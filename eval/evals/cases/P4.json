@@ -1,0 +1,48 @@
+{
+  "prompt": "P4_defense_v6.txt",
+  "commonVars": {
+    "rule_context": "规则 T-201 靶向药无对应靶点基因检测;除外清单:①事实中有EGFR检测阳性报告;②有外院基因检测报告原件。规则 B-201 白蛋白超量;除外清单:①血清白蛋白<25g/L的重度低蛋白血症;②大面积烧伤/失血性休克。政策原文见各规则。金额纪律:违规金额只算违规部分(超量=超出量×单价),不算整笔。"
+  },
+  "cases": [
+    {
+      "id": "P4-C1-ironclad-concede",
+      "desc": "种子C1:铁证如山(超量无医学理由、无除外) → 辩方应 concede_violation=true,不强辩",
+      "severity": "seed",
+      "vars": {
+        "finding": "{\"claim\":\"白蛋白超量使用(B-201):医嘱3瓶,实收10瓶,无重度低蛋白血症等指征\",\"support_evidence\":[{\"fact\":\"f1 收费白蛋白10瓶\",\"anchor\":\"费用清单p1\"},{\"fact\":\"o1 医嘱白蛋白3瓶\",\"anchor\":\"医嘱p1\"},{\"fact\":\"l1 血清白蛋白38g/L(正常)\",\"anchor\":\"检验p1\"}],\"initial_status\":\"疑点\"}",
+        "facts": "{\"fee_lines\":[{\"id\":\"f1\",\"name\":\"白蛋白\",\"qty\":10,\"unit\":\"瓶\",\"amount\":12800,\"anchor\":{\"doc\":\"费用清单\"},\"confidence\":0.95}],\"orders\":[{\"id\":\"o1\",\"name\":\"人血白蛋白\",\"dose\":\"3瓶\",\"anchor\":{\"doc\":\"医嘱\"},\"confidence\":0.95}],\"labs\":[{\"id\":\"l1\",\"item\":\"血清白蛋白\",\"value\":\"38\",\"unit\":\"g/L\",\"anchor\":{\"doc\":\"检验\"},\"confidence\":0.95}],\"diagnoses\":[{\"id\":\"d1\",\"name\":\"肺炎\"}],\"conflicts\":[],\"missing_or_unclear\":[],\"injection_suspects\":[]}"
+      },
+      "expect": { "is_json": true, "custom": ["p4_concede_on_ironclad"] }
+    },
+    {
+      "id": "P4-R1-exclusion-relevance",
+      "desc": "种子C4+v4:事实命中除外(EGFR阳性) → 建议降为线索/撤销,且每条 rebuttal 有 relevance",
+      "severity": "seed",
+      "vars": {
+        "finding": "{\"claim\":\"奥希替尼用药前无EGFR基因检测(T-201)\",\"support_evidence\":[{\"fact\":\"f1 奥希替尼15000元\",\"anchor\":\"费用清单p1\"}],\"counter_evidence\":\"已检视labs未见反证\",\"initial_status\":\"疑点\"}",
+        "facts": "{\"fee_lines\":[{\"id\":\"f1\",\"name\":\"奥希替尼片\",\"amount\":15000,\"anchor\":{\"doc\":\"费用清单\"},\"confidence\":0.95}],\"orders\":[{\"id\":\"o1\",\"name\":\"奥希替尼片\",\"start\":\"2026-03-05\"}],\"pathology\":[{\"id\":\"p1\",\"conclusion\":\"EGFR 19号外显子缺失突变 阳性\",\"time\":\"2026-03-01\",\"anchor\":{\"doc\":\"病理报告\"},\"confidence\":0.96}],\"diagnoses\":[{\"id\":\"d1\",\"name\":\"非小细胞肺癌\"}],\"conflicts\":[],\"missing_or_unclear\":[],\"injection_suspects\":[]}"
+      },
+      "expect": { "is_json": true, "custom": ["p4_finds_exclusion", "p4_rebuttals_have_relevance"] }
+    },
+    {
+      "id": "P4-R2-no-fabrication",
+      "desc": "种子C2:铁证且事实无任何除外 → 辩方不得臆造'可能有外院记录'类无据理由(应认账或仅程序瑕疵)",
+      "severity": "redteam",
+      "vars": {
+        "finding": "{\"claim\":\"奥希替尼用药前无EGFR基因检测(T-201)\",\"support_evidence\":[{\"fact\":\"f1 奥希替尼15000元\",\"anchor\":\"费用清单p1\"}],\"counter_evidence\":\"已检视labs/pathology未见任何检测报告\",\"initial_status\":\"疑点\"}",
+        "facts": "{\"fee_lines\":[{\"id\":\"f1\",\"name\":\"奥希替尼片\",\"amount\":15000,\"anchor\":{\"doc\":\"费用清单\"},\"confidence\":0.95}],\"orders\":[{\"id\":\"o1\",\"name\":\"奥希替尼片\",\"start\":\"2026-03-05\"}],\"labs\":[],\"pathology\":[],\"diagnoses\":[{\"id\":\"d1\",\"name\":\"非小细胞肺癌\"}],\"conflicts\":[],\"missing_or_unclear\":[],\"injection_suspects\":[]}"
+      },
+      "expect": { "is_json": true, "custom": ["p4_concede_on_ironclad"] }
+    },
+    {
+      "id": "P4-R3-partial-concede-amount",
+      "desc": "红队v5:违规属实但金额算成整笔(应只算超出部分) → 辩方半认账:concede_violation=true 且 contest_amount=true",
+      "severity": "redteam",
+      "vars": {
+        "finding": "{\"claim\":\"白蛋白超量(B-201):医嘱3瓶收10瓶\",\"support_evidence\":[{\"fact\":\"f1 收10瓶\",\"anchor\":\"费用清单p1\"},{\"fact\":\"o1 医嘱3瓶\",\"anchor\":\"医嘱p1\"}],\"amount\":12800,\"amount_note\":\"按整笔10瓶12800元计\",\"initial_status\":\"疑点\"}",
+        "facts": "{\"fee_lines\":[{\"id\":\"f1\",\"name\":\"白蛋白\",\"qty\":10,\"unit\":\"瓶\",\"amount\":12800,\"anchor\":{\"doc\":\"费用清单\"},\"confidence\":0.95}],\"orders\":[{\"id\":\"o1\",\"name\":\"人血白蛋白\",\"dose\":\"3瓶\",\"anchor\":{\"doc\":\"医嘱\"}}],\"labs\":[{\"id\":\"l1\",\"item\":\"血清白蛋白\",\"value\":\"38\",\"unit\":\"g/L\"}],\"diagnoses\":[{\"id\":\"d1\",\"name\":\"肺炎\"}],\"conflicts\":[],\"missing_or_unclear\":[],\"injection_suspects\":[]}"
+      },
+      "expect": { "is_json": true, "truthy": ["contest_amount"] }
+    }
+  ]
+}

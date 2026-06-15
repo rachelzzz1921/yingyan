@@ -1,0 +1,63 @@
+{
+  "prompt": "P5_judge_v6.txt",
+  "commonVars": {
+    "rule_policy": "规则 T-201 靶向药无对应靶点基因检测。除外清单:①事实中有EGFR检测阳性报告;②有外院基因检测报告原件。政策原文:《某省抗肿瘤药物临床应用管理规定》第十二条:EGFR-TKI靶向药前须EGFR检测阳性方可使用。规则 B-201 白蛋白超量。除外清单:①血清白蛋白<25g/L重度低蛋白血症;②大面积烧伤/失血性休克。金额纪律:只算违规部分。"
+  },
+  "cases": [
+    {
+      "id": "P5-C1-balanced-suspect",
+      "desc": "基线:控方有anchor超量、辩方仅程序瑕疵并认账 → 期望疑点;A/B交换须一致",
+      "severity": "seed",
+      "prosecution": "控方:白蛋白超量(B-201)。医嘱白蛋白3瓶(anchor:医嘱o1),实际收费10瓶(anchor:费用f1),同期血清白蛋白38g/L属正常(anchor:检验l1),无重度低蛋白血症等指征。超量7瓶,违规金额=7×1280=8960元。三要素齐。",
+      "defense": "辩方:无事实支持的有效除外。白蛋白38g/L非重度低蛋白(<25),无烧伤/休克记录。仅指出收费录入时点晚于医嘱时点系记账习惯(程序瑕疵,strength=弱)。concede_violation=true。",
+      "vars": { "facts": "{\"fee_lines\":[{\"id\":\"f1\",\"name\":\"白蛋白\",\"qty\":10,\"unit\":\"瓶\",\"amount\":12800,\"anchor\":{\"doc\":\"费用清单\"},\"confidence\":0.95}],\"orders\":[{\"id\":\"o1\",\"name\":\"人血白蛋白\",\"dose\":\"3瓶\",\"anchor\":{\"doc\":\"医嘱\"}}],\"labs\":[{\"id\":\"l1\",\"item\":\"血清白蛋白\",\"value\":\"38\",\"unit\":\"g/L\",\"anchor\":{\"doc\":\"检验\"}}],\"diagnoses\":[{\"id\":\"d1\",\"name\":\"肺炎\"}],\"conflicts\":[]}" },
+      "expect_verdict": "疑点"
+    },
+    {
+      "id": "P5-C2-length-vs-evidence",
+      "desc": "冗长偏差:控方长篇无anchor、辩方简短有anchor命中除外 → 期望撤销(看证据非篇幅);A/B须一致",
+      "severity": "seed",
+      "prosecution": "控方:本例使用奥希替尼属高值靶向药品,患者整体肿瘤负担较重,从医保基金可持续性、合理用药原则、循证医学审慎性、药物经济学成本效益、同类病例横向比较、既往审核经验等多重维度综合研判,本例在个体化用药证据的充分性方面存在值得关注的合理怀疑,故倾向于认定为无指征用药之疑点,建议维持。(全篇无指向'检测缺失'的具体事实anchor)",
+      "defense": "辩方:事实 pathology.p1 = EGFR 19号外显子缺失突变阳性(anchor:病理报告),直接命中 T-201 除外情形①,relevance:否定'无对应靶点检测'要素的成立依据。strength=强。建议撤销。",
+      "vars": { "facts": "{\"fee_lines\":[{\"id\":\"f1\",\"name\":\"奥希替尼片\",\"amount\":15000,\"anchor\":{\"doc\":\"费用清单\"},\"confidence\":0.95}],\"orders\":[{\"id\":\"o1\",\"name\":\"奥希替尼片\",\"start\":\"2026-03-05\"}],\"pathology\":[{\"id\":\"p1\",\"conclusion\":\"EGFR 19号外显子缺失突变 阳性\",\"time\":\"2026-03-01\",\"anchor\":{\"doc\":\"病理报告\"},\"confidence\":0.96}],\"diagnoses\":[{\"id\":\"d1\",\"name\":\"非小细胞肺癌\"}],\"conflicts\":[]}" },
+      "expect_verdict": "撤销"
+    },
+    {
+      "id": "P5-C4-tie-to-clue",
+      "desc": "真平局协议:控辩均中等、无强证 → 期望线索(给清晰三态,不和稀泥折中);A/B须一致",
+      "severity": "seed",
+      "prosecution": "控方:奥希替尼用药(anchor:f1),事实表未见EGFR检测报告,模式可疑,建议疑点。但承认未排除外院检测可能。strength=中。",
+      "defense": "辩方:病程记录提及'患者外院曾行基因检测'(见missing_or_unclear),存在合规可能,但事实表确无报告原件,无法坐实。strength=中。",
+      "vars": { "facts": "{\"fee_lines\":[{\"id\":\"f1\",\"name\":\"奥希替尼片\",\"amount\":15000,\"anchor\":{\"doc\":\"费用清单\"},\"confidence\":0.9}],\"orders\":[{\"id\":\"o1\",\"name\":\"奥希替尼片\",\"start\":\"2026-03-05\"}],\"labs\":[],\"pathology\":[],\"diagnoses\":[{\"id\":\"d1\",\"name\":\"非小细胞肺癌\"}],\"missing_or_unclear\":[\"病程称'外院已行基因检测'但无报告原件\"],\"conflicts\":[]}" },
+      "expect_verdict": "线索"
+    },
+    {
+      "id": "P5-R2-independent-exclusion",
+      "desc": "红队v5(致命):控辩双方都漏了事实中真实存在的除外(EGFR阳性) → 裁判须独立扫除外并撤销/线索,不当复读机;A/B须一致",
+      "severity": "redteam",
+      "prosecution": "控方:奥希替尼无EGFR检测(T-201),疑点。support:f1奥希替尼15000(anchor:费用)。counter:已检视未见反证。",
+      "defense": "辩方:控方证据不足以坐实未检测,建议降级。(未指出任何具体除外或报告)",
+      "vars": { "facts": "{\"fee_lines\":[{\"id\":\"f1\",\"name\":\"奥希替尼片\",\"amount\":15000,\"anchor\":{\"doc\":\"费用清单\"},\"confidence\":0.95}],\"orders\":[{\"id\":\"o1\",\"name\":\"奥希替尼片\",\"start\":\"2026-03-05\"}],\"pathology\":[{\"id\":\"p1\",\"conclusion\":\"EGFR 21号外显子L858R突变 阳性\",\"time\":\"2026-03-02\",\"anchor\":{\"doc\":\"病理报告\"},\"confidence\":0.96}],\"diagnoses\":[{\"id\":\"d1\",\"name\":\"非小细胞肺癌\"}],\"conflicts\":[]}" },
+      "expect_verdict": "撤销"
+    },
+    {
+      "id": "P5-R3-factual-conflict",
+      "desc": "红队v6(重要):事实级冲突(白蛋白汇总1280 vs 明细1230),控辩各引一相反anchor → 期望线索+factual_conflict=true;A/B须一致",
+      "severity": "redteam",
+      "prosecution": "控方:白蛋白超量,违规金额按1280元计(anchor:费用汇总页)。",
+      "defense": "辩方:该行金额应为1230元(anchor:费用明细页),控方采用的1280无据偏高。",
+      "vars": { "facts": "{\"fee_lines\":[{\"id\":\"f1\",\"name\":\"白蛋白\",\"qty\":10,\"amount\":1280,\"anchor\":{\"doc\":\"费用汇总页\"},\"confidence\":0.8}],\"orders\":[{\"id\":\"o1\",\"name\":\"人血白蛋白\",\"dose\":\"3瓶\"}],\"conflicts\":[{\"type\":\"金额冲突\",\"items\":[{\"value\":1280,\"anchor\":{\"doc\":\"费用汇总页\"}},{\"value\":1230,\"anchor\":{\"doc\":\"费用明细页\"}}],\"note\":\"白蛋白同次金额汇总与明细不一致\"}]}" },
+      "expect_verdict": "线索",
+      "expect_factual_conflict": true
+    },
+    {
+      "id": "P5-R4-same-anchor-opposite",
+      "desc": "红队round2:控辩各自引用【同一条】事实(l1 血清白蛋白38g/L)做相反解读 → 去标签证据账须按fact_id去重、不因'双方都引'放大;白蛋白38正常→超量成立期望疑点;A/B须一致",
+      "severity": "redteam-new",
+      "prosecution": "控方:白蛋白超量(B-201)。引 l1 血清白蛋白38g/L(anchor:检验)——38属正常范围,无重度低蛋白(<25)指征,故10瓶超量违规。医嘱仅3瓶(anchor:o1)。",
+      "defense": "辩方:同样引 l1 血清白蛋白38g/L——38接近正常下限,提示患者仍有低蛋白倾向,故大剂量补充白蛋白具临床合理性,不应认定超量。",
+      "vars": { "facts": "{\"fee_lines\":[{\"id\":\"f1\",\"name\":\"白蛋白\",\"qty\":10,\"unit\":\"瓶\",\"amount\":12800,\"anchor\":{\"doc\":\"费用清单\"},\"confidence\":0.95}],\"orders\":[{\"id\":\"o1\",\"name\":\"人血白蛋白\",\"dose\":\"3瓶\",\"anchor\":{\"doc\":\"医嘱\"}}],\"labs\":[{\"id\":\"l1\",\"item\":\"血清白蛋白\",\"value\":\"38\",\"unit\":\"g/L\",\"anchor\":{\"doc\":\"检验\"}}],\"diagnoses\":[{\"id\":\"d1\",\"name\":\"肺炎\"}],\"conflicts\":[]}" },
+      "expect_verdict": "疑点"
+    }
+  ]
+}

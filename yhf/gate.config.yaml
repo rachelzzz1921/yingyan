@@ -1,0 +1,58 @@
+# YHF 变更门禁配置（核对稿）
+# 任何 prompt / 规则 / 模型变更，CI 跑: node yhf/gate.js --strict
+
+gates:
+  G0_clean_zero_fp:
+    enabled: true
+    description: "干净案卷不得产出疑点（红线，一票否决）"
+    layer: engine          # L3
+    mode: oracle           # 必须 oracle，禁止 governance 叠加
+
+  G1_shadow_fpr:
+    enabled: false         # MVP scaffold，核对后再开
+    description: "变更规则影子运行误报率上限"
+    layer: shadow          # L4
+    max_fpr: 0.10
+    min_precision: 0.90
+
+  G2_prompt_pass:
+    enabled: false         # MVP report-only
+    description: "关联 prompt 断言通过率"
+    layer: prompt          # L1
+    min_pass_rate: 1.0
+
+  G3_latency:
+    enabled: false         # MVP report-only
+    description: "单案稽核 P95 时延上限（毫秒）"
+    layer: engine
+    p95_ms: 90000
+
+engine:
+  # 与 prototype/server.js /api/bench 对齐：跳过临时导入件
+  skip_case_ids: ["uploaded"]
+  # 判定 clean 案卷的方式（与 case_meta.embedded_violation_count === 0 一致）
+  clean_field: embedded_violation_count
+
+shadow:
+  # 运行期 live shadow（iter-16）与 harness shadow 共用阈值语义
+  reject_threshold: 3      # 复核驳回几次触发 re_review → shadow
+  observe_mode: per_rule   # L4 按单规则静默观察
+
+# Phase 4 L2 核心集：10 条演示/门禁必测规则（T4-2）
+core_rules:
+  - T-201
+  - B-201
+  - T-207
+  - A-109
+  - A-105
+  - F-003
+  - T-205
+  - D-401
+  - A-101
+  - E-503
+
+paths:
+  prototype_data: ../prototype/data
+  prototype_engine: ../prototype/app/engine/audit-engine
+  eval_runner: ../eval/evals/run.js
+  rule_states: ../prototype/data/rule_states.json   # live 模式只读，gate 默认不读

@@ -1,0 +1,90 @@
+{
+  "case_meta": {
+    "case_id": "YY-DEMO-ORTHO-001",
+    "case_title": "骨科·经皮椎体后凸成形术(PKP) 备演材料包（硬证据·对错分明）",
+    "disclaimer": "虚构数据。骨科备演场景：违规均为'数量/内涵比对'类硬证据，对错分明、难被临床指征争议挑战——肿瘤主线被质疑用药指征时切到此场景托底。",
+    "embedded_violation_count": 4,
+    "distractor_count": 1,
+    "settlement_summary": {"total_amount": 18650.0, "insurance_paid_amount": 18650.0, "currency": "CNY", "settle_type": "住院·按项目付费"},
+    "demo_value": "★对错分明：①PKP术含椎体穿刺却另收(内涵重复) ②球囊扩张/复位另收(分解) ③球囊收2个手术记录用1个(数量不符) ④收进口骨水泥手术记录用国产(高值串低值)。全部可与手术记录/植入物登记逐项比对，无医学指征争议空间。"
+  },
+  "front_page": {
+    "doc_type": "病案首页", "hospital": "示范市第一人民医院（虚构）", "hospital_level": "三级甲等",
+    "patient_name": "刘德海", "sex": "男", "age": 68, "birth_date": "1958-03-15",
+    "insurance_type": "城乡居民基本医疗保险", "admission_no": "ZY20260420-0301",
+    "admit_time": "2026-04-20 10:00", "discharge_time": "2026-04-25 11:00", "actual_inpatient_days": 5,
+    "admit_dept": "骨科", "bed_no": "骨科-18床",
+    "principal_diagnosis": {"name": "L1椎体压缩性骨折", "icd10": "S32.001", "tnm_stage": "—", "note": "骨质疏松性"},
+    "other_diagnosis": [{"name": "骨质疏松症", "icd10": "M81.900"}],
+    "principal_operation": {"name": "经皮椎体后凸成形术(PKP) L1", "icd9": "81.66"},
+    "attending_physician": "孙医生（主治医师）", "chief_physician": "钱主任（主任医师）",
+    "previous_admissions": []
+  },
+  "admission_note": {
+    "doc_type": "入院记录", "record_time": "2026-04-20 11:00",
+    "chief_complaint": "腰背痛伴活动受限5天。",
+    "present_illness": "患者5天前弯腰提物后出现腰背部疼痛，活动受限，卧床休息可缓解。腰椎MRI示L1椎体压缩性骨折，骨髓水肿。骨密度示骨质疏松。拟行经皮椎体后凸成形术。",
+    "past_history": "骨质疏松多年。否认药物过敏。",
+    "physical_exam": "L1棘突压痛、叩击痛阳性，双下肢肌力、感觉正常。",
+    "preliminary_diagnosis": ["L1椎体压缩性骨折（骨质疏松性）", "骨质疏松症"],
+    "treatment_plan": "完善术前检查，行L1经皮椎体后凸成形术(PKP)；术后抗骨质疏松治疗。"
+  },
+  "progress_notes": [
+    {"date": "2026-04-20", "type": "首次病程记录", "author": "孙医生", "text": "患者L1椎体压缩性骨折，骨质疏松性，有PKP手术指征。完善术前检查，拟明日行L1经皮椎体后凸成形术。二级护理。"},
+    {"date": "2026-04-21", "type": "手术记录/术后病程", "author": "钱主任", "text": "今日局麻下行L1经皮椎体后凸成形术(PKP)。经双侧椎弓根穿刺、球囊扩张复位、注入骨水泥，过程顺利。实际使用椎体球囊1个、国产骨水泥1套、穿刺套管针1个。术后平卧。"},
+    {"date": "2026-04-25", "type": "出院记录", "author": "孙医生", "text": "患者术后腰背痛明显缓解，达出院标准，今日出院。"}
+  ],
+  "operation_note": {
+    "doc_type": "手术记录",
+    "operation_name": "经皮椎体后凸成形术(PKP) L1",
+    "operation_date": "2026-04-21",
+    "surgeon": "钱主任", "anesthesia": "局部麻醉",
+    "procedure_steps": "C臂透视定位L1椎体，局麻下经双侧椎弓根穿刺至椎体（椎体穿刺为本术式固有步骤），置入工作通道，球囊扩张复位（球囊扩张复位为本术式固有步骤），调制并注入骨水泥(PMMA)，透视见骨水泥弥散满意、无渗漏，撤除器械，缝合。",
+    "consumables_used": [
+      {"name": "椎体球囊扩张导管", "qty": 1, "type": "国产", "spec": "单侧", "note": "★实际仅用1个（单椎体单球囊）"},
+      {"name": "骨水泥(PMMA)", "qty": 1, "type": "国产", "brand": "国产A牌", "spec": "20g", "note": "★实际使用国产骨水泥1套"},
+      {"name": "椎体穿刺套管针", "qty": 1, "type": "国产", "spec": "-", "note": "正常用1个"}
+    ],
+    "note": "★关键比对源：本术式固有含'椎体穿刺''球囊扩张复位''骨水泥注入'三步；耗材实际用量：球囊1个、骨水泥1套(国产)、穿刺针1个。"
+  },
+  "long_term_orders": {"doc_type": "长期医嘱单", "items": [
+    {"order_id": "L01", "start": "2026-04-20 11:00", "stop": "2026-04-25 11:00", "content": "骨科护理常规", "doctor": "孙医生"},
+    {"order_id": "L02", "start": "2026-04-20 11:00", "stop": "2026-04-25 11:00", "content": "二级护理", "doctor": "孙医生"},
+    {"order_id": "L03", "start": "2026-04-22 09:00", "stop": "2026-04-25 11:00", "content": "碳酸钙D3片 0.6g po qd（抗骨质疏松）", "doctor": "孙医生"}
+  ]},
+  "temporary_orders": {"doc_type": "临时医嘱单", "items": [
+    {"order_id": "T01", "time": "2026-04-20 11:30", "content": "腰椎正侧位X线、骨密度、血常规、凝血", "doctor": "孙医生"},
+    {"order_id": "T02", "time": "2026-04-21 09:00", "content": "经皮椎体后凸成形术(PKP) L1（局麻）", "doctor": "钱主任"}
+  ]},
+  "nursing_records": {"doc_type": "护理记录单", "nursing_level_executed": "二级护理（每2小时巡视）", "note": "与医嘱二级护理一致。", "entries": [
+    {"date": "2026-04-20", "vitals_count": 2, "round_interval_h": 2, "text": "入院，二级护理，完善术前准备。"},
+    {"date": "2026-04-21", "vitals_count": 3, "round_interval_h": 2, "text": "行PKP术，术后平卧，生命体征平稳。"},
+    {"date": "2026-04-25", "vitals_count": 1, "round_interval_h": 2, "text": "出院。"}
+  ]},
+  "lab_reports": [
+    {"doc_type": "检验报告", "report_id": "LAB-20260420-0301", "report_time": "2026-04-20 15:00", "category": "血常规", "results": [
+      {"item": "白细胞 WBC", "value": 6.0, "unit": "10⁹/L", "ref": "3.5–9.5", "flag": "正常"}
+    ]}
+  ],
+  "pathology_report": {"doc_type": "—", "report_id": "—", "report_time": "—", "diagnosis": "本例无病理（非肿瘤）", "note": "骨科良性骨折，无病理报告，T-201/T-202等肿瘤规则不适用"},
+  "gene_test_report": {"doc_type": "—", "status": "不适用", "note": "非肿瘤病例，无需基因检测"},
+  "fee_list": {
+    "doc_type": "费用清单（医保结算明细）", "settle_date": "2026-04-25",
+    "items": [
+      {"line_no": 1, "fee_date": "2026-04-20~04-25", "category": "床位费", "item_name": "床位费（三人间）", "spec": "-", "qty": 5, "unit": "日", "unit_price": 50.0, "amount": 250.0, "insurance_class": "医保", "linked_order": "L01", "flag": "正常"},
+      {"line_no": 2, "fee_date": "2026-04-20~04-25", "category": "护理费", "item_name": "二级护理", "spec": "-", "qty": 5, "unit": "日", "unit_price": 12.0, "amount": 60.0, "insurance_class": "医保", "linked_order": "L02", "flag": "正常（与医嘱一致）"},
+      {"line_no": 3, "fee_date": "2026-04-21", "category": "手术费", "item_name": "经皮椎体后凸成形术", "spec": "-", "qty": 1, "unit": "次", "unit_price": 4500.0, "amount": 4500.0, "insurance_class": "医保", "linked_order": "T02", "flag": "正常（术式本身）"},
+      {"line_no": 4, "fee_date": "2026-04-21", "category": "手术费", "item_name": "椎体穿刺术", "spec": "-", "qty": 1, "unit": "次", "unit_price": 680.0, "amount": 680.0, "insurance_class": "医保", "linked_order": "—", "flag": "★A-101重复收费：椎体穿刺为PKP术固有内涵步骤，已含在术式中，不应另收"},
+      {"line_no": 5, "fee_date": "2026-04-21", "category": "手术费", "item_name": "经皮椎体球囊扩张复位术", "spec": "-", "qty": 1, "unit": "次", "unit_price": 1200.0, "amount": 1200.0, "insurance_class": "医保", "linked_order": "—", "flag": "★A-106分解收费：球囊扩张复位为PKP打包内涵，拆出单独收费"},
+      {"line_no": 6, "fee_date": "2026-04-21", "category": "耗材费", "item_name": "椎体球囊扩张导管", "spec": "单侧", "qty": 2, "unit": "个", "unit_price": 3800.0, "amount": 7600.0, "insurance_class": "医保乙", "linked_order": "—", "flag": "★A-109耗材数量不符：收2个，手术记录实际用1个，多收1个(¥3800)"},
+      {"line_no": 7, "fee_date": "2026-04-21", "category": "耗材费", "item_name": "骨水泥(PMMA·进口)", "spec": "20g", "qty": 1, "unit": "套", "unit_price": 3200.0, "amount": 3200.0, "insurance_class": "医保乙", "linked_order": "—", "flag": "★A-107串换耗材：收进口骨水泥(高值¥3200)，手术记录/植入物登记实际用国产骨水泥(低值)"},
+      {"line_no": 8, "fee_date": "2026-04-21", "category": "耗材费", "item_name": "椎体穿刺套管针", "spec": "-", "qty": 1, "unit": "个", "unit_price": 450.0, "amount": 450.0, "insurance_class": "医保乙", "linked_order": "—", "flag": "干扰项：穿刺针收1个，手术记录用1个，数量一致→正确不报"},
+      {"line_no": 9, "fee_date": "2026-04-22", "category": "西药费", "item_name": "碳酸钙D3片", "spec": "0.6g", "qty": 4, "unit": "片", "unit_price": 1.0, "amount": 4.0, "insurance_class": "医保甲", "linked_order": "L03", "flag": "正常"},
+      {"line_no": 10, "fee_date": "2026-04-20", "category": "检查费", "item_name": "腰椎正侧位X线", "spec": "-", "qty": 1, "unit": "次", "unit_price": 180.0, "amount": 180.0, "insurance_class": "医保", "linked_order": "T01", "flag": "正常"},
+      {"line_no": 11, "fee_date": "2026-04-21", "category": "材料费", "item_name": "一次性手术包", "spec": "-", "qty": 1, "unit": "个", "unit_price": 526.0, "amount": 526.0, "insurance_class": "医保", "linked_order": "T02", "flag": "正常"}
+    ],
+    "absent_items_note": "骨科备演核对源=手术记录(术式内涵+耗材实际用量)+植入物登记。内涵重复/分解、耗材数量、高低值串换均可逐项硬比对。",
+    "total_amount": 18650.0
+  },
+  "discharge_summary": {"doc_type": "出院小结", "admit_date": "2026-04-20", "discharge_date": "2026-04-25", "discharge_diagnosis": ["L1椎体压缩性骨折（骨质疏松性·术后）", "骨质疏松症"], "hospital_course": "入院后完善检查，2026-04-21行L1 PKP术，过程顺利，术后腰背痛明显缓解，抗骨质疏松治疗。好转出院。", "discharge_orders": ["碳酸钙D3片 0.6g qd", "门诊随访"], "discharge_meds": [{"name": "碳酸钙D3片", "note": "抗骨质疏松"}]}
+}

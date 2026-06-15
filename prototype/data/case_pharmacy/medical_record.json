@@ -1,0 +1,56 @@
+{
+  "case_meta": {
+    "case_id": "YY-PHARM-001",
+    "case_title": "门诊·定点零售药店 备演材料包（串换/空刷/回流药 · 跳出住院场景）",
+    "disclaimer": "虚构数据。门诊/零售药店场景真fire示范件（继肿瘤/骨科/DRG/影像/麻醉后第6个完整可fire领域，且首次跳出住院病案结构）：以销售小票/进销存为事实基准，对医保结算明细做硬比对——生活用品串换医保药品(P-303,材料内可闭环→疑点)/空刷医保凭证(P-301,需进销存佐证→线索)/回流药追溯码断链(P-302,需追溯码佐证→线索)。另设1干扰(二甲双胍真实售药,正确不报)。依据取官方定点零售药店问题清单逐字(序1/5/7,✅已核实)。",
+    "scene": "门诊药店",
+    "embedded_violation_count": 2,
+    "distractor_count": 1,
+    "clue_count": 2,
+    "specialty": "定点零售药店",
+    "settlement_summary": {"total_amount": 373.0, "insurance_paid_amount": 373.0, "currency": "CNY", "settle_type": "门诊统筹·定点零售药店刷卡结算"}
+  },
+  "front_page": {
+    "doc_type": "门诊购药结算凭证", "hospital": "示范市惠民大药房（医保定点·虚构）", "hospital_level": "定点零售药店",
+    "patient_name": "钱参保", "sex": "男", "age": 58, "birth_date": "1968-04-20",
+    "insurance_type": "职工基本医疗保险（门诊统筹）", "admission_no": "MZ20260610-3302",
+    "admit_time": "2026-06-10 10:30", "discharge_time": "2026-06-10 10:45", "actual_inpatient_days": 0,
+    "admit_dept": "定点零售药店（门诊统筹）", "bed_no": "—",
+    "principal_diagnosis": {"name": "2型糖尿病（门诊慢特病）", "icd10": "E11.900"},
+    "other_diagnosis": [],
+    "attending_physician": "（门诊处方）", "chief_physician": "—",
+    "previous_admissions": []
+  },
+  "pharmacy_info": {
+    "doc_type": "药店医保定点信息", "store_name": "示范市惠民大药房（虚构）", "medical_insurance_code": "DD-XF-0007",
+    "pooling_region": "示范市统筹区", "trace_code_required_since": "2025-07-01（医保药品强制扫追溯码结算）",
+    "note": "定点零售药店门诊统筹刷卡结算。稽核以销售小票/进销存/追溯码为事实基准，对医保结算明细做硬比对。"
+  },
+  "prescriptions": [
+    {"rx_id": "RX-3302-01", "drug": "二甲双胍片", "doctor": "李医生（示范市第一人民医院内分泌科）", "date": "2026-06-09", "valid": true, "note": "门诊慢特病处方，真实有效"}
+  ],
+  "sales_records": {
+    "doc_type": "销售小票/进销存（实际销售商品）",
+    "note": "进销存与销售小票载明本次实际售出商品如下——作为医保结算明细的硬比对基准。",
+    "items": [
+      {"actual_name": "医用外科口罩（3盒）", "category": "生活用品(口罩)", "qty": 3, "settled_as_line": 1},
+      {"actual_name": "蛋白粉（某保健品）", "category": "保健品", "qty": 1, "settled_as_line": 2},
+      {"actual_name": "二甲双胍片", "category": "医保目录内药品", "qty": 2, "settled_as_line": 3},
+      {"actual_name": "（无对应销售出库记录）", "category": "缺失", "qty": 0, "settled_as_line": 4},
+      {"actual_name": "阿托伐他汀钙片（进货来源异常·追溯码断链）", "category": "医保目录内药品", "qty": 1, "settled_as_line": 5}
+    ]
+  },
+  "fee_list": {
+    "doc_type": "医保结算明细（门诊统筹刷卡）", "settle_date": "2026-06-10",
+    "items": [
+      {"line_no": 1, "fee_date": "2026-06-10", "category": "西药费", "item_name": "奥美拉唑肠溶胶囊", "spec": "20mg×14", "qty": 1, "unit": "盒", "unit_price": 85.0, "amount": 85.0, "insurance_class": "医保乙", "linked_order": "POS-01", "actual_sold": {"name": "医用外科口罩（3盒）", "category": "生活用品(口罩)"}, "inventory_supported": true, "trace_code": "—", "flag": "★实际售口罩,串换为奥美拉唑结算→P-303"},
+      {"line_no": 2, "fee_date": "2026-06-10", "category": "西药费", "item_name": "蒙脱石散", "spec": "3g×10", "qty": 1, "unit": "盒", "unit_price": 60.0, "amount": 60.0, "insurance_class": "医保乙", "linked_order": "POS-02", "actual_sold": {"name": "蛋白粉（保健品）", "category": "保健品"}, "inventory_supported": true, "trace_code": "—", "flag": "★实际售保健品,串换为蒙脱石散结算→P-303"},
+      {"line_no": 3, "fee_date": "2026-06-10", "category": "西药费", "item_name": "二甲双胍片", "spec": "0.5g×30", "qty": 2, "unit": "盒", "unit_price": 45.0, "amount": 90.0, "insurance_class": "医保甲", "linked_order": "RX-3302-01", "actual_sold": {"name": "二甲双胍片", "category": "医保目录内药品"}, "inventory_supported": true, "trace_code": "完整", "flag": "正常（真实售药·有处方·进销存支持·追溯完整→干扰项,正确不报）"},
+      {"line_no": 4, "fee_date": "2026-06-10", "category": "西药费", "item_name": "布洛芬缓释胶囊", "spec": "0.3g×20", "qty": 1, "unit": "盒", "unit_price": 38.0, "amount": 38.0, "insurance_class": "医保乙", "linked_order": "POS-04", "actual_sold": null, "inventory_supported": false, "trace_code": "—", "flag": "★刷卡结算但进销存无销售出库记录→P-301空刷线索"},
+      {"line_no": 5, "fee_date": "2026-06-10", "category": "西药费", "item_name": "阿托伐他汀钙片", "spec": "20mg×7", "qty": 1, "unit": "盒", "unit_price": 100.0, "amount": 100.0, "insurance_class": "医保乙", "linked_order": "POS-05", "actual_sold": {"name": "阿托伐他汀钙片", "category": "医保目录内药品"}, "inventory_supported": true, "trace_code": "断链", "flag": "★药品追溯码断链/进货来源异常→P-302回流药线索"}
+    ],
+    "absent_items_note": "门诊药店件：以销售小票/进销存为事实基准。P-303串换2笔(口罩/保健品→疑点) + P-301空刷1笔(线索) + P-302回流药1笔(线索)；二甲双胍真实售药为干扰项(正确不报)。",
+    "total_amount": 373.0
+  },
+  "discharge_summary": {"doc_type": "门诊购药小结", "admit_date": "2026-06-10", "discharge_date": "2026-06-10", "discharge_diagnosis": ["2型糖尿病（门诊慢特病）"], "hospital_course": "门诊统筹定点药店刷卡购药结算。", "discharge_orders": [], "discharge_meds": []}
+}

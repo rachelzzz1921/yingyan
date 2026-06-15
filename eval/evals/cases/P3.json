@@ -1,0 +1,48 @@
+{
+  "prompt": "P3_prosecutor_v6.txt",
+  "commonVars": {
+    "rule_and_policy": "规则 T-201 靶向药无对应靶点基因检测。触发要素:①存在靶向药费用行 ②无对应靶点(EGFR)基因检测阳性报告。除外情形:事实中有EGFR检测阳性报告 或 外院基因检测报告原件。政策原文:《某省抗肿瘤药物临床应用管理规定》第十二条:使用EGFR-TKI类靶向药前须完成EGFR基因检测,结果阳性方可使用。临床原文:《NSCLC诊疗指南》——EGFR-TKI适用于EGFR敏感突变阳性的非小细胞肺癌患者。"
+  },
+  "cases": [
+    {
+      "id": "P3-R1-unfounded",
+      "desc": "红队v4(致命):无根据候选(事实完全合规) → initial_status 须为不成立,不得挤出假线索",
+      "severity": "redteam",
+      "vars": {
+        "candidate": "怀疑该患者的CT检查为虚记(未实际检查)",
+        "facts": "{\"fee_lines\":[{\"id\":\"f1\",\"name\":\"胸部CT平扫\",\"amount\":280,\"date\":\"2026-03-02\",\"anchor\":{\"doc\":\"费用清单\"},\"confidence\":0.95}],\"orders\":[{\"id\":\"o1\",\"name\":\"胸部CT平扫\",\"start\":\"2026-03-02\",\"anchor\":{\"doc\":\"医嘱\"}}],\"procedures\":[{\"id\":\"pr1\",\"name\":\"胸部CT平扫\",\"time\":\"2026-03-02\",\"anchor\":{\"doc\":\"检查记录\"}}],\"pathology\":[{\"id\":\"img1\",\"conclusion\":\"右肺下叶结节\",\"time\":\"2026-03-02\",\"anchor\":{\"doc\":\"影像报告\"}}],\"diagnoses\":[{\"id\":\"d1\",\"name\":\"肺结节\"}],\"conflicts\":[],\"missing_or_unclear\":[],\"injection_suspects\":[]}"
+      },
+      "expect": { "is_json": true, "custom": ["p3_unfounded_not_suspect"] }
+    },
+    {
+      "id": "P3-R2-valid-suspect",
+      "desc": "有效疑点(有靶向药、无任何检测) → 须有 cove_checks 且有钢人 anticipated_defense",
+      "severity": "seed",
+      "vars": {
+        "candidate": "奥希替尼用药前无EGFR基因检测,涉嫌无指征用药(T-201)",
+        "facts": "{\"fee_lines\":[{\"id\":\"f1\",\"name\":\"奥希替尼片\",\"amount\":15000,\"date\":\"2026-03-05\",\"anchor\":{\"doc\":\"费用清单\"},\"confidence\":0.95}],\"orders\":[{\"id\":\"o1\",\"name\":\"奥希替尼片\",\"start\":\"2026-03-05\",\"anchor\":{\"doc\":\"医嘱\"}}],\"labs\":[],\"pathology\":[],\"diagnoses\":[{\"id\":\"d1\",\"name\":\"非小细胞肺癌\"}],\"conflicts\":[],\"missing_or_unclear\":[],\"injection_suspects\":[]}"
+      },
+      "expect": { "is_json": true, "in": { "initial_status": ["疑点", "线索"] }, "custom": ["p3_has_cove_and_steelman"] }
+    },
+    {
+      "id": "P3-R3-strong-counter",
+      "desc": "红队v4:事实含强反证(EGFR阳性报告) → counter非空,initial_status 不得高于线索",
+      "severity": "redteam",
+      "vars": {
+        "candidate": "奥希替尼用药前无EGFR基因检测,涉嫌无指征用药(T-201)",
+        "facts": "{\"fee_lines\":[{\"id\":\"f1\",\"name\":\"奥希替尼片\",\"amount\":15000,\"date\":\"2026-03-05\",\"anchor\":{\"doc\":\"费用清单\"},\"confidence\":0.95}],\"orders\":[{\"id\":\"o1\",\"name\":\"奥希替尼片\",\"start\":\"2026-03-05\"}],\"labs\":[],\"pathology\":[{\"id\":\"p1\",\"conclusion\":\"EGFR 19号外显子缺失突变 阳性\",\"time\":\"2026-03-01\",\"anchor\":{\"doc\":\"病理报告\"},\"confidence\":0.96}],\"diagnoses\":[{\"id\":\"d1\",\"name\":\"非小细胞肺癌\"}],\"conflicts\":[],\"missing_or_unclear\":[],\"injection_suspects\":[]}"
+      },
+      "expect": { "is_json": true, "custom": ["p3_not_above_clue"] }
+    },
+    {
+      "id": "P3-R4-lowconf-evidence",
+      "desc": "红队:关键证据 low_conf(金额模糊) → 不得高于线索",
+      "severity": "redteam",
+      "vars": {
+        "candidate": "白蛋白超量使用(B-201),涉嫌过度",
+        "facts": "{\"fee_lines\":[{\"id\":\"f1\",\"name\":\"白蛋白\",\"qty\":10,\"unit\":\"瓶\",\"amount\":12800,\"date\":\"2026-03-02\",\"anchor\":{\"doc\":\"费用清单\",\"locator\":{\"page\":3}},\"confidence\":0.52,\"low_conf\":true}],\"labs\":[{\"id\":\"l1\",\"item\":\"白蛋白\",\"value\":\"28\",\"unit\":\"g/L\",\"time\":\"2026-03-01\",\"confidence\":0.6,\"low_conf\":true}],\"orders\":[],\"diagnoses\":[{\"id\":\"d1\",\"name\":\"低蛋白血症\"}],\"conflicts\":[],\"missing_or_unclear\":[\"第3页费用数量与金额模糊\"],\"injection_suspects\":[]}"
+      },
+      "expect": { "is_json": true, "custom": ["p3_not_above_clue"] }
+    }
+  ]
+}

@@ -1,0 +1,292 @@
+{
+  "case_meta": {
+    "case_id": "YY-DEMO-NSCLC-001",
+    "case_title": "非小细胞肺癌（NSCLC）住院化疗 · 模拟材料包",
+    "disclaimer": "本材料包为鹰眼项目演示用虚构数据，患者信息、机构信息均为虚构，不含任何真实患者数据。所有金额/日期/数量经过精确设计，供稽核规则跑出确定结果。",
+    "generated_for": "鹰眼·医保基金稽核智能体 现场演示",
+    "embedded_violation_count": 7,
+    "distractor_count": 2,
+    "embedded_note": "6个独立违规点 + 1个合议层演示点(人血白蛋白：B-201+A-110+A-108三规则命中同一笔¥1280，合议合并为1主疑点+2佐证)",
+    "settlement_summary": {
+      "total_amount": 13132.0,
+      "insurance_paid_amount": 13132.0,
+      "currency": "CNY",
+      "settle_type": "住院·按项目付费（DRG分组：RU1x 肺恶性肿瘤伴化疗）"
+    }
+  },
+
+  "front_page": {
+    "doc_type": "病案首页",
+    "page": "首页",
+    "hospital": "示范市第一人民医院（虚构）",
+    "hospital_level": "三级甲等",
+    "patient_name": "王建国",
+    "patient_id": "P-2026-0000888（虚构）",
+    "sex": "男",
+    "age": 62,
+    "birth_date": "1963-11-08",
+    "id_card": "32xxxx196311xxxxxx（虚构脱敏）",
+    "insurance_type": "职工基本医疗保险",
+    "insurance_no": "JS-ZG-xxxxxx（虚构）",
+    "admission_no": "ZY20260313-0456",
+    "admit_time": "2026-03-13 09:20",
+    "discharge_time": "2026-03-20 10:00",
+    "actual_inpatient_days": 7,
+    "admit_dept": "肿瘤内科",
+    "discharge_dept": "肿瘤内科",
+    "bed_no": "肿瘤内科-12床",
+    "admit_route": "门诊",
+    "principal_diagnosis": {
+      "name": "右肺腺癌",
+      "icd10": "C34.101",
+      "tnm_stage": "cT3N2M1a，IVA期",
+      "note": "双肺多发转移"
+    },
+    "other_diagnosis": [
+      {"name": "恶性肿瘤化学治疗", "icd10": "Z51.101"},
+      {"name": "急性上呼吸道感染", "icd10": "J06.900"}
+    ],
+    "principal_operation": {"name": "无（本次为化疗住院）", "icd9": "—"},
+    "attending_physician": "李医生（主治医师，执业编号虚构）",
+    "chief_physician": "张主任（主任医师）",
+    "previous_admissions": [
+      {
+        "admission_no": "ZY20260224-0231",
+        "admit_time": "2026-02-24 14:30",
+        "discharge_time": "2026-02-26 11:00",
+        "principal_diagnosis": "右肺腺癌 IVA期",
+        "summary": "行经皮肺穿刺活检明确病理；行第1周期化疗（培美曲塞+卡铂+贝伐珠单抗）。好转出院，嘱3周后返院行第2周期。",
+        "purpose": "病理活检 + 第1周期化疗"
+      }
+    ]
+  },
+
+  "admission_note": {
+    "doc_type": "入院记录",
+    "record_time": "2026-03-13 10:00",
+    "chief_complaint": "确诊右肺腺癌1月余，第1周期化疗后21天，为行第2周期化疗入院。",
+    "present_illness": "患者1月余前因'咳嗽、痰中带血丝'就诊，胸部CT示右肺上叶占位伴双肺多发结节、纵隔淋巴结肿大。2026-02-24于我科住院行经皮肺穿刺活检，病理回报'（右肺）腺癌'。2026-02-25行第1周期化疗：培美曲塞 0.9g d1 + 卡铂 0.5g d1 + 贝伐珠单抗 0.4g d1，过程顺利，2026-02-26出院。化疗后无明显恶心呕吐、无骨髓抑制相关不适。近2日轻度咳嗽、咳少量黄痰，无发热、无咯血。今为行第2周期化疗收入院。患者自发病以来精神可，食纳睡眠可，二便正常，体重无明显下降。",
+    "past_history": "高血压病史5年，规律服用氨氯地平，血压控制可。否认糖尿病、冠心病。否认肝炎、结核。否认手术史、外伤史、输血史。否认药物食物过敏史。",
+    "physical_exam": "T 36.8℃，P 78次/分，R 18次/分，BP 132/82mmHg。神清，精神可，KPS评分80分。全身浅表淋巴结未触及明显肿大。双肺呼吸音清，右肺上叶可闻及少量湿啰音，未闻及胸膜摩擦音。心律齐，腹软无压痛。双下肢无水肿。",
+    "specialist_exam": "ECOG体力评分1分。",
+    "preliminary_diagnosis": [
+      "右肺腺癌（cT3N2M1a，IVA期，双肺转移）",
+      "恶性肿瘤化学治疗",
+      "急性上呼吸道感染",
+      "高血压病2级"
+    ],
+    "treatment_plan": "完善血常规、生化、凝血、肿瘤标志物等检查；评估化疗耐受性；拟行第2周期化疗：培美曲塞+卡铂+贝伐珠单抗，方案同前；对症止吐、护胃、水化；针对上感经验性抗感染。"
+  },
+
+  "progress_notes": [
+    {
+      "date": "2026-03-13",
+      "type": "首次病程记录",
+      "author": "李医生",
+      "text": "患者王建国，男，62岁，右肺腺癌IVA期第1周期化疗后入院。查体见右肺上叶少量湿啰音，近2日咳少量黄痰，CRP轻度升高（22 mg/L），考虑合并急性上呼吸道感染，予注射用头孢呋辛钠 1.5g 静滴 bid 经验性抗感染3天。拟明日完善评估后行第2周期化疗。护理级别：二级护理。"
+    },
+    {
+      "date": "2026-03-14",
+      "type": "日常病程记录",
+      "author": "李医生",
+      "text": "患者一般情况可，体温正常，咳嗽较前减轻。血常规：WBC 6.2×10⁹/L，中性粒细胞绝对值（ANC）4.5×10⁹/L，Hb 121g/L，PLT 187×10⁹/L，未见骨髓抑制。肝肾功能正常。今行第2周期化疗（D1）：培美曲塞0.9g + 卡铂0.5g + 贝伐珠单抗0.4g 静脉滴注。贝伐珠单抗使用前已核对：病理为腺癌（非鳞癌），近期无咯血、无近期手术及出血倾向，血压控制可，无使用禁忌。化疗前予托烷司琼、地塞米松止吐预处理。我院药房培美曲塞暂时缺药，已嘱家属至院外药房自行购买培美曲塞0.5g×2支带入病房使用。"
+    },
+    {
+      "date": "2026-03-15",
+      "type": "日常病程记录",
+      "author": "李医生",
+      "text": "化疗后第1天，患者无明显恶心呕吐，精神食纳可，体温正常。为预防化疗后骨髓抑制，今予聚乙二醇化重组人粒细胞刺激因子 6mg 皮下注射一次。继续抗感染及water化、护胃支持。"
+    },
+    {
+      "date": "2026-03-16",
+      "type": "日常病程记录",
+      "author": "李医生",
+      "text": "患者无特殊不适，体温正常，咳嗽基本消失。头孢呋辛抗感染3天疗程结束，今日停用。复查CRP降至6 mg/L。继续观察化疗耐受性。"
+    },
+    {
+      "date": "2026-03-17",
+      "type": "上级医师查房记录",
+      "author": "张主任",
+      "text": "张主任查房：患者右肺腺癌IVA期，第2周期化疗后恢复可。患者及家属积极要求加用靶向药物以提高疗效。结合患者为肺腺癌、家属强烈意愿，建议加用奥希替尼80mg 口服 每日一次 靶向治疗，今起开始服用，出院带药28天。向患者交代用药注意事项。"
+    },
+    {
+      "date": "2026-03-18",
+      "type": "日常病程记录",
+      "author": "李医生",
+      "text": "患者服用奥希替尼第1天，无皮疹、腹泻等不良反应。一般情况良好，生命体征平稳。复查血常规ANC 5.1×10⁹/L正常。"
+    },
+    {
+      "date": "2026-03-19",
+      "type": "日常病程记录",
+      "author": "李医生",
+      "text": "患者一般情况好，无化疗相关不良反应，无靶向药相关不良反应。拟明日出院。交代出院后注意事项及返院复查时间。"
+    },
+    {
+      "date": "2026-03-20",
+      "type": "出院记录",
+      "author": "李医生",
+      "text": "患者第2周期化疗顺利完成，无明显不良反应，达出院标准，今日10:00办理出院。嘱按时服用奥希替尼，3周后返院行第3周期化疗。"
+    }
+  ],
+
+  "long_term_orders": {
+    "doc_type": "长期医嘱单",
+    "items": [
+      {"order_id": "L01", "start": "2026-03-13 10:00", "stop": "2026-03-20 10:00", "content": "肿瘤内科护理常规", "doctor": "李医生"},
+      {"order_id": "L02", "start": "2026-03-13 10:00", "stop": "2026-03-20 10:00", "content": "二级护理", "doctor": "李医生", "key": "护理等级医嘱=二级护理"},
+      {"order_id": "L03", "start": "2026-03-13 10:00", "stop": "2026-03-20 10:00", "content": "普通饮食", "doctor": "李医生"},
+      {"order_id": "L04", "start": "2026-03-13 10:00", "stop": "2026-03-20 10:00", "content": "氨氯地平片 5mg po qd（降压）", "doctor": "李医生"},
+      {"order_id": "L05", "start": "2026-03-13 11:00", "stop": "2026-03-16 11:00", "content": "注射用头孢呋辛钠 1.5g + 0.9%氯化钠100ml ivgtt bid", "doctor": "李医生", "key": "头孢呋辛 1.5g bid ×3天 → 应发6支(规格1.5g/支)"},
+      {"order_id": "L06", "start": "2026-03-17 10:00", "stop": "2026-03-20 10:00", "content": "奥希替尼片 80mg po qd（靶向治疗）", "doctor": "张主任", "key": "靶向药·明确作用靶点(EGFR)·须靶点检测后用"}
+    ]
+  },
+
+  "temporary_orders": {
+    "doc_type": "临时医嘱单",
+    "items": [
+      {"order_id": "T01", "time": "2026-03-13 10:30", "content": "血常规、C反应蛋白、生化全套、凝血四项、肿瘤标志物（CEA/CYFRA21-1/NSE）", "doctor": "李医生"},
+      {"order_id": "T02", "time": "2026-03-13 11:00", "content": "胸部CT平扫", "doctor": "李医生"},
+      {"order_id": "T03", "time": "2026-03-14 08:30", "content": "托烷司琼 5mg iv + 地塞米松磷酸钠 5mg iv（化疗前止吐预处理）", "doctor": "李医生"},
+      {"order_id": "T04", "time": "2026-03-14 09:00", "content": "培美曲塞二钠 0.9g + 0.9%氯化钠250ml ivgtt（化疗D1，患者自院外购入）", "doctor": "李医生", "key": "培美曲塞已开立医嘱，但费用清单中无对应收费行（院外自购）"},
+      {"order_id": "T05", "time": "2026-03-14 10:30", "content": "卡铂 0.5g + 5%葡萄糖250ml ivgtt（化疗D1）", "doctor": "李医生"},
+      {"order_id": "T06", "time": "2026-03-14 13:00", "content": "贝伐珠单抗注射液 0.4g + 0.9%氯化钠100ml ivgtt（化疗D1）", "doctor": "李医生"},
+      {"order_id": "T07", "time": "2026-03-15 09:00", "content": "聚乙二醇化重组人粒细胞刺激因子 6mg ih st（预防性升白）", "doctor": "李医生", "key": "长效升白针·预防性·需评估FN风险与中性粒细胞计数"},
+      {"order_id": "T08", "time": "2026-03-18 08:00", "content": "复查血常规", "doctor": "李医生"}
+    ]
+  },
+
+  "nursing_records": {
+    "doc_type": "护理记录单",
+    "nursing_level_executed": "二级护理（每2小时巡视一次，每日测量生命体征2次）",
+    "note": "护理记录的巡视频次与二级护理标准一致，与长期医嘱L02（二级护理）相符；不支持一级护理（一级护理要求每1小时巡视）。",
+    "entries": [
+      {"date": "2026-03-13", "vitals_count": 2, "round_interval_h": 2, "text": "患者入院，T36.8 P78 R18 BP132/82，神清，二级护理，宣教入院须知。"},
+      {"date": "2026-03-14", "vitals_count": 2, "round_interval_h": 2, "text": "化疗D1，输注培美曲塞（自备）、卡铂、贝伐珠单抗，全程无外渗，患者无不适。"},
+      {"date": "2026-03-15", "vitals_count": 2, "round_interval_h": 2, "text": "予升白针皮下注射1次，注射部位无红肿。患者精神可。"},
+      {"date": "2026-03-16", "vitals_count": 2, "round_interval_h": 2, "text": "头孢呋辛静滴2次，患者体温正常。"},
+      {"date": "2026-03-17", "vitals_count": 2, "round_interval_h": 2, "text": "开始口服奥希替尼，宣教服药注意事项。"},
+      {"date": "2026-03-18", "vitals_count": 2, "round_interval_h": 2, "text": "晨起采血复查血常规，患者无不适。"},
+      {"date": "2026-03-19", "vitals_count": 2, "round_interval_h": 2, "text": "患者一般情况好，准备明日出院。"},
+      {"date": "2026-03-20", "vitals_count": 1, "round_interval_h": 2, "text": "患者10:00办理出院，交代出院注意事项。"}
+    ]
+  },
+
+  "lab_reports": [
+    {
+      "doc_type": "检验报告",
+      "report_id": "LAB-20260314-0011",
+      "report_time": "2026-03-14 07:30",
+      "category": "血常规",
+      "results": [
+        {"item": "白细胞 WBC", "value": 6.2, "unit": "10⁹/L", "ref": "3.5–9.5", "flag": "正常"},
+        {"item": "中性粒细胞绝对值 ANC", "value": 4.5, "unit": "10⁹/L", "ref": "1.8–6.3", "flag": "正常", "key": "ANC正常，无中性粒细胞减少→T-205 预防性升白指征存疑"},
+        {"item": "血红蛋白 Hb", "value": 121, "unit": "g/L", "ref": "130–175", "flag": "轻度偏低"},
+        {"item": "血小板 PLT", "value": 187, "unit": "10⁹/L", "ref": "125–350", "flag": "正常"}
+      ]
+    },
+    {
+      "doc_type": "检验报告",
+      "report_id": "LAB-20260314-0012",
+      "report_time": "2026-03-14 07:30",
+      "category": "生化/炎症",
+      "results": [
+        {"item": "白蛋白 ALB", "value": 39, "unit": "g/L", "ref": "40–55", "flag": "轻度偏低"},
+        {"item": "丙氨酸氨基转移酶 ALT", "value": 28, "unit": "U/L", "ref": "9–50", "flag": "正常"},
+        {"item": "肌酐 Cr", "value": 72, "unit": "μmol/L", "ref": "57–97", "flag": "正常"},
+        {"item": "C反应蛋白 CRP", "value": 22, "unit": "mg/L", "ref": "0–10", "flag": "升高", "key": "支持上感诊断，头孢呋辛抗感染有指征（仅超量计费违规，非无指征）"}
+      ]
+    },
+    {
+      "doc_type": "检验报告",
+      "report_id": "LAB-20260318-0021",
+      "report_time": "2026-03-18 07:40",
+      "category": "血常规（复查）",
+      "results": [
+        {"item": "白细胞 WBC", "value": 7.1, "unit": "10⁹/L", "ref": "3.5–9.5", "flag": "正常"},
+        {"item": "中性粒细胞绝对值 ANC", "value": 5.1, "unit": "10⁹/L", "ref": "1.8–6.3", "flag": "正常"},
+        {"item": "C反应蛋白 CRP", "value": 6, "unit": "mg/L", "ref": "0–10", "flag": "正常"}
+      ]
+    },
+    {
+      "doc_type": "检验报告",
+      "report_id": "LAB-20260313-0003",
+      "report_time": "2026-03-13 15:00",
+      "category": "肿瘤标志物",
+      "results": [
+        {"item": "癌胚抗原 CEA", "value": 18.7, "unit": "ng/ml", "ref": "0–5", "flag": "升高"},
+        {"item": "细胞角蛋白19片段 CYFRA21-1", "value": 6.2, "unit": "ng/ml", "ref": "0–3.3", "flag": "升高"}
+      ]
+    }
+  ],
+
+  "pathology_report": {
+    "doc_type": "病理报告",
+    "report_id": "PATH-20260225-0007",
+    "report_time": "2026-02-25",
+    "specimen": "右肺穿刺活检组织",
+    "gross": "灰白色穿刺组织2条，长0.8–1.2cm。",
+    "microscopic": "镜下见异型上皮细胞呈腺样排列，浸润性生长。",
+    "immunohistochemistry": "TTF-1(+)，NapsinA(+)，CK7(+)，P40(-)，Ki-67约40%(+)。",
+    "diagnosis": "（右肺穿刺）腺癌。",
+    "note": "病理已确诊腺癌——满足'病理确诊方可用抗肿瘤药'要求（T-202不触发）；但本报告未包含EGFR/ALK等驱动基因检测结果。"
+  },
+
+  "gene_test_report": {
+    "doc_type": "基因检测报告",
+    "status": "缺失",
+    "note": "★关键阴性证据：本材料包中不存在任何EGFR/ALK/ROS1等驱动基因检测报告（院内病理科外送基因检测申请单、报告单均无）。病程中亦无'外院已检测'记载。→ 奥希替尼（明确作用靶点EGFR的药物）在无靶点检测证据下使用，命中T-201。"
+  },
+
+  "fee_list": {
+    "doc_type": "费用清单（医保结算明细）",
+    "settle_date": "2026-03-20",
+    "columns": ["line_no", "fee_date", "category", "item_name", "spec", "qty", "unit", "unit_price", "amount", "insurance_class", "linked_order", "flag"],
+    "items": [
+      {"line_no": 1, "fee_date": "2026-03-13~03-20", "category": "床位费", "item_name": "床位费（三人间）", "spec": "-", "qty": 8, "unit": "日", "unit_price": 50.0, "amount": 400.0, "insurance_class": "医保", "linked_order": "L01", "flag": "正常"},
+      {"line_no": 2, "fee_date": "2026-03-13~03-20", "category": "护理费", "item_name": "一级护理", "spec": "-", "qty": 8, "unit": "日", "unit_price": 25.0, "amount": 200.0, "insurance_class": "医保", "linked_order": "L02", "flag": "★A-105：医嘱为二级护理(12元/日)，实际按一级护理(25元/日)计费，护理记录巡视频次仅支持二级护理"},
+      {"line_no": 3, "fee_date": "2026-03-21", "category": "护理费", "item_name": "一级护理", "spec": "-", "qty": 1, "unit": "日", "unit_price": 25.0, "amount": 25.0, "insurance_class": "医保", "linked_order": "—", "flag": "★F-003：费用日期2026-03-21晚于出院日期2026-03-20，出院后仍计护理费"},
+      {"line_no": 4, "fee_date": "2026-03-21", "category": "治疗费", "item_name": "静脉输液", "spec": "-", "qty": 1, "unit": "次", "unit_price": 8.0, "amount": 8.0, "insurance_class": "医保", "linked_order": "—", "flag": "★F-003：费用日期2026-03-21晚于出院日期2026-03-20，且出院后无输液医嘱"},
+      {"line_no": 5, "fee_date": "2026-03-14", "category": "西药费", "item_name": "注射用卡铂", "spec": "0.1g", "qty": 5, "unit": "支", "unit_price": 52.0, "amount": 260.0, "insurance_class": "医保乙", "linked_order": "T05", "flag": "正常（化疗D1，0.5g=5支，与医嘱一致）"},
+      {"line_no": 6, "fee_date": "2026-03-14", "category": "西药费", "item_name": "贝伐珠单抗注射液", "spec": "0.4g(16ml)", "qty": 1, "unit": "支", "unit_price": 1998.0, "amount": 1998.0, "insurance_class": "医保乙", "linked_order": "T06", "flag": "干扰项1：贝伐珠单抗无需靶点检测，病理为腺癌、已核对禁忌，使用合规→不应报T-201"},
+      {"line_no": 7, "fee_date": "2026-03-17", "category": "西药费", "item_name": "奥希替尼片", "spec": "80mg", "qty": 28, "unit": "片", "unit_price": 168.0, "amount": 4704.0, "insurance_class": "医保乙", "linked_order": "L06", "flag": "★T-201：明确作用靶点(EGFR)药物，全材料包无EGFR基因检测报告。金额最大。"},
+      {"line_no": 8, "fee_date": "2026-03-14~03-16", "category": "西药费", "item_name": "注射用头孢呋辛钠", "spec": "1.5g", "qty": 12, "unit": "支", "unit_price": 30.0, "amount": 360.0, "insurance_class": "医保甲", "linked_order": "L05", "flag": "★A-109/T-204：医嘱1.5g bid×3天应发6支，结算12支，超量6支(180元)"},
+      {"line_no": 9, "fee_date": "2026-03-15", "category": "西药费", "item_name": "聚乙二醇化重组人粒细胞刺激因子注射液", "spec": "6mg", "qty": 1, "unit": "支", "unit_price": 1180.0, "amount": 1180.0, "insurance_class": "医保乙", "linked_order": "T07", "flag": "★T-205：化疗后ANC 4.5×10⁹/L正常，无中性粒细胞减少，预防性长效升白指征存疑→线索"},
+      {"line_no": 10, "fee_date": "2026-03-14", "category": "西药费", "item_name": "注射用托烷司琼", "spec": "5mg", "qty": 2, "unit": "支", "unit_price": 45.0, "amount": 90.0, "insurance_class": "医保乙", "linked_order": "T03", "flag": "正常（止吐预处理，与医嘱一致）"},
+      {"line_no": 11, "fee_date": "2026-03-14", "category": "西药费", "item_name": "地塞米松磷酸钠注射液", "spec": "5mg", "qty": 2, "unit": "支", "unit_price": 3.0, "amount": 6.0, "insurance_class": "医保甲", "linked_order": "T03", "flag": "正常"},
+      {"line_no": 12, "fee_date": "2026-03-13", "category": "西药费", "item_name": "氨氯地平片", "spec": "5mg", "qty": 8, "unit": "片", "unit_price": 1.5, "amount": 12.0, "insurance_class": "医保甲", "linked_order": "L04", "flag": "正常（降压，与医嘱一致）"},
+      {"line_no": 13, "fee_date": "2026-03-13", "category": "检查费", "item_name": "胸部CT平扫", "spec": "-", "qty": 1, "unit": "次", "unit_price": 280.0, "amount": 280.0, "insurance_class": "医保", "linked_order": "T02", "flag": "正常"},
+      {"line_no": 14, "fee_date": "2026-03-13", "category": "检验费", "item_name": "血常规", "spec": "-", "qty": 1, "unit": "次", "unit_price": 25.0, "amount": 25.0, "insurance_class": "医保", "linked_order": "T01", "flag": "正常"},
+      {"line_no": 15, "fee_date": "2026-03-18", "category": "检验费", "item_name": "血常规", "spec": "-", "qty": 1, "unit": "次", "unit_price": 25.0, "amount": 25.0, "insurance_class": "医保", "linked_order": "T08", "flag": "正常（复查）"},
+      {"line_no": 16, "fee_date": "2026-03-13", "category": "检验费", "item_name": "生化全套", "spec": "-", "qty": 1, "unit": "次", "unit_price": 120.0, "amount": 120.0, "insurance_class": "医保", "linked_order": "T01", "flag": "正常"},
+      {"line_no": 17, "fee_date": "2026-03-13", "category": "检验费", "item_name": "肿瘤标志物（3项）", "spec": "-", "qty": 1, "unit": "次", "unit_price": 180.0, "amount": 180.0, "insurance_class": "医保", "linked_order": "T01", "flag": "正常"},
+      {"line_no": 18, "fee_date": "2026-03-14", "category": "治疗费", "item_name": "静脉输液（化疗）", "spec": "-", "qty": 3, "unit": "次", "unit_price": 8.0, "amount": 24.0, "insurance_class": "医保", "linked_order": "T04/T05/T06", "flag": "正常"},
+      {"line_no": 19, "fee_date": "2026-03-13~03-20", "category": "治疗费", "item_name": "静脉输液（抗感染/水化）", "spec": "-", "qty": 8, "unit": "次", "unit_price": 8.0, "amount": 64.0, "insurance_class": "医保", "linked_order": "L05", "flag": "正常"},
+      {"line_no": 20, "fee_date": "2026-03-15", "category": "治疗费", "item_name": "皮下注射", "spec": "-", "qty": 1, "unit": "次", "unit_price": 5.0, "amount": 5.0, "insurance_class": "医保", "linked_order": "T07", "flag": "正常"},
+      {"line_no": 21, "fee_date": "2026-03-16", "category": "西药费", "item_name": "人血白蛋白", "spec": "10g", "qty": 4, "unit": "支", "unit_price": 320.0, "amount": 1280.0, "insurance_class": "医保乙", "linked_order": "—", "flag": "★合议层演示·一笔钱三规则命中：B-201超限定支付(白蛋白39g/L非重症)+A-110范围外纳入结算+A-108无医嘱及执行记录——同指¥1280，应合并为1主疑点+2佐证、金额只算一次(非¥3840)"}
+    ],
+    "absent_items_note": "★T-207关键核对：医嘱T04开立培美曲塞二钠0.9g（化疗D1必需药），但费用清单中无培美曲塞收费行——病程2026-03-14记载'我院药房培美曲塞暂缺，嘱家属至院外药房自行购买'。培美曲塞为医保目录内药品、本次化疗方案必需，转由患者院外自费购买，涉嫌费用转嫁/规避DRG打包。",
+    "total_amount": 13132.0
+  },
+
+  "discharge_summary": {
+    "doc_type": "出院小结",
+    "admit_date": "2026-03-13",
+    "discharge_date": "2026-03-20",
+    "discharge_diagnosis": [
+      "右肺腺癌（cT3N2M1a，IVA期，双肺转移）",
+      "恶性肿瘤化学治疗（第2周期）",
+      "急性上呼吸道感染（已愈）",
+      "高血压病2级"
+    ],
+    "hospital_course": "患者入院后完善检查，2026-03-14行第2周期化疗（培美曲塞+卡铂+贝伐珠单抗），予止吐、升白、抗感染等支持治疗，过程顺利。2026-03-17起加用奥希替尼靶向治疗。化疗及靶向治疗耐受性良好，无明显不良反应。2026-03-20好转出院。",
+    "discharge_orders": [
+      "奥希替尼片 80mg 口服 每日一次，带药28天",
+      "氨氯地平片 5mg 口服 每日一次",
+      "3周后返院行第3周期化疗",
+      "不适随诊"
+    ],
+    "discharge_meds": [
+      {"name": "奥希替尼片 80mg×28片", "note": "本次结算，对应费用清单第7行"}
+    ]
+  }
+}

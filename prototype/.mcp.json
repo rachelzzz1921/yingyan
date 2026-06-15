@@ -1,0 +1,17 @@
+{
+  "mcpServers": {
+    "context7":   { "command": "npx", "args": ["-y", "@upstash/context7-mcp"] },
+    "supabase":   { "type": "http", "url": "https://mcp.supabase.com/mcp",
+                    "headers": { "Authorization": "Bearer ${SUPABASE_PAT}" } },
+    "vercel":     { "type": "http", "url": "https://mcp.vercel.com" },
+    "playwright": { "command": "npx", "args": ["-y", "@playwright/mcp@latest"] },
+    "github":     { "type": "http", "url": "https://api.githubcopilot.com/mcp/",
+                    "headers": { "Authorization": "Bearer ${GITHUB_PAT}" } },
+    "figma":      { "command": "npx", "args": ["-y", "figma-developer-mcp", "--stdio"],
+                    "env": { "FIGMA_API_KEY": "${FIGMA_PAT}" } },
+    "stripe":     { "type": "http", "url": "https://mcp.stripe.com",
+                    "headers": { "Authorization": "Bearer ${STRIPE_TEST_KEY}" } },
+    "firecrawl":  { "command": "npx", "args": ["-y", "firecrawl-mcp"],
+                    "env": { "FIRECRAWL_API_KEY": "${FIRECRAWL_API_KEY}" } }
+  }
+}

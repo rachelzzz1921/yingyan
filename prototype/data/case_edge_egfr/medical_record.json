@@ -1,0 +1,67 @@
+{
+  "case_meta": {
+    "case_id": "YY-EDGE-EGFR-001",
+    "case_title": "边界干扰件·奥希替尼有EGFR阳性报告（应正确不报T-201）",
+    "disclaimer": "虚构数据。红蓝对抗阴性用例：看似违规实则合规——用了奥希替尼、病程也写'建议靶向治疗'(像T-201违规案),但EGFR检测阳性报告齐备→引擎应正确'不报'。测T-201除外情形,embedded=0,纳入AuditBench干净件红线。",
+    "embedded_violation_count": 0,
+    "distractor_count": 0,
+    "edge_target_rule": "T-201",
+    "settlement_summary": {"total_amount": 5100.0, "insurance_paid_amount": 5100.0, "currency": "CNY", "settle_type": "住院·按项目付费"}
+  },
+  "front_page": {
+    "doc_type": "病案首页", "hospital": "示范市第一人民医院（虚构）", "hospital_level": "三级甲等",
+    "patient_name": "陈边界", "sex": "女", "age": 59, "birth_date": "1967-08-12",
+    "insurance_type": "职工基本医疗保险", "admission_no": "ZY20260518-0611",
+    "admit_time": "2026-05-18 09:00", "discharge_time": "2026-05-22 10:00", "actual_inpatient_days": 4,
+    "admit_dept": "肿瘤内科", "bed_no": "肿瘤内科-15床",
+    "principal_diagnosis": {"name": "右肺腺癌", "icd10": "C34.101", "tnm_stage": "cT2N2M1a，IVA期", "note": "EGFR 21 L858R突变阳性"},
+    "other_diagnosis": [{"name": "恶性肿瘤靶向治疗", "icd10": "Z51.802"}],
+    "attending_physician": "李医生（主治医师）", "chief_physician": "张主任（主任医师）",
+    "previous_admissions": []
+  },
+  "admission_note": {
+    "doc_type": "入院记录", "record_time": "2026-05-18 10:00",
+    "chief_complaint": "确诊右肺腺癌2月，为行靶向治疗入院。",
+    "present_illness": "患者2月前确诊右肺腺癌IVA期，基因检测示EGFR 21外显子L858R突变阳性，有靶向治疗指征。本次入院行奥希替尼靶向治疗。",
+    "past_history": "无特殊。",
+    "physical_exam": "T36.6 P76 R18 BP126/78。双肺呼吸音清。",
+    "preliminary_diagnosis": ["右肺腺癌（IVA期，EGFR L858R阳性）", "恶性肿瘤靶向治疗"],
+    "treatment_plan": "予奥希替尼80mg qd 靶向治疗（EGFR L858R阳性，有明确指征）。"
+  },
+  "progress_notes": [
+    {"date": "2026-05-18", "type": "首次病程记录", "author": "李医生", "text": "患者右肺腺癌IVA期，EGFR 21 L858R突变阳性。建议靶向治疗，予奥希替尼80mg qd口服。基因检测报告(EGFR L858R阳性)已归档。二级护理。"},
+    {"date": "2026-05-22", "type": "出院记录", "author": "李医生", "text": "靶向治疗耐受良好，今日出院，嘱继续奥希替尼。"}
+  ],
+  "long_term_orders": {"doc_type": "长期医嘱单", "items": [
+    {"order_id": "L01", "start": "2026-05-18 10:00", "stop": "2026-05-22 10:00", "content": "二级护理", "doctor": "李医生"},
+    {"order_id": "L02", "start": "2026-05-18 11:00", "stop": "2026-05-22 10:00", "content": "奥希替尼片 80mg po qd（靶向治疗，EGFR L858R阳性）", "doctor": "张主任"}
+  ]},
+  "temporary_orders": {"doc_type": "临时医嘱单", "items": [
+    {"order_id": "T01", "time": "2026-05-18 10:30", "content": "血常规、生化、EGFR基因检测复核", "doctor": "李医生"}
+  ]},
+  "nursing_records": {"doc_type": "护理记录单", "nursing_level_executed": "二级护理（每2小时巡视）", "note": "与医嘱二级护理一致。", "entries": [
+    {"date": "2026-05-18", "vitals_count": 2, "round_interval_h": 2, "text": "入院，二级护理。"},
+    {"date": "2026-05-22", "vitals_count": 1, "round_interval_h": 2, "text": "出院。"}
+  ]},
+  "lab_reports": [
+    {"doc_type": "检验报告", "report_id": "LAB-20260518-0611", "report_time": "2026-05-18 14:00", "category": "血常规", "results": [
+      {"item": "白细胞 WBC", "value": 5.6, "unit": "10⁹/L", "ref": "3.5–9.5", "flag": "正常"},
+      {"item": "中性粒细胞绝对值 ANC", "value": 3.8, "unit": "10⁹/L", "ref": "1.8–6.3", "flag": "正常"}
+    ]}
+  ],
+  "pathology_report": {"doc_type": "病理报告", "report_id": "PATH-20260320-0033", "report_time": "2026-03-20", "specimen": "右肺穿刺", "microscopic": "腺样排列异型细胞。", "immunohistochemistry": "TTF-1(+) NapsinA(+)。", "diagnosis": "（右肺穿刺）腺癌。", "note": "病理确诊腺癌。"},
+  "gene_test_report": {"doc_type": "基因检测报告", "status": "已归档", "report_id": "GENE-20260322-0044", "report_time": "2026-03-22", "result": "EGFR 21外显子 L858R 突变阳性；ALK阴性；ROS1阴性。", "note": "★EGFR L858R阳性——奥希替尼有明确靶点检测依据，T-201应正确不报（除外情形：靶点检测阳性）。"},
+  "fee_list": {
+    "doc_type": "费用清单（医保结算明细）", "settle_date": "2026-05-22",
+    "items": [
+      {"line_no": 1, "fee_date": "2026-05-18~05-22", "category": "床位费", "item_name": "床位费（三人间）", "spec": "-", "qty": 4, "unit": "日", "unit_price": 50.0, "amount": 200.0, "insurance_class": "医保", "linked_order": "L01", "flag": "正常"},
+      {"line_no": 2, "fee_date": "2026-05-18~05-22", "category": "护理费", "item_name": "二级护理", "spec": "-", "qty": 4, "unit": "日", "unit_price": 12.0, "amount": 48.0, "insurance_class": "医保", "linked_order": "L01", "flag": "正常（与医嘱一致）"},
+      {"line_no": 3, "fee_date": "2026-05-18", "category": "西药费", "item_name": "奥希替尼片", "spec": "80mg", "qty": 28, "unit": "片", "unit_price": 168.0, "amount": 4704.0, "insurance_class": "医保乙", "linked_order": "L02", "flag": "正常（EGFR L858R阳性，有靶点检测依据→T-201应不报）"},
+      {"line_no": 4, "fee_date": "2026-05-18", "category": "检验费", "item_name": "血常规", "spec": "-", "qty": 1, "unit": "次", "unit_price": 25.0, "amount": 25.0, "insurance_class": "医保", "linked_order": "T01", "flag": "正常"},
+      {"line_no": 5, "fee_date": "2026-05-18", "category": "检验费", "item_name": "EGFR基因检测", "spec": "-", "qty": 1, "unit": "次", "unit_price": 123.0, "amount": 123.0, "insurance_class": "医保", "linked_order": "T01", "flag": "正常（有医嘱）"}
+    ],
+    "absent_items_note": "边界件：奥希替尼有EGFR阳性报告，T-201除外情形满足，应0疑点。",
+    "total_amount": 5100.0
+  },
+  "discharge_summary": {"doc_type": "出院小结", "admit_date": "2026-05-18", "discharge_date": "2026-05-22", "discharge_diagnosis": ["右肺腺癌（IVA期，EGFR L858R阳性）", "恶性肿瘤靶向治疗"], "hospital_course": "EGFR L858R阳性，予奥希替尼靶向治疗，耐受良好出院。", "discharge_orders": ["奥希替尼片 80mg qd"], "discharge_meds": [{"name": "奥希替尼片 80mg×28片", "note": "EGFR阳性有指征"}]}
+}

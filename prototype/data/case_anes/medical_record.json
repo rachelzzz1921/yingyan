@@ -1,0 +1,102 @@
+{
+  "case_meta": {
+    "case_id": "YY-ANES-001",
+    "case_title": "麻醉专科·全麻下腹腔镜胆囊切除术 备演材料包（硬证据·对错分明）",
+    "disclaimer": "虚构数据。麻醉专科真fire示范件（继肿瘤/骨科/DRG/影像后第5个完整可fire领域）：以麻醉记录单为事实基准，对费用清单做硬比对——收费时长>实际(M-301)/全麻内涵已含气管插管+术中监测另收(M-302序159/160)/麻醉药品收费数量>实际用量(M-303)/未入麻醉恢复室却收监护费(M-304线索)。另设1干扰(术后镇痛泵PCA为独立操作,正确不报)。依据取新疆官方麻醉问题清单逐字(序155/156/157/159/160/162,✅已核实)。",
+    "embedded_violation_count": 5,
+    "distractor_count": 1,
+    "clue_count": 1,
+    "specialty": "麻醉",
+    "settlement_summary": {"total_amount": 5453.0, "insurance_paid_amount": 5453.0, "currency": "CNY", "settle_type": "住院·按项目付费"}
+  },
+  "front_page": {
+    "doc_type": "病案首页", "hospital": "示范市第一人民医院（虚构）", "hospital_level": "三级甲等",
+    "patient_name": "孙麻醉", "sex": "女", "age": 52, "birth_date": "1974-03-08",
+    "insurance_type": "职工基本医疗保险", "admission_no": "ZY20260516-0820",
+    "admit_time": "2026-05-16 09:00", "discharge_time": "2026-05-20 10:00", "actual_inpatient_days": 4,
+    "admit_dept": "肝胆外科", "bed_no": "肝胆外科-12床",
+    "principal_diagnosis": {"name": "胆囊结石伴慢性胆囊炎", "icd10": "K80.101"},
+    "other_diagnosis": [],
+    "operation": {"name": "腹腔镜胆囊切除术", "date": "2026-05-18", "anesthesia": "全身麻醉（气管插管）"},
+    "attending_physician": "周医生（主治医师）", "chief_physician": "吴主任（主任医师）",
+    "previous_admissions": []
+  },
+  "admission_note": {
+    "doc_type": "入院记录", "record_time": "2026-05-16 10:00",
+    "chief_complaint": "反复右上腹痛3月，加重1周。",
+    "present_illness": "患者3月来反复右上腹隐痛，B超示胆囊多发结石伴胆囊壁增厚，拟行腹腔镜胆囊切除术。",
+    "past_history": "无特殊。否认心肺疾病史。",
+    "physical_exam": "T36.6 P76 R18 BP122/78。腹软，右上腹轻压痛，Murphy征(±)。",
+    "preliminary_diagnosis": ["胆囊结石伴慢性胆囊炎"],
+    "treatment_plan": "完善术前检查，择期全麻下行腹腔镜胆囊切除术。"
+  },
+  "progress_notes": [
+    {"date": "2026-05-16", "type": "首次病程记录", "author": "周医生", "text": "患者胆囊结石伴慢性胆囊炎诊断明确，有手术指征。拟全麻下行腹腔镜胆囊切除术。二级护理。"},
+    {"date": "2026-05-18", "type": "手术日病程记录", "author": "周医生", "text": "今日全麻下行腹腔镜胆囊切除术，手术顺利。麻醉记录实际麻醉时长3小时（09:00–12:00），术毕患者于手术间内拔除气管导管，生命体征平稳，未进入麻醉恢复室，直接返回病房。"},
+    {"date": "2026-05-20", "type": "出院记录", "author": "周医生", "text": "恢复良好，今日出院。"}
+  ],
+  "operation_note": {
+    "doc_type": "手术记录", "operation_name": "腹腔镜胆囊切除术", "operation_date": "2026-05-18",
+    "surgeon": "吴主任", "anesthesiologist": "郑医生（麻醉科）",
+    "procedure_steps": "全麻气管插管成功后，建立气腹，三孔法置入腹腔镜及操作器械，解剖胆囊三角，夹闭并离断胆囊管及胆囊动脉，完整切除胆囊，标本经脐部取出，冲洗止血，排气拔管，缝合切口。",
+    "consumables_used": []
+  },
+  "anesthesia_record": {
+    "doc_type": "麻醉记录单", "anesthesiologist": "郑医生（麻醉科）",
+    "anesthesia_method": "全身麻醉（气管插管全麻）",
+    "anesthesia_start": "2026-05-18 09:00", "anesthesia_end": "2026-05-18 12:00",
+    "actual_duration_min": 180,
+    "surgery_start": "2026-05-18 09:30", "surgery_end": "2026-05-18 11:30",
+    "intubation": true,
+    "monitoring": ["心电监测", "无创血压", "脉搏血氧饱和度", "呼气末二氧化碳"],
+    "drugs_used": [
+      {"name": "丙泊酚注射液", "spec": "200mg/支", "actual_qty": 3, "unit": "支"},
+      {"name": "瑞芬太尼", "spec": "1mg/支", "actual_qty": 2, "unit": "支"},
+      {"name": "罗库溴铵", "spec": "50mg/支", "actual_qty": 2, "unit": "支"}
+    ],
+    "pacu_used": false,
+    "recovery_room": "患者术毕于手术间内拔除气管导管，生命体征平稳，未进入麻醉恢复室（PACU），直接返回病房。",
+    "note": "全身麻醉（气管插管），麻醉记录实际时长180分钟（09:00–12:00）。术中常规监测：心电、无创血压、脉搏血氧饱和度、呼气末二氧化碳。麻醉药品实际用量：丙泊酚3支、瑞芬太尼2支、罗库溴铵2支。术毕未入麻醉恢复室。"
+  },
+  "long_term_orders": {"doc_type": "长期医嘱单", "items": [
+    {"order_id": "L01", "start": "2026-05-16 10:00", "stop": "2026-05-20 10:00", "content": "二级护理", "doctor": "周医生"}
+  ]},
+  "temporary_orders": {"doc_type": "临时医嘱单", "items": [
+    {"order_id": "T01", "time": "2026-05-16 10:30", "content": "血常规、生化", "doctor": "周医生"},
+    {"order_id": "T02", "time": "2026-05-18 08:30", "content": "全麻下行腹腔镜胆囊切除术", "doctor": "周医生"},
+    {"order_id": "T03", "time": "2026-05-18 09:00", "content": "全身麻醉（气管插管）+ 术中监测 + 麻醉药品（丙泊酚/瑞芬太尼/罗库溴铵）", "doctor": "郑医生"},
+    {"order_id": "T04", "time": "2026-05-18 11:30", "content": "术后患者自控镇痛泵（PCA）", "doctor": "郑医生"}
+  ]},
+  "nursing_records": {"doc_type": "护理记录单", "nursing_level_executed": "二级护理（每2小时巡视）", "note": "与医嘱二级护理一致。", "entries": [
+    {"date": "2026-05-16", "vitals_count": 2, "round_interval_h": 2, "text": "入院，二级护理。"},
+    {"date": "2026-05-18", "vitals_count": 4, "round_interval_h": 2, "text": "全麻术后返病房，二级护理，生命体征平稳。"},
+    {"date": "2026-05-20", "vitals_count": 1, "round_interval_h": 2, "text": "出院。"}
+  ]},
+  "lab_reports": [
+    {"doc_type": "检验报告", "report_id": "LAB-20260516-0820", "report_time": "2026-05-16 14:00", "category": "血常规", "results": [
+      {"item": "白细胞 WBC", "value": 6.1, "unit": "10⁹/L", "ref": "3.5–9.5", "flag": "正常"}
+    ]}
+  ],
+  "fee_list": {
+    "doc_type": "费用清单（医保结算明细）", "settle_date": "2026-05-20",
+    "items": [
+      {"line_no": 1, "fee_date": "2026-05-16~05-20", "category": "床位费", "item_name": "床位费（三人间）", "spec": "-", "qty": 4, "unit": "日", "unit_price": 50.0, "amount": 200.0, "insurance_class": "医保", "linked_order": "L01", "flag": "正常"},
+      {"line_no": 2, "fee_date": "2026-05-16~05-20", "category": "护理费", "item_name": "二级护理", "spec": "-", "qty": 4, "unit": "日", "unit_price": 12.0, "amount": 48.0, "insurance_class": "医保", "linked_order": "L01", "flag": "正常（与医嘱一致）"},
+      {"line_no": 3, "fee_date": "2026-05-18", "category": "手术费", "item_name": "腹腔镜胆囊切除术", "spec": "-", "qty": 1, "unit": "次", "unit_price": 2800.0, "amount": 2800.0, "insurance_class": "医保", "linked_order": "T02", "flag": "正常（手术费）"},
+      {"line_no": 4, "fee_date": "2026-05-18", "category": "麻醉费", "item_name": "全身麻醉（气管插管）", "spec": "按时长", "qty": 1, "unit": "次", "unit_price": 1200.0, "amount": 1200.0, "duration_charged_min": 240, "insurance_class": "医保", "linked_order": "T03", "flag": "★收费时长240分钟>麻醉记录实际180分钟→M-301"},
+      {"line_no": 5, "fee_date": "2026-05-18", "category": "手术费", "item_name": "气管插管术", "spec": "-", "qty": 1, "unit": "次", "unit_price": 150.0, "amount": 150.0, "insurance_class": "医保", "linked_order": "T03", "flag": "★全麻内涵已含气管插管,另收→M-302序159"},
+      {"line_no": 6, "fee_date": "2026-05-18", "category": "诊疗费", "item_name": "心电监测", "spec": "术中", "qty": 1, "unit": "次", "unit_price": 80.0, "amount": 80.0, "insurance_class": "医保", "linked_order": "T03", "flag": "★术中麻醉监测内涵已含,另收→M-302序160"},
+      {"line_no": 7, "fee_date": "2026-05-18", "category": "诊疗费", "item_name": "脉搏血氧饱和度监测", "spec": "术中", "qty": 1, "unit": "次", "unit_price": 60.0, "amount": 60.0, "insurance_class": "医保", "linked_order": "T03", "flag": "★术中麻醉监测内涵已含,另收→M-302序160"},
+      {"line_no": 8, "fee_date": "2026-05-18", "category": "西药费", "item_name": "丙泊酚注射液", "spec": "200mg", "qty": 5, "unit": "支", "unit_price": 45.0, "amount": 225.0, "insurance_class": "医保乙", "linked_order": "T03", "flag": "★收费5支>麻醉记录实际3支→M-303序155"},
+      {"line_no": 9, "fee_date": "2026-05-18", "category": "西药费", "item_name": "瑞芬太尼", "spec": "1mg", "qty": 2, "unit": "支", "unit_price": 80.0, "amount": 160.0, "insurance_class": "医保乙", "linked_order": "T03", "flag": "正常（与麻醉记录实际2支一致）"},
+      {"line_no": 10, "fee_date": "2026-05-18", "category": "西药费", "item_name": "罗库溴铵", "spec": "50mg", "qty": 2, "unit": "支", "unit_price": 30.0, "amount": 60.0, "insurance_class": "医保乙", "linked_order": "T03", "flag": "正常（与麻醉记录实际2支一致）"},
+      {"line_no": 11, "fee_date": "2026-05-18", "category": "诊疗费", "item_name": "麻醉恢复室监护", "spec": "-", "qty": 1, "unit": "次", "unit_price": 150.0, "amount": 150.0, "insurance_class": "医保", "linked_order": "T03", "flag": "★麻醉记录载明未入麻醉恢复室→M-304线索"},
+      {"line_no": 12, "fee_date": "2026-05-18", "category": "诊疗费", "item_name": "患者自控镇痛泵（PCA）", "spec": "术后镇痛", "qty": 1, "unit": "次", "unit_price": 200.0, "amount": 200.0, "insurance_class": "医保", "linked_order": "T04", "flag": "正常（独立操作，麻醉内涵不含，有医嘱T04→干扰项,正确不报）"},
+      {"line_no": 13, "fee_date": "2026-05-16", "category": "检验费", "item_name": "血常规", "spec": "-", "qty": 1, "unit": "次", "unit_price": 25.0, "amount": 25.0, "insurance_class": "医保", "linked_order": "T01", "flag": "正常"},
+      {"line_no": 14, "fee_date": "2026-05-16", "category": "检验费", "item_name": "生化全套", "spec": "-", "qty": 1, "unit": "次", "unit_price": 95.0, "amount": 95.0, "insurance_class": "医保", "linked_order": "T01", "flag": "正常"}
+    ],
+    "absent_items_note": "麻醉专科件：以麻醉记录单为基准做硬比对。M-301时长/M-302内涵/M-303用量 共5疑点 + M-304恢复室监护1线索；术后镇痛泵PCA为干扰项(独立操作,正确不报)。",
+    "total_amount": 5453.0
+  },
+  "discharge_summary": {"doc_type": "出院小结", "admit_date": "2026-05-16", "discharge_date": "2026-05-20", "discharge_diagnosis": ["胆囊结石伴慢性胆囊炎", "腹腔镜胆囊切除术后"], "hospital_course": "全麻下行腹腔镜胆囊切除术，过程顺利，术后恢复良好出院。", "discharge_orders": ["2周后门诊复查"], "discharge_meds": []}
+}

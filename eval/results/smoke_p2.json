@@ -1,0 +1,359 @@
+{
+  "startedAt": "2026-06-13T02:34:18.929Z",
+  "N": 1,
+  "temperature": 0.2,
+  "models": [
+    "MiniMax-Text-01"
+  ],
+  "useV7": false,
+  "prompts": {
+    "P2": {
+      "promptFile": "P2_rule_judgment_v6.txt",
+      "usedV7": false,
+      "cases": [
+        {
+          "id": "P2-C1-suspect",
+          "desc": "种子C1:有靶向药费用行、无基因检测 → 疑点",
+          "severity": "seed",
+          "byModel": [
+            {
+              "model": "MiniMax-Text-01",
+              "modelKey": "debater",
+              "json_valid": {
+                "pass": 0,
+                "total": 1
+              },
+              "call_ok": {
+                "pass": 1,
+                "total": 1
+              },
+              "all_green": {
+                "pass": 0,
+                "total": 1
+              },
+              "perAssert": {
+                "is_json": {
+                  "pass": 0,
+                  "total": 1,
+                  "rate": 0
+                },
+                "equals:status=\"疑点\"": {
+                  "pass": 0,
+                  "total": 1,
+                  "rate": 0
+                },
+                "in:policy_status∈[\"适用\"]": {
+                  "pass": 0,
+                  "total": 1,
+                  "rate": 0
+                },
+                "custom:p2_self_consistent": {
+                  "pass": 1,
+                  "total": 1,
+                  "rate": 1
+                }
+              },
+              "fail_details": [
+                "is_json{JSON 不可解析}",
+                "equals:status=\"疑点\"{got=undefined}",
+                "in:policy_status∈[\"适用\"]{got=undefined}"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "P2-C2-compliant",
+          "desc": "种子C2:有靶向药 + EGFR阳性报告 → 不报(命中除外)",
+          "severity": "seed",
+          "byModel": [
+            {
+              "model": "MiniMax-Text-01",
+              "modelKey": "debater",
+              "json_valid": {
+                "pass": 1,
+                "total": 1
+              },
+              "call_ok": {
+                "pass": 1,
+                "total": 1
+              },
+              "all_green": {
+                "pass": 1,
+                "total": 1
+              },
+              "perAssert": {
+                "is_json": {
+                  "pass": 1,
+                  "total": 1,
+                  "rate": 1
+                },
+                "equals:status=\"不报\"": {
+                  "pass": 1,
+                  "total": 1,
+                  "rate": 1
+                }
+              },
+              "fail_details": []
+            }
+          ]
+        },
+        {
+          "id": "P2-C3-clue-external",
+          "desc": "种子C3:病程称外院已做检测但事实表无报告 → 线索(证据不全)",
+          "severity": "seed",
+          "byModel": [
+            {
+              "model": "MiniMax-Text-01",
+              "modelKey": "debater",
+              "json_valid": {
+                "pass": 1,
+                "total": 1
+              },
+              "call_ok": {
+                "pass": 1,
+                "total": 1
+              },
+              "all_green": {
+                "pass": 0,
+                "total": 1
+              },
+              "perAssert": {
+                "is_json": {
+                  "pass": 1,
+                  "total": 1,
+                  "rate": 1
+                },
+                "equals:status=\"线索\"": {
+                  "pass": 0,
+                  "total": 1,
+                  "rate": 0
+                }
+              },
+              "fail_details": [
+                "equals:status=\"线索\"{got=\"疑点\"}"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "P2-C5-empty-policy",
+          "desc": "种子C5:政策原文为空(KB检索失败) → 不得编造,最高线索",
+          "severity": "seed",
+          "byModel": [
+            {
+              "model": "MiniMax-Text-01",
+              "modelKey": "debater",
+              "json_valid": {
+                "pass": 0,
+                "total": 1
+              },
+              "call_ok": {
+                "pass": 1,
+                "total": 1
+              },
+              "all_green": {
+                "pass": 0,
+                "total": 1
+              },
+              "perAssert": {
+                "is_json": {
+                  "pass": 0,
+                  "total": 1,
+                  "rate": 0
+                },
+                "in:status∈[\"线索\",\"不报\"]": {
+                  "pass": 0,
+                  "total": 1,
+                  "rate": 0
+                },
+                "custom:p2_empty_policy_no_fabricate": {
+                  "pass": 1,
+                  "total": 1,
+                  "rate": 1
+                }
+              },
+              "fail_details": [
+                "is_json{JSON 不可解析}",
+                "in:status∈[\"线索\",\"不报\"]{got=undefined}"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "P2-R1-policy-mismatch",
+          "desc": "红队v4(致命):政策非空但不对口(门诊慢病限额条款用到住院靶向药) → policy_status≠适用,不得疑点",
+          "severity": "redteam",
+          "byModel": [
+            {
+              "model": "MiniMax-Text-01",
+              "modelKey": "debater",
+              "json_valid": {
+                "pass": 0,
+                "total": 1
+              },
+              "call_ok": {
+                "pass": 1,
+                "total": 1
+              },
+              "all_green": {
+                "pass": 0,
+                "total": 1
+              },
+              "perAssert": {
+                "is_json": {
+                  "pass": 0,
+                  "total": 1,
+                  "rate": 0
+                },
+                "not_equals:status!=\"疑点\"": {
+                  "pass": 0,
+                  "total": 1,
+                  "rate": 0
+                },
+                "custom:p2_policy_not_applicable": {
+                  "pass": 1,
+                  "total": 1,
+                  "rate": 1
+                }
+              },
+              "fail_details": [
+                "is_json{JSON 不可解析}",
+                "not_equals:status!=\"疑点\"{got=undefined}"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "P2-R2-lowconf-propagate",
+          "desc": "红队v5(重要):关键事实(靶向药费用行)low_conf → 置信传播,疑点降线索",
+          "severity": "redteam",
+          "byModel": [
+            {
+              "model": "MiniMax-Text-01",
+              "modelKey": "debater",
+              "json_valid": {
+                "pass": 1,
+                "total": 1
+              },
+              "call_ok": {
+                "pass": 1,
+                "total": 1
+              },
+              "all_green": {
+                "pass": 1,
+                "total": 1
+              },
+              "perAssert": {
+                "is_json": {
+                  "pass": 1,
+                  "total": 1,
+                  "rate": 1
+                },
+                "not_equals:status!=\"疑点\"": {
+                  "pass": 1,
+                  "total": 1,
+                  "rate": 1
+                },
+                "in:status∈[\"线索\",\"不报\"]": {
+                  "pass": 1,
+                  "total": 1,
+                  "rate": 1
+                }
+              },
+              "fail_details": []
+            }
+          ]
+        },
+        {
+          "id": "P2-R3a-timing-compliant",
+          "desc": "红队v6(重要):时序op'检测晚于用药'。检测(03-01)早于用药(03-05)=合规 → 不报",
+          "severity": "redteam",
+          "byModel": [
+            {
+              "model": "MiniMax-Text-01",
+              "modelKey": "debater",
+              "json_valid": {
+                "pass": 0,
+                "total": 1
+              },
+              "call_ok": {
+                "pass": 1,
+                "total": 1
+              },
+              "all_green": {
+                "pass": 0,
+                "total": 1
+              },
+              "perAssert": {
+                "is_json": {
+                  "pass": 0,
+                  "total": 1,
+                  "rate": 0
+                },
+                "not_equals:status!=\"疑点\"": {
+                  "pass": 0,
+                  "total": 1,
+                  "rate": 0
+                }
+              },
+              "fail_details": [
+                "is_json{JSON 不可解析}",
+                "not_equals:status!=\"疑点\"{got=undefined}"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "P2-R3b-timing-violation",
+          "desc": "红队v6(重要):时序op。检测(03-10)晚于用药(03-05)=先用药后检测违规 → 疑点",
+          "severity": "redteam",
+          "byModel": [
+            {
+              "model": "MiniMax-Text-01",
+              "modelKey": "debater",
+              "json_valid": {
+                "pass": 0,
+                "total": 1
+              },
+              "call_ok": {
+                "pass": 1,
+                "total": 1
+              },
+              "all_green": {
+                "pass": 0,
+                "total": 1
+              },
+              "perAssert": {
+                "is_json": {
+                  "pass": 0,
+                  "total": 1,
+                  "rate": 0
+                },
+                "equals:status=\"疑点\"": {
+                  "pass": 0,
+                  "total": 1,
+                  "rate": 0
+                },
+                "custom:p2_self_consistent": {
+                  "pass": 1,
+                  "total": 1,
+                  "rate": 1
+                }
+              },
+              "fail_details": [
+                "is_json{JSON 不可解析}",
+                "equals:status=\"疑点\"{got=undefined}"
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "finishedAt": "2026-06-13T02:38:27.471Z",
+  "callStats": {
+    "CALL_COUNT": 8,
+    "CACHE_HITS": 0,
+    "MAX_CALLS": 2000
+  }
+}

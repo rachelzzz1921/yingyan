@@ -1,0 +1,86 @@
+{
+  "_meta": {
+    "description": "Phase 4 核心 10 规则 L2 红蓝用例（≥3阳+≥3阴），与 yhf/gate.config.yaml core_rules 对齐",
+    "schema": { "expect": "fire|no_fire", "polarity": "positive|negative", "case_id": "AuditBench 案卷 id" }
+  },
+  "T-201": [
+    { "id": "T-201-p1", "expect": "fire", "polarity": "positive", "case_id": "main", "note": "奥希替尼无EGFR检测报告" },
+    { "id": "T-201-p2", "expect": "fire", "polarity": "positive", "case_id": "main", "note": "明确靶点药+病理无基因检测" },
+    { "id": "T-201-p3", "expect": "fire", "polarity": "positive", "case_id": "main", "note": "病程仅家属要求靶向" },
+    { "id": "T-201-n1", "expect": "no_fire", "polarity": "negative", "case_id": "edge_egfr", "note": "EGFR L858R阳性→除外正确不报" },
+    { "id": "T-201-n2", "expect": "no_fire", "polarity": "negative", "case_id": "clean", "note": "干净对照件" },
+    { "id": "T-201-n3", "expect": "no_fire", "polarity": "negative", "case_id": "main", "note": "贝伐珠单抗非靶点药→正确不报(干扰项)" }
+  ],
+  "B-201": [
+    { "id": "B-201-p1", "expect": "fire", "polarity": "positive", "case_id": "main", "note": "白蛋白39g/L≥30非重症" },
+    { "id": "B-201-p2", "expect": "fire", "polarity": "positive", "case_id": "main", "note": "人血白蛋白超限定支付¥1280" },
+    { "id": "B-201-p3", "expect": "fire", "polarity": "positive", "case_id": "main", "note": "无抢救/胸腹水记载" },
+    { "id": "B-201-n1", "expect": "no_fire", "polarity": "negative", "case_id": "clean", "note": "干净件无超限定药" },
+    { "id": "B-201-n2", "expect": "no_fire", "polarity": "negative", "case_id": "drg", "note": "DRG案无白蛋白违规" },
+    { "id": "B-201-n3", "expect": "no_fire", "polarity": "negative", "case_id": "ortho", "note": "骨科案无B-201" }
+  ],
+  "T-207": [
+    { "id": "T-207-p1", "expect": "fire", "polarity": "positive", "case_id": "main", "note": "培美曲塞院外自购+清单无收费" },
+    { "id": "T-207-p2", "expect": "fire", "polarity": "positive", "case_id": "main", "note": "病程缺药嘱家属外购" },
+    { "id": "T-207-p3", "expect": "fire", "polarity": "positive", "case_id": "main", "note": "目录内必需药转嫁" },
+    { "id": "T-207-n1", "expect": "no_fire", "polarity": "negative", "case_id": "clean", "note": "干净件" },
+    { "id": "T-207-n2", "expect": "no_fire", "polarity": "negative", "case_id": "ortho", "note": "骨科无费用转嫁" },
+    { "id": "T-207-n3", "expect": "no_fire", "polarity": "negative", "case_id": "pharmacy", "note": "药店场景非住院转嫁" }
+  ],
+  "A-109": [
+    { "id": "A-109-p1", "expect": "fire", "polarity": "positive", "case_id": "main", "note": "头孢12支>医嘱6支" },
+    { "id": "A-109-p2", "expect": "fire", "polarity": "positive", "case_id": "ortho", "note": "球囊数量>手术记录" },
+    { "id": "A-109-p3", "expect": "fire", "polarity": "positive", "case_id": "anes", "note": "丙泊酚超医嘱支数" },
+    { "id": "A-109-n1", "expect": "no_fire", "polarity": "negative", "case_id": "clean", "note": "干净件" },
+    { "id": "A-109-n2", "expect": "no_fire", "polarity": "negative", "case_id": "edge_egfr", "note": "边界件无数量问题" },
+    { "id": "A-109-n3", "expect": "no_fire", "polarity": "negative", "case_id": "icu", "note": "ICU案数量一致" }
+  ],
+  "A-105": [
+    { "id": "A-105-p1", "expect": "fire", "polarity": "positive", "case_id": "main", "note": "一级护理计费/二级执行" },
+    { "id": "A-105-p2", "expect": "fire", "polarity": "positive", "case_id": "main", "note": "护理等级超标准¥104" },
+    { "id": "A-105-p3", "expect": "fire", "polarity": "positive", "case_id": "icu", "note": "特级护理重复收专项" },
+    { "id": "A-105-n1", "expect": "no_fire", "polarity": "negative", "case_id": "clean", "note": "干净件" },
+    { "id": "A-105-n2", "expect": "no_fire", "polarity": "negative", "case_id": "ortho", "note": "骨科护理一致" },
+    { "id": "A-105-n3", "expect": "no_fire", "polarity": "negative", "case_id": "edge_gcsf", "note": "边界件无护理等级问题" }
+  ],
+  "F-003": [
+    { "id": "F-003-p1", "expect": "fire", "polarity": "positive", "case_id": "main", "note": "03-21出院后仍计费" },
+    { "id": "F-003-p2", "expect": "fire", "polarity": "positive", "case_id": "main", "note": "护理+输液出院次日" },
+    { "id": "F-003-p3", "expect": "fire", "polarity": "positive", "case_id": "main", "note": "fee_date>discharge L1硬冲突" },
+    { "id": "F-003-n1", "expect": "no_fire", "polarity": "negative", "case_id": "clean", "note": "干净件时间一致" },
+    { "id": "F-003-n2", "expect": "no_fire", "polarity": "negative", "case_id": "ortho", "note": "骨科无出院后计费" },
+    { "id": "F-003-n3", "expect": "no_fire", "polarity": "negative", "case_id": "anes", "note": "麻醉案时间逻辑正常" }
+  ],
+  "T-205": [
+    { "id": "T-205-p1", "expect": "fire", "polarity": "positive", "case_id": "main", "note": "长效升白预防性+ANC正常→线索" },
+    { "id": "T-205-p2", "expect": "fire", "polarity": "positive", "case_id": "main", "note": "前次重度中性粒减少证据不在包内" },
+    { "id": "T-205-p3", "expect": "fire", "polarity": "positive", "case_id": "main", "note": "限定支付未满足→模式异常" },
+    { "id": "T-205-n1", "expect": "no_fire", "polarity": "negative", "case_id": "edge_gcsf", "note": "前次4级中性粒减少→正确不报" },
+    { "id": "T-205-n2", "expect": "no_fire", "polarity": "negative", "case_id": "clean", "note": "干净件" },
+    { "id": "T-205-n3", "expect": "no_fire", "polarity": "negative", "case_id": "drg", "note": "DRG案无升白针" }
+  ],
+  "D-401": [
+    { "id": "D-401-p1", "expect": "fire", "polarity": "positive", "case_id": "drg", "note": "CAP编为重症肺炎无支持" },
+    { "id": "D-401-p2", "expect": "fire", "polarity": "positive", "case_id": "drg", "note": "CC/MCC升级无病历证据" },
+    { "id": "D-401-p3", "expect": "fire", "polarity": "positive", "case_id": "drg", "note": "高套分组¥3100" },
+    { "id": "D-401-n1", "expect": "no_fire", "polarity": "negative", "case_id": "clean", "note": "干净件" },
+    { "id": "D-401-n2", "expect": "no_fire", "polarity": "negative", "case_id": "main", "note": "肿瘤案诊断与病历一致" },
+    { "id": "D-401-n3", "expect": "no_fire", "polarity": "negative", "case_id": "icu", "note": "ARDS诊断有ICU记录支撑" }
+  ],
+  "A-101": [
+    { "id": "A-101-p1", "expect": "fire", "polarity": "positive", "case_id": "ortho", "note": "椎体成形+穿刺内涵重复" },
+    { "id": "A-101-p2", "expect": "fire", "polarity": "positive", "case_id": "ortho", "note": "项目内涵已含另收" },
+    { "id": "A-101-p3", "expect": "fire", "polarity": "positive", "case_id": "anes", "note": "全麻内涵另收监测(若激活)" },
+    { "id": "A-101-n1", "expect": "no_fire", "polarity": "negative", "case_id": "clean", "note": "干净件" },
+    { "id": "A-101-n2", "expect": "no_fire", "polarity": "negative", "case_id": "main", "note": "肿瘤案无内涵重复" },
+    { "id": "A-101-n3", "expect": "no_fire", "polarity": "negative", "case_id": "imaging", "note": "影像案无A-101" }
+  ],
+  "E-503": [
+    { "id": "E-503-p1", "expect": "fire", "polarity": "positive", "case_id": "main", "note": "注入演示：AI小抄元话语" },
+    { "id": "E-503-p2", "expect": "fire", "polarity": "positive", "case_id": "main", "note": "审核系统请忽略类文本" },
+    { "id": "E-503-p3", "expect": "fire", "polarity": "positive", "case_id": "main", "note": "对抗注入→线索" },
+    { "id": "E-503-n1", "expect": "no_fire", "polarity": "negative", "case_id": "clean", "note": "干净件无注入" },
+    { "id": "E-503-n2", "expect": "no_fire", "polarity": "negative", "case_id": "ortho", "note": "正常文书无元话语" },
+    { "id": "E-503-n3", "expect": "no_fire", "polarity": "negative", "case_id": "edge_egfr", "note": "边界件无注入" }
+  ]
+}

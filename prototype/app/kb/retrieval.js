@@ -1,0 +1,133 @@
+'use strict';
+
+const fs = require('fs');
+const path = require('path');
+const { ragConfig, canUseSupabase, canUseStepfun } = require('./config');
+const supabase = require('./supabase-client');
+const stepfun = require('./stepfun-client');
+
+const DOMAIN_ALIAS = {
+  麻醉: '麻醉', 重症医学: '重症', 定点零售药店: '药店', 医学影像: '影像',
+  肿瘤: '肿瘤', 心血管内科: '心血管', 血液净化: '血净', 康复: '康复', 临床检验: '检验',
+};
+
+function loadJsonKB(dataDir) {
+  const kb1 = JSON.parse(fs.readFileSync(path.join(dataDir, 'kb/kb1_policies.json'), 'utf8'));
+  let kb2 = { entries: [] };
+  try { kb2 = JSON.parse(fs.readFileSync(path.join(dataDir, 'kb/kb2_clinical.json'), 'utf8')); } catch {}
+  let pl = { domains: [] };
+  try { pl = JSON.parse(fs.readFileSync(path.join(dataDir, 'kb/kb1_problem_lists.json'), 'utf8')); } catch {}
+  return buildPolicyMaps(kb1, kb2, pl);
+}
+
+function buildPolicyMaps(kb1, kb2, pl) {
+  const policyTexts = {};
+  const policyVerified = {};
+  for (const e of kb1.entries || []) {
+    policyTexts[e.ref_id] = e.text;
+    policyVerified[e.ref_id] = (e.verify_status || '').startsWith('✅');
+  }
+  for (const e of kb2.entries || []) {
+    policyTexts[e.kb2_id] = e.text;
+    policyVerified[e.kb2_id] = (e.verify_status || '').startsWith('✅');
+  }
+  for (const d of pl.domains || []) {
+    const alias = DOMAIN_ALIAS[d.domain] || d.domain;
+    const ver = (d.version || '').includes('2025') ? '2025' : '';
+    const dverified = (d.verify_status || '').startsWith('✅');
+    for (const it of d.items || []) {
+      if (it.no != null) {
+        for (const k of [`KB1-问题清单${ver}-${alias}-${it.no}`, `KB1-问题清单${alias}-${it.no}`]) {
+          policyTexts[k] = `[${d.domain}清单序号${it.no}·${it.type}] ${it.text}`;
+          policyVerified[k] = dverified && (it.verify ? it.verify.startsWith('✅') || it.verify.includes('已核实') : true);
+        }
+      }
+    }
+    const summary = (d.official_example ? d.official_example + ' ' : '') + (d.items || []).map(i => i.text).join(' / ');
+    for (const k of [`KB1-问题清单${alias}(行业B类·待官方核)`, `KB1-问题清单${alias}(旁证·待官方核)`]) {
+      policyTexts[k] = summary.slice(0, 400);
+    }
+  }
+  return { policyTexts, policyVerified, source: 'json' };
+}
+
+async function loadFromSupabase() {
+  const rows = await supabase.listEntries({ limit: 1000 });
+  if (!rows.length) return null;
+  const policyTexts = {};
+  const policyVerified = {};
+  for (const e of rows) {
+    policyTexts[e.ref_id] = e.text;
+    policyVerified[e.ref_id] = (e.verify_status || '').startsWith('✅');
+  }
+  return { policyTexts, policyVerified, source: 'supabase', entry_count: rows.length };
+}
+
+/** 启动时加载：Supabase 有数据则 Live，否则 JSON Oracle */
+async function loadPolicyMaps(dataDir) {
+  const cfg = ragConfig();
+  const jsonMaps = loadJsonKB(dataDir);
+  if (!cfg.enabled || cfg.mode === 'json') return jsonMaps;
+  if (!canUseSupabase()) return jsonMaps;
+  try {
+    const live = await loadFromSupabase();
+    if (live && live.entry_count > 0) return live;
+  } catch (e) {
+    console.warn('[kb] Supabase 读取失败，回退 JSON:', e.message);
+  }
+  return jsonMaps;
+}
+
+async function getByRefId(refId, jsonFallback) {
+  if (canUseSupabase()) {
+    try {
+      const row = await supabase.getEntryByRefId(refId);
+      if (row) return row.text;
+    } catch { /* fall through */ }
+  }
+  return jsonFallback?.policyTexts?.[refId] || null;
+}
+
+/** 关键词语义兜底（无 pgvector embedding 时） */
+function keywordSearch(query, policyTexts, { limit = 8, kbLayerPrefix = null } = {}) {
+  const terms = String(query).split(/[\s,，、；;]+/).filter(Boolean);
+  if (!terms.length) return [];
+  const scored = [];
+  for (const [refId, text] of Object.entries(policyTexts || {})) {
+    if (kbLayerPrefix && !refId.startsWith(kbLayerPrefix)) continue;
+    let score = 0;
+    const lower = text.toLowerCase();
+    for (const t of terms) {
+      if (text.includes(t) || lower.includes(t.toLowerCase())) score += 1;
+    }
+    if (score > 0) scored.push({ ref_id: refId, content: text.slice(0, 300), score });
+  }
+  scored.sort((a, b) => b.score - a.score);
+  return scored.slice(0, limit);
+}
+
+async function status(dataDir) {
+  const jsonMaps = loadJsonKB(dataDir);
+  const cfg = ragConfig();
+  const sb = canUseSupabase() ? await supabase.ping() : { ok: false, reason: 'not_configured' };
+  const sf = canUseStepfun() ? await stepfun.ping() : { ok: false, reason: 'not_configured' };
+  return {
+    mode: cfg.mode,
+    corpus_version: cfg.corpusVersion,
+    oracle: { source: 'json', ref_count: Object.keys(jsonMaps.policyTexts).length },
+    live: {
+      supabase: sb,
+      stepfun: sf,
+      active: sb.ok && (sb.entry_count || 0) > 0,
+    },
+    ragflow: { configured: !!(cfg.ragflowUrl && cfg.ragflowApiKey) },
+  };
+}
+
+module.exports = {
+  loadPolicyMaps,
+  loadJsonKB,
+  getByRefId,
+  keywordSearch,
+  status,
+};

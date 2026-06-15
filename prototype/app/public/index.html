@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#0B2A4A">
+<title>鹰眼 · 医保基金稽核智能体</title>
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,500;0,9..40,600;0,9..40,700;0,9..40,800;1,9..40,500&family=Noto+Sans+SC:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/style.css">
+</head>
+<body>
+<header class="topbar">
+  <div class="brand">
+    <div class="logo" title="鹰眼 · EagleEye Audit">
+      <img src="/brand/logo-mark.svg" width="52" height="52" alt="鹰眼 logo">
+    </div>
+    <div class="brand-text">
+      <h1>鹰眼 <span class="brand-en">EagleEye Audit</span></h1>
+      <p>医保基金稽核智能体 · 三方交叉验证 · 证据链输出 <span class="tag">飞检 AI 初筛</span></p>
+    </div>
+  </div>
+  <div class="topbar-actions">
+    <div class="mode-toggle" id="modeToggle" title="一套引擎两种模式">
+      <button class="mode-btn active" data-mode="audit">🛡 稽核</button>
+      <button class="mode-btn" data-mode="exam">🏥 体检</button>
+    </div>
+    <div class="health" id="health">规则加载中…</div>
+    <button class="btn-primary" id="btnAudit"><span class="btn-icon">▶</span> 开始稽核</button>
+  </div>
+</header>
+
+<nav class="v2bar">
+  <div class="v2bar-group v2bar-primary">
+    <span class="v2bar-label">主流程</span>
+    <button class="v2btn accent" id="btnAuditBar" type="button">▶ 开始稽核</button>
+    <a href="/dashboard.html" class="v2btn accent" title="项目看板">项目看板</a>
+    <button class="v2btn" id="btnBench" type="button">AuditBench</button>
+  </div>
+  <div class="v2bar-divider"></div>
+  <div class="v2bar-group">
+    <span class="v2bar-label subtle">材料与架构</span>
+    <button class="v2btn" id="btnIngest" type="button">导入材料</button>
+    <button class="v2btn" id="btnFacts" type="button">事实层</button>
+    <button class="v2btn" id="btnInstitution" type="button">机构画像</button>
+    <button class="v2btn" id="btnGovernance" type="button">规则治理</button>
+  </div>
+  <div class="v2bar-divider"></div>
+  <div class="v2bar-group">
+    <span class="v2bar-label subtle">演示</span>
+    <button class="v2btn real" id="btnLLM" type="button">LLM 语义</button>
+    <button class="v2btn danger" id="btnInject" type="button">注入对抗</button>
+    <button class="v2btn" id="btnExport" type="button">导出清单</button>
+    <button class="v2btn" id="btnPitch" type="button">演示要点</button>
+    <button class="v2btn ghost" id="btnReset" type="button" title="重置">↺</button>
+  </div>
+</nav>
+
+<div class="workflow-strip" id="workflowStrip">
+  <div class="wf-step active" data-step="1"><span class="wf-num">1</span><span class="wf-text">选案卷</span></div>
+  <div class="wf-arrow">→</div>
+  <div class="wf-step" data-step="2"><span class="wf-num">2</span><span class="wf-text">开始稽核</span></div>
+  <div class="wf-arrow">→</div>
+  <div class="wf-step" data-step="3"><span class="wf-num">3</span><span class="wf-text">看报告 · 点证据</span></div>
+</div>
+
+<div class="case-meta-bar hidden" id="caseMetaBar"></div>
+
+<main class="layout">
+  <section class="panel panel-left">
+    <div class="panel-head">
+      <h2><span class="panel-icon">📁</span> 患者就诊材料包</h2>
+      <select id="caseSelect" class="case-select" title="切换演示案卷"></select>
+    </div>
+    <nav class="doc-tabs" id="docTabs"></nav>
+    <div class="doc-body" id="docBody"></div>
+  </section>
+
+  <section class="panel panel-right">
+    <div class="panel-head">
+      <h2><span class="panel-icon">🛡</span> 稽核报告</h2>
+      <span class="muted" id="engineMode"></span>
+    </div>
+
+    <div id="reportEmpty" class="empty">
+      <div class="empty-logo"><img src="/brand/icons/scan.svg" alt="" width="56" height="56"></div>
+      <p class="empty-title">就绪 · 把线索到证据的距离，缩短到 90 秒</p>
+      <ol class="empty-steps">
+        <li>左侧下拉<strong>选演示案卷</strong>（肿瘤主线含 6 疑点 + 合议层）</li>
+        <li>点<strong>「开始稽核」</strong> — 文档索引与条款交叉验证</li>
+        <li>右侧查看疑点 → <strong>点证据定位</strong>跳费用行高亮</li>
+      </ol>
+      <p class="muted">引不出原文的疑点，不输出 · G0 干净件零误报红线</p>
+    </div>
+
+    <div id="reportBody" class="report hidden">
+      <div class="compare-banner">
+        <div class="compare-col human"><span class="big">40<small>分钟</small></span><span>人工逐页审阅</span></div>
+        <div class="vs">VS</div>
+        <div class="compare-col agent"><span class="big" id="agentTime">90<small>秒</small></span><span>鹰眼 AI 初筛</span></div>
+      </div>
+      <div class="summary-cards" id="summaryCards"></div>
+      <div class="findings-section">
+        <h3 class="sect-title">⚠ 疑点与线索 <span class="muted" id="findingCount"></span></h3>
+        <div id="findingsList"></div>
+      </div>
+      <div class="findings-section">
+        <h3 class="sect-title green">✓ 正确"不报"（误报防控）</h3>
+        <div id="distractorList"></div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="foot">
+  <span class="foot-brand">鹰眼 EagleEye Audit</span> v0.4 · 事实层 + YHF 评测门禁 + 规则治理 · 虚构演示数据 · 政策引自国家医保局公开文件
+</footer>
+
+<div class="modal-overlay hidden" id="modalRoot"><div class="modal" id="modalBox"></div></div>
+<script src="/app.js"></script>
+</body>
+</html>

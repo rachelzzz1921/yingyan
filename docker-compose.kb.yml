@@ -1,0 +1,41 @@
+# 鹰眼 · Route B 本地 KB 数据库（pgvector）
+# 用法：docker compose -f docker-compose.kb.yml up -d
+# 然后：psql postgresql://postgres:postgres@127.0.0.1:54322/postgres -f supabase/migrations/20260615000000_yingyan_kb.sql
+
+name: yingyan-kb
+
+services:
+  yingyan-kb-db:
+    image: pgvector/pgvector:pg17
+    container_name: yingyan-kb-db
+    restart: unless-stopped
+    ports:
+      - "54322:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: postgres
+    volumes:
+      - yingyan_kb_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  yingyan-kb-rest:
+    image: postgrest/postgrest:v12.2.3
+    container_name: yingyan-kb-rest
+    restart: unless-stopped
+    ports:
+      - "54321:3000"
+    environment:
+      PGRST_DB_URI: postgres://postgres:postgres@yingyan-kb-db:5432/postgres
+      PGRST_DB_SCHEMAS: public
+      PGRST_DB_ANON_ROLE: postgres
+    depends_on:
+      yingyan-kb-db:
+        condition: service_healthy
+
+volumes:
+  yingyan_kb_data:

@@ -1,0 +1,722 @@
+{
+  "startedAt": "2026-06-13T02:44:57.348Z",
+  "N": 1,
+  "temperature": 0.2,
+  "models": [
+    "MiniMax-Text-01"
+  ],
+  "useV7": false,
+  "prompts": {
+    "P3": {
+      "promptFile": "P3_prosecutor_v6.txt",
+      "usedV7": false,
+      "cases": [
+        {
+          "id": "P3-R1-unfounded",
+          "desc": "红队v4(致命):无根据候选(事实完全合规) → initial_status 须为不成立,不得挤出假线索",
+          "severity": "redteam",
+          "byModel": [
+            {
+              "model": "MiniMax-Text-01",
+              "modelKey": "debater",
+              "json_valid": {
+                "pass": 1,
+                "total": 1
+              },
+              "call_ok": {
+                "pass": 1,
+                "total": 1
+              },
+              "all_green": {
+                "pass": 1,
+                "total": 1
+              },
+              "perAssert": {
+                "is_json": {
+                  "pass": 1,
+                  "total": 1,
+                  "rate": 1
+                },
+                "custom:p3_unfounded_not_suspect": {
+                  "pass": 1,
+                  "total": 1,
+                  "rate": 1
+                }
+              },
+              "fail_details": []
+            }
+          ]
+        },
+        {
+          "id": "P3-R2-valid-suspect",
+          "desc": "有效疑点(有靶向药、无任何检测) → 须有 cove_checks 且有钢人 anticipated_defense",
+          "severity": "seed",
+          "byModel": [
+            {
+              "model": "MiniMax-Text-01",
+              "modelKey": "debater",
+              "json_valid": {
+                "pass": 1,
+                "total": 1
+              },
+              "call_ok": {
+                "pass": 1,
+                "total": 1
+              },
+              "all_green": {
+                "pass": 1,
+                "total": 1
+              },
+              "perAssert": {
+                "is_json": {
+                  "pass": 1,
+                  "total": 1,
+                  "rate": 1
+                },
+                "in:initial_status∈[\"疑点\",\"线索\"]": {
+                  "pass": 1,
+                  "total": 1,
+                  "rate": 1
+                },
+                "custom:p3_has_cove_and_steelman": {
+                  "pass": 1,
+                  "total": 1,
+                  "rate": 1
+                }
+              },
+              "fail_details": []
+            }
+          ]
+        },
+        {
+          "id": "P3-R3-strong-counter",
+          "desc": "红队v4:事实含强反证(EGFR阳性报告) → counter非空,initial_status 不得高于线索",
+          "severity": "redteam",
+          "byModel": [
+            {
+              "model": "MiniMax-Text-01",
+              "modelKey": "debater",
+              "json_valid": {
+                "pass": 1,
+                "total": 1
+              },
+              "call_ok": {
+                "pass": 1,
+                "total": 1
+              },
+              "all_green": {
+                "pass": 1,
+                "total": 1
+              },
+              "perAssert": {
+                "is_json": {
+                  "pass": 1,
+                  "total": 1,
+                  "rate": 1
+                },
+                "custom:p3_not_above_clue": {
+                  "pass": 1,
+                  "total": 1,
+                  "rate": 1
+                }
+              },
+              "fail_details": []
+            }
+          ]
+        },
+        {
+          "id": "P3-R4-lowconf-evidence",
+          "desc": "红队:关键证据 low_conf(金额模糊) → 不得高于线索",
+          "severity": "redteam",
+          "byModel": [
+            {
+              "model": "MiniMax-Text-01",
+              "modelKey": "debater",
+              "json_valid": {
+                "pass": 1,
+                "total": 1
+              },
+              "call_ok": {
+                "pass": 1,
+                "total": 1
+              },
+              "all_green": {
+                "pass": 1,
+                "total": 1
+              },
+              "perAssert": {
+                "is_json": {
+                  "pass": 1,
+                  "total": 1,
+                  "rate": 1
+                },
+                "custom:p3_not_above_clue": {
+                  "pass": 1,
+                  "total": 1,
+                  "rate": 1
+                }
+              },
+              "fail_details": []
+            }
+          ]
+        }
+      ]
+    },
+    "P4": {
+      "promptFile": "P4_defense_v6.txt",
+      "usedV7": false,
+      "cases": [
+        {
+          "id": "P4-C1-ironclad-concede",
+          "desc": "种子C1:铁证如山(超量无医学理由、无除外) → 辩方应 concede_violation=true,不强辩",
+          "severity": "seed",
+          "byModel": [
+            {
+              "model": "MiniMax-Text-01",
+              "modelKey": "debater",
+              "json_valid": {
+                "pass": 1,
+                "total": 1
+              },
+              "call_ok": {
+                "pass": 1,
+                "total": 1
+              },
+              "all_green": {
+                "pass": 0,
+                "total": 1
+              },
+              "perAssert": {
+                "is_json": {
+                  "pass": 1,
+                  "total": 1,
+                  "rate": 1
+                },
+                "custom:p4_concede_on_ironclad": {
+                  "pass": 0,
+                  "total": 1,
+                  "rate": 0
+                }
+              },
+              "fail_details": [
+                "custom:p4_concede_on_ironclad{concede_violation=false, suggested_status=\"降为线索\"}"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "P4-R1-exclusion-relevance",
+          "desc": "种子C4+v4:事实命中除外(EGFR阳性) → 建议降为线索/撤销,且每条 rebuttal 有 relevance",
+          "severity": "seed",
+          "byModel": [
+            {
+              "model": "MiniMax-Text-01",
+              "modelKey": "debater",
+              "json_valid": {
+                "pass": 1,
+                "total": 1
+              },
+              "call_ok": {
+                "pass": 1,
+                "total": 1
+              },
+              "all_green": {
+                "pass": 1,
+                "total": 1
+              },
+              "perAssert": {
+                "is_json": {
+                  "pass": 1,
+                  "total": 1,
+                  "rate": 1
+                },
+                "custom:p4_finds_exclusion": {
+                  "pass": 1,
+                  "total": 1,
+                  "rate": 1
+                },
+                "custom:p4_rebuttals_have_relevance": {
+                  "pass": 1,
+                  "total": 1,
+                  "rate": 1
+                }
+              },
+              "fail_details": []
+            }
+          ]
+        },
+        {
+          "id": "P4-R2-no-fabrication",
+          "desc": "种子C2:铁证且事实无任何除外 → 辩方不得臆造'可能有外院记录'类无据理由(应认账或仅程序瑕疵)",
+          "severity": "redteam",
+          "byModel": [
+            {
+              "model": "MiniMax-Text-01",
+              "modelKey": "debater",
+              "json_valid": {
+                "pass": 1,
+                "total": 1
+              },
+              "call_ok": {
+                "pass": 1,
+                "total": 1
+              },
+              "all_green": {
+                "pass": 0,
+                "total": 1
+              },
+              "perAssert": {
+                "is_json": {
+                  "pass": 1,
+                  "total": 1,
+                  "rate": 1
+                },
+                "custom:p4_concede_on_ironclad": {
+                  "pass": 0,
+                  "total": 1,
+                  "rate": 0
+                }
+              },
+              "fail_details": [
+                "custom:p4_concede_on_ironclad{concede_violation=false, suggested_status=\"降为线索\"}"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "P4-R3-partial-concede-amount",
+          "desc": "红队v5:违规属实但金额算成整笔(应只算超出部分) → 辩方半认账:concede_violation=true 且 contest_amount=true",
+          "severity": "redteam",
+          "byModel": [
+            {
+              "model": "MiniMax-Text-01",
+              "modelKey": "debater",
+              "json_valid": {
+                "pass": 1,
+                "total": 1
+              },
+              "call_ok": {
+                "pass": 1,
+                "total": 1
+              },
+              "all_green": {
+                "pass": 1,
+                "total": 1
+              },
+              "perAssert": {
+                "is_json": {
+                  "pass": 1,
+                  "total": 1,
+                  "rate": 1
+                },
+                "truthy:contest_amount": {
+                  "pass": 1,
+                  "total": 1,
+                  "rate": 1
+                }
+              },
+              "fail_details": []
+            }
+          ]
+        }
+      ]
+    },
+    "P6": {
+      "promptFile": "P6_reconcile_v6.txt",
+      "usedV7": false,
+      "cases": [
+        {
+          "id": "P6-C1-merge-three-rules",
+          "desc": "种子C1:白蛋白(行37)被B-201/A-110/A-108三规则命中 → 合1主疑点,金额=单行额1280,omitted空",
+          "severity": "seed",
+          "byModel": [
+            {
+              "model": "MiniMax-Text-01",
+              "modelKey": "debater",
+              "json_valid": {
+                "pass": 1,
+                "total": 1
+              },
+              "call_ok": {
+                "pass": 1,
+                "total": 1
+              },
+              "all_green": {
+                "pass": 1,
+                "total": 1
+              },
+              "perAssert": {
+                "is_json": {
+                  "pass": 1,
+                  "total": 1,
+                  "rate": 1
+                },
+                "custom:p6_merge_single_amount": {
+                  "pass": 1,
+                  "total": 1,
+                  "rate": 1
+                }
+              },
+              "fail_details": []
+            }
+          ]
+        },
+        {
+          "id": "P6-C2-distinct-no-merge",
+          "desc": "种子C2:不同费用行(行37白蛋白 vs 行52球囊)同类违规 → 不合并(≥2簇),金额各计=1580",
+          "severity": "seed",
+          "byModel": [
+            {
+              "model": "MiniMax-Text-01",
+              "modelKey": "debater",
+              "json_valid": {
+                "pass": 1,
+                "total": 1
+              },
+              "call_ok": {
+                "pass": 1,
+                "total": 1
+              },
+              "all_green": {
+                "pass": 0,
+                "total": 1
+              },
+              "perAssert": {
+                "is_json": {
+                  "pass": 1,
+                  "total": 1,
+                  "rate": 1
+                },
+                "custom:p6_no_merge_distinct": {
+                  "pass": 0,
+                  "total": 1,
+                  "rate": 0
+                },
+                "custom:p6_total_and_omitted": {
+                  "pass": 1,
+                  "total": 1,
+                  "rate": 1
+                }
+              },
+              "fail_details": [
+                "custom:p6_no_merge_distinct{clusters=1(期望≥2,不同行不合并)}"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "P6-R1-chain-overlap",
+          "desc": "红队v4(致命):链式重叠 X[37,38] Y[38,39] Z[39,40] 无单一核心行 → 不得传递并成1簇把37/40错并;且所有行须对账无漏",
+          "severity": "redteam",
+          "byModel": [
+            {
+              "model": "MiniMax-Text-01",
+              "modelKey": "debater",
+              "json_valid": {
+                "pass": 1,
+                "total": 1
+              },
+              "call_ok": {
+                "pass": 1,
+                "total": 1
+              },
+              "all_green": {
+                "pass": 0,
+                "total": 1
+              },
+              "perAssert": {
+                "is_json": {
+                  "pass": 1,
+                  "total": 1,
+                  "rate": 1
+                },
+                "custom:p6_chain_not_overmerged": {
+                  "pass": 0,
+                  "total": 1,
+                  "rate": 0
+                },
+                "custom:p6_accounts_all_lines": {
+                  "pass": 1,
+                  "total": 1,
+                  "rate": 1
+                }
+              },
+              "fail_details": [
+                "custom:p6_chain_not_overmerged{clusters=1, 37@0 40@0 过并=true}"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "P6-R2-amount-provable-first",
+          "desc": "红队v5(致命):同行37,A-108认定1200(有anchor可证) vs A-110认定800(证据弱) → 取可证1200,非无脑取低800",
+          "severity": "redteam",
+          "byModel": [
+            {
+              "model": "MiniMax-Text-01",
+              "modelKey": "debater",
+              "json_valid": {
+                "pass": 1,
+                "total": 1
+              },
+              "call_ok": {
+                "pass": 1,
+                "total": 1
+              },
+              "all_green": {
+                "pass": 1,
+                "total": 1
+              },
+              "perAssert": {
+                "is_json": {
+                  "pass": 1,
+                  "total": 1,
+                  "rate": 1
+                },
+                "custom:p6_merge_single_amount": {
+                  "pass": 1,
+                  "total": 1,
+                  "rate": 1
+                }
+              },
+              "fail_details": []
+            }
+          ]
+        }
+      ]
+    },
+    "P7": {
+      "promptFile": "P7_review_sediment_v6.txt",
+      "usedV7": false,
+      "cases": [
+        {
+          "id": "P7-C1-defect-single-observe",
+          "desc": "种子C1:驳回因'有省级备案超说明书审批'(具体且事实支持) → 归因A;但单次未达阈值 → 仅'疑似短板待观察',不直接提修订",
+          "severity": "seed",
+          "byModel": [
+            {
+              "model": "MiniMax-Text-01",
+              "modelKey": "debater",
+              "json_valid": {
+                "pass": 1,
+                "total": 1
+              },
+              "call_ok": {
+                "pass": 1,
+                "total": 1
+              },
+              "all_green": {
+                "pass": 1,
+                "total": 1
+              },
+              "perAssert": {
+                "is_json": {
+                  "pass": 1,
+                  "total": 1,
+                  "rate": 1
+                },
+                "custom:p7_attr_rule_defect": {
+                  "pass": 1,
+                  "total": 1,
+                  "rate": 1
+                },
+                "custom:p7_single_no_proposal": {
+                  "pass": 1,
+                  "total": 1,
+                  "rate": 1
+                }
+              },
+              "fail_details": []
+            }
+          ]
+        },
+        {
+          "id": "P7-C5-vague-no-change",
+          "desc": "种子C5:驳回理由模糊('感觉不对') → 归因D,标待资深复核,绝不改规则",
+          "severity": "seed",
+          "byModel": [
+            {
+              "model": "MiniMax-Text-01",
+              "modelKey": "debater",
+              "json_valid": {
+                "pass": 1,
+                "total": 1
+              },
+              "call_ok": {
+                "pass": 1,
+                "total": 1
+              },
+              "all_green": {
+                "pass": 1,
+                "total": 1
+              },
+              "perAssert": {
+                "is_json": {
+                  "pass": 1,
+                  "total": 1,
+                  "rate": 1
+                },
+                "custom:p7_vague_no_change": {
+                  "pass": 1,
+                  "total": 1,
+                  "rate": 1
+                }
+              },
+              "fail_details": []
+            }
+          ]
+        },
+        {
+          "id": "P7-C3-accept-pii-scrub",
+          "desc": "种子C3:采纳且证据确凿,但 finding 含 PII → 提炼正例须脱敏,输出不得含就诊号/身份证",
+          "severity": "seed",
+          "byModel": [
+            {
+              "model": "MiniMax-Text-01",
+              "modelKey": "debater",
+              "json_valid": {
+                "pass": 1,
+                "total": 1
+              },
+              "call_ok": {
+                "pass": 1,
+                "total": 1
+              },
+              "all_green": {
+                "pass": 1,
+                "total": 1
+              },
+              "perAssert": {
+                "is_json": {
+                  "pass": 1,
+                  "total": 1,
+                  "rate": 1
+                },
+                "custom:p7_pii_scrubbed": {
+                  "pass": 1,
+                  "total": 1,
+                  "rate": 1
+                }
+              },
+              "fail_details": []
+            }
+          ]
+        },
+        {
+          "id": "P7-R1-collusion-anomaly",
+          "desc": "红队v6(致命):同因驳回扎堆单一稽核员/极短时间窗 → review_anomaly=true,上报审计,绝不据此改规则",
+          "severity": "redteam",
+          "byModel": [
+            {
+              "model": "MiniMax-Text-01",
+              "modelKey": "debater",
+              "json_valid": {
+                "pass": 1,
+                "total": 1
+              },
+              "call_ok": {
+                "pass": 1,
+                "total": 1
+              },
+              "all_green": {
+                "pass": 1,
+                "total": 1
+              },
+              "perAssert": {
+                "is_json": {
+                  "pass": 1,
+                  "total": 1,
+                  "rate": 1
+                },
+                "custom:p7_collusion_anomaly": {
+                  "pass": 1,
+                  "total": 1,
+                  "rate": 1
+                }
+              },
+              "fail_details": []
+            }
+          ]
+        },
+        {
+          "id": "P7-R2-accept-insufficient",
+          "desc": "红队v5(重要):采纳但证据不足(无检验、仅凭印象) → 采纳侧对称怀疑,不铸正例",
+          "severity": "redteam",
+          "byModel": [
+            {
+              "model": "MiniMax-Text-01",
+              "modelKey": "debater",
+              "json_valid": {
+                "pass": 1,
+                "total": 1
+              },
+              "call_ok": {
+                "pass": 1,
+                "total": 1
+              },
+              "all_green": {
+                "pass": 1,
+                "total": 1
+              },
+              "perAssert": {
+                "is_json": {
+                  "pass": 1,
+                  "total": 1,
+                  "rate": 1
+                },
+                "not_in:sediment_action∉[\"正例入库\"]": {
+                  "pass": 1,
+                  "total": 1,
+                  "rate": 1
+                }
+              },
+              "fail_details": []
+            }
+          ]
+        },
+        {
+          "id": "P7-R3-threshold-met-proposal",
+          "desc": "对照:同因驳回占比20%(>15%)、≥3次、跨5名稽核员3周(非合谋) → 达阈值可提规则修订提案",
+          "severity": "redteam",
+          "byModel": [
+            {
+              "model": "MiniMax-Text-01",
+              "modelKey": "debater",
+              "json_valid": {
+                "pass": 1,
+                "total": 1
+              },
+              "call_ok": {
+                "pass": 1,
+                "total": 1
+              },
+              "all_green": {
+                "pass": 1,
+                "total": 1
+              },
+              "perAssert": {
+                "is_json": {
+                  "pass": 1,
+                  "total": 1,
+                  "rate": 1
+                },
+                "custom:p7_threshold_proposal": {
+                  "pass": 1,
+                  "total": 1,
+                  "rate": 1
+                }
+              },
+              "fail_details": []
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "finishedAt": "2026-06-13T02:53:26.284Z",
+  "callStats": {
+    "CALL_COUNT": 18,
+    "CACHE_HITS": 0,
+    "MAX_CALLS": 2000
+  }
+}

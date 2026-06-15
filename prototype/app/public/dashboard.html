@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#0B2A4A">
+<title>鹰眼 · 项目看板</title>
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,500;9..40,700;9..40,800&family=Noto+Sans+SC:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/dashboard.css">
+</head>
+<body>
+<header class="dash-header">
+  <div class="dash-brand">
+    <a href="/dashboard.html#overview" class="logo-link" title="看板首页">
+      <img src="/brand/logo-mark.svg" width="44" height="44" alt="" onerror="this.style.display='none'">
+    </a>
+    <div>
+      <h1>鹰眼 · 项目看板</h1>
+      <p class="sub" id="viewTitle">总览</p>
+    </div>
+  </div>
+  <nav class="dash-nav">
+    <a href="/" class="nav-pill primary">🛡 稽核工作台</a>
+    <button type="button" class="nav-pill" id="btnRefresh">↻ 刷新数据</button>
+  </nav>
+</header>
+
+<div class="dash-shell">
+  <aside class="side-nav" id="sideNav" aria-label="看板导航"></aside>
+  <main class="dash-content" id="dashContent"></main>
+</div>
+
+<footer class="dash-foot">鹰眼 EagleEye Audit · 所有文档与指标均在看板内浏览</footer>
+<script src="/tasks-board.js"></script>
+<script src="/dashboard.js"></script>
+</body>
+</html>

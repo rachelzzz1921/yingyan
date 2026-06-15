@@ -1,0 +1,52 @@
+# Secrets and local environment
+.env
+.env.*
+!.env.example
+**/.env
+**/.env.*
+!**/.env.example
+
+# Dependencies
+node_modules/
+**/node_modules/
+
+# Logs and runtime output
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# OS and editor noise
+.DS_Store
+.idea/
+.vscode/
+.cursor/debug-*.log
+.git.local-backup/
+**/.git.local-backup/
+
+# Build/cache output
+dist/
+build/
+coverage/
+.cache/
+.turbo/
+.next/
+
+# Local Supabase state
+supabase/.temp/
+supabase/.branches/
+
+# Generated evaluation artifacts
+eval/results/raw/
+yhf/results/*.json
+yhf/results/gate_latest.md
+
+# Runtime review/governance state
+prototype/data/review_feedback.json
+prototype/data/rule_states.json
+
+# Local exports and generated packages
+export/
+*.zip
+*.tar.gz

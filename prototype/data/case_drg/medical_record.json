@@ -1,0 +1,87 @@
+{
+  "case_meta": {
+    "case_id": "YY-DEMO-DRG-001",
+    "case_title": "支付方式·DRG高套分组 备演材料包（社区获得性肺炎编为重症肺炎）",
+    "disclaimer": "虚构数据。支付方式违规场景：病案首页主诊断高套为'重症肺炎'拔高DRG入组权重，但病历（血气/氧合/病程）均不支持重症——编码与病历明确冲突=高套分组(D-401)。",
+    "embedded_violation_count": 1,
+    "distractor_count": 1,
+    "settlement_summary": {"total_amount": 9860.0, "insurance_paid_amount": 9860.0, "currency": "CNY", "settle_type": "住院·DRG付费"},
+    "demo_value": "★支付方式维度：编码高套是DRG/DIP监管热点。真风险在CC/MCC升级(普通肺炎→重症肺炎),用DRG2.0编码校验+病历反向证据硬比对。次诊断糖尿病编码正确→正确不报。"
+  },
+  "front_page": {
+    "doc_type": "病案首页", "hospital": "示范市第一人民医院（虚构）", "hospital_level": "三级甲等",
+    "patient_name": "周建华", "sex": "男", "age": 65, "birth_date": "1961-02-10",
+    "insurance_type": "城乡居民基本医疗保险", "admission_no": "ZY20260415-0205",
+    "admit_time": "2026-04-15 14:00", "discharge_time": "2026-04-22 10:00", "actual_inpatient_days": 7,
+    "admit_dept": "呼吸内科", "bed_no": "呼吸内科-22床",
+    "principal_diagnosis": {"name": "重症肺炎", "icd10": "J15.901", "tnm_stage": "—", "note": "★主诊断编码为重症肺炎（高权重）", "coded_as_severe": true, "drg_group": "ES1x 呼吸系统感染/炎症伴重症(高权重组)", "base_should_be": "ES3x 呼吸系统感染/炎症不伴并发症(社区获得性肺炎)"},
+    "other_diagnosis": [
+      {"name": "2型糖尿病", "icd10": "E11.900", "note": "次诊断，编码有病历支持（空腹血糖8.9、用二甲双胍）→正确编码"},
+      {"name": "社区获得性肺炎", "icd10": "J18.101"}
+    ],
+    "principal_operation": {"name": "无", "icd9": "—"},
+    "attending_physician": "吴医生（主治医师）", "chief_physician": "郑主任（主任医师）",
+    "previous_admissions": [],
+    "coding_audit_note": "★高套核对源：主诊断编'重症肺炎'(ES1x高权重)，但入院记录为社区获得性肺炎(轻中度)、血气PaO2正常、氧合指数>300、全程无呼吸衰竭/机械通气/休克/ICU——重症诊断无病历支持，应入ES3x普通肺炎组。"
+  },
+  "admission_note": {
+    "doc_type": "入院记录", "record_time": "2026-04-15 15:00",
+    "chief_complaint": "咳嗽、咳黄痰伴发热3天。",
+    "present_illness": "患者3天前受凉后出现咳嗽、咳黄痰，伴发热（最高38.5℃），无气促、无胸痛、无咯血。胸部CT示右下肺斑片影。诊断社区获得性肺炎。患者神志清，精神可，无呼吸困难。",
+    "past_history": "2型糖尿病5年，口服二甲双胍，血糖控制可。",
+    "physical_exam": "T 38.2℃，P 88次/分，R 20次/分，BP 128/80mmHg，指脉氧 SpO2 96%（未吸氧）。神清，精神可。右下肺可闻及湿啰音。心律齐。",
+    "specialist_exam": "CURB-65评分 1分（低危）；无意识障碍、无低血压、无呼吸频率≥30、BUN正常、年龄65。无重症肺炎诊断标准。",
+    "preliminary_diagnosis": ["社区获得性肺炎（轻中度）", "2型糖尿病"],
+    "treatment_plan": "经验性抗感染（头孢呋辛）、化痰、控制血糖；监测病情。"
+  },
+  "progress_notes": [
+    {"date": "2026-04-15", "type": "首次病程记录", "author": "吴医生", "text": "患者社区获得性肺炎，CURB-65 1分低危，无重症肺炎标准（无呼吸衰竭、无感染性休克、无需机械通气）。指脉氧96%未吸氧。予头孢呋辛抗感染。二级护理。"},
+    {"date": "2026-04-17", "type": "日常病程记录", "author": "吴医生", "text": "体温降至正常，咳嗽减轻，一般情况可。血气分析：PaO2 85mmHg、PaCO2 40mmHg、氧合指数(PaO2/FiO2) 350（>300，非ARDS、非重症）。未吸氧。"},
+    {"date": "2026-04-20", "type": "日常病程记录", "author": "吴医生", "text": "患者无发热，咳嗽明显好转，复查CT炎症吸收。全程无呼吸衰竭、无入住ICU、无机械通气、无血管活性药物。"},
+    {"date": "2026-04-22", "type": "出院记录", "author": "吴医生", "text": "社区获得性肺炎好转，达出院标准，今日出院。"}
+  ],
+  "long_term_orders": {"doc_type": "长期医嘱单", "items": [
+    {"order_id": "L01", "start": "2026-04-15 15:00", "stop": "2026-04-22 10:00", "content": "呼吸内科护理常规", "doctor": "吴医生"},
+    {"order_id": "L02", "start": "2026-04-15 15:00", "stop": "2026-04-22 10:00", "content": "二级护理", "doctor": "吴医生"},
+    {"order_id": "L03", "start": "2026-04-15 16:00", "stop": "2026-04-21 16:00", "content": "注射用头孢呋辛钠 1.5g + 0.9%氯化钠100ml ivgtt bid", "doctor": "吴医生"},
+    {"order_id": "L04", "start": "2026-04-15 15:00", "stop": "2026-04-22 10:00", "content": "二甲双胍片 0.5g po bid（降糖）", "doctor": "吴医生"}
+  ]},
+  "temporary_orders": {"doc_type": "临时医嘱单", "items": [
+    {"order_id": "T01", "time": "2026-04-15 15:30", "content": "血常规、CRP、血气分析、空腹血糖、胸部CT", "doctor": "吴医生"}
+  ]},
+  "nursing_records": {"doc_type": "护理记录单", "nursing_level_executed": "二级护理（每2小时巡视）", "note": "与医嘱二级护理一致。", "entries": [
+    {"date": "2026-04-15", "vitals_count": 2, "round_interval_h": 2, "text": "入院，二级护理，SpO2 96%未吸氧。"},
+    {"date": "2026-04-17", "vitals_count": 2, "round_interval_h": 2, "text": "体温正常，一般情况可。"},
+    {"date": "2026-04-22", "vitals_count": 1, "round_interval_h": 2, "text": "出院。"}
+  ]},
+  "lab_reports": [
+    {"doc_type": "检验报告", "report_id": "LAB-20260417-0205", "report_time": "2026-04-17 08:00", "category": "血气分析", "results": [
+      {"item": "动脉血氧分压 PaO2", "value": 85, "unit": "mmHg", "ref": "80–100", "flag": "正常"},
+      {"item": "氧合指数 PaO2/FiO2", "value": 350, "unit": "", "ref": ">300正常", "flag": "正常（>300，非ARDS/非重症）"},
+      {"item": "动脉血二氧化碳分压 PaCO2", "value": 40, "unit": "mmHg", "ref": "35–45", "flag": "正常"}
+    ]},
+    {"doc_type": "检验报告", "report_id": "LAB-20260415-0205", "report_time": "2026-04-15 16:00", "category": "血常规/炎症/血糖", "results": [
+      {"item": "白细胞 WBC", "value": 11.2, "unit": "10⁹/L", "ref": "3.5–9.5", "flag": "升高"},
+      {"item": "C反应蛋白 CRP", "value": 48, "unit": "mg/L", "ref": "0–10", "flag": "升高"},
+      {"item": "空腹血糖 GLU", "value": 8.9, "unit": "mmol/L", "ref": "3.9–6.1", "flag": "升高（支持2型糖尿病次诊断）"}
+    ]}
+  ],
+  "pathology_report": {"doc_type": "—", "report_id": "—", "diagnosis": "本例无病理（非肿瘤）", "note": "肺炎非肿瘤，无病理/基因，肿瘤规则不适用"},
+  "gene_test_report": {"doc_type": "—", "status": "不适用", "note": "非肿瘤病例"},
+  "fee_list": {
+    "doc_type": "费用清单（医保结算明细）", "settle_date": "2026-04-22",
+    "items": [
+      {"line_no": 1, "fee_date": "2026-04-15~04-22", "category": "床位费", "item_name": "床位费（三人间）", "spec": "-", "qty": 7, "unit": "日", "unit_price": 50.0, "amount": 350.0, "insurance_class": "医保", "linked_order": "L01", "flag": "正常"},
+      {"line_no": 2, "fee_date": "2026-04-15~04-22", "category": "护理费", "item_name": "二级护理", "spec": "-", "qty": 7, "unit": "日", "unit_price": 12.0, "amount": 84.0, "insurance_class": "医保", "linked_order": "L02", "flag": "正常（与医嘱一致）"},
+      {"line_no": 3, "fee_date": "2026-04-15~04-20", "category": "西药费", "item_name": "注射用头孢呋辛钠", "spec": "1.5g", "qty": 12, "unit": "支", "unit_price": 30.0, "amount": 360.0, "insurance_class": "医保甲", "linked_order": "L03", "flag": "正常（1.5g bid×6天=12支，结算12支一致）"},
+      {"line_no": 4, "fee_date": "2026-04-15~04-22", "category": "西药费", "item_name": "二甲双胍片", "spec": "0.5g", "qty": 14, "unit": "片", "unit_price": 0.5, "amount": 7.0, "insurance_class": "医保甲", "linked_order": "L04", "flag": "正常"},
+      {"line_no": 5, "fee_date": "2026-04-15", "category": "检查费", "item_name": "胸部CT平扫", "spec": "-", "qty": 1, "unit": "次", "unit_price": 280.0, "amount": 280.0, "insurance_class": "医保", "linked_order": "T01", "flag": "正常"},
+      {"line_no": 6, "fee_date": "2026-04-15", "category": "检验费", "item_name": "血气分析", "spec": "-", "qty": 1, "unit": "次", "unit_price": 80.0, "amount": 80.0, "insurance_class": "医保", "linked_order": "T01", "flag": "正常"},
+      {"line_no": 7, "fee_date": "2026-04-15~04-22", "category": "治疗费", "item_name": "静脉输液", "spec": "-", "qty": 6, "unit": "日", "unit_price": 8.0, "amount": 48.0, "insurance_class": "医保", "linked_order": "L03", "flag": "正常"},
+      {"line_no": 8, "fee_date": "2026-04-22", "category": "综合费", "item_name": "DRG结算（ES1x 高权重组）", "spec": "-", "qty": 1, "unit": "例", "unit_price": 8651.0, "amount": 8651.0, "insurance_class": "医保", "linked_order": "—", "flag": "★D-401：按重症肺炎ES1x高权重组结算，但病历支持普通肺炎ES3x组，编码高套抬高权重"}
+    ],
+    "absent_items_note": "按项目费用本身合规；违规在DRG入组——主诊断高套'重症肺炎'拔高权重组(ES1x)，病历仅支持普通肺炎(ES3x)。核对源=病案首页编码 vs 病历(血气/氧合/病程重症标准)。",
+    "total_amount": 9860.0
+  },
+  "discharge_summary": {"doc_type": "出院小结", "admit_date": "2026-04-15", "discharge_date": "2026-04-22", "discharge_diagnosis": ["社区获得性肺炎（好转）", "2型糖尿病"], "hospital_course": "社区获得性肺炎，CURB-65低危，无重症标准，经抗感染治疗好转出院。", "discharge_orders": ["二甲双胍片 0.5g bid", "门诊随访"], "discharge_meds": [{"name": "二甲双胍片", "note": "降糖"}], "note": "★出院诊断为'社区获得性肺炎'，与病案首页主诊断'重症肺炎'不一致——印证高套。"}
+}

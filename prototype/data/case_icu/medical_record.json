@@ -1,0 +1,85 @@
+{
+  "case_meta": {
+    "case_id": "YY-ICU-001",
+    "case_title": "重症医学·ICU急性呼吸窘迫综合征 备演材料包（硬证据·对错分明）",
+    "disclaimer": "虚构数据。重症医学真fire示范件（第7个完整可fire领域）：以ICU记录/设备使用记录为事实基准，对费用清单硬比对——按小时计价监护项目计费时长>实际使用时长(ICU-302,呼吸机/CRRT)/特级护理重复收取一般专项护理费(ICU-301)。ICU-303(非ICU患者收重症监护费)设为干扰项:本例确有ICU收治记录→重症监护费正确不报。依据取官方重症医学问题清单逐字(序174/175/179,✅已核实)。",
+    "specialty": "重症医学",
+    "embedded_violation_count": 3,
+    "distractor_count": 1,
+    "clue_count": 0,
+    "settlement_summary": {"total_amount": 18460.0, "insurance_paid_amount": 18460.0, "currency": "CNY", "settle_type": "住院·按项目付费"}
+  },
+  "front_page": {
+    "doc_type": "病案首页", "hospital": "示范市第一人民医院（虚构）", "hospital_level": "三级甲等",
+    "patient_name": "周重症", "sex": "男", "age": 64, "birth_date": "1962-01-15",
+    "insurance_type": "职工基本医疗保险", "admission_no": "ZY20260510-0905",
+    "admit_time": "2026-05-10 14:00", "discharge_time": "2026-05-14 10:00", "actual_inpatient_days": 4,
+    "admit_dept": "重症医学科（ICU）", "bed_no": "ICU-03床",
+    "principal_diagnosis": {"name": "急性呼吸窘迫综合征（ARDS）", "icd10": "J80.x01"},
+    "other_diagnosis": [{"name": "I型呼吸衰竭", "icd10": "J96.001"}, {"name": "急性肾损伤", "icd10": "N17.901"}],
+    "attending_physician": "冯医生（主治医师）", "chief_physician": "褚主任（主任医师）",
+    "previous_admissions": []
+  },
+  "admission_note": {
+    "doc_type": "入院记录", "record_time": "2026-05-10 14:30",
+    "chief_complaint": "发热伴呼吸困难3天，加重伴意识模糊6小时。",
+    "present_illness": "患者3天前受凉后发热、咳嗽，6小时前呼吸困难加重、氧合进行性下降，急诊以「急性呼吸窘迫综合征」收入重症医学科（ICU）。",
+    "past_history": "高血压病史5年。",
+    "physical_exam": "T38.9 P118 R32 BP90/56，SpO2 82%（面罩吸氧）。双肺广泛湿啰音。",
+    "preliminary_diagnosis": ["急性呼吸窘迫综合征（ARDS）", "I型呼吸衰竭", "急性肾损伤"],
+    "treatment_plan": "收入ICU，特级护理；予有创呼吸机辅助呼吸、连续性血液净化（CRRT）、心电及动脉内压力监测、抗感染及器官支持治疗。"
+  },
+  "progress_notes": [
+    {"date": "2026-05-10", "type": "ICU首次病程记录", "author": "冯医生", "text": "患者ARDS、I型呼吸衰竭，14:00收入重症医学科（ICU）-03床，特级护理。15:00行气管插管接有创呼吸机辅助呼吸。因急性肾损伤、容量过负荷，予连续性血液净化（CRRT）。持续心电、动脉内压力监测。"},
+    {"date": "2026-05-12", "type": "ICU病程记录", "author": "冯医生", "text": "呼吸机辅助呼吸中，氧合改善。CRRT已于今晨停机（累计约40小时）。继续特级护理。"},
+    {"date": "2026-05-14", "type": "转出记录", "author": "冯医生", "text": "病情平稳，呼吸机于今晨脱机（累计约96小时），转出ICU至呼吸内科普通病房。"}
+  ],
+  "icu_record": {
+    "doc_type": "重症监护记录单（ICU记录/设备使用记录）", "admission_to_icu": true,
+    "icu_admit": "2026-05-10 14:00", "icu_discharge": "2026-05-14 14:00",
+    "nursing_level": "特级护理",
+    "ventilator": {"mode": "有创呼吸机辅助呼吸", "start": "2026-05-10 15:00", "end": "2026-05-14 15:00", "actual_hours": 96},
+    "crrt": {"mode": "连续性血液净化（CRRT）", "actual_hours": 40},
+    "monitoring": ["心电监测", "动脉内压力监测", "脉搏血氧饱和度"],
+    "note": "ICU收治记录明确。有创呼吸机实际辅助呼吸96小时（05-10 15:00～05-14 15:00）；CRRT实际40小时。全程特级护理（含吸痰、管路维护等一般专项护理）。"
+  },
+  "long_term_orders": {"doc_type": "长期医嘱单", "items": [
+    {"order_id": "L01", "start": "2026-05-10 14:00", "stop": "2026-05-14 14:00", "content": "特级护理", "doctor": "冯医生"},
+    {"order_id": "L02", "start": "2026-05-10 15:00", "stop": "2026-05-14 15:00", "content": "有创呼吸机辅助呼吸", "doctor": "冯医生"},
+    {"order_id": "L03", "start": "2026-05-10 16:00", "stop": "2026-05-12 08:00", "content": "连续性血液净化（CRRT）", "doctor": "冯医生"}
+  ]},
+  "temporary_orders": {"doc_type": "临时医嘱单", "items": [
+    {"order_id": "T01", "time": "2026-05-10 14:30", "content": "血常规、生化、动脉血气", "doctor": "冯医生"},
+    {"order_id": "T02", "time": "2026-05-10 15:00", "content": "气管插管接有创呼吸机", "doctor": "冯医生"}
+  ]},
+  "nursing_records": {"doc_type": "护理记录单", "nursing_level_executed": "特级护理（专人监护，含吸痰、管路维护等专项护理）", "note": "与医嘱特级护理一致；呼吸机、CRRT 起停时间见设备记录。", "entries": [
+    {"date": "2026-05-10", "vitals_count": 24, "round_interval_h": 1, "text": "ICU特级护理，呼吸机15:00接机，CRRT16:00开始。"},
+    {"date": "2026-05-12", "vitals_count": 24, "round_interval_h": 1, "text": "CRRT晨停（累计约40h）。特级护理。"},
+    {"date": "2026-05-14", "vitals_count": 12, "round_interval_h": 1, "text": "呼吸机晨脱（累计约96h），转出ICU。"}
+  ]},
+  "lab_reports": [
+    {"doc_type": "检验报告", "report_id": "LAB-20260510-0905", "report_time": "2026-05-10 15:30", "category": "动脉血气", "results": [
+      {"item": "氧合指数 PaO2/FiO2", "value": 110, "unit": "mmHg", "ref": ">300", "flag": "危急（ARDS）"}
+    ]}
+  ],
+  "fee_list": {
+    "doc_type": "费用清单（医保结算明细）", "settle_date": "2026-05-14",
+    "items": [
+      {"line_no": 1, "fee_date": "2026-05-10~05-14", "category": "床位费", "item_name": "重症监护病房床位费", "spec": "-", "qty": 4, "unit": "日", "unit_price": 300.0, "amount": 1200.0, "insurance_class": "医保", "linked_order": "L01", "flag": "正常"},
+      {"line_no": 2, "fee_date": "2026-05-10~05-14", "category": "护理费", "item_name": "特级护理", "spec": "-", "qty": 4, "unit": "日", "unit_price": 200.0, "amount": 800.0, "insurance_class": "医保", "linked_order": "L01", "flag": "正常（与医嘱一致）"},
+      {"line_no": 3, "fee_date": "2026-05-10~05-14", "category": "护理费", "item_name": "一般专项护理（吸痰/管路护理）", "spec": "-", "qty": 4, "unit": "日", "unit_price": 75.0, "amount": 300.0, "insurance_class": "医保", "linked_order": "L01", "flag": "★特级护理内涵已含一般专项护理,另收→ICU-301"},
+      {"line_no": 4, "fee_date": "2026-05-10~05-14", "category": "治疗费", "item_name": "有创呼吸机辅助呼吸", "spec": "按小时", "qty": 120, "unit": "小时", "unit_price": 50.0, "amount": 6000.0, "hours_charged": 120, "insurance_class": "医保", "linked_order": "L02", "flag": "★计费120小时>实际96小时→ICU-302"},
+      {"line_no": 5, "fee_date": "2026-05-10~05-12", "category": "治疗费", "item_name": "连续性血液净化（CRRT）", "spec": "按小时", "qty": 48, "unit": "小时", "unit_price": 80.0, "amount": 3840.0, "hours_charged": 48, "insurance_class": "医保", "linked_order": "L03", "flag": "★计费48小时>实际40小时→ICU-302"},
+      {"line_no": 6, "fee_date": "2026-05-10~05-14", "category": "诊疗费", "item_name": "重症监护费", "spec": "-", "qty": 4, "unit": "日", "unit_price": 150.0, "amount": 600.0, "insurance_class": "医保", "linked_order": "L01", "flag": "正常（患者确在ICU,有收治记录→ICU-303干扰项,正确不报）"},
+      {"line_no": 7, "fee_date": "2026-05-10~05-14", "category": "西药费", "item_name": "去甲肾上腺素注射液", "spec": "2mg", "qty": 20, "unit": "支", "unit_price": 18.0, "amount": 360.0, "insurance_class": "医保乙", "linked_order": "L02", "flag": "正常（升压）"},
+      {"line_no": 8, "fee_date": "2026-05-10~05-14", "category": "西药费", "item_name": "注射用美罗培南", "spec": "0.5g", "qty": 24, "unit": "支", "unit_price": 95.0, "amount": 2280.0, "insurance_class": "医保乙", "linked_order": "T01", "flag": "正常（抗感染）"},
+      {"line_no": 9, "fee_date": "2026-05-10~05-14", "category": "治疗费", "item_name": "心电监测", "spec": "按小时", "qty": 96, "unit": "小时", "unit_price": 8.0, "amount": 768.0, "hours_charged": 96, "insurance_class": "医保", "linked_order": "L02", "flag": "正常（计费96小时=实际96小时,正确不报）"},
+      {"line_no": 10, "fee_date": "2026-05-10", "category": "检验费", "item_name": "动脉血气分析", "spec": "-", "qty": 6, "unit": "次", "unit_price": 52.0, "amount": 312.0, "insurance_class": "医保", "linked_order": "T01", "flag": "正常"},
+      {"line_no": 11, "fee_date": "2026-05-10", "category": "检验费", "item_name": "血常规+生化", "spec": "-", "qty": 1, "unit": "次", "unit_price": 200.0, "amount": 200.0, "insurance_class": "医保", "linked_order": "T01", "flag": "正常"},
+      {"line_no": 12, "fee_date": "2026-05-10~05-14", "category": "西药费", "item_name": "丙泊酚注射液", "spec": "200mg", "qty": 18, "unit": "支", "unit_price": 100.0, "amount": 1800.0, "insurance_class": "医保乙", "linked_order": "L02", "flag": "正常（镇静）"}
+    ],
+    "absent_items_note": "重症ICU件：以ICU记录/设备使用记录为基准。ICU-302呼吸机时长虚计+CRRT时长虚计、ICU-301特级护理重复收专项护理 共3疑点；重症监护费为干扰项(患者确在ICU,正确不报);心电监测计费=实际,正确不报。",
+    "total_amount": 18460.0
+  },
+  "discharge_summary": {"doc_type": "转出小结", "admit_date": "2026-05-10", "discharge_date": "2026-05-14", "discharge_diagnosis": ["急性呼吸窘迫综合征（ARDS）", "I型呼吸衰竭", "急性肾损伤"], "hospital_course": "ICU特级护理，有创呼吸机辅助呼吸96小时、CRRT 40小时，氧合改善后脱机，转出ICU至普通病房。", "discharge_orders": ["转呼吸内科继续治疗"], "discharge_meds": []}
+}

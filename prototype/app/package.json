@@ -1,0 +1,14 @@
+{
+  "name": "yingyan-audit-workbench",
+  "version": "0.2.0",
+  "description": "鹰眼·医保基金稽核智能体 现场演示原型（零依赖运行）",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "build:rules": "node build-rules.js"
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "js-yaml": "^4.2.0"
+  }
+}

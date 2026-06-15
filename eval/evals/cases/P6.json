@@ -1,0 +1,41 @@
+{
+  "prompt": "P6_reconcile_v6.txt",
+  "cases": [
+    {
+      "id": "P6-C1-merge-three-rules",
+      "desc": "种子C1:白蛋白(行37)被B-201/A-110/A-108三规则命中 → 合1主疑点,金额=单行额1280,omitted空",
+      "severity": "seed",
+      "vars": {
+        "findings": "[{\"rule_id\":\"A-108\",\"fee_line_ids\":[37],\"status\":\"疑点\",\"violation_type\":\"虚记\",\"amount\":1280,\"evidence\":[\"白蛋白费用行anchor\"],\"confidence\":0.85},{\"rule_id\":\"A-110\",\"fee_line_ids\":[37],\"status\":\"疑点\",\"violation_type\":\"重复收费\",\"amount\":1280,\"evidence\":[\"白蛋白费用行anchor\"],\"confidence\":0.8},{\"rule_id\":\"B-201\",\"fee_line_ids\":[37],\"status\":\"疑点\",\"violation_type\":\"超量\",\"amount\":1280,\"evidence\":[\"白蛋白费用行anchor\"],\"confidence\":0.9}]"
+      },
+      "expect": { "is_json": true, "custom": ["p6_merge_single_amount"], "_meta": { "expected_total": 1280 } }
+    },
+    {
+      "id": "P6-C2-distinct-no-merge",
+      "desc": "种子C2:不同费用行(行37白蛋白 vs 行52球囊)同类违规 → 不合并(≥2簇),金额各计=1580",
+      "severity": "seed",
+      "vars": {
+        "findings": "[{\"rule_id\":\"B-201\",\"fee_line_ids\":[37],\"status\":\"疑点\",\"violation_type\":\"超量\",\"amount\":1280,\"evidence\":[\"白蛋白anchor\"],\"confidence\":0.9},{\"rule_id\":\"A-109\",\"fee_line_ids\":[52],\"status\":\"疑点\",\"violation_type\":\"超量\",\"amount\":300,\"evidence\":[\"球囊anchor\"],\"confidence\":0.9}]"
+      },
+      "expect": { "is_json": true, "custom": ["p6_no_merge_distinct", "p6_total_and_omitted"], "_meta": { "expected_total": 1580 } }
+    },
+    {
+      "id": "P6-R1-chain-overlap",
+      "desc": "红队v4(致命):链式重叠 X[37,38] Y[38,39] Z[39,40] 无单一核心行 → 不得传递并成1簇把37/40错并;且所有行须对账无漏",
+      "severity": "redteam",
+      "vars": {
+        "findings": "[{\"rule_id\":\"X-01\",\"fee_line_ids\":[37,38],\"status\":\"疑点\",\"violation_type\":\"重复\",\"amount\":200,\"evidence\":[\"a37\"],\"confidence\":0.8},{\"rule_id\":\"Y-01\",\"fee_line_ids\":[38,39],\"status\":\"疑点\",\"violation_type\":\"重复\",\"amount\":200,\"evidence\":[\"a38\"],\"confidence\":0.8},{\"rule_id\":\"Z-01\",\"fee_line_ids\":[39,40],\"status\":\"疑点\",\"violation_type\":\"重复\",\"amount\":200,\"evidence\":[\"a39\"],\"confidence\":0.8}]"
+      },
+      "expect": { "is_json": true, "custom": ["p6_chain_not_overmerged", "p6_accounts_all_lines"], "_meta": { "expected_lines": [37, 38, 39, 40] } }
+    },
+    {
+      "id": "P6-R2-amount-provable-first",
+      "desc": "红队v5(致命):同行37,A-108认定1200(有anchor可证) vs A-110认定800(证据弱) → 取可证1200,非无脑取低800",
+      "severity": "redteam",
+      "vars": {
+        "findings": "[{\"rule_id\":\"A-108\",\"fee_line_ids\":[37],\"status\":\"疑点\",\"violation_type\":\"虚记\",\"amount\":1200,\"evidence\":[\"直接anchor:账单价1200与发药记录\"],\"confidence\":0.9},{\"rule_id\":\"A-110\",\"fee_line_ids\":[37],\"status\":\"线索\",\"violation_type\":\"重复\",\"amount\":800,\"evidence\":[],\"confidence\":0.45}]"
+      },
+      "expect": { "is_json": true, "custom": ["p6_merge_single_amount"], "_meta": { "expected_total": 1200 } }
+    }
+  ]
+}

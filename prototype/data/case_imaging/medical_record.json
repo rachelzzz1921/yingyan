@@ -1,0 +1,64 @@
+{
+  "case_meta": {
+    "case_id": "YY-DEMO-IMG-001",
+    "case_title": "医学影像·胸部CT增强 备演材料包（硬证据·对错分明）",
+    "disclaimer": "虚构数据。影像领域违规均为'内涵/数量比对'类硬证据,与影像检查记录逐项比对,无指征争议空间。依据=医学影像问题清单逐字(上海医保局官方14条)。",
+    "embedded_violation_count": 2,
+    "distractor_count": 1,
+    "settlement_summary": {"total_amount": 1640.0, "insurance_paid_amount": 1640.0, "currency": "CNY", "settle_type": "门诊/住院·按项目付费"},
+    "demo_value": "★对错分明:①CT增强扫描内涵已含平扫,却另收CT平扫(重复收费,序10);②医用胶片收10张,影像记录实际用4张(超量,序2)。干扰项:胸部DR摄影本身合规。"
+  },
+  "front_page": {
+    "doc_type": "病案首页", "hospital": "示范市第一人民医院（虚构）", "hospital_level": "三级甲等",
+    "patient_name": "王影", "sex": "男", "age": 55, "birth_date": "1971-06-20",
+    "insurance_type": "城乡居民基本医疗保险", "admission_no": "MZ20260512-0808",
+    "admit_time": "2026-05-12 09:00", "discharge_time": "2026-05-12 12:00", "actual_inpatient_days": 0,
+    "admit_dept": "放射科/门诊", "bed_no": "门诊",
+    "principal_diagnosis": {"name": "肺部占位性病变待查", "icd10": "R91.x00", "tnm_stage": "—", "note": "门诊影像检查"},
+    "other_diagnosis": [],
+    "principal_operation": {"name": "无", "icd9": "—"},
+    "attending_physician": "冯医生（主治医师）", "chief_physician": "陈主任（主任医师·放射科）",
+    "previous_admissions": []
+  },
+  "admission_note": {
+    "doc_type": "门诊记录", "record_time": "2026-05-12 09:10",
+    "chief_complaint": "体检发现肺部阴影1周。",
+    "present_illness": "患者1周前体检胸片示右肺阴影，无咳嗽咳痰，无发热。为进一步明确行胸部CT增强扫描。",
+    "past_history": "无特殊。",
+    "physical_exam": "双肺呼吸音清。",
+    "preliminary_diagnosis": ["肺部占位性病变待查"],
+    "treatment_plan": "行胸部CT增强扫描明确占位性质。"
+  },
+  "progress_notes": [
+    {"date": "2026-05-12", "type": "门诊记录", "author": "冯医生", "text": "行胸部CT增强扫描（含平扫+增强序列）。影像所见右肺上叶结节，建议进一步随访。本次实际使用医用胶片4张。"}
+  ],
+  "imaging_record": {
+    "doc_type": "影像检查记录",
+    "studies": [
+      {"name": "胸部CT增强扫描", "modality": "CT", "date": "2026-05-12", "note": "★含平扫序列+增强序列。CT增强扫描项目内涵已包含平扫,不另收CT平扫。", "report": "右肺上叶结节,增强后轻度强化。"}
+    ],
+    "films_used": 4,
+    "note": "★比对源：CT增强扫描内涵已含平扫(不应另收CT平扫);本次实际使用医用胶片4张。"
+  },
+  "long_term_orders": {"doc_type": "长期医嘱单", "items": []},
+  "temporary_orders": {"doc_type": "临时医嘱单", "items": [
+    {"order_id": "T01", "time": "2026-05-12 09:20", "content": "胸部CT增强扫描", "doctor": "冯医生"}
+  ]},
+  "nursing_records": {"doc_type": "护理记录单", "nursing_level_executed": "门诊无护理", "entries": []},
+  "lab_reports": [],
+  "pathology_report": {"doc_type": "—", "report_id": "—", "diagnosis": "本例无病理", "note": "影像检查,无病理/基因,肿瘤规则不适用"},
+  "gene_test_report": {"doc_type": "—", "status": "不适用", "note": "非肿瘤确诊病例"},
+  "fee_list": {
+    "doc_type": "费用清单（医保结算明细）", "settle_date": "2026-05-12",
+    "items": [
+      {"line_no": 1, "fee_date": "2026-05-12", "category": "检查费", "item_name": "胸部CT增强扫描", "spec": "-", "qty": 1, "unit": "次", "unit_price": 420.0, "amount": 420.0, "insurance_class": "医保", "linked_order": "T01", "flag": "正常（术式本身）"},
+      {"line_no": 2, "fee_date": "2026-05-12", "category": "检查费", "item_name": "胸部CT平扫", "spec": "-", "qty": 1, "unit": "次", "unit_price": 280.0, "amount": 280.0, "insurance_class": "医保", "linked_order": "—", "flag": "★IMG-301重复收费：CT增强扫描内涵已含平扫，另收CT平扫属重复（影像问题清单序10）"},
+      {"line_no": 3, "fee_date": "2026-05-12", "category": "材料费", "item_name": "医用胶片", "spec": "8×10英寸", "qty": 10, "unit": "张", "unit_price": 12.0, "amount": 120.0, "insurance_class": "医保", "linked_order": "—", "flag": "★IMG-302超量：收10张，影像记录实际使用4张，超6张(¥72)（影像问题清单序2）"},
+      {"line_no": 4, "fee_date": "2026-05-12", "category": "检查费", "item_name": "胸部DR摄影", "spec": "-", "qty": 1, "unit": "次", "unit_price": 80.0, "amount": 80.0, "insurance_class": "医保", "linked_order": "—", "flag": "干扰项：DR摄影本身合规→正确不报"},
+      {"line_no": 5, "fee_date": "2026-05-12", "category": "诊查费", "item_name": "门诊诊查费", "spec": "-", "qty": 1, "unit": "次", "unit_price": 12.0, "amount": 12.0, "insurance_class": "医保", "linked_order": "—", "flag": "正常"}
+    ],
+    "absent_items_note": "影像领域核对源=影像检查记录(术式内涵+实际胶片张数)。CT增强含平扫、胶片张数均可逐项硬比对。",
+    "total_amount": 912.0
+  },
+  "discharge_summary": {"doc_type": "门诊小结", "admit_date": "2026-05-12", "discharge_date": "2026-05-12", "discharge_diagnosis": ["肺部占位性病变待查"], "hospital_course": "行胸部CT增强扫描，右肺上叶结节，建议随访。", "discharge_orders": ["1月后复查"], "discharge_meds": []}
+}

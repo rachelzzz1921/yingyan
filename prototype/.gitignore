@@ -1,0 +1,14 @@
+# 鹰眼原型 · 仓库根忽略清单
+# 密钥（只在 app/.env，绝不入库）
+app/.env
+.env
+
+# 依赖与日志
+node_modules/
+*.log
+
+# 运行期复核反馈（用户标注，非源码）
+data/review_feedback.json
+
+# 运行期规则治理状态(三态落盘,非源)
+data/rule_states.json

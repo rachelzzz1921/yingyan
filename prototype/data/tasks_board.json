@@ -1,0 +1,325 @@
+{
+  "meta": {
+    "smart_goal": "Phase 4 评测闭环：YHF 完整门禁 + AuditBench 20 案卷 + main gold 同步",
+    "updated_at": "2026-06-15T02:55:05.234Z",
+    "last_roadmap_sync": "2026-06-15T02:54:54.371Z"
+  },
+  "tasks": [
+    {
+      "id": "T4-1",
+      "title": "同步 main 案卷 expected_findings（5→6 疑点对齐引擎）",
+      "status": "done",
+      "priority": "P0",
+      "phase": "Phase 4 · iter-21",
+      "source": "S",
+      "acceptance": "L3 recall PASS",
+      "created_at": "2026-06-15T00:00:00.000Z",
+      "updated_at": "2026-06-15T02:55:05.234Z",
+      "history": [
+        {
+          "ts": "2026-06-15T12:00:00.000Z",
+          "by": "agent",
+          "changes": [
+            {
+              "field": "status",
+              "from": "todo",
+              "to": "done"
+            }
+          ]
+        },
+        {
+          "ts": "2026-06-15T02:54:54.362Z",
+          "by": "human",
+          "changes": [
+            {
+              "field": "status",
+              "from": "done",
+              "to": "doing"
+            },
+            {
+              "field": "deferred_reason",
+              "to": ""
+            }
+          ]
+        },
+        {
+          "ts": "2026-06-15T02:54:54.368Z",
+          "by": "human",
+          "changes": [
+            {
+              "field": "status",
+              "from": "doing",
+              "to": "done"
+            }
+          ]
+        },
+        {
+          "ts": "2026-06-15T02:54:54.369Z",
+          "by": "human",
+          "changes": [
+            {
+              "field": "status",
+              "from": "done",
+              "to": "todo"
+            }
+          ]
+        },
+        {
+          "ts": "2026-06-15T02:55:05.234Z",
+          "by": "human",
+          "changes": [
+            {
+              "field": "status",
+              "from": "todo",
+              "to": "done"
+            }
+          ]
+        }
+      ],
+      "deferred_reason": ""
+    },
+    {
+      "id": "T4-2",
+      "title": "核心 10 规则补 test_cases[]（≥3阳+≥3阴）",
+      "status": "done",
+      "priority": "P0",
+      "phase": "Phase 4 · iter-21",
+      "source": "S",
+      "acceptance": "L2 核心集 missing=0",
+      "created_at": "2026-06-15T00:00:00.000Z",
+      "updated_at": "2026-06-15T14:00:00.000Z",
+      "history": [
+        {
+          "ts": "2026-06-15T14:00:00.000Z",
+          "by": "agent",
+          "changes": [
+            {
+              "field": "status",
+              "from": "todo",
+              "to": "done"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "T4-3",
+      "title": "L4 shadow harness 接规则准入 UI（三验 FPR≤10%）",
+      "status": "todo",
+      "priority": "P1",
+      "phase": "Phase 4 · iter-21",
+      "source": "S",
+      "acceptance": "治理页显 shadow_metrics",
+      "created_at": "2026-06-15T00:00:00.000Z",
+      "updated_at": "2026-06-15T00:00:00.000Z",
+      "history": []
+    },
+    {
+      "id": "T4-4",
+      "title": "L1 接 eval baseline / G2 报告",
+      "status": "todo",
+      "priority": "P1",
+      "phase": "Phase 4 · iter-21",
+      "source": "S",
+      "acceptance": "G2 有通过率",
+      "created_at": "2026-06-15T00:00:00.000Z",
+      "updated_at": "2026-06-15T00:00:00.000Z",
+      "history": []
+    },
+    {
+      "id": "T4-5",
+      "title": "AuditBench 扩至 20 案卷（+5 边界干扰）",
+      "status": "todo",
+      "priority": "P1",
+      "phase": "Phase 4 · iter-21",
+      "source": "S",
+      "acceptance": "bench 20 行",
+      "created_at": "2026-06-15T00:00:00.000Z",
+      "updated_at": "2026-06-15T00:00:00.000Z",
+      "history": []
+    },
+    {
+      "id": "T4-6",
+      "title": "yhf gate --strict 接入 CI",
+      "status": "todo",
+      "priority": "P2",
+      "phase": "Phase 4 · iter-21",
+      "source": "S",
+      "acceptance": "CI 文档",
+      "created_at": "2026-06-15T00:00:00.000Z",
+      "updated_at": "2026-06-15T00:00:00.000Z",
+      "history": []
+    },
+    {
+      "id": "T5-1",
+      "title": "LLM 路径接 shadow post-process (B07c)",
+      "status": "todo",
+      "priority": "P0",
+      "phase": "Phase 5 · iter-22",
+      "source": "S",
+      "acceptance": "llm+shadow 一致",
+      "created_at": "2026-06-15T00:00:00.000Z",
+      "updated_at": "2026-06-15T00:00:00.000Z",
+      "history": []
+    },
+    {
+      "id": "T5-2",
+      "title": "deprecated 规则在 routing 显「已下线」",
+      "status": "todo",
+      "priority": "P1",
+      "phase": "Phase 5 · iter-22",
+      "source": "S",
+      "acceptance": "B07d 收尾",
+      "created_at": "2026-06-15T00:00:00.000Z",
+      "updated_at": "2026-06-15T00:00:00.000Z",
+      "history": []
+    },
+    {
+      "id": "T5-3",
+      "title": "三审 Agent prompt 模板 demo",
+      "status": "todo",
+      "priority": "P1",
+      "phase": "Phase 5 · iter-22",
+      "source": "S",
+      "acceptance": "1 规则走通",
+      "created_at": "2026-06-15T00:00:00.000Z",
+      "updated_at": "2026-06-15T00:00:00.000Z",
+      "history": []
+    },
+    {
+      "id": "T6-1",
+      "title": "真 OCR → anchor.bbox (B04)",
+      "status": "deferred",
+      "priority": "P1",
+      "phase": "Phase 6 · iter-23",
+      "source": "S",
+      "deferred_reason": "生产期接 PP-StructureV3",
+      "created_at": "2026-06-15T00:00:00.000Z",
+      "updated_at": "2026-06-15T00:00:00.000Z",
+      "history": []
+    },
+    {
+      "id": "T6-2",
+      "title": "江苏价格目录导入 KB1",
+      "status": "todo",
+      "priority": "P1",
+      "phase": "Phase 6 · iter-23",
+      "source": "U",
+      "acceptance": "A-105 等引用核验",
+      "created_at": "2026-06-15T00:00:00.000Z",
+      "updated_at": "2026-06-15T00:00:00.000Z",
+      "history": []
+    },
+    {
+      "id": "B07c",
+      "title": "LLM 路径也接 shadow（与确定性主路对齐）",
+      "status": "todo",
+      "priority": "P2",
+      "phase": "BACKLOG",
+      "source": "R",
+      "created_at": "2026-06-15T00:00:00.000Z",
+      "updated_at": "2026-06-15T00:00:00.000Z",
+      "history": []
+    },
+    {
+      "id": "B09",
+      "title": "驳回原因内联输入框（替 prompt()）",
+      "status": "deferred",
+      "priority": "P2",
+      "phase": "BACKLOG",
+      "source": "R",
+      "deferred_reason": "demo 用 prompt 够用",
+      "created_at": "2026-06-15T00:00:00.000Z",
+      "updated_at": "2026-06-15T00:00:00.000Z",
+      "history": []
+    },
+    {
+      "id": "B10",
+      "title": "专科边界干扰件 +3（丰富 AuditBench）",
+      "status": "todo",
+      "priority": "P2",
+      "phase": "BACKLOG",
+      "source": "S",
+      "created_at": "2026-06-15T00:00:00.000Z",
+      "updated_at": "2026-06-15T00:00:00.000Z",
+      "history": []
+    },
+    {
+      "id": "UX-2",
+      "title": "任务台账交互管理（看板 Kanban）",
+      "status": "done",
+      "priority": "P0",
+      "phase": "Phase 4 · iter-21",
+      "source": "U",
+      "acceptance": "增删改状态+落盘",
+      "created_at": "2026-06-15T00:00:00.000Z",
+      "updated_at": "2026-06-15T01:59:33.104Z",
+      "history": [
+        {
+          "ts": "2026-06-15T01:59:33.104Z",
+          "by": "human",
+          "changes": [
+            {
+              "field": "status",
+              "from": "doing",
+              "to": "done"
+            },
+            {
+              "field": "deferred_reason",
+              "to": ""
+            }
+          ]
+        }
+      ],
+      "deferred_reason": ""
+    },
+    {
+      "id": "T7-1",
+      "title": "批量队列 + 进度条",
+      "status": "todo",
+      "priority": "P1",
+      "phase": "Phase 7 · iter-24",
+      "source": "S",
+      "acceptance": "",
+      "deferred_reason": "",
+      "created_at": "2026-06-15T02:16:36.401Z",
+      "updated_at": "2026-06-15T02:16:36.401Z",
+      "history": [
+        {
+          "ts": "2026-06-15T02:16:36.401Z",
+          "by": "sync",
+          "changes": [
+            {
+              "field": "_synced_from",
+              "to": "roadmap"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "T8-1",
+      "title": "治理落盘 → DB + 鉴权",
+      "status": "todo",
+      "priority": "P2",
+      "phase": "Phase 8",
+      "source": "S",
+      "acceptance": "",
+      "deferred_reason": "",
+      "created_at": "2026-06-15T02:16:36.401Z",
+      "updated_at": "2026-06-15T02:16:36.401Z",
+      "history": [
+        {
+          "ts": "2026-06-15T02:16:36.401Z",
+          "by": "sync",
+          "changes": [
+            {
+              "field": "_synced_from",
+              "to": "roadmap"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

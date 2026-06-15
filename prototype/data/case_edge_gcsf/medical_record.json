@@ -1,0 +1,72 @@
+{
+  "case_meta": {
+    "case_id": "YY-EDGE-GCSF-001",
+    "case_title": "边界干扰件·长效升白针有前次重度中性粒减少（应正确不报T-205）",
+    "disclaimer": "虚构数据。红蓝对抗阴性用例：看似违规实则合规——预防性用了长效升白针(像T-205),但前次住院血常规确有重度(4级)中性粒细胞减少→长效升白针限定支付条件满足,引擎应正确'不报'。测T-205除外情形,embedded=0,纳入AuditBench红线。",
+    "embedded_violation_count": 0,
+    "distractor_count": 0,
+    "edge_target_rule": "T-205",
+    "settlement_summary": {"total_amount": 4200.0, "insurance_paid_amount": 4200.0, "currency": "CNY", "settle_type": "住院·按项目付费"}
+  },
+  "front_page": {
+    "doc_type": "病案首页", "hospital": "示范市第一人民医院（虚构）", "hospital_level": "三级甲等",
+    "patient_name": "赵边界", "sex": "男", "age": 61, "birth_date": "1965-02-18",
+    "insurance_type": "职工基本医疗保险", "admission_no": "ZY20260520-0712",
+    "admit_time": "2026-05-20 09:00", "discharge_time": "2026-05-24 10:00", "actual_inpatient_days": 4,
+    "admit_dept": "肿瘤内科", "bed_no": "肿瘤内科-09床",
+    "principal_diagnosis": {"name": "左肺鳞癌", "icd10": "C34.901", "tnm_stage": "IIIB期", "note": "第2周期化疗"},
+    "other_diagnosis": [{"name": "恶性肿瘤化学治疗", "icd10": "Z51.101"}],
+    "attending_physician": "王医生（主治医师）", "chief_physician": "钱主任（主任医师）",
+    "previous_admissions": [
+      {"admission_no": "ZY20260429-0501", "admit_time": "2026-04-29 14:00", "discharge_time": "2026-05-02 11:00", "principal_diagnosis": "左肺鳞癌 IIIB期", "summary": "第1周期化疗（紫杉醇+卡铂）。★前次化疗后曾发生重度（4级）中性粒细胞减少（ANC最低0.4×10⁹/L），予升白支持治疗后恢复。", "purpose": "第1周期化疗"}
+    ]
+  },
+  "admission_note": {
+    "doc_type": "入院记录", "record_time": "2026-05-20 10:00",
+    "chief_complaint": "确诊左肺鳞癌2月，第1周期化疗后21天，为行第2周期化疗入院。",
+    "present_illness": "患者左肺鳞癌IIIB期，第1周期化疗（紫杉醇+卡铂）后曾发生重度（4级）中性粒细胞减少（ANC最低0.4×10⁹/L），属化疗后骨髓抑制高危。本次行第2周期化疗，拟一级预防性使用长效升白针。",
+    "past_history": "无特殊。",
+    "physical_exam": "T36.7 P78 R18 BP130/82。双肺呼吸音清。",
+    "preliminary_diagnosis": ["左肺鳞癌（IIIB期）", "恶性肿瘤化学治疗", "前次化疗后重度中性粒细胞减少"],
+    "treatment_plan": "行第2周期化疗（紫杉醇+卡铂）；因前次重度中性粒减少，本周期一级预防性使用长效升白针（聚乙二醇化G-CSF）。"
+  },
+  "progress_notes": [
+    {"date": "2026-05-20", "type": "首次病程记录", "author": "王医生", "text": "患者左肺鳞癌IIIB期，前次化疗后发生重度（4级）中性粒细胞减少（ANC 0.4×10⁹/L）。本周期行第2周期化疗，鉴于前次重度中性粒减少，符合一级预防指征，予长效升白针预防化疗后骨髓抑制。二级护理。"},
+    {"date": "2026-05-21", "type": "日常病程记录", "author": "王医生", "text": "化疗D1，予聚乙二醇化重组人粒细胞刺激因子6mg皮下注射一次（一级预防，前次重度中性粒减少指征）。"},
+    {"date": "2026-05-24", "type": "出院记录", "author": "王医生", "text": "化疗顺利，出院。"}
+  ],
+  "long_term_orders": {"doc_type": "长期医嘱单", "items": [
+    {"order_id": "L01", "start": "2026-05-20 10:00", "stop": "2026-05-24 10:00", "content": "二级护理", "doctor": "王医生"}
+  ]},
+  "temporary_orders": {"doc_type": "临时医嘱单", "items": [
+    {"order_id": "T01", "time": "2026-05-20 10:30", "content": "血常规、生化", "doctor": "王医生"},
+    {"order_id": "T02", "time": "2026-05-21 09:00", "content": "聚乙二醇化重组人粒细胞刺激因子 6mg ih st（一级预防，前次重度中性粒减少）", "doctor": "王医生"}
+  ]},
+  "nursing_records": {"doc_type": "护理记录单", "nursing_level_executed": "二级护理（每2小时巡视）", "note": "与医嘱二级护理一致。", "entries": [
+    {"date": "2026-05-20", "vitals_count": 2, "round_interval_h": 2, "text": "入院，二级护理。"},
+    {"date": "2026-05-21", "vitals_count": 2, "round_interval_h": 2, "text": "化疗D1，予升白针。"},
+    {"date": "2026-05-24", "vitals_count": 1, "round_interval_h": 2, "text": "出院。"}
+  ]},
+  "lab_reports": [
+    {"doc_type": "检验报告", "report_id": "LAB-20260520-0712", "report_time": "2026-05-20 14:00", "category": "血常规", "results": [
+      {"item": "白细胞 WBC", "value": 5.2, "unit": "10⁹/L", "ref": "3.5–9.5", "flag": "正常"},
+      {"item": "中性粒细胞绝对值 ANC", "value": 3.5, "unit": "10⁹/L", "ref": "1.8–6.3", "flag": "正常（本次基线）"}
+    ]}
+  ],
+  "pathology_report": {"doc_type": "病理报告", "report_id": "PATH-20260318-0050", "report_time": "2026-03-18", "diagnosis": "（左肺）鳞状细胞癌。", "note": "病理确诊鳞癌。"},
+  "gene_test_report": {"doc_type": "—", "status": "不适用", "note": "鳞癌,本例化疗非靶向,无需基因检测"},
+  "fee_list": {
+    "doc_type": "费用清单（医保结算明细）", "settle_date": "2026-05-24",
+    "items": [
+      {"line_no": 1, "fee_date": "2026-05-20~05-24", "category": "床位费", "item_name": "床位费（三人间）", "spec": "-", "qty": 4, "unit": "日", "unit_price": 50.0, "amount": 200.0, "insurance_class": "医保", "linked_order": "L01", "flag": "正常"},
+      {"line_no": 2, "fee_date": "2026-05-20~05-24", "category": "护理费", "item_name": "二级护理", "spec": "-", "qty": 4, "unit": "日", "unit_price": 12.0, "amount": 48.0, "insurance_class": "医保", "linked_order": "L01", "flag": "正常（与医嘱一致）"},
+      {"line_no": 3, "fee_date": "2026-05-21", "category": "西药费", "item_name": "聚乙二醇化重组人粒细胞刺激因子注射液", "spec": "6mg", "qty": 1, "unit": "支", "unit_price": 1180.0, "amount": 1180.0, "insurance_class": "医保乙", "linked_order": "T02", "flag": "正常（前次重度中性粒减少，限定支付条件满足→T-205应不报）"},
+      {"line_no": 4, "fee_date": "2026-05-21", "category": "西药费", "item_name": "注射用紫杉醇", "spec": "30mg", "qty": 8, "unit": "支", "unit_price": 280.0, "amount": 2240.0, "insurance_class": "医保乙", "linked_order": "T01", "flag": "正常（化疗）"},
+      {"line_no": 5, "fee_date": "2026-05-21", "category": "西药费", "item_name": "注射用卡铂", "spec": "0.1g", "qty": 5, "unit": "支", "unit_price": 52.0, "amount": 260.0, "insurance_class": "医保乙", "linked_order": "T01", "flag": "正常（化疗）"},
+      {"line_no": 6, "fee_date": "2026-05-20", "category": "检验费", "item_name": "血常规", "spec": "-", "qty": 1, "unit": "次", "unit_price": 25.0, "amount": 25.0, "insurance_class": "医保", "linked_order": "T01", "flag": "正常"}
+    ],
+    "absent_items_note": "边界件：长效升白针有前次重度中性粒减少记载，限定支付满足，T-205应不报，应0疑点。",
+    "total_amount": 3953.0
+  },
+  "discharge_summary": {"doc_type": "出院小结", "admit_date": "2026-05-20", "discharge_date": "2026-05-24", "discharge_diagnosis": ["左肺鳞癌（IIIB期）", "恶性肿瘤化学治疗（第2周期）"], "hospital_course": "第2周期化疗，因前次重度中性粒减少予一级预防长效升白针，过程顺利出院。", "discharge_orders": ["3周后返院第3周期"], "discharge_meds": []}
+}
