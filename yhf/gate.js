@@ -3,12 +3,26 @@
 
 /**
  * YHF Gate CLI — MVP：L3 Oracle + G0 干净件零误报红线。
- * 用法: node yhf/gate.js [--strict] [--layer engine,prompt,shadow,rule] [--rule T-201]
+ * 用法: node yhf/gate.js [--strict] [--layer engine,prompt,shadow,rule,rag] [--rule T-201]
  */
 
 const fs = require('fs');
 const path = require('path');
-const { YHF_ROOT } = require('./lib/paths');
+const { YHF_ROOT, REPO_ROOT } = require('./lib/paths');
+
+(function loadEnv() {
+  const envPath = path.join(REPO_ROOT, 'prototype/app/.env');
+  try {
+    for (const line of fs.readFileSync(envPath, 'utf8').split('\n')) {
+      const s = line.trim();
+      if (!s || s.startsWith('#') || !s.includes('=')) continue;
+      const i = s.indexOf('=');
+      const k = s.slice(0, i).trim();
+      const v = s.slice(i + 1).trim();
+      if (k && !process.env[k]) process.env[k] = v;
+    }
+  } catch {}
+})();
 const { runYhfGate } = require('./index');
 
 function arg(name, def) {
@@ -18,7 +32,7 @@ function arg(name, def) {
 function flag(name) { return process.argv.includes(`--${name}`); }
 
 const STRICT = flag('strict');
-const LAYERS = arg('layer', 'engine').split(',').map(s => s.trim());
+const LAYERS = arg('layer', STRICT ? 'engine,rule,rag,shadow' : 'engine').split(',').map(s => s.trim());
 const RULE_ID = arg('rule', '');
 
 function renderMarkdown(report) {
@@ -37,9 +51,17 @@ function renderMarkdown(report) {
   }
   if (report.shadow) {
     const s = report.shadow;
-    lines.push('## L4 Shadow', '');
-    lines.push(`- rule: ${s.rule_id} | FPR: ${s.metrics.fpr} | precision: ${s.metrics.precision}`);
-    lines.push(`- G1: ${s.pass === null ? 'n/a' : s.pass ? '✅' : '❌'}`, '');
+    lines.push('## L4 Shadow (G1)', '');
+    if (s.summary) {
+      lines.push(`- **G1 shadow FPR**: ${s.pass ? '✅ PASS' : '❌ FAIL'} (passed ${s.summary.passed}/${s.summary.total}, skipped ${s.summary.skipped})`, '');
+      for (const r of (s.rules || []).filter(x => x.pass === false).slice(0, 5)) {
+        lines.push(`- ❌ \`${r.rule_id}\` FPR=${r.metrics.fpr} fp=${r.metrics.fp} tn=${r.metrics.tn}`);
+      }
+    } else {
+      lines.push(`- rule: ${s.rule_id} | FPR: ${s.metrics?.fpr} | precision: ${s.metrics?.precision}`);
+      lines.push(`- G1: ${s.pass === null ? 'n/a' : s.pass ? '✅' : '❌'}`, '');
+    }
+    lines.push('');
   }
   if (report.prompt?.status === 'stub') {
     lines.push('## L1 Prompt (stub)', '', report.prompt.message, '');
@@ -60,29 +82,43 @@ function renderMarkdown(report) {
       lines.push('## L2 Rule (stub)', '', `- ${report.rule.missing_test_cases}/${report.rule.total_rules} rules lack 6 test_cases`, '');
     }
   }
+  if (report.rag) {
+    const r = report.rag;
+    lines.push('## L5 RAG (recall@k)', '');
+    lines.push(`- **G4 recall@${r.k}**: ${r.pass ? '✅ PASS' : '❌ FAIL'} (${(r.recall * 100).toFixed(1)}% ≥ ${(r.min_recall * 100).toFixed(0)}%)`);
+    lines.push(`- hits: ${r.hit_count}/${r.total_queries}`, '');
+    const misses = (r.cases || []).filter(c => !c.recalled).slice(0, 5);
+    for (const c of misses) {
+      lines.push(`- ❌ \`${c.id}\` expected ${c.expected_refs.join('|')} got ${c.hit_refs.slice(0, 3).join(', ') || '—'}`);
+    }
+    lines.push('');
+  }
   lines.push('---', `**overall**: ${report.overall_pass ? '✅ PASS' : '❌ FAIL'}`);
   return lines.join('\n');
 }
 
 function main() {
-  const report = runYhfGate({
+  runYhfGate({
     layers: LAYERS,
     ruleId: RULE_ID || undefined,
+  }).then(report => {
+    report.overall_pass = report.overall_pass !== false;
+    if (report.engine && !report.engine.gates.G0_clean_zero_fp) report.overall_pass = false;
+    if (report.shadow?.pass === false) report.overall_pass = false;
+    if (report.rag?.pass === false) report.overall_pass = false;
+
+    const outDir = path.join(YHF_ROOT, 'results');
+    fs.mkdirSync(outDir, { recursive: true });
+    const ts = new Date().toISOString().replace(/[:.]/g, '-').slice(0, 19);
+    fs.writeFileSync(path.join(outDir, `gate_${ts}.json`), JSON.stringify(report, null, 2));
+    fs.writeFileSync(path.join(outDir, 'gate_latest.md'), renderMarkdown(report));
+    const md = renderMarkdown(report);
+    console.log(md);
+    if (STRICT && !report.overall_pass) process.exit(1);
+  }).catch(e => {
+    console.error(e);
+    process.exit(1);
   });
-  report.overall_pass = report.overall_pass !== false;
-  if (report.engine && !report.engine.gates.G0_clean_zero_fp) report.overall_pass = false;
-  if (report.shadow?.pass === false) report.overall_pass = false;
-
-  const outDir = path.join(YHF_ROOT, 'results');
-  fs.mkdirSync(outDir, { recursive: true });
-  const ts = new Date().toISOString().replace(/[:.]/g, '-').slice(0, 19);
-  fs.writeFileSync(path.join(outDir, `gate_${ts}.json`), JSON.stringify(report, null, 2));
-  fs.writeFileSync(path.join(outDir, 'gate_latest.md'), renderMarkdown(report));
-
-  console.log(renderMarkdown(report));
-  console.log(`\n(written: yhf/results/gate_latest.md)`);
-
-  if (STRICT && !report.overall_pass) process.exit(1);
 }
 
 main();

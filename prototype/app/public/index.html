@@ -42,15 +42,18 @@
   <div class="v2bar-divider"></div>
   <div class="v2bar-group">
     <span class="v2bar-label subtle">材料与架构</span>
-    <button class="v2btn" id="btnIngest" type="button">导入材料</button>
+    <a href="/intake.html" class="v2btn accent" title="材料导入中心（完整页）">材料导入</a>
+    <button class="v2btn" id="btnIngest" type="button" title="弹窗快速导入">快速导入</button>
     <button class="v2btn" id="btnFacts" type="button">事实层</button>
     <button class="v2btn" id="btnInstitution" type="button">机构画像</button>
+    <button class="v2btn" id="btnRuleCatalog" type="button">规则目录</button>
     <button class="v2btn" id="btnGovernance" type="button">规则治理</button>
   </div>
   <div class="v2bar-divider"></div>
   <div class="v2bar-group">
     <span class="v2bar-label subtle">演示</span>
     <button class="v2btn real" id="btnLLM" type="button">LLM 语义</button>
+    <button class="v2btn real" id="btnRag" type="button" title="Supabase pgvector 语义检索增强政策上下文">RAG 增强稽核</button>
     <button class="v2btn danger" id="btnInject" type="button">注入对抗</button>
     <button class="v2btn" id="btnExport" type="button">导出清单</button>
     <button class="v2btn" id="btnPitch" type="button">演示要点</button>
@@ -63,7 +66,9 @@
   <div class="wf-arrow">→</div>
   <div class="wf-step" data-step="2"><span class="wf-num">2</span><span class="wf-text">开始稽核</span></div>
   <div class="wf-arrow">→</div>
-  <div class="wf-step" data-step="3"><span class="wf-num">3</span><span class="wf-text">看报告 · 点证据</span></div>
+  <div class="wf-step" data-step="3"><span class="wf-num">3</span><span class="wf-text">看报告</span></div>
+  <div class="wf-arrow wf-exam-only hidden">→</div>
+  <div class="wf-step wf-exam-only hidden" data-step="4"><span class="wf-num">4</span><span class="wf-text">登记整改</span></div>
 </div>
 
 <div class="case-meta-bar hidden" id="caseMetaBar"></div>
@@ -80,8 +85,14 @@
 
   <section class="panel panel-right">
     <div class="panel-head">
-      <h2><span class="panel-icon">🛡</span> 稽核报告</h2>
-      <span class="muted" id="engineMode"></span>
+      <h2><span class="panel-icon">🛡</span> <span id="panelReportTitle">稽核报告</span></h2>
+      <div class="panel-head-right">
+        <nav class="report-tabs hidden" id="reportTabs" aria-label="报告视图切换">
+          <button type="button" class="rtab active" data-view="report">体检报告</button>
+          <button type="button" class="rtab" data-view="rectification">登记整改</button>
+        </nav>
+        <span class="muted" id="engineMode"></span>
+      </div>
     </div>
 
     <div id="reportEmpty" class="empty">
@@ -111,6 +122,8 @@
         <div id="distractorList"></div>
       </div>
     </div>
+
+    <div id="rectificationBody" class="report hidden"></div>
   </section>
 </main>
 

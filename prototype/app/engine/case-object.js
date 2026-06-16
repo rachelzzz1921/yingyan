@@ -51,15 +51,17 @@ function compileCaseObject(record) {
 
   // 费用行（含一个演示性低置信字段，体现OCR置信度传播）
   for (const it of (record.fee_list?.items || [])) {
-    // demo：对单价异常小/手写易误读的项给较低OCR置信（此处对地塞米松小额项设低置信做演示，不影响疑点）
-    const ocr = /地塞米松/.test(it.item_name) ? 0.63 : 0.98;
+    const ocr = it.anchor?.ocr_conf ?? (/地塞米松/.test(it.item_name) ? 0.63 : 0.98);
+    const loc = it.anchor?.locator || `第${it.line_no}行`;
+    const doc = it.anchor?.doc || '费用清单';
+    const bbox = it.anchor?.bbox || null;
     const fact = {
       id: `F${String(it.line_no).padStart(3, '0')}`,
       type: 'fee_line',
       date: it.fee_date, name: it.item_name, spec: it.spec,
       qty: it.qty, unit: it.unit, unit_price: it.unit_price, amount: it.amount,
       insurance_class: it.insurance_class, linked_order: it.linked_order,
-      anchor: anchor('费用清单', `第${it.line_no}行`, ocr),
+      anchor: anchor(doc, loc, ocr, bbox),
     };
     facts.fee_lines.push(fact);
     if (ocr < 0.8) facts.flags.low_ocr_spans.push({ fact_id: fact.id, ocr_conf: ocr, note: `${it.item_name} 单价/金额 OCR低置信，建议人工核对原件` });

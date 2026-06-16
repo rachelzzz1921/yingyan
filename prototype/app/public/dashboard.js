@@ -170,16 +170,35 @@ function navigate(id) {
 }
 
 async function loadData() {
-  const [bench, yhf, health, inst, gov, tasks] = await Promise.all([
+  const [bench, yhf, health, inst, gov, tasks, kb, maturity] = await Promise.all([
     fetchJSON('/api/bench'),
     fetchJSON('/api/yhf'),
     fetchJSON('/api/health'),
     fetchJSON('/api/institution'),
     fetchJSON('/api/rule-governance'),
     fetchJSON('/api/tasks').catch(() => ({ tasks: [], summary: {}, meta: {} })),
+    fetchJSON('/api/kb/status').catch(() => null),
+    fetchJSON('/api/maturity').catch(() => null),
   ]);
-  cache = { bench, yhf, health, inst, gov, tasks, at: new Date() };
+  cache = { bench, yhf, health, inst, gov, tasks, kb, maturity, at: new Date() };
   return cache;
+}
+
+function maturitySectionHTML(m) {
+  if (!m) return '';
+  const pct = Math.round((m.gold_ratio || 0) * 100);
+  const g1 = m.g1 ? 'PASS' : 'FAIL';
+  const themes = (m.giac_themes || []).join(' · ');
+  return `<section class="card"><div class="card-head"><h2 class="section-title">工程成熟度 · GIAC 对齐</h2><span class="badge-live">/api/maturity</span></div>
+    <div class="kpi-grid kpi-compact" style="margin-bottom:10px">
+      ${kpiCard('G0 零误报', m.g0 ? 'PASS' : 'FAIL', m.g0 ? 'pass' : 'fail', '干净件红线')}
+      ${kpiCard('G4 RAG', m.g4 ? 'PASS' : 'FAIL', m.g4 ? 'pass' : 'fail', 'recall@8')}
+      ${kpiCard('G1 Shadow', g1, m.g1 ? 'pass' : 'fail', `${m.shadow_summary?.passed ?? '—'}/${m.shadow_summary?.total ?? '—'} 规则`)}
+      ${kpiCard('Bench 案卷', m.bench_cases ?? '—', 'accent', 'AuditBench 20')}
+      ${kpiCard('Gold 覆盖', pct + '%', pct >= 90 ? 'pass' : '', `${m.registry?.total ?? '—'} 注册`)}
+      ${kpiCard('Parse QA', '已接入', 'pass', 'intake + 置信惩罚')}
+    </div>
+    <p class="muted" style="margin:0;font-size:12px">GIAC 主题：${esc(themes)}</p></section>`;
 }
 
 async function loadDoc(id, full) {
@@ -350,8 +369,12 @@ function p0TasksHTML(tasks) {
 
 function overviewHTML(d) {
   const st = heroStatus(d);
-  const { bench, yhf, health, inst, gov } = d;
+  const { bench, yhf, health, inst, gov, kb } = d;
   const g0 = yhf?.engine?.gates?.G0_clean_zero_fp;
+  const kbLive = kb?.live?.active && kb?.live?.vector_ready;
+  const kbSub = kb
+    ? `${kb.live?.supabase?.entry_count ?? kb.oracle?.ref_count ?? '—'} 条 · ${kb.embedding?.embedded_chunks ?? 0} 向量 · ${kb.embedding?.provider || '—'}`
+    : '未连接';
   return `
     ${statusHeroHTML(d)}
     ${blockersHTML(st.blockers)}
@@ -359,6 +382,7 @@ function overviewHTML(d) {
       ${kpiCard('G0 零误报', g0 ? 'PASS' : 'FAIL', g0 ? 'pass' : 'fail', `误报 ${bench.meta.clean_false_positive_total}`)}
       ${kpiCard('L3 案卷', `${(yhf.engine?.cases || []).filter(c => c.pass).length}/${yhf.engine?.cases?.length || 0}`, 'accent', 'recall 对齐')}
       ${kpiCard('规则', health.rules ?? health.rules_count ?? '—', '', `shadow ${gov.summary?.shadow ?? 0}`)}
+      ${kpiCard('KB/RAG', kbLive ? 'Live' : (kb ? 'JSON' : '—'), kbLive ? 'pass' : '', kbSub)}
       ${kpiCard('机构疑点', inst.summary.suspected_total, 'warn', '¥' + inst.summary.amount_total)}
       ${kpiCard('LLM', health.llm_ready ? '就绪' : '未配置', health.llm_ready ? 'pass' : '', health.llm_provider || '确定性引擎')}
     </section>
@@ -369,13 +393,21 @@ function overviewHTML(d) {
         <div class="gate-rings">${gateRingsHTML(yhf)}</div>
         <p class="gate-legend">G0 干净件 · G1 shadow · G2 prompt · All 综合</p></article>
     </section>
+    ${kb ? `<section class="card"><div class="card-head"><h2 class="section-title">知识库 / RAG 状态</h2><a class="link-sm" href="/" target="_blank">工作台 RAG 稽核 →</a></div>
+      <div class="kpi-grid kpi-compact" style="margin-bottom:0">
+        ${kpiCard('模式', kb.mode || '—', '', kb.corpus_version || '')}
+        ${kpiCard('Supabase', kb.live?.supabase?.ok ? '在线' : '离线', kb.live?.supabase?.ok ? 'pass' : 'fail', `${kb.live?.supabase?.entry_count ?? 0} entries`)}
+        ${kpiCard('向量就绪', kb.live?.vector_ready ? '是' : '否', kb.live?.vector_ready ? 'pass' : '', `${kb.embedding?.model || ''}`)}
+        ${kpiCard('Oracle JSON', kb.oracle?.ref_count ?? '—', '', '离线兜底')}
+      </div></section>` : ''}
     ${p0TasksHTML(d.tasks)}
+    ${maturitySectionHTML(d.maturity)}
     <section class="card"><div class="card-head"><h2 class="section-title">迭代 Phase</h2><button type="button" class="link-sm link-btn" data-goto="roadmap">完整路线 →</button></div>
       <div class="phase-timeline">${PHASES.map(p => `<div class="phase-node ${p.status}"><div class="phase-dot"></div><div class="phase-name">${esc(p.name)}</div><div class="phase-id">${esc(p.id)}</div></div>`).join('')}</div>
     </section>
     <section class="card"><div class="card-head"><h2 class="section-title">快捷入口</h2></div>
       <div class="docs-hub">
-        <button type="button" class="doc-card accent" data-goto="bench"><span class="doc-card-title">AuditBench</span><span class="doc-card-desc">10 案卷回归 · G0 红线</span></button>
+        <button type="button" class="doc-card accent" data-goto="bench"><span class="doc-card-title">AuditBench</span><span class="doc-card-desc">20 案卷回归 · G0 红线</span></button>
         <button type="button" class="doc-card accent" data-goto="institution"><span class="doc-card-title">机构画像</span><span class="doc-card-desc">${inst.summary.audited_cases} 案 · ¥${inst.summary.amount_total}</span></button>
         <button type="button" class="doc-card accent" data-goto="governance"><span class="doc-card-title">规则治理</span><span class="doc-card-desc">shadow ${gov.summary?.shadow ?? 0} · 下线 ${gov.summary?.deprecated ?? 0}</span></button>
         <button type="button" class="doc-card accent" data-goto="docs"><span class="doc-card-title">文档中心</span><span class="doc-card-desc">战略 · 架构 · Pitch</span></button>
@@ -477,7 +509,23 @@ function institutionViewHTML(inst) {
     <div class="action-row"><a class="action-btn" href="/">🏥 打开工作台 · 机构画像</a></div>`;
 }
 
-function governanceViewHTML(gov) {
+function evalDraftsHTML(drafts) {
+  const pending = (drafts?.items || []).filter(i => i.status === 'pending');
+  if (!pending.length) {
+    return `<section class="card"><h3 class="section-title" style="margin:0 0 8px">Eval 草案队列</h3><p class="muted" style="margin:0">暂无待确认驳回草案 — 在工作台驳回误报后自动生成</p></section>`;
+  }
+  const rows = pending.map(d => `<tr data-draft-id="${esc(d.id)}">
+    <td>${esc(d.case_id)}</td><td>${esc(d.rule_id)}</td><td>${esc(d.reject_reason || '—')}</td>
+    <td class="num">${esc(d.gold_draft?.expected_status || '—')}</td>
+    <td><button type="button" class="btn-sm draft-confirm" data-id="${esc(d.id)}">确认入库</button>
+        <button type="button" class="btn-sm draft-ignore" data-id="${esc(d.id)}">忽略</button></td>
+  </tr>`).join('');
+  return `<section class="card" style="padding:0;overflow:auto"><div style="padding:12px 16px"><h3 class="section-title" style="margin:0">Eval 草案队列 · ${pending.length} 待确认</h3>
+    <p class="muted" style="margin:4px 0 0;font-size:11px">驳回误报自动生成 — 确认后写入 eval_drafts/，不自动改 gold</p></div>
+    <table class="bench-table"><thead><tr><th>案卷</th><th>规则</th><th>驳回原因</th><th>草案状态</th><th>操作</th></tr></thead><tbody>${rows}</tbody></table></section>`;
+}
+
+function governanceViewHTML(gov, drafts) {
   const entries = gov.entries || [];
   const cards = entries.length ? entries.map(e => {
     const cls = e.status === 'shadow' ? '' : (e.status === 'deprecated' ? 'dep' : 'active');
@@ -493,7 +541,26 @@ function governanceViewHTML(gov) {
       ${kpiCard('deprecated', gov.summary?.deprecated ?? 0, '', '已下线')}
     </div>
     <div class="gov-list">${cards}</div>
+    ${evalDraftsHTML(drafts)}
     <div class="action-row"><a class="action-btn" href="/">🗂 打开工作台 · 规则治理</a></div>`;
+}
+
+async function bindEvalDraftActions(root) {
+  root.querySelectorAll('.draft-confirm, .draft-ignore').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      const action = btn.classList.contains('draft-confirm') ? 'confirm' : 'ignore';
+      try {
+        await fetch('/api/eval-drafts', {
+          method: 'POST',
+          headers: { 'content-type': 'application/json' },
+          body: JSON.stringify({ action, id: btn.dataset.id }),
+        });
+        navigate('governance');
+      } catch (e) {
+        alert('操作失败：' + e.message);
+      }
+    });
+  });
 }
 
 function brandViewHTML() {
@@ -654,7 +721,14 @@ async function renderView(id) {
     else if (id === 'bench') html = benchViewHTML(cache.bench);
     else if (id === 'yhf') html = yhfViewHTML(cache.yhf, cache.bench);
     else if (id === 'institution') html = institutionViewHTML(cache.inst);
-    else if (id === 'governance') html = governanceViewHTML(cache.gov);
+    else if (id === 'governance') {
+      const drafts = await fetchJSON('/api/eval-drafts').catch(() => ({ items: [] }));
+      html = governanceViewHTML(cache.gov, drafts);
+      root.innerHTML = `<div class="view-panel active">${html}</div>`;
+      bindDocCards(root);
+      await bindEvalDraftActions(root);
+      return;
+    }
     else if (id === 'docs') html = await docsHubHTML();
     else if (id === 'eval') {
       const [readme, status] = await Promise.all([loadDoc('eval'), fetchJSON('/api/eval/status')]);

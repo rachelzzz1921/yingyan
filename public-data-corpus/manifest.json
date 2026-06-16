@@ -1,0 +1,303 @@
+{
+  "generated_at": "2026-06-15",
+  "summary": {
+    "total_kb_entries": 31,
+    "total_problem_list_items": 74,
+    "total_grand": 105,
+    "unique_official_documents": 18,
+    "unique_source_urls": 17,
+    "kb1_policy_entries": 22,
+    "kb2_clinical_entries": 9,
+    "problem_list_domains": 15,
+    "problem_list_items": 74,
+    "text_chars_kb1": 2955,
+    "text_chars_kb2": 1749,
+    "verification": {
+      "kb1_fully_verified": 20,
+      "kb1_partial": 2,
+      "kb2_fully_verified": 8,
+      "kb2_partial": 1,
+      "problem_list_verified_items": 50,
+      "problem_list_partial_items": 15,
+      "problem_list_pending_items": 9
+    }
+  },
+  "kb1_documents": [
+    {
+      "doc_id": "KB1-条例",
+      "doc_name": "医疗保障基金使用监督管理条例",
+      "layer": "法规",
+      "authority": "国务院",
+      "entries": 9,
+      "source_url": "https://app.www.gov.cn/govdata/gov/202102/19/468490/article.html"
+    },
+    {
+      "doc_id": "KB1-实施细则7号令",
+      "doc_name": "医疗保障基金使用监督管理条例实施细则",
+      "layer": "法规",
+      "authority": "国家医保局",
+      "entries": 2,
+      "source_url": "https://www.nhsa.gov.cn/art/2026/2/13/art_173_19681.html"
+    },
+    {
+      "doc_id": "KB1-问题清单2025",
+      "doc_name": "定点医疗机构违法违规使用医疗保障基金典型问题清单（2025版）·肿瘤领域",
+      "layer": "清单",
+      "authority": "国家医保局",
+      "entries": 1,
+      "source_url": "https://ylbzj.xinjiang.gov.cn/ylbzj/jjj/202501/60bfa1c7e2de423c880c00ff9f0cfdd1.shtml"
+    },
+    {
+      "doc_id": "KB1-DRGDIP2.0",
+      "doc_name": "按病组和病种分值付费2.0版分组方案",
+      "layer": "规则",
+      "authority": "国家医保局",
+      "entries": 1,
+      "source_url": "https://www.nhsa.gov.cn/art/2024/7/23/art_104_13313.html"
+    },
+    {
+      "doc_id": "KB1-江苏",
+      "doc_name": "江苏省定点医疗机构DRG/DIP支付方式改革绩效评价办法·负面清单",
+      "layer": "规则",
+      "authority": "江苏省医保局",
+      "entries": 1,
+      "source_url": "http://ybj.jiangsu.gov.cn/art/2022/9/9/art_74037_10602078.html"
+    },
+    {
+      "doc_id": "KB1-2026监管通知",
+      "doc_name": "关于做好2026年医疗保障基金监管工作的通知",
+      "layer": "规则",
+      "authority": "国家医保局",
+      "entries": 1,
+      "source_url": "https://www.nhsa.gov.cn/art/2026/2/2/art_104_19556.html"
+    },
+    {
+      "doc_id": "KB1-目录2025",
+      "doc_name": "国家医保药品目录2025·奥希替尼·限定支付备注",
+      "layer": "目录",
+      "authority": "国家医保局",
+      "entries": 5,
+      "source_url": "https://www.nhsa.gov.cn/art/2025/12/7/art_104_18970.html （2025版目录；逐字取自2024版文本PDF+2025申报材料双源一致）"
+    },
+    {
+      "doc_id": "KB1-立项指南",
+      "doc_name": "椎体成形费·项目内涵（PVP/PKP 分解收费判定依据）",
+      "layer": "目录",
+      "authority": "国家医保局",
+      "entries": 1,
+      "source_url": "https://ylbz.tj.gov.cn/xxgk/zcfg/ybjwj/202602/W020260205608574153082.pdf (天津转发立项指南支付表) / https://www.nhsa.gov.cn/art/2025/3/7/art_14_15902.html (国家版2025-03-07)"
+    },
+    {
+      "doc_id": "KB1-耗材编码",
+      "doc_name": "骨科植入类耗材分类与代码（高值耗材串换/数量判定参照）",
+      "layer": "目录",
+      "authority": "国家医保局",
+      "entries": 1,
+      "source_url": "https://www.nhsa.gov.cn/art/2026/1/16/art_105_19374.html"
+    }
+  ],
+  "kb2_entries": [
+    {
+      "kb2_id": "KB2-指导原则2025-病理诊断要求",
+      "knowledge_type": "治疗规范",
+      "source": "新型抗肿瘤药物临床应用指导原则（2025年版）·一、病理组织学确诊后方可使用",
+      "verify_status": "✅已核实（官方PDF逐字）",
+      "source_url": "https://www.nhc.gov.cn/yzygj/c100067/202601/460c2377aa294b55baacd339b8b19eb8.shtml"
+    },
+    {
+      "kb2_id": "KB2-指导原则2025-靶点检测原则",
+      "knowledge_type": "治疗规范",
+      "source": "新型抗肿瘤药物临床应用指导原则（2025年版）·二、部分需靶点检测后方可使用",
+      "verify_status": "✅已核实（官方PDF逐字）",
+      "source_url": "https://www.nhc.gov.cn/yzygj/c100067/202601/460c2377aa294b55baacd339b8b19eb8.shtml"
+    },
+    {
+      "kb2_id": "KB2-指导原则2025-特殊情况合理使用",
+      "knowledge_type": "治疗规范",
+      "source": "新型抗肿瘤药物临床应用指导原则（2025年版）·五、特殊情况下的药物合理使用",
+      "verify_status": "✅已核实（官方PDF逐字）",
+      "source_url": "https://www.nhc.gov.cn/yzygj/c100067/202601/460c2377aa294b55baacd339b8b19eb8.shtml"
+    },
+    {
+      "kb2_id": "KB2-指导原则2025-EGFR-TKI用药要点",
+      "knowledge_type": "药品说明书",
+      "source": "新型抗肿瘤药物临床应用指导原则（2025年版）·第二部分·各药合理用药要点",
+      "verify_status": "✅已核实（官方PDF逐字，药品级稽核可直接用）",
+      "source_url": "https://www.nhc.gov.cn/yzygj/c100067/202601/460c2377aa294b55baacd339b8b19eb8.shtml"
+    },
+    {
+      "kb2_id": "KB2-病种包-NSCLC",
+      "knowledge_type": "病种包",
+      "source": "NSCLC病种包（CSCO诊疗指南条目级摘引 + 2025版指导原则 + 医保目录限定支付）",
+      "verify_status": "✅药品限定支付/靶点要求已核实；分期与线数细节为指南条目级摘引"
+    },
+    {
+      "kb2_id": "KB2-病种包-结直肠癌",
+      "knowledge_type": "病种包",
+      "source": "结直肠癌病种包（副线，覆盖另一类检测逻辑）",
+      "verify_status": "⚠西妥昔单抗RAS野生型要求为指南共识；具体医保限定逐字建议补抓2025目录"
+    },
+    {
+      "kb2_id": "KB2-重点监控目录",
+      "knowledge_type": "监控目录",
+      "source": "国家重点监控合理用药药品目录",
+      "verify_status": "✅第二批为最新/无第三批已核实；30品种完整逐字清单部分核实（官网412反爬，进报告前以正文复核）",
+      "source_url": "http://www.nhc.gov.cn/yzygj/s7659/202301/5b291aaae64b4e56a10f9ea910e11426.shtml"
+    },
+    {
+      "kb2_id": "KB2-升白药使用规范",
+      "knowledge_type": "治疗规范",
+      "source": "G-CSF临床应用 + 医保限定支付（KB1长效升白针备注）",
+      "verify_status": "✅医保限定支付已核实；FN风险分级阈值为指南共识（NCCN/CSCO）"
+    },
+    {
+      "kb2_id": "KB2-肿瘤化疗周期方案",
+      "knowledge_type": "治疗规范",
+      "source": "化疗周期常识（C-301肿瘤白名单依据）",
+      "verify_status": "✅临床常识（化疗周期）"
+    }
+  ],
+  "problem_list_domains": [
+    {
+      "domain": "肿瘤",
+      "version": "2025版",
+      "count": 15,
+      "verify": "✅已核实(官方Excel附件逐字)"
+    },
+    {
+      "domain": "麻醉",
+      "version": "2025版",
+      "count": 12,
+      "verify": "✅已核实(新疆官方Excel附件逐字,序号连续154-170)"
+    },
+    {
+      "domain": "重症医学",
+      "version": "2025版",
+      "count": 6,
+      "verify": "✅已核实(官方Excel附件逐字)"
+    },
+    {
+      "domain": "定点零售药店",
+      "version": "2025版",
+      "count": 7,
+      "verify": "✅已核实(官方Excel附件逐字)"
+    },
+    {
+      "domain": "骨科",
+      "version": "2024版+立项指南内涵",
+      "count": 3,
+      "verify": "⚠部分核实(行业/省局汇编)+✅价格内涵已核实"
+    },
+    {
+      "domain": "医学影像",
+      "version": "2024版(措辞,上海医保局2025页逐字)",
+      "count": 10,
+      "verify": "✅已核实(上海市医保局官方页面逐字)"
+    },
+    {
+      "domain": "心血管内科",
+      "version": "2024版",
+      "count": 5,
+      "verify": "⚠官方1示例句已核实+行业B类细化(部分核实)"
+    },
+    {
+      "domain": "血液净化",
+      "version": "2024版",
+      "count": 2,
+      "verify": "⚠官方1示例句已核实/具体场景逐字最弱"
+    },
+    {
+      "domain": "康复",
+      "version": "2024版",
+      "count": 2,
+      "verify": "⚠官方1示例句已核实+行业规则(部分核实)"
+    },
+    {
+      "domain": "临床检验",
+      "version": "2024版",
+      "count": 3,
+      "verify": "⚠4类型结构已核实+行业逐字(部分核实)"
+    },
+    {
+      "domain": "2024版6领域框架",
+      "version": "2024版",
+      "count": 0,
+      "verify": "✅已核实(框架,新华网)"
+    },
+    {
+      "domain": "2026版新增3领域",
+      "version": "2026版",
+      "count": 0,
+      "verify": "⚠框架已核实/逐条未核到"
+    },
+    {
+      "domain": "口腔",
+      "version": "2026版",
+      "count": 3,
+      "verify": "⚠框架已核实/逐条未核到"
+    },
+    {
+      "domain": "内分泌",
+      "version": "2026版",
+      "count": 3,
+      "verify": "⚠框架已核实/逐条未核到"
+    },
+    {
+      "domain": "精神医学",
+      "version": "2026版",
+      "count": 3,
+      "verify": "⚠框架已核实/逐条未核到"
+    }
+  ],
+  "source_urls": [
+    "http://www.news.cn/government/20240712/10aaa410d1f549d9bfff1ec7f56887f9/c.html",
+    "http://www.nhc.gov.cn/yzygj/s7659/202301/5b291aaae64b4e56a10f9ea910e11426.shtml",
+    "http://www.nhsa.gov.cn/art/2026/4/14/art_14_20206.html",
+    "http://ybj.jiangsu.gov.cn/art/2022/9/9/art_74037_10602078.html",
+    "https://app.www.gov.cn/govdata/gov/202102/19/468490/article.html",
+    "https://www.nhc.gov.cn/yzygj/c100067/202601/460c2377aa294b55baacd339b8b19eb8.shtml",
+    "https://www.nhsa.gov.cn/art/2024/7/23/art_104_13313.html",
+    "https://www.nhsa.gov.cn/art/2025/12/7/art_104_18970.html",
+    "https://www.nhsa.gov.cn/art/2026/1/16/art_105_19374.html",
+    "https://www.nhsa.gov.cn/art/2026/2/13/art_173_19681.html",
+    "https://www.nhsa.gov.cn/art/2026/2/2/art_104_19556.html",
+    "https://www.nhsa.gov.cn/module/download/downfile.jsp",
+    "https://ybj.sh.gov.cn/ybdt/20250214/8807bd5a92ac4182b5a17c254b67b259.html",
+    "https://ylbz.tj.gov.cn/xxgk/zcfg/ybjwj/202602/W020260205608574153082.pdf",
+    "https://ylbzj.xinjiang.gov.cn/ylbzj/jjj/202501/60bfa1c7e2de423c880c00ff9f0cfdd1.shtml",
+    "https://ylbzj.xinjiang.gov.cn/ylbzj/jjj/202501/60bfa1c7e2de423c880c00ff9f0cfdd1/files/定点医疗机构违法违规使用医疗保障基金典型问题清单（2025版）.xlsx",
+    "https://ylbzj.xinjiang.gov.cn/ylbzj/jjj/202501/60bfa1c7e2de423c880c00ff9f0cfdd1/files/定点零售药店违法违规使用医疗保障基金典型问题清单（2025版）.xlsx"
+  ],
+  "data_files": [
+    {
+      "path": "prototype/data/kb/kb1_policies.json",
+      "role": "KB1 政策/法规/目录/规则",
+      "entries": 22
+    },
+    {
+      "path": "prototype/data/kb/kb2_clinical.json",
+      "role": "KB2 临床指南/病种包",
+      "entries": 9
+    },
+    {
+      "path": "prototype/data/kb/kb1_problem_lists.json",
+      "role": "典型问题清单（全领域）",
+      "domains": 15,
+      "items": 74
+    },
+    {
+      "path": "prototype/data/kb/rag_eval_queries.json",
+      "role": "RAG 评测查询集",
+      "note": "非公开抓取，为评测用"
+    }
+  ],
+  "gaps": [
+    "条例全文仅摘引第38/40条等稽核高频条款，未全文入库",
+    "2025药品目录仅5个演示药品行（奥希替尼/培美曲塞/升白针/白蛋白/贝伐珠单抗），非3253种全量",
+    "2024版6领域问题清单仅部分领域逐字（肿瘤/麻醉/重症/药店/影像已较完整）",
+    "2026版口腔/内分泌/精神医学仅框架+行业认知占位，官方Excel尚未上网",
+    "两库1.0版79条规则框架未逐条入库",
+    "临床路径224病种未建库，仅NSCLC/结直肠癌病种包",
+    "曝光台案例(P1)尚未抓取"
+  ]
+}

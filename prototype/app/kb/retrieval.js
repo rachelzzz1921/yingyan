@@ -5,6 +5,9 @@ const path = require('path');
 const { ragConfig, canUseSupabase, canUseStepfun } = require('./config');
 const supabase = require('./supabase-client');
 const stepfun = require('./stepfun-client');
+const { canEmbed, embedOne } = require('./embedding-provider');
+
+const { buildPolicyMetaFromKb, filterPolicyMaps, parseAdmitDate } = require('./as-of');
 
 const DOMAIN_ALIAS = {
   麻醉: '麻醉', 重症医学: '重症', 定点零售药店: '药店', 医学影像: '影像',
@@ -48,7 +51,12 @@ function buildPolicyMaps(kb1, kb2, pl) {
       policyTexts[k] = summary.slice(0, 400);
     }
   }
-  return { policyTexts, policyVerified, source: 'json' };
+  return {
+    policyTexts,
+    policyVerified,
+    policyMeta: buildPolicyMetaFromKb(kb1, kb2),
+    source: 'json',
+  };
 }
 
 async function loadFromSupabase() {
@@ -106,6 +114,48 @@ function keywordSearch(query, policyTexts, { limit = 8, kbLayerPrefix = null } =
   return scored.slice(0, limit);
 }
 
+/** pgvector 语义检索；无 embedding 时回退 keywordSearch */
+async function semanticSearch(query, { limit = 8, kbLayer = null, policyTexts = null, policyVerified = null, policyMeta = null, asOf = null, minSimilarity = 0.25 } = {}) {
+  const q = String(query || '').trim();
+  if (!q) return [];
+  let texts = policyTexts || {};
+  let verified = policyVerified || {};
+  if (asOf && policyMeta) {
+    const filtered = filterPolicyMaps({ policyTexts: texts, policyVerified: verified, policyMeta }, asOf);
+    texts = filtered.policyTexts;
+    verified = filtered.policyVerified;
+  }
+  if (canUseSupabase() && canEmbed()) {
+    try {
+      const embedded = await supabase.countEmbeddedChunks();
+      if (embedded > 0) {
+        const vec = await embedOne(q);
+        if (vec?.length) {
+          const rows = await supabase.rpcKbMatch(vec, {
+            matchLayer: kbLayer,
+            matchCount: limit,
+            minSimilarity,
+          });
+          return (rows || []).map(r => ({
+            ref_id: r.ref_id,
+            kb_layer: r.kb_layer,
+            content: r.content,
+            score: r.similarity,
+            source: 'pgvector',
+          }));
+        }
+      }
+    } catch (e) {
+      console.warn('[kb] semanticSearch pgvector:', e.message);
+    }
+  }
+  const prefix = kbLayer === 'KB2' ? 'KB2' : kbLayer === 'KB1' ? 'KB1' : kbLayer === 'PL' ? 'KB1-问题清单' : null;
+  return keywordSearch(q, texts, { limit, kbLayerPrefix: prefix }).map(h => ({
+    ...h,
+    source: 'keyword',
+  }));
+}
+
 async function status(dataDir) {
   const jsonMaps = loadJsonKB(dataDir);
   const cfg = ragConfig();
@@ -114,11 +164,18 @@ async function status(dataDir) {
   return {
     mode: cfg.mode,
     corpus_version: cfg.corpusVersion,
+    embedding: {
+      provider: cfg.embeddingProvider,
+      model: cfg.embeddingModel,
+      configured: canEmbed(),
+      embedded_chunks: sb.embedded_chunks || 0,
+    },
     oracle: { source: 'json', ref_count: Object.keys(jsonMaps.policyTexts).length },
     live: {
       supabase: sb,
       stepfun: sf,
       active: sb.ok && (sb.entry_count || 0) > 0,
+      vector_ready: (sb.embedded_chunks || 0) > 0,
     },
     ragflow: { configured: !!(cfg.ragflowUrl && cfg.ragflowApiKey) },
   };
@@ -129,5 +186,8 @@ module.exports = {
   loadJsonKB,
   getByRefId,
   keywordSearch,
+  semanticSearch,
   status,
+  parseAdmitDate,
+  filterPolicyMaps,
 };

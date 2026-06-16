@@ -4,6 +4,25 @@
 
 ---
 
+## iter-21 — Intake/OCR 链闭环（PP-Structure lite + OCR 词行 bbox）
+
+**SMART目标**：拖入 demo 费用 PDF → intake batch → fee_list.anchor.bbox 非空 → 稽核点击证据高亮费用行；gate strict PASS。
+
+**1. 本轮完成**：
+- sidecar `prototype/ppstructure/`（lite-pdfplumber 词级 bbox + tesseract 扫描图可选）
+- `ppstructure-mapper.js` 词行分列解析（无 tables 时从 words 重建费用行 + bbox）
+- demo 样例 `prototype/data/intake_samples/fee_list_demo.pdf` + 验收脚本 `scripts/verify-intake-bbox.js`
+- UI：主工作台「快速导入」弹窗 + `/intake.html` 完整中心；L1 状态灯；疑点跳转 `.bbox-highlight`
+- `install-paddle.sh` 注明 Python 3.14 暂无 wheel，需 ≤3.12
+
+**2. 测试**：`node scripts/verify-intake-bbox.js` → fee rows 3 | with bbox 3 PASS；`bash yhf/run.sh --strict` PASS
+
+**3. 已知限制**：PNG 扫描图 bbox 需 `brew install tesseract tesseract-lang`；Paddle PP-StructureV3 需 Python ≤3.12
+
+**4. iter-22 计划（用户已核对）**：GIAC 七项精进 + 规则沉淀 full + 江苏 KB + eval/G2 + corpus/embed
+
+---
+
 ## iter-20 — 稽核/体检模式真差异化（用户点名：两个模式有区别吗）+ 后台起江苏价格research agent
 
 **SMART目标**：把🛡稽核/🏥体检从"只差横幅"做成"真有区别"(同引擎两口径),验收同案两模式findings一致、措辞/文书按视角切换、红线不动。

@@ -1,0 +1,21 @@
+{
+  "report_meta": {
+    "case_id": "YY-BENCH-EDGE-BEV-001",
+    "gold_standard": true,
+    "gold_standard_note": "Oracle 引擎自动生成，供 YHF/shadow 使用",
+    "summary": {
+      "suspected_count": 0,
+      "clue_count": 0,
+      "total_findings": 0
+    }
+  },
+  "findings": [],
+  "correctly_not_flagged": [
+    {
+      "item": "贝伐珠单抗注射液（费用清单第3行，1998元）",
+      "tempting_rule": "T-201 靶向药无基因检测",
+      "why_not_flagged": "贝伐珠单抗为抗血管生成药物，不属\"明确作用靶点需伴随诊断检测\"类，无需EGFR/ALK靶点检测即可使用；病理已确诊腺癌（非鳞癌，符合适应人群），病程已核对禁忌（无咯血、无近期手术、血压控制可）。命中 T-201 除外情形 → 正确不报。",
+      "demo_value": "★主动讲：同是肿瘤大额药，奥希替尼报、贝伐珠单抗不报，差别正在\"是否明确作用靶点\"——语义级稽核超越字段比对之处。"
+    }
+  ]
+}

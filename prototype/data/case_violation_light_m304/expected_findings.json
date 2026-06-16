@@ -1,0 +1,22 @@
+{
+  "report_meta": {
+    "case_id": "YY-BENCH-VIOL-M304-001",
+    "gold_standard": true,
+    "gold_standard_note": "Oracle 引擎自动生成，供 YHF/shadow 使用",
+    "summary": {
+      "suspected_count": 0,
+      "clue_count": 1,
+      "total_findings": 1
+    }
+  },
+  "findings": [
+    {
+      "rule_id": "M-304",
+      "rule_name": "无麻醉恢复室收取麻醉恢复室监护费",
+      "status": "线索",
+      "amount_involved": 150,
+      "violation_type": "超标准收费"
+    }
+  ],
+  "correctly_not_flagged": []
+}

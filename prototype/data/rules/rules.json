@@ -3,7 +3,7 @@
     "schema_version": "3.2",
     "rules_version": "v0.2",
     "generated_date": "2026-06-12",
-    "total_rules": 41,
+    "total_rules": 58,
     "three_element_gate": [
       "原始证据定位",
       "违反的政策条款原文",
@@ -96,7 +96,447 @@
         "耗材专项(无指征植入/数量与手术不符/高值串低值,骨科备演用)",
         "服务不足(路径关键环节缺失,联KB2临床路径)"
       ]
-    }
+    },
+    "naming_convention": {
+      "pattern": "{前缀}-{三位序号}",
+      "display_format": "{family_label} · {rule_name}（{rule_id}）",
+      "prefix_legend": "F基础逻辑 · A收费合规 · B诊疗合理 · C住院行为 · D支付方式 · E对抗资质 · T肿瘤 · M麻醉 · ICU重症 · P药店 · IMG影像 · CV心血管 · BP慢病",
+      "layers": {
+        "L1确定性": "代码可执行，无歧义",
+        "L2语义": "需读病历/医嘱语义",
+        "L3线索": "跨病历或需外部数据，默认降级线索"
+      }
+    },
+    "rule_families": {
+      "F": {
+        "label": "基础逻辑",
+        "layer_hint": "L1确定性",
+        "description": "性别/年龄/时间/频次等底线校验",
+        "exam_scope": true
+      },
+      "A": {
+        "label": "收费合规",
+        "layer_hint": "L1/L2",
+        "description": "重复收费、超标准、分解收费、串换",
+        "exam_scope": true
+      },
+      "B": {
+        "label": "诊疗合理",
+        "layer_hint": "L2语义",
+        "description": "无指征、过度医疗、出院带药",
+        "exam_scope": true
+      },
+      "C": {
+        "label": "住院行为",
+        "layer_hint": "L2/L3",
+        "description": "分解住院、挂床、低标入院",
+        "exam_scope": true
+      },
+      "D": {
+        "label": "支付方式",
+        "layer_hint": "L2语义",
+        "description": "DRG/DIP高套、特例单议",
+        "exam_scope": true
+      },
+      "E": {
+        "label": "对抗/资质",
+        "layer_hint": "L3线索",
+        "description": "对抗性串换、资质不符",
+        "exam_scope": false
+      },
+      "T": {
+        "label": "肿瘤语义",
+        "layer_hint": "L2语义",
+        "description": "靶向/化疗/免疫/路径专项",
+        "exam_scope": true
+      },
+      "M": {
+        "label": "麻醉",
+        "layer_hint": "L2语义",
+        "description": "麻醉时长、计费、ASA分级",
+        "exam_scope": true
+      },
+      "ICU": {
+        "label": "重症ICU",
+        "layer_hint": "L2语义",
+        "description": "呼吸机、CRRT、重症计费",
+        "exam_scope": true
+      },
+      "P": {
+        "label": "零售药店",
+        "layer_hint": "L2语义",
+        "description": "药店串换、空刷、回流药",
+        "exam_scope": false
+      },
+      "IMG": {
+        "label": "医学影像",
+        "layer_hint": "L2语义",
+        "description": "影像无指征、重复、超频次",
+        "exam_scope": true
+      },
+      "CV": {
+        "label": "心血管",
+        "layer_hint": "L2语义",
+        "description": "心内科/介入专项",
+        "exam_scope": true
+      },
+      "BP": {
+        "label": "慢病管理",
+        "layer_hint": "L2语义",
+        "description": "血压/慢病监测配药",
+        "exam_scope": true
+      }
+    },
+    "rule_index": [
+      {
+        "id": "F-001",
+        "title": "基础逻辑 · 性别—项目冲突（F-001）",
+        "prefix": "F",
+        "exam_scope": true
+      },
+      {
+        "id": "F-002",
+        "title": "基础逻辑 · 年龄—项目冲突（F-002）",
+        "prefix": "F",
+        "exam_scope": true
+      },
+      {
+        "id": "F-003",
+        "title": "基础逻辑 · 时间逻辑冲突（F-003）",
+        "prefix": "F",
+        "exam_scope": true
+      },
+      {
+        "id": "F-004",
+        "title": "基础逻辑 · 单日计量超物理上限（F-004）",
+        "prefix": "F",
+        "exam_scope": true
+      },
+      {
+        "id": "F-005",
+        "title": "基础逻辑 · 互斥项目同时计费（F-005）",
+        "prefix": "F",
+        "exam_scope": true
+      },
+      {
+        "id": "F-006",
+        "title": "基础逻辑 · 限频项目超频次（F-006）",
+        "prefix": "F",
+        "exam_scope": true
+      },
+      {
+        "id": "A-101",
+        "title": "收费合规 · 重复收费—项目内涵已包含（A-101）",
+        "prefix": "A",
+        "exam_scope": true
+      },
+      {
+        "id": "A-102",
+        "title": "收费合规 · 重复收费—同义/包含项目并收（A-102）",
+        "prefix": "A",
+        "exam_scope": true
+      },
+      {
+        "id": "A-103",
+        "title": "收费合规 · 超标准收费—单价超物价标准（A-103）",
+        "prefix": "A",
+        "exam_scope": true
+      },
+      {
+        "id": "A-104",
+        "title": "收费合规 · 超标准收费—扩大计价单位/数量（A-104）",
+        "prefix": "A",
+        "exam_scope": true
+      },
+      {
+        "id": "A-105",
+        "title": "收费合规 · 超标准收费—护理等级与实际不符（A-105）",
+        "prefix": "A",
+        "exam_scope": true
+      },
+      {
+        "id": "A-106",
+        "title": "收费合规 · 分解项目收费（A-106）",
+        "prefix": "A",
+        "exam_scope": true
+      },
+      {
+        "id": "A-107",
+        "title": "收费合规 · 串换药品/耗材/诊疗项目（A-107）",
+        "prefix": "A",
+        "exam_scope": true
+      },
+      {
+        "id": "A-108",
+        "title": "收费合规 · 虚记费用—收费项目无医嘱及执行记录支撑（A-108）",
+        "prefix": "A",
+        "exam_scope": true
+      },
+      {
+        "id": "A-109",
+        "title": "收费合规 · 多记费用—结算数量超医嘱/记录数量（A-109）",
+        "prefix": "A",
+        "exam_scope": true
+      },
+      {
+        "id": "A-110",
+        "title": "收费合规 · 范围外费用纳入医保结算（A-110）",
+        "prefix": "A",
+        "exam_scope": true
+      },
+      {
+        "id": "B-201",
+        "title": "诊疗合理 · 药品使用超出医保目录限定支付范围（B-201）",
+        "prefix": "B",
+        "exam_scope": true
+      },
+      {
+        "id": "B-202",
+        "title": "诊疗合理 · 无指征使用抗菌药物（B-202）",
+        "prefix": "B",
+        "exam_scope": true
+      },
+      {
+        "id": "B-203",
+        "title": "诊疗合理 · 重点监控药品无适应症使用（B-203）",
+        "prefix": "B",
+        "exam_scope": true
+      },
+      {
+        "id": "B-204",
+        "title": "诊疗合理 · 超说明书用药（适应症/用法用量）（B-204）",
+        "prefix": "B",
+        "exam_scope": true
+      },
+      {
+        "id": "B-205",
+        "title": "诊疗合理 · 重复用药—同类药理叠加（B-205）",
+        "prefix": "B",
+        "exam_scope": true
+      },
+      {
+        "id": "B-206",
+        "title": "诊疗合理 · 超量开药/出院带药超天数（B-206）",
+        "prefix": "B",
+        "exam_scope": true
+      },
+      {
+        "id": "B-207",
+        "title": "诊疗合理 · 无指征检查（大套餐式检查）（B-207）",
+        "prefix": "B",
+        "exam_scope": true
+      },
+      {
+        "id": "B-208",
+        "title": "诊疗合理 · 康复/理疗超疗程且无评估（B-208）",
+        "prefix": "B",
+        "exam_scope": true
+      },
+      {
+        "id": "C-301",
+        "title": "住院行为 · 分解住院（C-301）",
+        "prefix": "C",
+        "exam_scope": true
+      },
+      {
+        "id": "C-302",
+        "title": "住院行为 · 挂床住院（C-302）",
+        "prefix": "C",
+        "exam_scope": true
+      },
+      {
+        "id": "C-303",
+        "title": "住院行为 · 低标准入院（含体检式住院）（C-303）",
+        "prefix": "C",
+        "exam_scope": true
+      },
+      {
+        "id": "C-304",
+        "title": "住院行为 · 虚假住院（整册造假）（C-304）",
+        "prefix": "C",
+        "exam_scope": true
+      },
+      {
+        "id": "D-401",
+        "title": "支付方式 · 高套分组—主诊断/主手术与病历不符（D-401）",
+        "prefix": "D",
+        "exam_scope": true
+      },
+      {
+        "id": "D-402",
+        "title": "支付方式 · 费用转嫁—应保项目让患者自费/院外购买（D-402）",
+        "prefix": "D",
+        "exam_scope": true
+      },
+      {
+        "id": "D-403",
+        "title": "支付方式 · 服务不足/未达必要诊疗（D-403）",
+        "prefix": "D",
+        "exam_scope": true
+      },
+      {
+        "id": "E-501",
+        "title": "对抗/资质 · 无资质/超执业范围执业（E-501）",
+        "prefix": "E",
+        "exam_scope": false
+      },
+      {
+        "id": "E-502",
+        "title": "对抗/资质 · 病历资料矛盾/涂改痕迹（伪造变造线索）（E-502）",
+        "prefix": "E",
+        "exam_scope": false
+      },
+      {
+        "id": "E-503",
+        "title": "对抗/资质 · 材料含异常指令性文本（对抗注入）（E-503）",
+        "prefix": "E",
+        "exam_scope": false
+      },
+      {
+        "id": "T-201",
+        "title": "肿瘤语义 · 靶向药无基因检测证据使用（T-201）",
+        "prefix": "T",
+        "exam_scope": true
+      },
+      {
+        "id": "T-202",
+        "title": "肿瘤语义 · 无病理诊断使用抗肿瘤药（T-202）",
+        "prefix": "T",
+        "exam_scope": true
+      },
+      {
+        "id": "T-203",
+        "title": "肿瘤语义 · 抗肿瘤药超适应症/超线数使用（T-203）",
+        "prefix": "T",
+        "exam_scope": true
+      },
+      {
+        "id": "T-204",
+        "title": "肿瘤语义 · 靶向/免疫药超量计费（T-204）",
+        "prefix": "T",
+        "exam_scope": true
+      },
+      {
+        "id": "T-205",
+        "title": "肿瘤语义 · 化疗辅助用药超规/无指征（T-205）",
+        "prefix": "T",
+        "exam_scope": true
+      },
+      {
+        "id": "T-206",
+        "title": "肿瘤语义 · 肿瘤标志物/基因检测过度或重复（T-206）",
+        "prefix": "T",
+        "exam_scope": true
+      },
+      {
+        "id": "T-207",
+        "title": "肿瘤语义 · 院外购药费用转嫁（T-207）",
+        "prefix": "T",
+        "exam_scope": true
+      },
+      {
+        "id": "T-208",
+        "title": "肿瘤语义 · 高套分组—肿瘤主诊断/主手术编码虚高（T-208）",
+        "prefix": "T",
+        "exam_scope": true
+      },
+      {
+        "id": "M-301",
+        "title": "麻醉 · 麻醉收费时长超实际麻醉记录时长（M-301）",
+        "prefix": "M",
+        "exam_scope": true
+      },
+      {
+        "id": "M-302",
+        "title": "麻醉 · 麻醉监测重复收费（内涵已含）（M-302）",
+        "prefix": "M",
+        "exam_scope": true
+      },
+      {
+        "id": "M-303",
+        "title": "麻醉 · 麻醉药品收费数量超实际使用（M-303）",
+        "prefix": "M",
+        "exam_scope": true
+      },
+      {
+        "id": "M-304",
+        "title": "麻醉 · 无麻醉恢复室收取麻醉恢复室监护费（M-304）",
+        "prefix": "M",
+        "exam_scope": true
+      },
+      {
+        "id": "ICU-301",
+        "title": "重症ICU · 特级护理重复收取一般专项护理费（ICU-301）",
+        "prefix": "ICU",
+        "exam_scope": true
+      },
+      {
+        "id": "ICU-302",
+        "title": "重症ICU · 按小时计价监护项目时长虚计（ICU-302）",
+        "prefix": "ICU",
+        "exam_scope": true
+      },
+      {
+        "id": "ICU-303",
+        "title": "重症ICU · 非重症监护室患者收取重症监护费（ICU-303）",
+        "prefix": "ICU",
+        "exam_scope": true
+      },
+      {
+        "id": "P-301",
+        "title": "零售药店 · 药店空刷医保凭证骗保（P-301）",
+        "prefix": "P",
+        "exam_scope": false
+      },
+      {
+        "id": "P-302",
+        "title": "零售药店 · 回流药二次销售（P-302）",
+        "prefix": "P",
+        "exam_scope": false
+      },
+      {
+        "id": "P-303",
+        "title": "零售药店 · 生活用品串换为医保药品（P-303）",
+        "prefix": "P",
+        "exam_scope": false
+      },
+      {
+        "id": "IMG-301",
+        "title": "医学影像 · 增强扫描重复收取平扫费用（IMG-301）",
+        "prefix": "IMG",
+        "exam_scope": true
+      },
+      {
+        "id": "IMG-302",
+        "title": "医学影像 · 医用胶片收费超实际使用张数（含串换）（IMG-302）",
+        "prefix": "IMG",
+        "exam_scope": true
+      },
+      {
+        "id": "IMG-303",
+        "title": "医学影像 · 低配置设备检查按高配置计价（IMG-303）",
+        "prefix": "IMG",
+        "exam_scope": true
+      },
+      {
+        "id": "CV-301",
+        "title": "心血管 · 冠脉介入重复收取内涵项目（CV-301）",
+        "prefix": "CV",
+        "exam_scope": true
+      },
+      {
+        "id": "CV-302",
+        "title": "心血管 · 药物涂层球囊串换（普通球囊按药球收费）（CV-302）",
+        "prefix": "CV",
+        "exam_scope": true
+      },
+      {
+        "id": "BP-301",
+        "title": "慢病管理 · 血液净化重复收取已含耗材/置换液（BP-301）",
+        "prefix": "BP",
+        "exam_scope": true
+      }
+    ]
   },
   "rules": [
     {
@@ -131,7 +571,15 @@
       "params": {
         "gender_restricted_table": "KB1-性别限定项目对照表"
       },
-      "demo_seed": "男性患者费用清单含'宫颈刮片'"
+      "demo_seed": "男性患者费用清单含'宫颈刮片'",
+      "catalog": {
+        "prefix": "F",
+        "family_label": "基础逻辑",
+        "family_description": "性别/年龄/时间/频次等底线校验",
+        "layer_hint": "L1确定性",
+        "exam_scope": true,
+        "display_title": "基础逻辑 · 性别—项目冲突（F-001）"
+      }
     },
     {
       "rule_id": "F-002",
@@ -163,7 +611,15 @@
       "params": {
         "age_restricted_table": "KB1-年龄适用人群对照表"
       },
-      "demo_seed": "成人患者收'新生儿护理'"
+      "demo_seed": "成人患者收'新生儿护理'",
+      "catalog": {
+        "prefix": "F",
+        "family_label": "基础逻辑",
+        "family_description": "性别/年龄/时间/频次等底线校验",
+        "layer_hint": "L1确定性",
+        "exam_scope": true,
+        "display_title": "基础逻辑 · 年龄—项目冲突（F-002）"
+      }
     },
     {
       "rule_id": "F-003",
@@ -239,7 +695,15 @@
           "case_id": "anes",
           "note": "麻醉案时间逻辑正常"
         }
-      ]
+      ],
+      "catalog": {
+        "prefix": "F",
+        "family_label": "基础逻辑",
+        "family_description": "性别/年龄/时间/频次等底线校验",
+        "layer_hint": "L1确定性",
+        "exam_scope": true,
+        "display_title": "基础逻辑 · 时间逻辑冲突（F-003）"
+      }
     },
     {
       "rule_id": "F-004",
@@ -270,7 +734,15 @@
       "params": {
         "max_per_day": "按项目配置(吸氧24h/护理24h/...)"
       },
-      "demo_seed": "单日'持续吸氧'计费30小时"
+      "demo_seed": "单日'持续吸氧'计费30小时",
+      "catalog": {
+        "prefix": "F",
+        "family_label": "基础逻辑",
+        "family_description": "性别/年龄/时间/频次等底线校验",
+        "layer_hint": "L1确定性",
+        "exam_scope": true,
+        "display_title": "基础逻辑 · 单日计量超物理上限（F-004）"
+      }
     },
     {
       "rule_id": "F-005",
@@ -303,7 +775,15 @@
       "params": {
         "mutex_table": "KB1-互斥项目对照表"
       },
-      "demo_seed": "同一静脉通道'静脉输液'与'静脉注射'同时段并收"
+      "demo_seed": "同一静脉通道'静脉输液'与'静脉注射'同时段并收",
+      "catalog": {
+        "prefix": "F",
+        "family_label": "基础逻辑",
+        "family_description": "性别/年龄/时间/频次等底线校验",
+        "layer_hint": "L1确定性",
+        "exam_scope": true,
+        "display_title": "基础逻辑 · 互斥项目同时计费（F-005）"
+      }
     },
     {
       "rule_id": "F-006",
@@ -335,7 +815,15 @@
       "params": {
         "freq_limit_table": "从地方价格项目规范导入"
       },
-      "demo_seed": "入院诊查费(限每住院1次)重复计费2次"
+      "demo_seed": "入院诊查费(限每住院1次)重复计费2次",
+      "catalog": {
+        "prefix": "F",
+        "family_label": "基础逻辑",
+        "family_description": "性别/年龄/时间/频次等底线校验",
+        "layer_hint": "L1确定性",
+        "exam_scope": true,
+        "display_title": "基础逻辑 · 限频项目超频次（F-006）"
+      }
     },
     {
       "rule_id": "A-101",
@@ -416,7 +904,15 @@
           "case_id": "imaging",
           "note": "影像案无A-101"
         }
-      ]
+      ],
+      "catalog": {
+        "prefix": "A",
+        "family_label": "收费合规",
+        "family_description": "重复收费、超标准、分解收费、串换",
+        "layer_hint": "L1/L2",
+        "exam_scope": true,
+        "display_title": "收费合规 · 重复收费—项目内涵已包含（A-101）"
+      }
     },
     {
       "rule_id": "A-102",
@@ -448,7 +944,15 @@
       "params": {
         "synonym_map": "KB1-同义映射表"
       },
-      "demo_seed": "'特级护理'与'重症监护'同日并收"
+      "demo_seed": "'特级护理'与'重症监护'同日并收",
+      "catalog": {
+        "prefix": "A",
+        "family_label": "收费合规",
+        "family_description": "重复收费、超标准、分解收费、串换",
+        "layer_hint": "L1/L2",
+        "exam_scope": true,
+        "display_title": "收费合规 · 重复收费—同义/包含项目并收（A-102）"
+      }
     },
     {
       "rule_id": "A-103",
@@ -480,7 +984,15 @@
       "params": {
         "price_catalog": "KB1-江苏价格目录(覆盖层，待抓取)"
       },
-      "demo_seed": "demo若不锚定具体省份，此条做演示桩；江苏覆盖层抓取后启用"
+      "demo_seed": "demo若不锚定具体省份，此条做演示桩；江苏覆盖层抓取后启用",
+      "catalog": {
+        "prefix": "A",
+        "family_label": "收费合规",
+        "family_description": "重复收费、超标准、分解收费、串换",
+        "layer_hint": "L1/L2",
+        "exam_scope": true,
+        "display_title": "收费合规 · 超标准收费—单价超物价标准（A-103）"
+      }
     },
     {
       "rule_id": "A-104",
@@ -516,7 +1028,15 @@
       "params": {
         "pricing_unit_kb": "KB1-价格目录-计价单位"
       },
-      "demo_seed": "理疗一次治疗拆多部位计多次"
+      "demo_seed": "理疗一次治疗拆多部位计多次",
+      "catalog": {
+        "prefix": "A",
+        "family_label": "收费合规",
+        "family_description": "重复收费、超标准、分解收费、串换",
+        "layer_hint": "L1/L2",
+        "exam_scope": true,
+        "display_title": "收费合规 · 超标准收费—扩大计价单位/数量（A-104）"
+      }
     },
     {
       "rule_id": "A-105",
@@ -594,7 +1114,15 @@
           "case_id": "edge_gcsf",
           "note": "边界件无护理等级问题"
         }
-      ]
+      ],
+      "catalog": {
+        "prefix": "A",
+        "family_label": "收费合规",
+        "family_description": "重复收费、超标准、分解收费、串换",
+        "layer_hint": "L1/L2",
+        "exam_scope": true,
+        "display_title": "收费合规 · 超标准收费—护理等级与实际不符（A-105）"
+      }
     },
     {
       "rule_id": "A-106",
@@ -630,7 +1158,15 @@
       "params": {
         "bundle_kb": "KB1-立项指南-打包项目"
       },
-      "demo_seed": "手术含的常规缝合、冲洗拆开收；组套检验拆单项叠加"
+      "demo_seed": "手术含的常规缝合、冲洗拆开收；组套检验拆单项叠加",
+      "catalog": {
+        "prefix": "A",
+        "family_label": "收费合规",
+        "family_description": "重复收费、超标准、分解收费、串换",
+        "layer_hint": "L1/L2",
+        "exam_scope": true,
+        "display_title": "收费合规 · 分解项目收费（A-106）"
+      }
     },
     {
       "rule_id": "A-107",
@@ -664,7 +1200,15 @@
       ],
       "kb2_refs": [],
       "params": {},
-      "demo_seed": "病程'行刮痧治疗'，费用清单结算'中医定向透药疗法'"
+      "demo_seed": "病程'行刮痧治疗'，费用清单结算'中医定向透药疗法'",
+      "catalog": {
+        "prefix": "A",
+        "family_label": "收费合规",
+        "family_description": "重复收费、超标准、分解收费、串换",
+        "layer_hint": "L1/L2",
+        "exam_scope": true,
+        "display_title": "收费合规 · 串换药品/耗材/诊疗项目（A-107）"
+      }
     },
     {
       "rule_id": "A-108",
@@ -708,7 +1252,15 @@
         ],
         "negative_proof_scope": "已核对单据范围必须列明，阴性结论可复核"
       },
-      "demo_seed": "收'伤口换药(大)'×6，医嘱与护理记录仅2次；收'雾化吸入'全程无医嘱"
+      "demo_seed": "收'伤口换药(大)'×6，医嘱与护理记录仅2次；收'雾化吸入'全程无医嘱",
+      "catalog": {
+        "prefix": "A",
+        "family_label": "收费合规",
+        "family_description": "重复收费、超标准、分解收费、串换",
+        "layer_hint": "L1/L2",
+        "exam_scope": true,
+        "display_title": "收费合规 · 虚记费用—收费项目无医嘱及执行记录支撑（A-108）"
+      }
     },
     {
       "rule_id": "A-109",
@@ -786,7 +1338,15 @@
           "case_id": "icu",
           "note": "ICU案数量一致"
         }
-      ]
+      ],
+      "catalog": {
+        "prefix": "A",
+        "family_label": "收费合规",
+        "family_description": "重复收费、超标准、分解收费、串换",
+        "layer_hint": "L1/L2",
+        "exam_scope": true,
+        "display_title": "收费合规 · 多记费用—结算数量超医嘱/记录数量（A-109）"
+      }
     },
     {
       "rule_id": "A-110",
@@ -818,7 +1378,15 @@
       "params": {
         "commercial_innovative_drug_list": "KB1-商保创新药目录2025(19种)"
       },
-      "demo_seed": "医保结算清单出现陪护费/保健品；或出现商保创新药目录品种"
+      "demo_seed": "医保结算清单出现陪护费/保健品；或出现商保创新药目录品种",
+      "catalog": {
+        "prefix": "A",
+        "family_label": "收费合规",
+        "family_description": "重复收费、超标准、分解收费、串换",
+        "layer_hint": "L1/L2",
+        "exam_scope": true,
+        "display_title": "收费合规 · 范围外费用纳入医保结算（A-110）"
+      }
     },
     {
       "rule_id": "B-201",
@@ -905,7 +1473,15 @@
           "case_id": "ortho",
           "note": "骨科案无B-201"
         }
-      ]
+      ],
+      "catalog": {
+        "prefix": "B",
+        "family_label": "诊疗合理",
+        "family_description": "无指征、过度医疗、出院带药",
+        "layer_hint": "L2语义",
+        "exam_scope": true,
+        "display_title": "诊疗合理 · 药品使用超出医保目录限定支付范围（B-201）"
+      }
     },
     {
       "rule_id": "B-202",
@@ -939,7 +1515,15 @@
       ],
       "params": {},
       "demo_seed": "无感染证据使用三代头孢",
-      "note": "本案头孢呋辛有CRP升高+黄痰支持感染→不触发B-202，仅触发A-109超量(测试不过度报)"
+      "note": "本案头孢呋辛有CRP升高+黄痰支持感染→不触发B-202，仅触发A-109超量(测试不过度报)",
+      "catalog": {
+        "prefix": "B",
+        "family_label": "诊疗合理",
+        "family_description": "无指征、过度医疗、出院带药",
+        "layer_hint": "L2语义",
+        "exam_scope": true,
+        "display_title": "诊疗合理 · 无指征使用抗菌药物（B-202）"
+      }
     },
     {
       "rule_id": "B-203",
@@ -976,7 +1560,15 @@
         "KB2-药品说明书"
       ],
       "params": {},
-      "demo_seed": "重点监控目录品种无对应诊断"
+      "demo_seed": "重点监控目录品种无对应诊断",
+      "catalog": {
+        "prefix": "B",
+        "family_label": "诊疗合理",
+        "family_description": "无指征、过度医疗、出院带药",
+        "layer_hint": "L2语义",
+        "exam_scope": true,
+        "display_title": "诊疗合理 · 重点监控药品无适应症使用（B-203）"
+      }
     },
     {
       "rule_id": "B-204",
@@ -1012,7 +1604,15 @@
         "KB2-指导原则2025-特殊情况合理使用"
       ],
       "params": {},
-      "demo_seed": "化疗药超说明书剂量无审批记录"
+      "demo_seed": "化疗药超说明书剂量无审批记录",
+      "catalog": {
+        "prefix": "B",
+        "family_label": "诊疗合理",
+        "family_description": "无指征、过度医疗、出院带药",
+        "layer_hint": "L2语义",
+        "exam_scope": true,
+        "display_title": "诊疗合理 · 超说明书用药（适应症/用法用量）（B-204）"
+      }
     },
     {
       "rule_id": "B-205",
@@ -1046,7 +1646,15 @@
         "KB2-药品说明书"
       ],
       "params": {},
-      "demo_seed": "同时开两种质子泵抑制剂"
+      "demo_seed": "同时开两种质子泵抑制剂",
+      "catalog": {
+        "prefix": "B",
+        "family_label": "诊疗合理",
+        "family_description": "无指征、过度医疗、出院带药",
+        "layer_hint": "L2语义",
+        "exam_scope": true,
+        "display_title": "诊疗合理 · 重复用药—同类药理叠加（B-205）"
+      }
     },
     {
       "rule_id": "B-206",
@@ -1082,7 +1690,15 @@
         "special_chronic_days": 30
       },
       "demo_seed": "急性病出院带药30天",
-      "note": "本案奥希替尼带药28天属慢性肿瘤维持治疗(特殊慢病≈30天)→不触发B-206天数，仅触发T-201无检测"
+      "note": "本案奥希替尼带药28天属慢性肿瘤维持治疗(特殊慢病≈30天)→不触发B-206天数，仅触发T-201无检测",
+      "catalog": {
+        "prefix": "B",
+        "family_label": "诊疗合理",
+        "family_description": "无指征、过度医疗、出院带药",
+        "layer_hint": "L2语义",
+        "exam_scope": true,
+        "display_title": "诊疗合理 · 超量开药/出院带药超天数（B-206）"
+      }
     },
     {
       "rule_id": "B-207",
@@ -1118,7 +1734,15 @@
         "KB2-临床路径必查项目"
       ],
       "params": {},
-      "demo_seed": "单纯阑尾炎住院做全套肿瘤标志物+甲功"
+      "demo_seed": "单纯阑尾炎住院做全套肿瘤标志物+甲功",
+      "catalog": {
+        "prefix": "B",
+        "family_label": "诊疗合理",
+        "family_description": "无指征、过度医疗、出院带药",
+        "layer_hint": "L2语义",
+        "exam_scope": true,
+        "display_title": "诊疗合理 · 无指征检查（大套餐式检查）（B-207）"
+      }
     },
     {
       "rule_id": "B-208",
@@ -1154,7 +1778,15 @@
       "params": {
         "max_course": "按项目/地方配置"
       },
-      "demo_seed": "康复理疗连续30天无康复评定"
+      "demo_seed": "康复理疗连续30天无康复评定",
+      "catalog": {
+        "prefix": "B",
+        "family_label": "诊疗合理",
+        "family_description": "无指征、过度医疗、出院带药",
+        "layer_hint": "L2语义",
+        "exam_scope": true,
+        "display_title": "诊疗合理 · 康复/理疗超疗程且无评估（B-208）"
+      }
     },
     {
       "rule_id": "C-301",
@@ -1202,7 +1834,15 @@
         "观察区": "8-15天·需更多佐证",
         "豁免": "放化疗周期/血透/急诊新发/转诊(全局豁免清单,仲裁层统一应用)"
       },
-      "demo_seed": "本案干扰项2：第1→第2周期间隔15天、主诊断同，但属放化疗周期→正确不报"
+      "demo_seed": "本案干扰项2：第1→第2周期间隔15天、主诊断同，但属放化疗周期→正确不报",
+      "catalog": {
+        "prefix": "C",
+        "family_label": "住院行为",
+        "family_description": "分解住院、挂床、低标入院",
+        "layer_hint": "L2/L3",
+        "exam_scope": true,
+        "display_title": "住院行为 · 分解住院（C-301）"
+      }
     },
     {
       "rule_id": "C-302",
@@ -1234,7 +1874,15 @@
       "params": {
         "idle_days": 3
       },
-      "demo_seed": "住院期间连续3日无任何记录但床位护理费持续计费"
+      "demo_seed": "住院期间连续3日无任何记录但床位护理费持续计费",
+      "catalog": {
+        "prefix": "C",
+        "family_label": "住院行为",
+        "family_description": "分解住院、挂床、低标入院",
+        "layer_hint": "L2/L3",
+        "exam_scope": true,
+        "display_title": "住院行为 · 挂床住院（C-302）"
+      }
     },
     {
       "rule_id": "C-303",
@@ -1267,7 +1915,15 @@
         "KB2-临床路径入院指征"
       ],
       "params": {},
-      "demo_seed": "症状轻微入院，全程仅做检查无治疗"
+      "demo_seed": "症状轻微入院，全程仅做检查无治疗",
+      "catalog": {
+        "prefix": "C",
+        "family_label": "住院行为",
+        "family_description": "分解住院、挂床、低标入院",
+        "layer_hint": "L2/L3",
+        "exam_scope": true,
+        "display_title": "住院行为 · 低标准入院（含体检式住院）（C-303）"
+      }
     },
     {
       "rule_id": "C-304",
@@ -1296,7 +1952,15 @@
       ],
       "kb2_refs": [],
       "params": {},
-      "demo_seed": "病程逐日完全雷同复制"
+      "demo_seed": "病程逐日完全雷同复制",
+      "catalog": {
+        "prefix": "C",
+        "family_label": "住院行为",
+        "family_description": "分解住院、挂床、低标入院",
+        "layer_hint": "L2/L3",
+        "exam_scope": true,
+        "display_title": "住院行为 · 虚假住院（整册造假）（C-304）"
+      }
     },
     {
       "rule_id": "D-401",
@@ -1377,7 +2041,15 @@
           "case_id": "icu",
           "note": "ARDS诊断有ICU记录支撑"
         }
-      ]
+      ],
+      "catalog": {
+        "prefix": "D",
+        "family_label": "支付方式",
+        "family_description": "DRG/DIP高套、特例单议",
+        "layer_hint": "L2语义",
+        "exam_scope": true,
+        "display_title": "支付方式 · 高套分组—主诊断/主手术与病历不符（D-401）"
+      }
     },
     {
       "rule_id": "D-402",
@@ -1409,7 +2081,15 @@
       ],
       "kb2_refs": [],
       "params": {},
-      "demo_seed": "见T-207(肿瘤特化)"
+      "demo_seed": "见T-207(肿瘤特化)",
+      "catalog": {
+        "prefix": "D",
+        "family_label": "支付方式",
+        "family_description": "DRG/DIP高套、特例单议",
+        "layer_hint": "L2语义",
+        "exam_scope": true,
+        "display_title": "支付方式 · 费用转嫁—应保项目让患者自费/院外购买（D-402）"
+      }
     },
     {
       "rule_id": "D-403",
@@ -1441,7 +2121,15 @@
         "KB2-临床路径关键环节"
       ],
       "params": {},
-      "demo_seed": "未完成路径关键环节即出院"
+      "demo_seed": "未完成路径关键环节即出院",
+      "catalog": {
+        "prefix": "D",
+        "family_label": "支付方式",
+        "family_description": "DRG/DIP高套、特例单议",
+        "layer_hint": "L2语义",
+        "exam_scope": true,
+        "display_title": "支付方式 · 服务不足/未达必要诊疗（D-403）"
+      }
     },
     {
       "rule_id": "E-501",
@@ -1473,7 +2161,15 @@
       "params": {
         "external_practice_db": "演示桩"
       },
-      "demo_seed": "手术术者与执业注册不符(演示桩)"
+      "demo_seed": "手术术者与执业注册不符(演示桩)",
+      "catalog": {
+        "prefix": "E",
+        "family_label": "对抗/资质",
+        "family_description": "对抗性串换、资质不符",
+        "layer_hint": "L3线索",
+        "exam_scope": false,
+        "display_title": "对抗/资质 · 无资质/超执业范围执业（E-501）"
+      }
     },
     {
       "rule_id": "E-502",
@@ -1503,7 +2199,15 @@
       ],
       "kb2_refs": [],
       "params": {},
-      "demo_seed": "手术记录时间与麻醉单、收费时间三方不一致"
+      "demo_seed": "手术记录时间与麻醉单、收费时间三方不一致",
+      "catalog": {
+        "prefix": "E",
+        "family_label": "对抗/资质",
+        "family_description": "对抗性串换、资质不符",
+        "layer_hint": "L3线索",
+        "exam_scope": false,
+        "display_title": "对抗/资质 · 病历资料矛盾/涂改痕迹（伪造变造线索）（E-502）"
+      }
     },
     {
       "rule_id": "E-503",
@@ -1588,7 +2292,15 @@
           "case_id": "edge_egfr",
           "note": "边界件无注入"
         }
-      ]
+      ],
+      "catalog": {
+        "prefix": "E",
+        "family_label": "对抗/资质",
+        "family_description": "对抗性串换、资质不符",
+        "layer_hint": "L3线索",
+        "exam_scope": false,
+        "display_title": "对抗/资质 · 材料含异常指令性文本（对抗注入）（E-503）"
+      }
     },
     {
       "rule_id": "T-201",
@@ -1699,7 +2411,15 @@
           "case_id": "main",
           "note": "贝伐珠单抗非靶点药→正确不报(干扰项)"
         }
-      ]
+      ],
+      "catalog": {
+        "prefix": "T",
+        "family_label": "肿瘤语义",
+        "family_description": "靶向/化疗/免疫/路径专项",
+        "layer_hint": "L2语义",
+        "exam_scope": true,
+        "display_title": "肿瘤语义 · 靶向药无基因检测证据使用（T-201）"
+      }
     },
     {
       "rule_id": "T-202",
@@ -1734,7 +2454,15 @@
       ],
       "params": {},
       "demo_seed": "仅胸部CT诊断肺癌即用抗肿瘤药，无病理报告",
-      "note": "本案有病理报告(腺癌)→T-202不触发，体现规则精确性"
+      "note": "本案有病理报告(腺癌)→T-202不触发，体现规则精确性",
+      "catalog": {
+        "prefix": "T",
+        "family_label": "肿瘤语义",
+        "family_description": "靶向/化疗/免疫/路径专项",
+        "layer_hint": "L2语义",
+        "exam_scope": true,
+        "display_title": "肿瘤语义 · 无病理诊断使用抗肿瘤药（T-202）"
+      }
     },
     {
       "rule_id": "T-203",
@@ -1770,7 +2498,15 @@
         "KB2-指导原则2025-特殊情况合理使用"
       ],
       "params": {},
-      "demo_seed": "免疫药超适应症线数使用无审批"
+      "demo_seed": "免疫药超适应症线数使用无审批",
+      "catalog": {
+        "prefix": "T",
+        "family_label": "肿瘤语义",
+        "family_description": "靶向/化疗/免疫/路径专项",
+        "layer_hint": "L2语义",
+        "exam_scope": true,
+        "display_title": "肿瘤语义 · 抗肿瘤药超适应症/超线数使用（T-203）"
+      }
     },
     {
       "rule_id": "T-204",
@@ -1805,7 +2541,15 @@
         "KB2-说明书-给药剂量"
       ],
       "params": {},
-      "demo_seed": "单周期方案应2支，结算3支"
+      "demo_seed": "单周期方案应2支，结算3支",
+      "catalog": {
+        "prefix": "T",
+        "family_label": "肿瘤语义",
+        "family_description": "靶向/化疗/免疫/路径专项",
+        "layer_hint": "L2语义",
+        "exam_scope": true,
+        "display_title": "肿瘤语义 · 靶向/免疫药超量计费（T-204）"
+      }
     },
     {
       "rule_id": "T-205",
@@ -1891,7 +2635,15 @@
           "case_id": "drg",
           "note": "DRG案无升白针"
         }
-      ]
+      ],
+      "catalog": {
+        "prefix": "T",
+        "family_label": "肿瘤语义",
+        "family_description": "靶向/化疗/免疫/路径专项",
+        "layer_hint": "L2语义",
+        "exam_scope": true,
+        "display_title": "肿瘤语义 · 化疗辅助用药超规/无指征（T-205）"
+      }
     },
     {
       "rule_id": "T-206",
@@ -1927,7 +2679,15 @@
         "KB2-肿瘤标志物检测规范"
       ],
       "params": {},
-      "demo_seed": "短期重复全套肿瘤标志物无病情变化"
+      "demo_seed": "短期重复全套肿瘤标志物无病情变化",
+      "catalog": {
+        "prefix": "T",
+        "family_label": "肿瘤语义",
+        "family_description": "靶向/化疗/免疫/路径专项",
+        "layer_hint": "L2语义",
+        "exam_scope": true,
+        "display_title": "肿瘤语义 · 肿瘤标志物/基因检测过度或重复（T-206）"
+      }
     },
     {
       "rule_id": "T-207",
@@ -2006,7 +2766,15 @@
           "case_id": "pharmacy",
           "note": "药店场景非住院转嫁"
         }
-      ]
+      ],
+      "catalog": {
+        "prefix": "T",
+        "family_label": "肿瘤语义",
+        "family_description": "靶向/化疗/免疫/路径专项",
+        "layer_hint": "L2语义",
+        "exam_scope": true,
+        "display_title": "肿瘤语义 · 院外购药费用转嫁（T-207）"
+      }
     },
     {
       "rule_id": "T-208",
@@ -2040,7 +2808,15 @@
         "KB2-DRGDIP2.0不入组编码列表"
       ],
       "params": {},
-      "demo_seed": "维持治疗编为伴并发症拔高权重，病程无并发症支持"
+      "demo_seed": "维持治疗编为伴并发症拔高权重，病程无并发症支持",
+      "catalog": {
+        "prefix": "T",
+        "family_label": "肿瘤语义",
+        "family_description": "靶向/化疗/免疫/路径专项",
+        "layer_hint": "L2语义",
+        "exam_scope": true,
+        "display_title": "肿瘤语义 · 高套分组—肿瘤主诊断/主手术编码虚高（T-208）"
+      }
     },
     {
       "rule_id": "M-301",
@@ -2068,7 +2844,15 @@
       ],
       "kb2_refs": [],
       "params": {},
-      "demo_seed": "全麻收费180分钟，麻醉记录实际120分钟"
+      "demo_seed": "全麻收费180分钟，麻醉记录实际120分钟",
+      "catalog": {
+        "prefix": "M",
+        "family_label": "麻醉",
+        "family_description": "麻醉时长、计费、ASA分级",
+        "layer_hint": "L2语义",
+        "exam_scope": true,
+        "display_title": "麻醉 · 麻醉收费时长超实际麻醉记录时长（M-301）"
+      }
     },
     {
       "rule_id": "M-302",
@@ -2098,7 +2882,15 @@
       ],
       "kb2_refs": [],
       "params": {},
-      "demo_seed": "术中麻醉监测另收心电监测+有创血压监测"
+      "demo_seed": "术中麻醉监测另收心电监测+有创血压监测",
+      "catalog": {
+        "prefix": "M",
+        "family_label": "麻醉",
+        "family_description": "麻醉时长、计费、ASA分级",
+        "layer_hint": "L2语义",
+        "exam_scope": true,
+        "display_title": "麻醉 · 麻醉监测重复收费（内涵已含）（M-302）"
+      }
     },
     {
       "rule_id": "M-303",
@@ -2126,7 +2918,15 @@
       ],
       "kb2_refs": [],
       "params": {},
-      "demo_seed": "丙泊酚收费5支，麻醉记录实际用3支"
+      "demo_seed": "丙泊酚收费5支，麻醉记录实际用3支",
+      "catalog": {
+        "prefix": "M",
+        "family_label": "麻醉",
+        "family_description": "麻醉时长、计费、ASA分级",
+        "layer_hint": "L2语义",
+        "exam_scope": true,
+        "display_title": "麻醉 · 麻醉药品收费数量超实际使用（M-303）"
+      }
     },
     {
       "rule_id": "M-304",
@@ -2153,7 +2953,15 @@
       ],
       "kb2_refs": [],
       "params": {},
-      "demo_seed": "无麻醉恢复室却收恢复室监护费"
+      "demo_seed": "无麻醉恢复室却收恢复室监护费",
+      "catalog": {
+        "prefix": "M",
+        "family_label": "麻醉",
+        "family_description": "麻醉时长、计费、ASA分级",
+        "layer_hint": "L2语义",
+        "exam_scope": true,
+        "display_title": "麻醉 · 无麻醉恢复室收取麻醉恢复室监护费（M-304）"
+      }
     },
     {
       "rule_id": "ICU-301",
@@ -2181,7 +2989,15 @@
       ],
       "kb2_refs": [],
       "params": {},
-      "demo_seed": "ICU特级护理同时另收一般专项护理"
+      "demo_seed": "ICU特级护理同时另收一般专项护理",
+      "catalog": {
+        "prefix": "ICU",
+        "family_label": "重症ICU",
+        "family_description": "呼吸机、CRRT、重症计费",
+        "layer_hint": "L2语义",
+        "exam_scope": true,
+        "display_title": "重症ICU · 特级护理重复收取一般专项护理费（ICU-301）"
+      }
     },
     {
       "rule_id": "ICU-302",
@@ -2209,7 +3025,15 @@
       ],
       "kb2_refs": [],
       "params": {},
-      "demo_seed": "呼吸机计费120小时，实际使用80小时"
+      "demo_seed": "呼吸机计费120小时，实际使用80小时",
+      "catalog": {
+        "prefix": "ICU",
+        "family_label": "重症ICU",
+        "family_description": "呼吸机、CRRT、重症计费",
+        "layer_hint": "L2语义",
+        "exam_scope": true,
+        "display_title": "重症ICU · 按小时计价监护项目时长虚计（ICU-302）"
+      }
     },
     {
       "rule_id": "ICU-303",
@@ -2236,7 +3060,15 @@
       ],
       "kb2_refs": [],
       "params": {},
-      "demo_seed": "普通病房患者收取重症监护费"
+      "demo_seed": "普通病房患者收取重症监护费",
+      "catalog": {
+        "prefix": "ICU",
+        "family_label": "重症ICU",
+        "family_description": "呼吸机、CRRT、重症计费",
+        "layer_hint": "L2语义",
+        "exam_scope": true,
+        "display_title": "重症ICU · 非重症监护室患者收取重症监护费（ICU-303）"
+      }
     },
     {
       "rule_id": "P-301",
@@ -2265,7 +3097,15 @@
       ],
       "kb2_refs": [],
       "params": {},
-      "demo_seed": "刷卡结算但无对应药品出库"
+      "demo_seed": "刷卡结算但无对应药品出库",
+      "catalog": {
+        "prefix": "P",
+        "family_label": "零售药店",
+        "family_description": "药店串换、空刷、回流药",
+        "layer_hint": "L2语义",
+        "exam_scope": false,
+        "display_title": "零售药店 · 药店空刷医保凭证骗保（P-301）"
+      }
     },
     {
       "rule_id": "P-302",
@@ -2295,7 +3135,15 @@
       "params": {
         "追溯码": "2025-07起强制扫追溯码结算,可作第四验证轴"
       },
-      "demo_seed": "进货来源不明+追溯码已被其他机构核销过"
+      "demo_seed": "进货来源不明+追溯码已被其他机构核销过",
+      "catalog": {
+        "prefix": "P",
+        "family_label": "零售药店",
+        "family_description": "药店串换、空刷、回流药",
+        "layer_hint": "L2语义",
+        "exam_scope": false,
+        "display_title": "零售药店 · 回流药二次销售（P-302）"
+      }
     },
     {
       "rule_id": "P-303",
@@ -2323,7 +3171,15 @@
       ],
       "kb2_refs": [],
       "params": {},
-      "demo_seed": "实际卖口罩酒精，结算为医保目录内药品"
+      "demo_seed": "实际卖口罩酒精，结算为医保目录内药品",
+      "catalog": {
+        "prefix": "P",
+        "family_label": "零售药店",
+        "family_description": "药店串换、空刷、回流药",
+        "layer_hint": "L2语义",
+        "exam_scope": false,
+        "display_title": "零售药店 · 生活用品串换为医保药品（P-303）"
+      }
     },
     {
       "rule_id": "IMG-301",
@@ -2352,7 +3208,15 @@
       ],
       "kb2_refs": [],
       "params": {},
-      "demo_seed": "CT增强扫描同时另收CT平扫"
+      "demo_seed": "CT增强扫描同时另收CT平扫",
+      "catalog": {
+        "prefix": "IMG",
+        "family_label": "医学影像",
+        "family_description": "影像无指征、重复、超频次",
+        "layer_hint": "L2语义",
+        "exam_scope": true,
+        "display_title": "医学影像 · 增强扫描重复收取平扫费用（IMG-301）"
+      }
     },
     {
       "rule_id": "IMG-302",
@@ -2381,7 +3245,15 @@
       ],
       "kb2_refs": [],
       "params": {},
-      "demo_seed": "胶片收10张影像记录实际用4张；或DR胶片串换为诊疗项目"
+      "demo_seed": "胶片收10张影像记录实际用4张；或DR胶片串换为诊疗项目",
+      "catalog": {
+        "prefix": "IMG",
+        "family_label": "医学影像",
+        "family_description": "影像无指征、重复、超频次",
+        "layer_hint": "L2语义",
+        "exam_scope": true,
+        "display_title": "医学影像 · 医用胶片收费超实际使用张数（含串换）（IMG-302）"
+      }
     },
     {
       "rule_id": "IMG-303",
@@ -2409,7 +3281,15 @@
       ],
       "kb2_refs": [],
       "params": {},
-      "demo_seed": "低排CT按高排CT收费"
+      "demo_seed": "低排CT按高排CT收费",
+      "catalog": {
+        "prefix": "IMG",
+        "family_label": "医学影像",
+        "family_description": "影像无指征、重复、超频次",
+        "layer_hint": "L2语义",
+        "exam_scope": true,
+        "display_title": "医学影像 · 低配置设备检查按高配置计价（IMG-303）"
+      }
     },
     {
       "rule_id": "CV-301",
@@ -2440,7 +3320,15 @@
       "governance": {
         "note": "心血管细化条目为行业整理(部分核实)，逐字待省级附件核验，进报告标'待核'"
       },
-      "demo_seed": "冠脉支架置入另收冠脉造影+球囊预扩张"
+      "demo_seed": "冠脉支架置入另收冠脉造影+球囊预扩张",
+      "catalog": {
+        "prefix": "CV",
+        "family_label": "心血管",
+        "family_description": "心内科/介入专项",
+        "layer_hint": "L2语义",
+        "exam_scope": true,
+        "display_title": "心血管 · 冠脉介入重复收取内涵项目（CV-301）"
+      }
     },
     {
       "rule_id": "CV-302",
@@ -2467,7 +3355,15 @@
       ],
       "kb2_refs": [],
       "params": {},
-      "demo_seed": "普通球囊按药物涂层球囊收费"
+      "demo_seed": "普通球囊按药物涂层球囊收费",
+      "catalog": {
+        "prefix": "CV",
+        "family_label": "心血管",
+        "family_description": "心内科/介入专项",
+        "layer_hint": "L2语义",
+        "exam_scope": true,
+        "display_title": "心血管 · 药物涂层球囊串换（普通球囊按药球收费）（CV-302）"
+      }
     },
     {
       "rule_id": "BP-301",
@@ -2497,7 +3393,15 @@
       "governance": {
         "note": "血液净化逐字证据最弱,具体场景(置管护理/冲管/复用)待手动抓吉林省负面清单PDF核验"
       },
-      "demo_seed": "血透另收置换液；血液灌流与血液透析并收"
+      "demo_seed": "血透另收置换液；血液灌流与血液透析并收",
+      "catalog": {
+        "prefix": "BP",
+        "family_label": "慢病管理",
+        "family_description": "血压/慢病监测配药",
+        "layer_hint": "L2语义",
+        "exam_scope": true,
+        "display_title": "慢病管理 · 血液净化重复收取已含耗材/置换液（BP-301）"
+      }
     }
   ]
 }

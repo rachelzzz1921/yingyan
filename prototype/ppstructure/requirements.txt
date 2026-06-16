@@ -1,0 +1,14 @@
+# 鹰眼 · L1 文档解析 sidecar（最小可跑：lite 模式）
+fastapi>=0.110
+uvicorn[standard]>=0.27
+python-multipart>=0.0.9
+pdfplumber>=0.11.0
+pymupdf>=1.24.0
+pillow>=10.0.0
+pytesseract>=0.3.10
+
+# 可选 · 完整 PP-StructureV3（见 install-paddle.sh；需 Python ≤3.12）
+# paddleocr[doc-parser]>=3.0
+# paddlepaddle>=3.0
+# pdf2image>=1.17
+# pytesseract>=0.3.10

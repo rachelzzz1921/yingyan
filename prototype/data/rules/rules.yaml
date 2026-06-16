@@ -51,6 +51,29 @@ meta:
     已建: {F: "基础逻辑", A: "收费合规", B: "诊疗合理", C: "住院行为", D: "支付方式", E: "资质数据/对抗"}
     路线图: {G: "时序与跨就诊(同患者短期跨机构重复/慢病配药节奏突变/住院-门诊腾挪，依赖批量数据底座)", H: "统计离群(单价/用量显著偏离同类病例分布，无需先验规则即可发现新型违规，依赖群体数据)"}
     其他缺口: ["门诊/药店场景(回流药/串换/超量,2026监管重点)", "耗材专项(无指征植入/数量与手术不符/高值串低值,骨科备演用)", "服务不足(路径关键环节缺失,联KB2临床路径)"]
+  # 规则命名规范：编号 = {前缀}-{三位序号}；展示名 = {族名} · {规则短名}（{编号}）
+  naming_convention:
+    pattern: "{前缀}-{三位序号}"
+    display_format: "{family_label} · {rule_name}（{rule_id}）"
+    prefix_legend: "F基础逻辑 · A收费合规 · B诊疗合理 · C住院行为 · D支付方式 · E对抗资质 · T肿瘤 · M麻醉 · ICU重症 · P药店 · IMG影像 · CV心血管 · BP慢病"
+    layers:
+      L1确定性: "代码可执行，无歧义"
+      L2语义: "需读病历/医嘱语义"
+      L3线索: "跨病历或需外部数据，默认降级线索"
+  rule_families:
+    F: { label: 基础逻辑, layer_hint: L1确定性, description: "性别/年龄/时间/频次等底线校验", exam_scope: true }
+    A: { label: 收费合规, layer_hint: L1/L2, description: "重复收费、超标准、分解收费、串换", exam_scope: true }
+    B: { label: 诊疗合理, layer_hint: L2语义, description: "无指征、过度医疗、出院带药", exam_scope: true }
+    C: { label: 住院行为, layer_hint: L2/L3, description: "分解住院、挂床、低标入院", exam_scope: true }
+    D: { label: 支付方式, layer_hint: L2语义, description: "DRG/DIP高套、特例单议", exam_scope: true }
+    E: { label: 对抗/资质, layer_hint: L3线索, description: "对抗性串换、资质不符", exam_scope: false }
+    T: { label: 肿瘤语义, layer_hint: L2语义, description: "靶向/化疗/免疫/路径专项", exam_scope: true }
+    M: { label: 麻醉, layer_hint: L2语义, description: "麻醉时长、计费、ASA分级", exam_scope: true }
+    ICU: { label: 重症ICU, layer_hint: L2语义, description: "呼吸机、CRRT、重症计费", exam_scope: true }
+    P: { label: 零售药店, layer_hint: L2语义, description: "药店串换、空刷、回流药", exam_scope: false }
+    IMG: { label: 医学影像, layer_hint: L2语义, description: "影像无指征、重复、超频次", exam_scope: true }
+    CV: { label: 心血管, layer_hint: L2语义, description: "心内科/介入专项", exam_scope: true }
+    BP: { label: 慢病管理, layer_hint: L2语义, description: "血压/慢病监测配药", exam_scope: true }
 
 rules:
 

@@ -10,7 +10,8 @@
 |---|---|---|
 | 🧬 事实层 Case Object | 材料编译为类型化事实，每条自带源锚点+OCR置信度，证据定位成硬字段 | 顶栏"事实层"按钮 / 证据卡⚓锚点 |
 | 🔀 触发器路由 | 全42条规则本案只激活11条，其余零成本跳过（90秒承诺的工程基础） | 报告顶部路由条 |
-| 📊 AuditBench 评测 | 违规件+干净件评测集，**干净件误报=0红线**，指标盘 | 顶栏"AuditBench"按钮 |
+| 📊 AuditBench 评测 | 违规件+干净件评测集（**20 案卷**），**干净件误报=0红线**，指标盘 | 顶栏"AuditBench"按钮 / 看板 |
+| 🔒 PII 脱敏 + 内部案卷号 | 送 LLM 前自动脱敏姓名/证件；`YY-{SCOPE}-{DOMAIN}-{SEQ}` registry 排号 | 引擎 llm-agent / case_registry.json |
 | 🪤 对抗鲁棒性 E-503 | 病历=不可信输入；"写给AI的小抄"本身即证据(40条二) | 顶栏"注入对抗演示"按钮 |
 | 🔁 CoVe 取证自检 | 疑点定稿前生成验证问题逐题独立回查 | 疑点卡内 |
 | ⚖️ 控辩裁 + 置信校准 | 控/辩/裁三方对质(申诉Agent=误报过滤器)；排序=金额×置信 | 疑点卡内 |
@@ -74,12 +75,40 @@ prototype/
     └── public/                    # 稽核工作台前端（原生JS，无框架）
 ```
 
+## 📥 一键导入 + L1 解析（PP-Structure Sidecar）
+
+**两条终端：**
+
+```bash
+# 终端 1 · L1 解析服务（PDF/图片 → bbox 坐标）
+cd prototype/ppstructure && bash run.sh
+
+# 终端 2 · 稽核工作台
+cd prototype/app && node server.js
+```
+
+顶栏显示 **L1✓(lite)** 表示解析 sidecar 就绪。**材料导入**（完整页）或 **快速导入**（弹窗）→ 拖入 PDF/JSON/CSV/图片。
+
+验收：`node scripts/verify-intake-bbox.js`（需 sidecar + app 已启动）。扫描图 PNG 还需 `brew install tesseract tesseract-lang`。
+
+| API | 说明 |
+|---|---|
+| `POST /api/intake/batch` | 批量拖入 `{ files: [{ name, mime, fileBase64 }] }` |
+| `GET /api/intake/slots` | 材料槽位清单 |
+| `GET /api/health` | 含 `ppstructure.reachable` |
+
+详见 [`ppstructure/README.md`](ppstructure/README.md)。
+
+---
+
 ## 🔌 API
 
 | 方法 | 路径 | 说明 |
 |---|---|---|
 | GET | `/api/case?id=main\|clean\|ortho\|drg\|uploaded` | 患者材料包（肿瘤/干净/骨科/DRG高套/导入） |
 | GET | `/api/cases` | 案卷清单 |
+| POST | `/api/intake/batch` | **一键导入**：批量文件→自动分类→合并 medical_record（含 bbox） |
+| GET | `/api/intake/slots` | 导入材料槽位（费用清单/病案首页/医嘱…） |
 | POST | `/api/ingest` | **输入端**：摄取材料 `{type:structured\|document\|connector,...}`→结构化 medical_record，注册 uploaded 案卷 |
 | GET | `/api/connectors` | **输入端**：医院连接器清单（MockHIS/FHIR/HL7）+ 状态 |
 | GET | `/api/rules` | 全量规则（meta+42条，含governance治理） |
@@ -89,7 +118,7 @@ prototype/
 | GET | `/api/bench` | AuditBench：跑全部案卷出指标盘（干净件0误报红线） |
 | GET | `/api/export/checklist` | 导出《疑点核查清单》（监管文书化） |
 | POST | `/api/audit` | 运行稽核；body `{record?,caseId?,inject?}`；`?mode=llm\|exam`（LLM语义/体检模式） |
-| GET | `/api/health` | 健康检查（规则数、案卷数、LLM是否就绪） |
+| GET | `/api/health` | 健康检查（规则数、案卷数、LLM、**L1 sidecar**） |
 
 ## 🧱 设计原则（写进代码的产品承诺）
 

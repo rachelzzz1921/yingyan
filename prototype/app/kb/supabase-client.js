@@ -101,11 +101,52 @@ async function countEntries() {
   return Array.isArray(rows) ? rows.length : 0;
 }
 
+async function countEmbeddedChunks() {
+  const rows = await rest('GET', 'kb_chunks', {
+    query: 'select=ref_id&embedding=not.is.null',
+    service: false,
+  });
+  return Array.isArray(rows) ? rows.length : 0;
+}
+
+/** pgvector 相似度检索（需 kb_match RPC + embedding 已灌） */
+async function rpcKbMatch(embedding, { matchLayer = null, matchCount = 8, minSimilarity = 0.25 } = {}) {
+  const vec = `[${embedding.join(',')}]`;
+  return rest('POST', 'rpc/kb_match', {
+    body: {
+      query_embedding: vec,
+      match_layer: matchLayer,
+      match_count: matchCount,
+      min_similarity: minSimilarity,
+    },
+    service: false,
+  });
+}
+
+async function patchChunkEmbedding(refId, chunkIndex, corpusVersion, embedding) {
+  const cfg = ragConfig();
+  const q = `ref_id=eq.${encodeURIComponent(refId)}&chunk_index=eq.${chunkIndex}&corpus_version=eq.${encodeURIComponent(corpusVersion)}`;
+  const url = `${apiBase()}/kb_chunks?${q}`;
+  const key = cfg.supabaseServiceKey;
+  const headers = key === 'local-dev-postgres'
+    ? { 'Content-Type': 'application/json', Prefer: 'return=representation' }
+    : { apikey: key, Authorization: `Bearer ${key}`, 'Content-Type': 'application/json', Prefer: 'return=representation' };
+  const res = await fetch(url, {
+    method: 'PATCH',
+    headers,
+    body: JSON.stringify({ embedding: `[${embedding.join(',')}]`, updated_at: new Date().toISOString() }),
+  });
+  if (!res.ok) throw new Error(`patchChunkEmbedding ${res.status}: ${await res.text()}`);
+  return res.json();
+}
+
 async function ping() {
   if (!canUseSupabase()) return { ok: false, reason: 'missing_credentials' };
   try {
     const n = await countEntries();
-    return { ok: true, entry_count: n };
+    let embedded = 0;
+    try { embedded = await countEmbeddedChunks(); } catch { /* optional */ }
+    return { ok: true, entry_count: n, embedded_chunks: embedded };
   } catch (e) {
     return { ok: false, reason: e.message };
   }
@@ -118,5 +159,8 @@ module.exports = {
   getEntryByRefId,
   listEntries,
   countEntries,
+  countEmbeddedChunks,
+  rpcKbMatch,
+  patchChunkEmbedding,
   ping,
 };

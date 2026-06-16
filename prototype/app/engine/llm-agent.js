@@ -14,6 +14,8 @@
 'use strict';
 
 const { callLLM, providerName } = require('./llm-provider');
+const { piiRedact } = require('./pii-redact');
+const { applyContextBudget } = require('./context-budget');
 const MODEL = providerName();
 
 // 统一经 provider（MiniMax/Anthropic）
@@ -28,8 +30,10 @@ function extractJSON(text) {
 
 // ---------- Stage 1：稽核 Agent（控方）——真读自由文本提疑点 ----------
 async function prosecutor(record, rules, kb) {
-  const slimRules = rules.map(r => ({ rule_id: r.rule_id, rule_name: r.rule_name, layer: r.layer, violation_type: r.violation_type, trigger_logic: r.trigger_logic, exclusions: r.exclusions, policy_basis: r.policy_basis }));
+  const safeRecord = piiRedact(record);
   const policyKB = {}; for (const e of (kb?.entries || [])) policyKB[e.ref_id] = e.text;
+  const budgeted = applyContextBudget({ rules, policyKB, record: safeRecord });
+  const slimRules = budgeted.rules;
   const system = [
     '你是"鹰眼"稽核Agent(控方)。真读这份患者材料包的**自由文本**(病程/入院记录/手术记录/检验报告/医嘱/费用清单)，做费用-医嘱-诊断三方交叉验证，找医保违规疑点。',
     '不可动摇原则：①三要素门禁——疑点必须给 证据定位(具体到费用行号/单据名+原文摘录)+条款引用ID+推理；引不出三要素的不输出。②宁漏报不误报——医学合理性争议只出"线索"。③violation_type用《条例》38/40条官方术语。④条款只能引 policy_kb 提供的原文，不得凭记忆编造。',
@@ -37,14 +41,14 @@ async function prosecutor(record, rules, kb) {
   ].join('\n');
   const user = [
     '## 规则库(节选)', '```json', JSON.stringify(slimRules), '```',
-    '## policy_kb(条款原文,report只能引这里)', '```json', JSON.stringify(policyKB), '```',
-    '## 待稽核材料包', '```json', JSON.stringify(record), '```',
+    '## policy_kb(条款原文,report只能引这里)', '```json', JSON.stringify(budgeted.policyKB), '```',
+    '## 待稽核材料包（已脱敏）', '```json', JSON.stringify(budgeted.record), '```',
     '逐条跑规则做三方交叉验证。只输出JSON数组，每元素:',
     '{"rule_id","rule_name","violation_type","layer","risk_level":"高|中—高|中|低","status":"疑点|线索","amount_involved":number,"evidence":[{"type","loc","text"}],"policy":[{"ref","text"}],"reasoning","needs_more":[],"disposal_suggestion"}',
   ].join('\n');
   const txt = await callClaude(system, user, 8000);
   const arr = extractJSON(txt);
-  return Array.isArray(arr) ? arr : (arr.findings || []);
+  return { findings: Array.isArray(arr) ? arr : (arr.findings || []), context_manifest: budgeted.context_manifest };
 }
 
 // ---------- Stage 2：CoVe 取证自检（真生成验证问题+独立回查） ----------
@@ -100,7 +104,9 @@ async function coveVerifyAll(findings, record) {
 async function llmAgentAudit(record, rules, opts = {}) {
   const kb = opts.kb;
   const t0 = Date.now();
-  let raw = await prosecutor(record, rules, kb);                          // Stage1 真读病历
+  const prose = await prosecutor(record, rules, kb);
+  let raw = prose.findings;
+  const context_manifest = prose.context_manifest;
   raw.forEach((f, i) => { f.finding_id = `F-LLM-${String(i + 1).padStart(3, '0')}`; });
   let coveMap = {};
   try { coveMap = await coveVerifyAll(raw, record); } catch (e) { /* CoVe失败不阻断 */ }
@@ -124,6 +130,7 @@ async function llmAgentAudit(record, rules, opts = {}) {
       audit_engine: `鹰眼·真·LLM多Agent语义稽核（${MODEL}：稽核Agent读病历→批量CoVe自检→合议去重→控辩裁按需）`,
       reconciliation_log,
       engine_mode: `真·LLM语义分析（Agent读病历自由文本推理 · ${MODEL}）`, real_agent: true, llm_provider: MODEL,
+      context_manifest,
       human_baseline_minutes: 40, agent_seconds: 90, elapsed_ms: Date.now() - t0,
       summary: { total_findings: findings.length, suspected_count: suspected.length, clue_count: clues.length, suspected_amount: Number(suspected.reduce((s, f) => s + (f.amount_involved || 0), 0).toFixed(2)), clue_amount_flagged: Number(clues.reduce((s, f) => s + (f.amount_involved || 0), 0).toFixed(2)) },
     },

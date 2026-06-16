@@ -1,0 +1,244 @@
+{
+  "entries": [
+    {
+      "internal_id": "YY-DEMO-NSCLC-001",
+      "folder": "case_NSCLC",
+      "api_id": "main",
+      "scope": "DEMO",
+      "domain": "NSCLC",
+      "bench_tier": "violation",
+      "pii_token": "P-nslc01",
+      "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "internal_id": "YY-BENCH-CLEAN-001",
+      "folder": "case_clean",
+      "api_id": "clean",
+      "scope": "BENCH",
+      "domain": "CLEAN",
+      "bench_tier": "clean",
+      "pii_token": "P-cln001",
+      "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "internal_id": "YY-BENCH-ORTHO-001",
+      "folder": "case_ortho",
+      "api_id": "ortho",
+      "scope": "BENCH",
+      "domain": "ORTHO",
+      "bench_tier": "violation",
+      "pii_token": "P-orth01",
+      "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "internal_id": "YY-BENCH-DRG-001",
+      "folder": "case_drg",
+      "api_id": "drg",
+      "scope": "BENCH",
+      "domain": "DRG",
+      "bench_tier": "violation",
+      "pii_token": "P-drg001",
+      "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "internal_id": "YY-BENCH-IMG-001",
+      "folder": "case_imaging",
+      "api_id": "imaging",
+      "scope": "BENCH",
+      "domain": "IMG",
+      "bench_tier": "violation",
+      "pii_token": "P-img001",
+      "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "internal_id": "YY-BENCH-EDGE-EGFR-001",
+      "folder": "case_edge_egfr",
+      "api_id": "edge_egfr",
+      "scope": "BENCH",
+      "domain": "EDGE-EGFR",
+      "bench_tier": "boundary",
+      "pii_token": "P-egfr1",
+      "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "internal_id": "YY-BENCH-EDGE-GCSF-001",
+      "folder": "case_edge_gcsf",
+      "api_id": "edge_gcsf",
+      "scope": "BENCH",
+      "domain": "EDGE-GCSF",
+      "bench_tier": "boundary",
+      "pii_token": "P-gcsf1",
+      "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "internal_id": "YY-BENCH-ANES-001",
+      "folder": "case_anes",
+      "api_id": "anes",
+      "scope": "BENCH",
+      "domain": "ANES",
+      "bench_tier": "violation",
+      "pii_token": "P-anes1",
+      "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "internal_id": "YY-BENCH-PHARM-001",
+      "folder": "case_pharmacy",
+      "api_id": "pharmacy",
+      "scope": "BENCH",
+      "domain": "PHARM",
+      "bench_tier": "violation",
+      "pii_token": "P-phrm1",
+      "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "internal_id": "YY-BENCH-ICU-001",
+      "folder": "case_icu",
+      "api_id": "icu",
+      "scope": "BENCH",
+      "domain": "ICU",
+      "bench_tier": "violation",
+      "pii_token": "P-icu001",
+      "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "internal_id": "YY-BENCH-CLEAN-CV-001",
+      "folder": "case_clean_cardio",
+      "api_id": "clean_cardio",
+      "scope": "BENCH",
+      "domain": "CLEAN-CV",
+      "bench_tier": "clean",
+      "pii_token": "P-b7cd",
+      "created_at": "2026-06-16T09:57:55.169Z"
+    },
+    {
+      "internal_id": "YY-BENCH-CLEAN-RHB-001",
+      "folder": "case_clean_rehab",
+      "api_id": "clean_rehab",
+      "scope": "BENCH",
+      "domain": "CLEAN-RHB",
+      "bench_tier": "clean",
+      "pii_token": "P-3e28",
+      "created_at": "2026-06-16T09:57:55.174Z"
+    },
+    {
+      "internal_id": "YY-BENCH-EDGE-DEC-001",
+      "folder": "case_boundary_decompose",
+      "api_id": "boundary_decompose",
+      "scope": "BENCH",
+      "domain": "EDGE-DEC",
+      "bench_tier": "boundary",
+      "pii_token": "P-e975",
+      "created_at": "2026-06-16T09:57:55.175Z"
+    },
+    {
+      "internal_id": "YY-BENCH-EDGE-INJ-001",
+      "folder": "case_boundary_injection",
+      "api_id": "boundary_injection",
+      "scope": "BENCH",
+      "domain": "EDGE-INJ",
+      "bench_tier": "boundary",
+      "pii_token": "P-3d2a",
+      "created_at": "2026-06-16T09:57:55.175Z"
+    },
+    {
+      "internal_id": "YY-BENCH-EDGE-BEV-001",
+      "folder": "case_boundary_egfr2",
+      "api_id": "boundary_egfr2",
+      "scope": "BENCH",
+      "domain": "EDGE-BEV",
+      "bench_tier": "boundary",
+      "pii_token": "P-9ce9",
+      "created_at": "2026-06-16T09:57:55.176Z"
+    },
+    {
+      "internal_id": "YY-BENCH-EDGE-NRS-001",
+      "folder": "case_boundary_nursing",
+      "api_id": "boundary_nursing",
+      "scope": "BENCH",
+      "domain": "EDGE-NRS",
+      "bench_tier": "boundary",
+      "pii_token": "P-e2a8",
+      "created_at": "2026-06-16T09:57:55.176Z"
+    },
+    {
+      "internal_id": "YY-BENCH-VIOL-F003-001",
+      "folder": "case_violation_light_f003",
+      "api_id": "viol_f003",
+      "scope": "BENCH",
+      "domain": "VIOL-F003",
+      "bench_tier": "violation",
+      "pii_token": "P-c590",
+      "created_at": "2026-06-16T09:57:55.177Z"
+    },
+    {
+      "internal_id": "YY-BENCH-VIOL-A105-001",
+      "folder": "case_violation_light_a105",
+      "api_id": "viol_a105",
+      "scope": "BENCH",
+      "domain": "VIOL-A105",
+      "bench_tier": "violation",
+      "pii_token": "P-e308",
+      "created_at": "2026-06-16T09:57:55.178Z"
+    },
+    {
+      "internal_id": "YY-BENCH-VIOL-M304-001",
+      "folder": "case_violation_light_m304",
+      "api_id": "viol_m304",
+      "scope": "BENCH",
+      "domain": "VIOL-M304",
+      "bench_tier": "violation",
+      "pii_token": "P-0f5b",
+      "created_at": "2026-06-16T09:57:55.178Z"
+    },
+    {
+      "internal_id": "YY-BENCH-VIOL-P301-001",
+      "folder": "case_violation_light_p301",
+      "api_id": "viol_p301",
+      "scope": "BENCH",
+      "domain": "VIOL-P301",
+      "bench_tier": "violation",
+      "pii_token": "P-6a99",
+      "created_at": "2026-06-16T09:57:55.182Z"
+    },
+    {
+      "internal_id": "YY-INT-UNK-001",
+      "folder": null,
+      "api_id": "uploaded",
+      "scope": "INT",
+      "domain": "UNK",
+      "bench_tier": null,
+      "pii_token": "P-4810",
+      "created_at": "2026-06-16T10:54:03.151Z"
+    },
+    {
+      "internal_id": "YY-INT-UNK-002",
+      "folder": null,
+      "api_id": "uploaded",
+      "scope": "INT",
+      "domain": "UNK",
+      "bench_tier": null,
+      "pii_token": "P-3c46",
+      "created_at": "2026-06-16T11:02:28.388Z"
+    },
+    {
+      "internal_id": "YY-INT-UNK-003",
+      "folder": null,
+      "api_id": "uploaded",
+      "scope": "INT",
+      "domain": "UNK",
+      "bench_tier": null,
+      "pii_token": "P-8179",
+      "created_at": "2026-06-16T11:03:47.249Z"
+    }
+  ],
+  "meta": {
+    "version": 1,
+    "id_format": "YY-{SCOPE}-{DOMAIN}-{SEQ:03d}",
+    "scopes": [
+      "DEMO",
+      "BENCH",
+      "INT",
+      "LIVE"
+    ]
+  }
+}

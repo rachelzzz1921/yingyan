@@ -9,7 +9,7 @@ gates:
     mode: oracle           # 必须 oracle，禁止 governance 叠加
 
   G1_shadow_fpr:
-    enabled: false         # MVP scaffold，核对后再开
+    enabled: true         # iter-GIAC：core_rules shadow FPR 门禁
     description: "变更规则影子运行误报率上限"
     layer: shadow          # L4
     max_fpr: 0.10
@@ -26,6 +26,13 @@ gates:
     description: "单案稽核 P95 时延上限（毫秒）"
     layer: engine
     p95_ms: 90000
+
+  G4_rag_recall:
+    enabled: true
+    description: "RAG 检索 recall@8 下限（eval 集）"
+    layer: rag           # L5
+    min_recall: 0.75
+    k: 8
 
 engine:
   # 与 prototype/server.js /api/bench 对齐：跳过临时导入件

@@ -1,0 +1,29 @@
+{
+  "report_meta": {
+    "case_id": "YY-DEMO-DRG-001",
+    "gold_standard": true,
+    "gold_standard_note": "Oracle 引擎自动生成，供 YHF/shadow 使用",
+    "summary": {
+      "suspected_count": 1,
+      "clue_count": 0,
+      "total_findings": 1
+    }
+  },
+  "findings": [
+    {
+      "rule_id": "D-401",
+      "rule_name": "高套分组—主诊断/主手术与病历不符",
+      "status": "疑点",
+      "amount_involved": 3100,
+      "violation_type": "高套分组"
+    }
+  ],
+  "correctly_not_flagged": [
+    {
+      "item": "次诊断「2型糖尿病」(E11.900)",
+      "tempting_rule": "D-401 高套/虚编",
+      "why_not_flagged": "次诊断2型糖尿病编码有病历支持：空腹血糖8.9mmol/L升高、长期口服二甲双胍——诊断成立、编码与病历相符 → 正确不报。仅主诊断「重症肺炎」高套被报，次诊断不连坐。",
+      "demo_value": "★主动讲：不是所有编码都套高——同一份病案首页，主诊断高套报、次诊断糖尿病编码正确不报。精准定位到具体高套项，不殃及合规编码。"
+    }
+  ]
+}

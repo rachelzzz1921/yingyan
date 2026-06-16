@@ -1,0 +1,36 @@
+{
+  "report_meta": {
+    "case_id": "YY-DEMO-IMG-001",
+    "gold_standard": true,
+    "gold_standard_note": "Oracle 引擎自动生成，供 YHF/shadow 使用",
+    "summary": {
+      "suspected_count": 2,
+      "clue_count": 0,
+      "total_findings": 2
+    }
+  },
+  "findings": [
+    {
+      "rule_id": "IMG-301",
+      "rule_name": "增强扫描重复收取平扫费用",
+      "status": "疑点",
+      "amount_involved": 280,
+      "violation_type": "重复收费"
+    },
+    {
+      "rule_id": "IMG-302",
+      "rule_name": "医用胶片收费超实际使用张数（含串换）",
+      "status": "疑点",
+      "amount_involved": 72,
+      "violation_type": "重复收费/串换项目"
+    }
+  ],
+  "correctly_not_flagged": [
+    {
+      "item": "胸部DR摄影（费用清单第4行，80元）",
+      "tempting_rule": "IMG 影像类",
+      "why_not_flagged": "胸部DR摄影为独立合规检查项，非增强/平扫内涵重复、非胶片超量——影像记录支持，正确收费 → 正确不报。仅\"CT增强另收平扫(IMG-301)\"和\"胶片超量(IMG-302)\"被报，DR摄影不连坐。",
+      "demo_value": "★影像备演价值：同一份影像费用，CT增强重复平扫报、胶片超量报，DR摄影正确不报——内涵/张数逐项硬比对，精准到具体违规项，对错分明。"
+    }
+  ]
+}

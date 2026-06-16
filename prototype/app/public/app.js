@@ -4,8 +4,162 @@ const $ = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => [...r.querySelectorAll(s)];
 const esc = (s) => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 
+function refreshRuleMap() {
+  RULE_MAP = Object.fromEntries((RULES?.rules || []).map(r => [r.rule_id, r]));
+}
+
+function ruleDisplayTitle(ruleId) {
+  const r = RULE_MAP[ruleId];
+  return r?.catalog?.display_title || (r ? `${r.rule_name}（${ruleId}）` : ruleId);
+}
+
+function ruleLink(ruleId, opts = {}) {
+  if (!ruleId) return '';
+  const compact = !!opts.compact;
+  const r = RULE_MAP[ruleId];
+  const title = ruleDisplayTitle(ruleId);
+  if (compact) {
+    const hit = opts.hit ? ' hit' : '';
+    const tip = opts.locateHint ? '点击查看规则 · 旁 ↗ 定位疑点' : '查看规则说明';
+    return `<button type="button" class="rule-link rule-link-compact rchip${hit}" data-rule-id="${esc(ruleId)}" title="${esc(tip)}：${esc(title)}">${esc(ruleId)}</button>`;
+  }
+  const name = r?.catalog ? `${r.catalog.family_label} · ${r.rule_name}` : (r?.rule_name || ruleId);
+  return `<button type="button" class="rule-link" data-rule-id="${esc(ruleId)}" title="查看规则说明：${esc(title)}"><span class="rule-id-chip">${esc(ruleId)}</span><span class="rule-name-chip">${esc(name)}</span></button>`;
+}
+
+function findingForRule(ruleId) {
+  return (REPORT?.findings || []).find(f =>
+    f.rule_id === ruleId || (f.corroborations || []).some(c => c.rule_id === ruleId)
+  );
+}
+
+function pulseHighlight(el) {
+  if (!el) return;
+  el.style.transition = 'box-shadow .3s';
+  const prev = el.style.boxShadow;
+  el.style.boxShadow = '0 0 0 3px rgba(196,44,44,.35)';
+  setTimeout(() => { el.style.boxShadow = prev; }, 1200);
+}
+
+/** 覆盖度表等：多条命中规则，编号可查说明、↗ 可定位疑点 */
+function ruleHitCell(ruleIds) {
+  if (!ruleIds?.length) return '<span class="muted">—</span>';
+  return `<span class="rule-hit-cell">${ruleIds.map(id =>
+    `<span class="rule-hit-wrap">${ruleLink(id, { compact: true, hit: true, locateHint: true })}<button type="button" class="rule-locate-btn" data-locate-rule="${esc(id)}" title="定位到本案疑点">↗</button></span>`
+  ).join('')}</span>`;
+}
+
+function ruleLinksInline(ruleIds, opts = {}) {
+  if (!ruleIds?.length) return '<span class="muted">—</span>';
+  return ruleIds.map(id => ruleLink(id, { compact: true, hit: !!opts.hit })).join('<span class="rule-sep">、</span>');
+}
+
+function renderRuleDetailBody(rule) {
+  if (!rule) return '<p class="muted">未找到该规则，请刷新页面后重试。</p>';
+  const c = rule.catalog || {};
+  const pol = (rule.policy_basis || []).map(p => `<li>${esc(p)}</li>`).join('') || '<li class="muted">—</li>';
+  const applies = (rule.applies_to || []).join('、') || '—';
+  const examNote = c.exam_scope === false ? '<span class="rule-tag exam-off">体检模式不跑</span>' : '<span class="rule-tag">体检/稽核均适用</span>';
+  return `
+    <div class="rule-detail-head">
+      <h3 class="rule-detail-title">${esc(c.display_title || rule.rule_name)}</h3>
+      <div class="rule-detail-meta">
+        <span class="rule-tag">${esc(c.family_label || c.prefix || '规则')}</span>
+        <span class="rule-tag">${esc(rule.layer || c.layer_hint || '')}</span>
+        <span class="rule-tag">${esc(rule.violation_type || '')}</span>
+        <span class="rule-tag">风险 ${esc(rule.risk_level || '—')}</span>
+        ${examNote}
+      </div>
+      ${c.family_description ? `<p class="muted" style="margin:0;font-size:12.5px">${esc(c.family_description)}</p>` : ''}
+    </div>
+    <div class="rule-detail-sec"><h4>判定逻辑</h4><pre class="rule-detail-pre">${esc(rule.trigger_logic || '—')}</pre></div>
+    <div class="rule-detail-sec"><h4>除外 / 误报防控</h4><pre class="rule-detail-pre">${esc(rule.exclusions || '—')}</pre></div>
+    <div class="rule-detail-sec"><h4>最小证据集</h4><pre class="rule-detail-pre">${esc((rule.evidence_min_set || []).join(' · ') || '—')}</pre></div>
+    <div class="rule-detail-sec"><h4>政策依据</h4><ul style="margin:0;padding-left:18px;font-size:12.5px">${pol}</ul></div>
+    <div class="rule-detail-sec"><h4>适用场景</h4><p class="muted" style="margin:0;font-size:12.5px">${esc(applies)} · ${esc((rule.specialty_tags || []).join('、') || '通用')}</p></div>
+    ${rule.demo_seed ? `<div class="rule-detail-sec"><h4>演示种子</h4><p class="muted" style="margin:0;font-size:12.5px">${esc(rule.demo_seed)}</p></div>` : ''}
+    <div class="rule-detail-actions">
+      ${findingForRule(rule.rule_id) ? `<button type="button" class="v2btn accent" onclick="closeModal();jumpToRuleFinding('${esc(rule.rule_id)}')">↗ 定位到本案疑点</button>${findingForRule(rule.rule_id)?.evidence?.[0]?.loc ? `<button type="button" class="v2btn" onclick="closeModal();jumpToRuleEvidence('${esc(rule.rule_id)}')">📄 定位证据原文</button>` : ''}` : ''}
+      <button type="button" class="v2btn" onclick="showRuleCatalog('${esc(rule.rule_id)}')">在目录中定位</button>
+      <button type="button" class="v2btn" onclick="closeModal();showGovernance();">规则治理</button>
+    </div>`;
+}
+
+window.showRuleDetail = function (ruleId) {
+  const rule = RULE_MAP[ruleId];
+  openModal('📘 规则说明 · ' + esc(ruleId), renderRuleDetailBody(rule));
+};
+
+window.showRuleCatalog = function (highlightId) {
+  const naming = RULES?.meta?.naming_convention || {};
+  const families = RULES?.meta?.rule_families || {};
+  const byPrefix = {};
+  for (const r of RULES?.rules || []) {
+    const p = r.catalog?.prefix || r.rule_id.split('-')[0];
+    if (!byPrefix[p]) byPrefix[p] = [];
+    byPrefix[p].push(r);
+  }
+  const order = Object.keys(families).length ? Object.keys(families) : Object.keys(byPrefix).sort();
+  const groups = order.filter(p => byPrefix[p]?.length).map(p => {
+    const fam = families[p] || {};
+    const items = byPrefix[p].map(r => {
+      const hi = r.rule_id === highlightId ? ' highlight' : '';
+      return `<button type="button" class="rule-catalog-item${hi}" data-rule-id="${esc(r.rule_id)}">
+        <span class="rule-id-chip">${esc(r.rule_id)}</span>
+        <span><strong>${esc(r.rule_name)}</strong><div class="rule-cat-desc">${esc(r.catalog?.display_title || '')}${r.catalog?.exam_scope === false ? ' · 体检不跑' : ''}</div></span>
+      </button>`;
+    }).join('');
+    return `<div class="rule-catalog-group" id="rule-grp-${esc(p)}"><h4>${esc(p)} · ${esc(fam.label || p)} <span class="muted">(${byPrefix[p].length})</span></h4><div class="rule-catalog-list">${items}</div></div>`;
+  }).join('');
+  const html = `
+    <div class="rule-catalog-legend"><b>命名规则</b>：${esc(naming.pattern || '{前缀}-{序号}')} · 展示为「${esc(naming.display_format || '')}」<br>${esc(naming.prefix_legend || '')}</div>
+    <input type="search" class="rule-catalog-search" id="ruleCatalogSearch" placeholder="搜索编号 / 规则名 / 族名…" autocomplete="off">
+    <div id="ruleCatalogBody">${groups || '<p class="muted">暂无规则</p>'}</div>`;
+  openModal('📘 规则目录 · ' + (RULES?.rules?.length || 0) + ' 条', html);
+  const search = document.getElementById('ruleCatalogSearch');
+  if (search) {
+    search.oninput = () => {
+      const q = search.value.trim().toLowerCase();
+      $$('.rule-catalog-item').forEach(el => {
+        const id = el.dataset.ruleId || '';
+        const r = RULE_MAP[id];
+        const blob = [id, r?.rule_name, r?.catalog?.display_title, r?.catalog?.family_label].join(' ').toLowerCase();
+        el.style.display = !q || blob.includes(q) ? '' : 'none';
+      });
+      $$('.rule-catalog-group').forEach(g => {
+        g.style.display = [...g.querySelectorAll('.rule-catalog-item')].some(i => i.style.display !== 'none') ? '' : 'none';
+      });
+    };
+    if (highlightId) {
+      search.value = highlightId;
+      search.dispatchEvent(new Event('input'));
+      setTimeout(() => document.getElementById('rule-grp-' + (RULE_MAP[highlightId]?.catalog?.prefix || ''))?.scrollIntoView({ block: 'nearest' }), 80);
+    }
+  }
+};
+
+function bindRuleLinkDelegation() {
+  document.addEventListener('click', (e) => {
+    const locBtn = e.target.closest('[data-locate-rule]');
+    if (locBtn) {
+      e.preventDefault();
+      e.stopPropagation();
+      jumpToRuleFinding(locBtn.dataset.locateRule);
+      return;
+    }
+    const el = e.target.closest('[data-rule-id]');
+    if (!el || el.closest('.actions') || el.closest('.rule-detail-actions')) return;
+    if (!el.classList.contains('rule-link') && !el.classList.contains('rchip') && !el.classList.contains('rule-catalog-item')) return;
+    e.preventDefault();
+    e.stopPropagation();
+    showRuleDetail(el.dataset.ruleId);
+  });
+}
+
 let RECORD = null, RULES = null, REPORT = null, FLAGGED_LINES = new Set();
+let RULE_MAP = {};
 let MODE = 'audit', INJECT = false, CURRENT_CASE = 'main';
+let RECT_MAP = {}, REPORT_VIEW = 'report', PRECIP_DATA = { items: [], drafts: [] };
 
 const CASE_LABELS = {
   main: '肿瘤主线 · NSCLC', clean: '干净对照件', ortho: '骨科备演 · PKP', drg: 'DRG高套 · 重症肺炎',
@@ -21,6 +175,89 @@ function setWorkflowStep(n) {
     el.classList.toggle('done', s < n);
   });
 }
+
+function applyModeUI() {
+  const exam = MODE === 'exam';
+  document.body.classList.toggle('mode-exam', exam);
+  document.body.classList.toggle('mode-audit', !exam);
+  const themeMeta = document.querySelector('meta[name="theme-color"]');
+  if (themeMeta) themeMeta.setAttribute('content', exam ? '#0D4A32' : '#0B2A4A');
+  $$('.mode-btn').forEach(x => x.classList.toggle('active', x.dataset.mode === MODE));
+
+  const brandP = document.querySelector('.brand-text p');
+  if (brandP) {
+    brandP.innerHTML = exam
+      ? '医保飞检前自查自纠 · 院端体检仪 · 主动整改 <span class="tag exam-tag">院端自查</span>'
+      : '医保基金稽核智能体 · 三方交叉验证 · 证据链输出 <span class="tag">飞检 AI 初筛</span>';
+  }
+  const panelTitle = document.querySelector('.panel-right .panel-head h2');
+  if (panelTitle) {
+    panelTitle.innerHTML = exam
+      ? '<span class="panel-icon">🏥</span> <span id="panelReportTitle">自查体检报告</span>'
+      : '<span class="panel-icon">🛡</span> <span id="panelReportTitle">稽核报告</span>';
+  }
+  const leftTitle = document.querySelector('.panel-left .panel-head h2');
+  if (leftTitle && exam) leftTitle.innerHTML = '<span class="panel-icon">📋</span> 自查材料包';
+  else if (leftTitle && !exam) leftTitle.innerHTML = '<span class="panel-icon">📁</span> 患者就诊材料包';
+
+  const btnAudit = $('#btnAudit');
+  const btnAuditBar = $('#btnAuditBar');
+  const auditLabel = exam ? '▶ 开始自查' : '▶ 开始稽核';
+  if (btnAudit) btnAudit.innerHTML = `<span class="btn-icon">▶</span> ${exam ? '开始自查' : '开始稽核'}`;
+  if (btnAuditBar) btnAuditBar.textContent = auditLabel;
+
+  const wf2 = document.querySelector('.wf-step[data-step="2"] .wf-text');
+  const wf3 = document.querySelector('.wf-step[data-step="3"] .wf-text');
+  if (wf2) wf2.textContent = exam ? '开始自查' : '开始稽核';
+  if (wf3) wf3.textContent = exam ? '看报告' : '看报告 · 点证据';
+  const wf4 = document.querySelector('.wf-step[data-step="4"] .wf-text');
+  if (wf4) wf4.textContent = '登记整改';
+  $$('.wf-exam-only').forEach(el => el.classList.toggle('hidden', !exam));
+
+  const tabs = $('#reportTabs');
+  if (tabs) tabs.classList.toggle('hidden', !exam || !REPORT);
+
+  const btnExport = $('#btnExport');
+  if (btnExport) btnExport.textContent = exam ? '导出自查清单' : '导出清单';
+  const btnInject = $('#btnInject');
+  if (btnInject) btnInject.classList.toggle('hidden', exam);
+
+  document.title = exam ? '鹰眼 · 医保飞检自查体检' : '鹰眼 · 医保基金稽核智能体';
+  updateEmptyState(exam);
+}
+
+function updateEmptyState(exam) {
+  const empty = $('#reportEmpty');
+  if (!empty) return;
+  const title = empty.querySelector('.empty-title');
+  const steps = empty.querySelector('.empty-steps');
+  if (title) title.textContent = exam ? '就绪 · 飞检前 90 秒完成院端自查初筛' : '就绪 · 把线索到证据的距离，缩短到 90 秒';
+  if (steps) {
+    steps.innerHTML = exam
+      ? `<li>左侧下拉<strong>选演示案卷</strong>（院端规则子集，不含监管演示规则）</li>
+         <li>点<strong>「开始自查」</strong> — 只跑住院/临床相关规则</li>
+         <li>右侧登记<strong>整改时限与整改状态</strong> → 导出自查清单</li>`
+      : `<li>左侧下拉<strong>选演示案卷</strong>（肿瘤主线含 6 疑点 + 合议层）</li>
+         <li>点<strong>「开始稽核」</strong> — 文档索引与条款交叉验证</li>
+         <li>右侧查看疑点 → <strong>点证据定位</strong>跳费用行高亮</li>`;
+  }
+}
+
+async function loadRectification(caseId) {
+  try {
+    const r = await fetch('/api/rectification?case_id=' + encodeURIComponent(caseId)).then(x => x.json());
+    RECT_MAP = r.entries || {};
+    if (r.precipitation_pending) PRECIP_DATA.items = r.precipitation_pending;
+  } catch (e) { RECT_MAP = {}; }
+}
+
+function defaultDeadline(days = 7) {
+  const d = new Date();
+  d.setDate(d.getDate() + days);
+  return d.toISOString().slice(0, 10);
+}
+
+function rectKey(f) { return `${CURRENT_CASE}::${f.finding_id}`; }
 
 function renderCaseMeta() {
   const bar = $('#caseMetaBar');
@@ -60,13 +297,16 @@ let activeTab = 'fee';
 // ---------- 初始化 ----------
 async function init() {
   try {
+    const savedMode = sessionStorage.getItem('yingyan_mode');
+    if (savedMode === 'exam' || savedMode === 'audit') MODE = savedMode;
     const [health, rules, cases] = await Promise.all([
       fetch('/api/health').then(r => r.json()),
       fetch('/api/rules').then(r => r.json()),
       fetch('/api/cases').then(r => r.json()),
     ]);
     RULES = rules;
-    $('#health').textContent = `规则 ${rules.rules.length} · 案卷 ${cases.length} · ${health.llm_ready ? 'LLM 就绪' : '确定性引擎'}`;
+    refreshRuleMap();
+    $('#health').textContent = `规则 ${rules.rules.length} · 案卷 ${cases.length} · ${health.llm_ready ? 'LLM 就绪' : '确定性引擎'}${health.ppstructure?.reachable ? ` · L1✓(${health.ppstructure.recommended_engine || 'ok'})` : ' · L1—(sidecar 未启动)'}`;
     $('#caseSelect').innerHTML = cases.map(c => {
       const lbl = CASE_LABELS[c.id] || c.id;
       const vio = c.violations === 0 ? '干净' : `${c.violations}违规`;
@@ -74,7 +314,13 @@ async function init() {
     }).join('');
     $('#caseSelect').onchange = (e) => loadCase(e.target.value);
     const qCase = new URLSearchParams(location.search).get('case');
-    await loadCase(qCase && cases.some(c => c.id === qCase) ? qCase : 'main');
+    const qAudit = new URLSearchParams(location.search).get('audit');
+    const caseId = qCase && cases.some(c => c.id === qCase) ? qCase : 'main';
+    await loadCase(caseId);
+    if (qAudit === '1' && caseId === 'uploaded') setTimeout(() => runAudit(), 400);
+    applyModeUI();
+    bindReviewActionDelegation();
+    bindRuleLinkDelegation();
   } catch (e) {
     $('#docBody').innerHTML = `<div class="empty">加载失败：${esc(e.message)}<br><span class="muted">请确认已运行 node server.js</span></div>`;
   }
@@ -89,6 +335,10 @@ async function loadCase(id) {
   setWorkflowStep(1);
   // 重置报告区
   $('#reportBody').classList.add('hidden'); $('#reportEmpty').classList.remove('hidden');
+  $('#rectificationBody').classList.add('hidden');
+  $('#reportTabs')?.classList.add('hidden');
+  REPORT_VIEW = 'report';
+  $$('.rtab').forEach(t => t.classList.toggle('active', t.dataset.view === 'report'));
   $('#engineMode').textContent = '';
   const btn = $('#btnAudit'); if (btn) { btn.disabled = false; btn.textContent = '▶ 开始稽核'; }
 }
@@ -225,8 +475,9 @@ function feeTable(r) {
   const items = r.fee_list.items;
   const rows = items.map(it => {
     const flagged = FLAGGED_LINES.has(it.line_no);
-    return `<tr class="${flagged ? 'flagged' : ''}" id="fee-row-${it.line_no}">
-      <td class="ln">${it.line_no}</td>
+    const hasBbox = !!(it.anchor && it.anchor.bbox);
+    return `<tr class="${flagged ? 'flagged' : ''}" id="fee-row-${it.line_no}" data-bbox="${hasBbox ? esc(JSON.stringify(it.anchor.bbox)) : ''}" data-page="${esc(it.anchor?.page || 1)}" data-doc="${esc(it.anchor?.doc || '')}">
+      <td class="ln">${it.line_no}${hasBbox ? ' <span class="bbox-dot" title="含 OCR 坐标">⌖</span>' : ''}</td>
       <td>${esc(it.item_name)} <span class="muted">${esc(it.spec || '')}</span>${flagged ? `<span class="row-flag">⚠ ${esc(it.flag || '命中规则')}</span>` : ''}</td>
       <td class="muted">${esc(it.fee_date)}</td>
       <td class="num">${esc(it.qty)}${esc(it.unit)}</td>
@@ -234,10 +485,13 @@ function feeTable(r) {
       <td class="num"><b>${esc(it.amount.toFixed(2))}</b></td>
       <td>${pill(it.insurance_class)}</td></tr>`;
   }).join('');
+  const layoutHint = r.intake_layouts && Object.keys(r.intake_layouts).length
+    ? `<div class="note-line muted">L1 解析布局已缓存（${Object.keys(r.intake_layouts).length} 个源文件）· 费用行 ⌖ = 含 bbox 坐标</div>` : '';
   return dh('费用结算明细（' + items.length + '行）')
     + `<table class="fee-table"><thead><tr><th>行</th><th>项目</th><th>日期</th><th class="num">数量</th><th class="num">单价</th><th class="num">金额</th><th>类别</th></tr></thead><tbody>${rows}</tbody></table>`
-    + `<div class="fee-foot"><span>合计</span><span>¥ ${r.fee_list.total_amount.toFixed(2)}</span></div>`
-    + `<div class="absent-note"><b>逐行核对提示（T-207）：</b>${esc(r.fee_list.absent_items_note)}</div>`;
+    + `<div class="fee-foot"><span>合计</span><span>¥ ${(r.fee_list.total_amount || items.reduce((s, x) => s + x.amount, 0)).toFixed(2)}</span></div>`
+    + layoutHint
+    + (r.fee_list.absent_items_note ? `<div class="absent-note"><b>逐行核对提示（T-207）：</b>${esc(r.fee_list.absent_items_note)}</div>` : '');
 }
 
 function ordTable(items) {
@@ -257,8 +511,9 @@ const flagCell = (f) => /升高|偏低|异常/.test(f) ? `<span style="color:var
 async function runAudit(opts = {}) {
   const btn = $('#btnAudit');
   const btnBar = $('#btnAuditBar');
-  btn.disabled = true; btn.textContent = opts.llm ? 'LLM 分析中…' : '稽核中…';
-  if (btnBar) { btnBar.disabled = true; btnBar.textContent = '稽核中…'; }
+  const rag = !!opts.rag;
+  btn.disabled = true; btn.textContent = opts.llm ? 'LLM 分析中…' : (rag ? 'RAG 增强稽核中…' : '稽核中…');
+  if (btnBar) { btnBar.disabled = true; btnBar.textContent = rag ? 'RAG 稽核中…' : '稽核中…'; }
   setWorkflowStep(2);
   $('#reportEmpty').classList.add('hidden'); $('#reportBody').classList.add('hidden');
   // 扫描动画
@@ -279,12 +534,15 @@ async function runAudit(opts = {}) {
   }
   // 调接口（带模式 + 注入开关）
   try {
-    const q = opts.llm ? '?mode=llm' : (MODE === 'exam' ? '?mode=exam' : '');
+    const q = opts.llm ? '?mode=llm' : (rag ? '?rag=1' : (MODE === 'exam' ? '?mode=exam' : ''));
     if (opts.llm) { const log = $('#scanLog'); if (log) { const d = document.createElement('div'); d.textContent = '› 🧠 真·LLM Agent 读病历自由文本推理中（稽核→CoVe→控辩裁，多次模型调用，较慢）…'; log.appendChild(d); } }
+    if (rag) { const log = $('#scanLog'); if (log) { const d = document.createElement('div'); d.textContent = '› 📚 RAG 语义检索：案卷关键词 → pgvector 召回 KB1/KB2/问题清单条目…'; log.appendChild(d); } }
     const report = await fetch('/api/audit' + q, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ inject: INJECT, caseId: CURRENT_CASE }) }).then(r => r.json());
     INJECT = false;
     REPORT = report;
     FLAGGED_LINES = collectFlaggedLines(report);
+    if (MODE === 'exam') await loadRectification(CURRENT_CASE);
+    if (MODE === 'exam') await loadPrecipitationData();
     await sleep(250);
     renderReport(report);
     renderTabs();
@@ -312,11 +570,14 @@ function renderReport(report) {
   const exam = m.panel === '体检'; VIEW_EXAM = exam;
   $('#engineMode').textContent = m.engine_mode || '';
 
+  const ruleCount = exam
+    ? (m.exam_rule_filter?.used ?? RULES.rules.length)
+    : RULES.rules.length;
   const cards = exam ? [
     { n: s.suspected_count, l: '风险点（待自查整改）', c: 'red', icon: 'doubt' },
     { n: s.clue_count, l: '线索（建议补全材料）', c: 'amber', icon: 'clue' },
     { n: '¥' + fmt(s.suspected_amount), l: '飞检暴露金额', c: 'money', icon: 'audit' },
-    { n: RULES.rules.length, l: '已跑规则数', c: '', icon: 'rules' },
+    { n: ruleCount, l: '院端规则子集', c: '', icon: 'rules' },
   ] : [
     { n: s.suspected_count, l: '疑点（证据闭环）', c: 'red', icon: 'doubt' },
     { n: s.clue_count, l: '线索（待复核）', c: 'amber', icon: 'clue' },
@@ -332,21 +593,260 @@ function renderReport(report) {
       <div class="compare-col agent"><span class="big">${(m.elapsed_ms != null && m.elapsed_ms < 1000) ? m.elapsed_ms + '<small>ms</small>' : '90<small>秒</small>'}</span><span>鹰眼 AI 初筛（实测 ${m.elapsed_ms ?? '—'}ms）</span></div>
     </div>
     <div class="mode-banner ${m.real_agent ? 'real' : (m.llm_needs_key ? 'warn' : 'det')}">${m.real_agent ? '🧠 真·LLM语义分析' : (m.llm_needs_key ? '⚠ 真·语义分析未启用' : '⚙ 确定性规则引擎')} · ${esc(m.engine_mode || '')}</div>
-    ${exam ? `<div class="exam-banner">🏥 <b>体检模式（院端自查视角）</b>：同一套引擎、同一批命中，换院端口径——"疑点"即"飞检会暴露的风险点"，处置由"责令退回/移交"改为"<b>飞检前主动自查整改、主动退回</b>"。2026年起全国定点机构每年强制自查自纠，这就是医院医保办的"防飞检体检仪"。切回🛡稽核模式即监管对质口径。</div>` : ''}
+    ${exam ? `<div class="exam-banner">🏥 <b>体检模式</b>：院端规则子集 ${m.exam_rule_filter?.used ?? '—'}/${m.exam_rule_filter?.total ?? '—'} 条。报告审阅完成后，请进入 <button type="button" class="linkish" onclick="switchReportView('rectification')">→ 登记整改</button> 填写整改时限、人工判断对错（回流规则治理）。</div>` : ''}
     ${m.injected ? `<div class="exam-banner" style="background:var(--red-bg);color:var(--red);border-color:#f0c4c0">🪤 已注入对抗演示：材料中混入"写给AI的小抄"，看 E-503 如何把它当成证据。</div>` : ''}
+    ${(m.overlay_rules || []).length ? `<div class="exam-banner">📎 规则 overlay 预览已合并：${m.overlay_rules.map(esc).join('、')}</div>` : ''}
     <div class="summary-cards">${cards.map(c => `<div class="scard ${c.c}"><img class="scard-icon" src="/brand/icons/${c.icon || 'rules'}.svg" alt="" width="28" height="28"><div class="scard-body"><div class="n">${c.n}</div><div class="l">${c.l}</div></div></div>`).join('')}</div>
     ${s.merged_count ? `<div class="recon-banner">🔗 <b>合议层</b>：合并前 ${s.raw_findings_before_merge} 条原始命中 → 去重后 <b>${s.total_findings} 条</b>（${s.merged_count} 条同笔费用多规则命中已合并）。疑点金额按费用行去重 <b>¥${fmt(s.suspected_amount)}</b>——若像传统做法各规则各算各的，会虚高到 <b style="color:var(--red)">¥${fmt(s.amount_if_double_counted)}</b>。<span class="muted">一笔钱一主疑点，杜绝"算三遍夸大"的对质把柄。</span></div>` : ''}
     ${s.shadow_count ? `<div class="shadow-banner">🌓 <b>规则状态机·观察期（shadow）</b>：${s.shadow_count} 条命中来自被复核高频驳回的规则（${esc((s.shadow_rules || []).join('、'))}）——已自动转入观察期，<b>暂不计入疑点/金额</b>（本可计 ¥${fmt(s.shadow_amount_withheld)}，已扣留待复审 re_review）。证据链仍完整展示但置灰沉底。<span class="muted">这是"误报回流"的执行端：坏规则被自动降权，而非继续误伤——闭环从"标记"走到"执行"。</span></div>` : ''}
-    ${routingBar(m.routing)}
+    ${routingBar(m.routing, exam)}
+    ${renderRagSection(m)}
     <div class="findings-section"><h3 class="sect-title"><img src="/brand/icons/doubt.svg" alt="" width="18" height="18" style="vertical-align:-3px"> ${exam ? '风险点与线索（院端自查）' : '疑点与线索'} <span class="muted">${findingSummaryLine(s)}</span></h3><div id="findingsList">${report.findings.map(findingCard).join('')}</div></div>
     <div class="findings-section"><h3 class="sect-title green"><img src="/brand/icons/ok.svg" alt="" width="18" height="18" style="vertical-align:-3px"> 正确「不报」（误报防控 · 宁漏报不误报）</h3><div id="distractorList">${(report.correctly_not_flagged || []).map(distractorCard).join('')}</div></div>
     ${renderCoverage(m.coverage)}
   `;
   $$('.f-head').forEach(el => el.onclick = () => el.parentElement.classList.toggle('open'));
   $$('.ev-loc').forEach(el => el.onclick = () => jumpToLoc(el.dataset.loc));
-  // 默认展开第一条
   const first = $('.finding'); if (first) first.classList.add('open');
+  if (exam) {
+    $('#reportTabs')?.classList.remove('hidden');
+    $('#reportEmpty').classList.add('hidden');
+    renderRectificationRegistry(report);
+    if (REPORT_VIEW === 'rectification') switchReportView('rectification', { skipRender: true });
+  } else {
+    $('#reportTabs')?.classList.add('hidden');
+    $('#rectificationBody')?.classList.add('hidden');
+  }
 }
+
+window.switchReportView = (view, opts = {}) => {
+  REPORT_VIEW = view;
+  $$('.rtab').forEach(t => t.classList.toggle('active', t.dataset.view === view));
+  const showRect = view === 'rectification' && VIEW_EXAM;
+  $('#reportBody')?.classList.toggle('hidden', showRect);
+  $('#rectificationBody')?.classList.toggle('hidden', !showRect);
+  $('#reportEmpty')?.classList.add('hidden');
+  if (showRect) {
+    setWorkflowStep(4);
+    if (!opts.skipRender && REPORT) renderRectificationRegistry(REPORT);
+    $('#rectificationBody')?.scrollTo?.(0, 0);
+  } else {
+    setWorkflowStep(3);
+  }
+};
+
+function rectProgress(report) {
+  const findings = (report.findings || []).filter(f => !f.shadow);
+  let done = 0;
+  for (const f of findings) {
+    const r = RECT_MAP[rectKey(f)] || {};
+    if (r.submitted && r.judgment) done++;
+  }
+  return { total: findings.length, done };
+}
+
+function renderRectificationRegistry(report) {
+  const box = $('#rectificationBody');
+  if (!box || !report) return;
+  const findings = (report.findings || []).filter(f => !f.shadow);
+  const prog = rectProgress(report);
+  const cards = findings.map((f, i) => rectificationCard(f, i)).join('');
+  box.innerHTML = `
+    <section class="rect-registry-hero">
+      <div><span class="rh-badge">登记整改</span><h3 class="rh-title">逐条登记 · 人工判断对错 · 回流规则沉淀</h3>
+      <p class="rh-sub">已完成 ${prog.done}/${prog.total} 条 · 不成立→误报链(≥3) · 成立→巩固链(≥3且近10条驳回≤1) · 部分成立=缓冲</p></div>
+    </section>
+    <div class="rect-registry-list">${cards || '<p class="muted">暂无待登记风险点</p>'}</div>
+    ${renderPrecipitationPanel()}
+  `;
+}
+
+function rectificationCard(f, idx) {
+  const key = rectKey(f);
+  const cur = RECT_MAP[key] || {};
+  const deadline = cur.deadline || defaultDeadline();
+  const status = cur.status || '待整改';
+  const judgment = cur.judgment || '';
+  const today = new Date().toISOString().slice(0, 10);
+  const overdue = deadline < today && (status === '待整改' || status === '整改中');
+  const statuses = ['待整改', '整改中', '已整改', '已主动退回', '延期申请'];
+  const judgments = ['', '成立', '不成立', '部分成立'];
+  const submitted = cur.submitted && cur.judgment;
+  return `<article class="rect-card${submitted ? ' submitted' : ''}${overdue ? ' overdue' : ''}" id="rect-${esc(f.finding_id)}" data-fid="${esc(f.finding_id)}" data-rule="${esc(f.rule_id)}">
+    <header class="rect-card-head">
+      <span class="rect-idx">${idx + 1}</span>
+      <div><strong>${ruleLink(f.rule_id)}</strong><div class="muted">¥${fmt(f.amount_involved)} · ${esc(f.status)} · 置信${f.confidence ?? '—'}</div></div>
+      ${submitted ? '<span class="rect-done-badge">已提交</span>' : ''}
+    </header>
+    <div class="rect-card-body">
+      <div class="rect-evidence muted">${(f.evidence || []).slice(0, 2).map(e => esc(e.loc)).join(' · ')}</div>
+      <div class="rect-fields-grid">
+        <label class="rect-label">整改时限<input type="date" class="rect-deadline" value="${esc(deadline)}"></label>
+        <label class="rect-label">整改状态<select class="rect-status">${statuses.map(s => `<option value="${esc(s)}"${s === status ? ' selected' : ''}>${esc(s)}</option>`).join('')}</select></label>
+        <label class="rect-label">责任人<input type="text" class="rect-owner" placeholder="医保办/科室" value="${esc(cur.owner || '')}"></label>
+      </div>
+      <div class="rect-judgment-block">
+        <div class="rect-judgment-label"><b>人工判断（对错）</b><span class="muted">提交后同步至规则治理 · 不成立=误报回流</span></div>
+        <div class="judgment-btns">${judgments.filter(Boolean).map(j => `<button type="button" class="judgment-btn${judgment === j ? ' chosen' : ''}" data-j="${esc(j)}" onclick="pickJudgment(this,'${esc(j)}')">${j === '成立' ? '✓ 成立' : j === '不成立' ? '✗ 不成立' : '◐ 部分成立'}</button>`).join('')}</div>
+        <input type="hidden" class="rect-judgment" value="${esc(judgment)}">
+        <label class="rect-label full">判断理由 / 院端说明<textarea class="rect-reason" rows="2" placeholder="不成立须填理由；部分成立说明缺什么材料">${esc(cur.judgment_reason || cur.rectify_note || '')}</textarea></label>
+      </div>
+      <div class="rect-actions">
+        <button type="button" class="rect-btn primary" onclick="saveRectificationCard(this,false)">💾 暂存</button>
+        <button type="button" class="rect-btn accent" onclick="saveRectificationCard(this,true)">✓ 提交登记</button>
+        <button type="button" class="rect-btn ghost" onclick="jumpToFinding('${esc(f.finding_id)}')">↗ 回看证据</button>
+        <span class="rect-tip muted"></span>
+      </div>
+    </div>
+  </article>`;
+}
+
+window.pickJudgment = (btn, j) => {
+  const card = btn.closest('.rect-card');
+  card.querySelectorAll('.judgment-btn').forEach(b => b.classList.toggle('chosen', b === btn));
+  card.querySelector('.rect-judgment').value = j;
+};
+
+window.jumpToFinding = (fid) => {
+  switchReportView('report');
+  setTimeout(() => {
+    const f = $(`.finding[data-fid="${fid}"]`);
+    if (f) { f.classList.add('open'); f.scrollIntoView({ behavior: 'smooth', block: 'center' }); pulseHighlight(f); }
+  }, 80);
+};
+
+window.jumpToRuleFinding = (ruleId) => {
+  const hit = findingForRule(ruleId);
+  if (!hit) { showRuleDetail(ruleId); return; }
+  switchReportView('report');
+  setTimeout(() => {
+    const el = $(`.finding[data-fid="${hit.finding_id}"]`);
+    if (el) { el.classList.add('open'); el.scrollIntoView({ behavior: 'smooth', block: 'center' }); pulseHighlight(el); }
+  }, 80);
+};
+
+window.jumpToRuleEvidence = (ruleId) => {
+  const hit = findingForRule(ruleId);
+  if (!hit?.evidence?.[0]?.loc) return jumpToRuleFinding(ruleId);
+  switchReportView('report');
+  jumpToLoc(hit.evidence[0].loc);
+  setTimeout(() => {
+    const el = $(`.finding[data-fid="${hit.finding_id}"]`);
+    if (el) { el.classList.add('open'); pulseHighlight(el); }
+  }, 80);
+};
+
+window.saveRectificationCard = async (btn, submit) => {
+  const card = btn.closest('.rect-card');
+  const finding_id = card.dataset.fid;
+  const rule_id = card.dataset.rule;
+  const judgment = card.querySelector('.rect-judgment').value;
+  const reason = card.querySelector('.rect-reason').value.trim();
+  if (submit && judgment === '不成立' && !reason) { alert('判断「不成立」须填写理由（将回流规则治理与沉淀 Agent）'); return; }
+  if (submit && !judgment) { alert('提交登记请选择人工判断（成立 / 不成立 / 部分成立）'); return; }
+  const tip = card.querySelector('.rect-tip');
+  if (tip) tip.textContent = submit ? '提交中…' : '保存中…';
+  const f = (REPORT?.findings || []).find(x => x.finding_id === finding_id);
+  try {
+    const r = await fetch('/api/rectification', {
+      method: 'POST', headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({
+        case_id: CURRENT_CASE, finding_id, rule_id,
+        rule_name: f?.rule_name, amount_involved: f?.amount_involved,
+        deadline: card.querySelector('.rect-deadline').value,
+        status: card.querySelector('.rect-status').value,
+        owner: card.querySelector('.rect-owner').value,
+        judgment: submit ? judgment : (judgment || ''),
+        judgment_reason: reason,
+        rectify_note: reason,
+        submitted: submit,
+      }),
+    }).then(x => x.json());
+    if (r.error) { if (tip) tip.textContent = r.error; return; }
+    RECT_MAP[rectKey({ finding_id })] = r.entry;
+    if (tip) {
+      let msg = submit ? '已提交登记' : '已暂存';
+      if (r.review_sync) {
+        msg += ` · 已回流(${r.review_sync.action})`;
+        if (r.review_sync.chain) msg += ` · ${formatChainProgress(r.review_sync.chain)}`;
+        if (r.review_sync.buffered) msg += ' · 缓冲态';
+      }
+      tip.textContent = msg;
+    }
+    if (submit) {
+      card.classList.add('submitted');
+      renderRectificationRegistry(REPORT);
+      loadPrecipitationData();
+    }
+  } catch (e) { if (tip) tip.textContent = '失败:' + e.message; }
+};
+
+async function loadPrecipitationData() {
+  try { PRECIP_DATA = await fetch('/api/rule-precipitation').then(r => r.json()); } catch (e) {
+    PRECIP_DATA = { reject_items: [], adopt_items: [], reject_drafts: [], adopt_drafts: [], overlay: { patches: {} } };
+  }
+}
+
+function formatChainProgress(chain) {
+  if (!chain) return '';
+  const r = chain.reject || {};
+  const a = chain.adopt || {};
+  return `误报 ${r.count ?? 0}/${r.threshold ?? 3} · 巩固 ${a.count ?? 0}/${a.threshold ?? 3}（近${a.window || 10}条驳回≤${a.window_max_rejects ?? 1}）`;
+}
+
+function precipDraftCards(drafts, track) {
+  return (drafts || []).slice(-5).reverse().map(d => {
+    const patch = d.patches?.exclusions_append || d.patches?.exclusions || d.patches?.trigger_logic || '';
+    return `<div class="precip-draft precip-${track}"><div class="precip-draft-head"><b>${esc(d.rule_id)}</b> · ${esc(d.recommendation)} <span class="kind-tag ${d.agent_mode === 'llm' ? 'real' : 'script'}">${d.agent_mode === 'llm' ? 'LLM' : '模板'}</span></div>
+    <p>${esc(d.rationale || '')}</p>
+    ${patch ? `<div class="muted"><b>patch：</b>${esc(String(patch).slice(0, 180))}${String(patch).length > 180 ? '…' : ''}</div>` : ''}
+    ${d.confidence_boost_note ? `<div class="muted">${esc(d.confidence_boost_note)}</div>` : ''}
+    <div class="rect-actions"><button type="button" class="rect-btn" onclick="applyPrecipDraft('${esc(d.id)}','approve')">✓ 写入 overlay 预览</button><button type="button" class="rect-btn ghost" onclick="applyPrecipDraft('${esc(d.id)}','dismiss')">忽略</button><button type="button" class="rect-btn ghost" onclick="runPrecipitationAgent('${esc(d.rule_id)}','${track}')">↻ 重跑</button></div></div>`;
+  }).join('');
+}
+
+function renderPrecipTrackPanel(track, label, icon, promptPath) {
+  const items = track === 'adopt' ? (PRECIP_DATA.adopt_items || []) : (PRECIP_DATA.reject_items || []);
+  const drafts = track === 'adopt' ? (PRECIP_DATA.adopt_drafts || []) : (PRECIP_DATA.reject_drafts || []);
+  const pending = items.filter(i => i.status === 'pending' || i.status === 'draft_ready');
+  const th = track === 'adopt'
+    ? '采纳≥3 且近10条有效反馈驳回≤1 → 自动跑巩固 Agent'
+    : '有效驳回≥3 → auto shadow + 自动跑误报 Agent';
+  const rows = pending.map(i => `<tr><td>${esc(i.rule_id)}</td><td>${esc(i.trigger)}</td><td>${esc(i.status)}</td><td><button type="button" class="rect-btn" onclick="runPrecipitationAgent('${esc(i.rule_id)}','${track}')">🧠 重跑 Agent</button></td></tr>`).join('');
+  return `<div class="precip-track" data-track="${track}">
+    <h4>${icon} ${label} <span class="muted">${th}</span></h4>
+    <p class="muted precip-hint"><code>${promptPath}</code></p>
+    ${rows ? `<table class="fee-table"><thead><tr><th>规则</th><th>触发</th><th>状态</th><th></th></tr></thead><tbody>${rows}</tbody></table>` : `<p class="muted">暂无${label}队列项</p>`}
+    ${precipDraftCards(drafts, track) ? `<div class="precip-drafts"><strong>最近草案</strong>${precipDraftCards(drafts, track)}</div>` : ''}
+  </div>`;
+}
+
+function renderPrecipitationPanel() {
+  const th = PRECIP_DATA.thresholds || {};
+  const overlayKeys = Object.keys(PRECIP_DATA.overlay?.patches || {});
+  return `<section class="precip-panel">
+    <h3 class="sect-title">🧬 规则沉淀双链 <span class="muted">驳回=误报淘汰 · 采纳=规则巩固 · 补材料=缓冲不入队</span></h3>
+    <div class="cov-statement">阈值：误报链 ${th.reject ?? 3} 次有效驳回 · 巩固链 ${th.adopt ?? 3} 次采纳且近 ${th.adopt_window ?? 10} 条驳回 ≤ ${th.adopt_max_rejects_in_window ?? 1} · 入队后自动跑 Agent</div>
+    ${overlayKeys.length ? `<div class="exam-banner">📎 overlay 预览中规则：${overlayKeys.map(esc).join('、')}（下次稽核合并 exclusions/trigger，不改源 rules.json）</div>` : ''}
+    <div class="precip-dual">${renderPrecipTrackPanel('reject', '误报沉淀链', '✗', PRECIP_DATA.prompts?.reject || 'prompts/规则沉淀-驳回.md')}${renderPrecipTrackPanel('adopt', '巩固沉淀链', '✓', PRECIP_DATA.prompts?.adopt || 'prompts/规则沉淀-采纳.md')}</div>
+  </section>`;
+}
+
+window.runPrecipitationAgent = async (ruleId, track = 'reject') => {
+  try {
+    const r = await fetch('/api/rule-precipitation/run', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ rule_id: ruleId, track }) }).then(x => x.json());
+    if (r.error) { alert(r.error + (r.needsKey ? '\n（可配 LLM key 启用真·Agent）' : '')); return; }
+    await loadPrecipitationData();
+    if (REPORT && VIEW_EXAM) renderRectificationRegistry(REPORT);
+  } catch (e) { alert(e.message); }
+};
+
+window.applyPrecipDraft = async (draftId, action) => {
+  const r = await fetch('/api/rule-precipitation/apply', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ draft_id: draftId, action }) }).then(x => x.json());
+  await loadPrecipitationData();
+  if (REPORT && VIEW_EXAM) renderRectificationRegistry(REPORT);
+  if (r.note) alert(r.note);
+};
 
 function reportHeroHTML(report, s, exam) {
   const m = report.report_meta;
@@ -364,28 +864,59 @@ function reportHeroHTML(report, s, exam) {
   </section>`;
 }
 
-function routingBar(routing) {
+function routingBar(routing, exam) {
   if (!routing) return '';
   const firedIds = new Set((REPORT.findings || []).flatMap(f => [f.rule_id, ...(f.corroborations || []).map(c => c.rule_id)]));
-  const chips = (routing.activated || []).map(id => `<span class="rchip ${firedIds.has(id) ? 'hit' : ''}">${esc(id)}</span>`).join('');
+  const chips = (routing.activated || []).map(id => ruleLink(id, { compact: true, hit: firedIds.has(id) })).join('');
   const sc = routing.short_circuit;
-  return `<div class="routing-bar">🔀 <b>触发器路由（三级短路）</b>：全 ${routing.total} 条，本案只<b>激活 ${routing.activated_count} 条</b>，${sc ? sc.saved + ' 零成本跳过' : '其余跳过'}（90秒承诺的工程基础）
+  const label = exam ? '院端规则路由' : '触发器路由（三级短路）';
+  const sub = exam
+    ? `本案激活 ${routing.activated_count} 条院端相关规则${sc ? '，' + sc.saved + ' 条跳过' : ''} · 红=已出风险点`
+    : `全 ${routing.total} 条，本案只<b>激活 ${routing.activated_count} 条</b>，${sc ? sc.saved + ' 零成本跳过' : '其余跳过'}（90秒承诺的工程基础）`;
+  return `<div class="routing-bar">🔀 <b>${label}</b>：${sub}
     <div class="routing-chips">${chips}</div>
-    ${sc ? `<span class="muted">L1确定性 ${sc.level1_L1_deterministic} · L2语义候选 ${sc.level3_L2_llm_candidates}（朴素实现需全 ${routing.total} 条调LLM）· 红=已命中</span>` : '<span class="muted">红=已出疑点/线索</span>'}</div>`;
+    ${sc && !exam ? `<span class="muted">L1确定性 ${sc.level1_L1_deterministic} · L2语义候选 ${sc.level3_L2_llm_candidates}（朴素实现需全 ${routing.total} 条调LLM）· 红=已命中</span>` : '<span class="muted">红=已出疑点/线索</span>'}</div>`;
 }
+function renderRagSection(m) {
+  const rag = m?.rag;
+  if (!rag?.hits?.length) return '';
+  const rows = rag.hits.map(h => `<tr>
+    <td><code>${esc(h.ref_id || '')}</code></td>
+    <td class="num">${h.score != null ? (h.score * 100).toFixed(1) + '%' : '—'}</td>
+    <td>${esc(h.source || '—')}</td>
+    <td class="muted">${esc((h.content || '').slice(0, 160))}${(h.content || '').length > 160 ? '…' : ''}</td>
+  </tr>`).join('');
+  return `<div class="findings-section rag-section">
+    <h3 class="sect-title">📚 RAG 知识库增强 <span class="muted">${rag.hits.length} 条语义命中 · 已 merge 进政策上下文</span></h3>
+    <p class="muted" style="margin:0 0 8px">检索 query：${esc((rag.query || '').slice(0, 240))}</p>
+    <table class="fee-table"><thead><tr><th>ref_id</th><th class="num">相似度</th><th>来源</th><th>摘要</th></tr></thead><tbody>${rows}</tbody></table>
+  </div>`;
+}
+
 function renderCoverage(cov) {
   if (!cov) return '';
   const mats = Object.entries(cov.materials).map(([k, v]) => `<span class="mat ${v ? 'ok' : 'miss'}">${v ? '✓' : '✗'} ${esc(k)}</span>`).join('');
-  const dims = cov.dimensions.map(d => `<tr><td>${esc(d.dimension)}</td><td class="num">${d.executed.length}/${d.total_rules}</td><td>${d.fired.length ? '<span style="color:var(--red)">' + d.fired.join('、') + '</span>' : '<span class="muted">—</span>'}</td><td><span class="cov-status ${d.executed.length ? (d.fired.length ? 'found' : 'clean') : 'na'}">${esc(d.status)}</span></td></tr>`).join('');
+  const dims = cov.dimensions.map(d => `<tr><td>${esc(d.dimension)}</td><td class="num">${d.executed.length}/${d.total_rules}</td><td class="rule-hit-col">${ruleHitCell(d.fired)}</td><td><span class="cov-status ${d.executed.length ? (d.fired.length ? 'found' : 'clean') : 'na'}">${esc(d.status)}</span></td></tr>`).join('');
   return `<div class="findings-section"><h3 class="sect-title">📋 覆盖度声明（查了什么·没查什么·为什么）</h3>
     <div class="cov-statement">${esc(cov.statement)}</div>
     <div class="cov-mats">材料完整性：${mats}</div>
+    <p class="muted cov-hit-hint">命中规则：<b>点编号</b> 查判定逻辑与政策依据 · <b>↗</b> 定位到本案疑点 · 弹窗内可跳转规则目录 / 治理</p>
     <table class="fee-table" style="margin-top:8px"><thead><tr><th>应查维度</th><th class="num">激活/规则数</th><th>命中规则</th><th>状态</th></tr></thead><tbody>${dims}</tbody></table></div>`;
 }
 function confBadge(f) {
   if (f.confidence == null) return '';
   const cls = f.confidence >= 85 ? 'hi' : f.confidence >= 65 ? 'mid' : '';
-  return `<span class="conf ${cls}" title="置信度=f(三要素完整度·控辩裁·OCR置信·CoVe)"><span class="conf-bar"><i style="width:${f.confidence}%"></i></span>置信${f.confidence}</span>${f._low_ocr ? '<span class="lowocr">⚠OCR低置信</span>' : ''}`;
+  const parseWarn = f._parse_qa_warn ? '<span class="lowocr" title="解析质量偏低，建议人工核对原件">⚠解析待核</span>' : '';
+  return `<span class="conf ${cls}" title="置信度=f(三要素完整度·控辩裁·OCR置信·CoVe)"><span class="conf-bar"><i style="width:${f.confidence}%"></i></span>置信${f.confidence}</span>${f._low_ocr ? '<span class="lowocr">⚠OCR低置信</span>' : ''}${parseWarn}`;
+}
+
+function renderComplianceFlags(f) {
+  const flags = f.compliance_flags;
+  if (!flags?.length) return '';
+  const items = flags.map(c =>
+    `<span class="compliance-chip" title="${esc(c.detail || '')}">${esc(c.code)} · ${esc(c.action)}</span>`
+  ).join('');
+  return `<div class="compliance-foot muted">合规前置：${items}</div>`;
 }
 function renderCoVe(cove) {
   if (!cove || !cove.items || !cove.items.length) return '';
@@ -395,33 +926,99 @@ function renderCoVe(cove) {
   return `<div class="cove"><div class="cove-h">🔁 CoVe 取证自检（定稿前逐题独立回查）<span class="kind-tag ${realAgent ? 'real' : 'script'}">${realAgent ? '真·LLM' : '脚本演示'}</span><span class="muted"> ${allPass ? '全部核实通过' : '存在未闭环项→影响定级'}${cove.verdict_reason ? '·' + esc(cove.verdict_reason) : ''}</span></div>${qs}</div>`;
 }
 function renderActions(f) {
+  if (VIEW_EXAM) return '';
   return `<div class="actions" data-fid="${esc(f.finding_id || '')}" data-rule="${esc(f.rule_id || '')}">
-    <button class="act adopt" onclick="reviewAction(this,'采纳')">✓ 采纳</button>
-    <button class="act reject" onclick="reviewAction(this,'驳回')">✗ 驳回(误报回流)</button>
-    <button class="act more" onclick="reviewAction(this,'补材料')">⊕ 存疑补材料</button>
+    <button type="button" class="act adopt" data-action="采纳">✓ 采纳</button>
+    <button type="button" class="act reject" data-action="驳回">✗ 驳回(误报回流)</button>
+    <button type="button" class="act more" data-action="补材料">⊕ 存疑补材料</button>
     <span class="act-tip muted"></span>
   </div>`;
 }
+
+function renderExamRectification(f) {
+  if (!VIEW_EXAM) return '';
+  const key = rectKey(f);
+  const cur = RECT_MAP[key] || {};
+  const done = cur.submitted && cur.judgment;
+  return `<div class="rect-mini-link"><button type="button" class="linkish" onclick="switchReportView('rectification');setTimeout(()=>document.getElementById('rect-${esc(f.finding_id)}')?.scrollIntoView({behavior:'smooth',block:'center'}),120)">${done ? '✓ 已登记 · 查看/修改' : '→ 去登记整改'}</button></div>`;
+}
+
+window.saveRectification = async () => { /* 旧入口保留，主流程在 saveRectificationCard */ };
+window.quickRectStatus = () => {};
+
+function askRejectReason() {
+  return new Promise((resolve) => {
+    openModal('✗ 驳回原因（必填）', `
+      <p class="muted">将回流用于规则复审。某规则被驳回 ≥3 次将自动转观察期（shadow）。</p>
+      <textarea id="rejectReasonInput" class="ingest-ta" rows="4" placeholder="例：外院已做过基因检测，本案应降为线索而非疑点…"></textarea>
+      <div class="rect-actions" style="margin-top:12px">
+        <button type="button" class="rect-btn accent" id="rejectConfirmBtn">确认驳回</button>
+        <button type="button" class="rect-btn ghost" id="rejectCancelBtn">取消</button>
+      </div>`);
+    const ta = $('#rejectReasonInput');
+    ta?.focus();
+    const confirm = () => {
+      const r = (ta?.value || '').trim();
+      if (!r) { if (ta) { ta.style.borderColor = 'var(--red)'; ta.focus(); } return; }
+      closeModal();
+      resolve(r);
+    };
+    $('#rejectConfirmBtn').onclick = confirm;
+    $('#rejectCancelBtn').onclick = () => { closeModal(); resolve(null); };
+    ta?.addEventListener('keydown', (ev) => { if (ev.key === 'Enter' && (ev.metaKey || ev.ctrlKey)) confirm(); });
+  });
+}
+
 window.reviewAction = async (btn, kind) => {
-  const box = btn.parentElement;
+  const box = btn.closest('.actions');
+  if (!box) return;
   let reason = '';
-  if (kind === '驳回') { reason = (prompt('驳回原因（必填，将回流用于规则复审；某规则被驳回≥3次自动标"高误报待复审"）：') || '').trim(); if (!reason) return; }
+  if (kind === '驳回') {
+    reason = await askRejectReason();
+    if (!reason) return;
+  }
   box.querySelectorAll('.act').forEach(b => b.classList.remove('chosen'));
   btn.classList.add('chosen');
   box.dataset.choice = kind;
   const tip = box.querySelector('.act-tip'); if (tip) tip.textContent = '记录中…';
   try {
     const r = await fetch('/api/review', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ finding_id: box.dataset.fid, rule_id: box.dataset.rule, case_id: CURRENT_CASE, action: kind, reason }) }).then(x => x.json());
-    if (tip) { const rej = r.stats?.by_rule?.[box.dataset.rule]?.rejected || 0; tip.textContent = `已持久化(${kind})${kind === '驳回' ? ` · 该规则累计驳回${rej}次${rej >= (r.stats?.threshold || 3) ? '→已标高误报待复审' : ''}` : ''}`; }
+    if (r.error) { if (tip) tip.textContent = r.error; return; }
+    if (tip) {
+      let msg = `已持久化(${kind})`;
+      if (r.chain) msg += ` · ${formatChainProgress(r.chain)}`;
+      if (kind === '驳回' && r.precip?.reject?.enqueued) msg += ' · 误报链已入队+Agent';
+      if (kind === '采纳' && r.precip?.adopt?.enqueued) msg += ' · 巩固链已入队+Agent';
+      if (kind === '补材料' || r.buffered) msg += ' · 缓冲态（不入沉淀队列）';
+      if (kind === '驳回') {
+        const rej = r.stats?.by_rule?.[box.dataset.rule]?.rejected || 0;
+        if (rej >= (r.stats?.threshold || 3)) msg += ' · 已触发 shadow 观察期';
+      }
+      tip.textContent = msg;
+    }
+    if (r.precip?.reject?.draft || r.precip?.adopt?.draft) loadPrecipitationData();
   } catch (e) { if (tip) tip.textContent = '记录失败:' + e.message; }
 };
 
+function bindReviewActionDelegation() {
+  const panel = $('.panel-right');
+  if (!panel || panel.dataset.reviewBound) return;
+  panel.dataset.reviewBound = '1';
+  panel.addEventListener('click', (e) => {
+    const btn = e.target.closest('#findingsList button.act[data-action]');
+    if (!btn) return;
+    e.preventDefault();
+    e.stopPropagation();
+    reviewAction(btn, btn.dataset.action);
+  });
+}
+
 function renderReconciliation(f) {
   if (!f.corroborations || !f.corroborations.length) return '';
-  const corro = f.corroborations.map(c => `<div class="corro-item"><span class="corro-rid">${esc(c.rule_id)} ${esc(c.rule_name)}</span><span class="muted"> · ${esc(c.violation_type)}</span><div class="corro-reason">${esc(c.reasoning)}</div></div>`).join('');
+  const corro = f.corroborations.map(c => `<div class="corro-item">${ruleLink(c.rule_id)}<span class="muted"> · ${esc(c.violation_type)}</span><div class="corro-reason">${esc(c.reasoning)}</div></div>`).join('');
   return `<div class="recon">
     <div class="recon-head">🔗 合议层：本笔 ¥${fmt(f.amount_involved)} 被 <b>${f._merged_count}</b> 条规则命中 → 合并为 <b>1 主疑点 + ${f.corroborations.length} 佐证视角</b>，金额只算一次（<b>非 ¥${fmt(f._raw_amount_sum)}</b>）</div>
-    <div class="recon-sub">主疑点：${esc(f.rule_id)}（定性最准）。以下为同一笔钱的其它定性角度（不重复计金额、不重复计数）——多视角=更强对质材料：</div>
+    <div class="recon-sub">主疑点：${ruleLink(f.rule_id, { compact: true })}（定性最准）。以下为同一笔钱的其它定性角度（不重复计金额、不重复计数）——多视角=更强对质材料：</div>
     ${corro}
   </div>`;
 }
@@ -431,29 +1028,37 @@ function examDisposal(t) {
     .replace(/建议作为伪造变造线索移交[；;]?/g, '建议院端重点自查该材料真实性、留存说明材料；')
     .replace(/移交(欺诈骗保|伪造变造)?线索/g, '院端重点自查并留存说明')
     .replace(/建议责令退回/g, '建议飞检前主动退回')
+    .replace(/建议移交骗保/g, '建议院端自查并留存说明')
+    .replace(/建议移交欺诈骗保/g, '建议院端自查并留存说明')
+    .replace(/建议移交/g, '建议院端自查并留存说明')
+    .replace(/移交骗保/g, '院端自查（飞检前主动说明）')
+    .replace(/移交欺诈骗保/g, '院端自查（飞检前主动说明）')
     .replace(/责令退回/g, '主动退回')
     .replace(/移交/g, '院端自查（必要时主动说明）')
     .replace(/责令/g, '主动');
 }
 function findingSummaryLine(s) {
+  if (VIEW_EXAM) return `已定位 ${s.suspected_count || 0} 条风险点 · 请至「登记整改」逐条填写`;
   return `已定位 ${s.suspected_count || 0} 条可回链疑点，待复核 ${s.clue_count || 0} 条线索 · 按金额×置信排序`;
 }
 
 function evidenceChainFooter(f) {
   const m = REPORT?.report_meta;
   const ts = m?.generated ? new Date(m.generated).toLocaleString('zh-CN') : '引擎输出';
-  return `<div class="ec-footer"><img src="/brand/icons/evidence.svg" alt="" width="14" height="14"><span>案卷 ${esc(CURRENT_CASE || '—')}</span><span>·</span><span>规则 ${esc(f.rule_id)}</span><span>·</span><span>${esc(ts)}</span><span>·</span><span>引擎 ${esc(m?.engine_mode || 'deterministic')}</span></div>`;
+  return `<div class="ec-footer"><img src="/brand/icons/evidence.svg" alt="" width="14" height="14"><span>案卷 ${esc(CURRENT_CASE || '—')}</span><span>·</span><span>规则 ${ruleLink(f.rule_id, { compact: true })}</span><span>·</span><span>${esc(ts)}</span><span>·</span><span>引擎 ${esc(m?.engine_mode || 'deterministic')}</span></div>`;
 }
 
 function findingCard(f) {
   const evHtml = f.evidence.map(e => `<div class="ev"><span class="ev-type">${esc(e.type)}</span><span class="ev-loc" data-loc="${esc(e.loc)}">${esc(e.loc)}</span><span class="ev-text">${esc(e.text)}${e.anchor ? ` <span class="anchor-chip" title="事实层锚点">⚓${esc(e.anchor.doc)} OCR${e.anchor.ocr_conf}</span>` : ''}</span></div>`).join('');
   const polHtml = (f.policy || []).map(p => `<div class="policy"><span class="pref">${esc(p.ref)}</span><span class="vchip ${(/已核/.test(p.verify_status || '')) ? 'ok' : 'warn'}">${esc(p.verify_status || '')}</span><div>${esc(p.text)}</div></div>`).join('');
-  const needs = (f.needs_more && f.needs_more.length) ? `<div class="needs"><b>需调阅材料清单：</b><ul>${f.needs_more.map(n => `<li>${esc(n)}</li>`).join('')}</ul></div>` : '';
-  return `<div class="finding ${esc(f.status)}${f.shadow ? ' shadow' : ''}">
+  const needsLabel = VIEW_EXAM ? '建议补全材料：' : '需调阅材料清单：';
+  const needs = (f.needs_more && f.needs_more.length) ? `<div class="needs"><b>${needsLabel}</b><ul>${f.needs_more.map(n => `<li>${esc(n)}</li>`).join('')}</ul></div>` : '';
+  const statusLabel = VIEW_EXAM && f.status === '疑点' ? '风险点' : f.status;
+  return `<div class="finding ${esc(f.status)}${f.shadow ? ' shadow' : ''}" data-fid="${esc(f.finding_id)}">
     <div class="f-head">
-      <span class="status-badge ${esc(f.status)}">${esc(f.status)}</span>
+      <span class="status-badge ${esc(f.status)}">${esc(statusLabel)}</span>
       ${f.shadow ? '<span class="shadow-badge" title="规则因高频驳回转入观察期，暂不计分">🌓 观察期·不计分</span>' : ''}
-      <span class="f-title"><span class="rid">${esc(f.rule_id)}</span>${esc(f.rule_name)}${f.corroborations && f.corroborations.length ? `<span class="merge-chip" title="合议层合并">🔗合议 ${f._merged_count}→1</span>` : ''}</span>
+      <span class="f-title">${ruleLink(f.rule_id)}${f.corroborations && f.corroborations.length ? `<span class="merge-chip" title="合议层合并">🔗合议 ${f._merged_count}→1</span>` : ''}</span>
       <span class="f-meta">${confBadge(f)}<span class="risk ${esc(f.risk_level)}">${esc(f.risk_level)}</span><span class="amount">${f.shadow ? '<s>¥' + fmt(f.amount_involved) + '</s>' : '¥' + fmt(f.amount_involved)}</span><span class="chev">▶</span></span>
     </div>
     <div class="f-body">
@@ -471,7 +1076,9 @@ function findingCard(f) {
         ${renderReconciliation(f)}
         ${renderCoVe(f.cove)}
         ${renderDebate(f.debate)}
+        ${renderExamRectification(f)}
         ${renderActions(f)}
+        ${renderComplianceFlags(f)}
         <div class="muted" style="margin-top:8px">违规类型（官方术语）：${esc(f.violation_type)} · 规则层级：${esc(f.layer || f.layer_label || '')} · 优先分(金额×置信)：${f.priority_score ?? '—'}</div>
     </div></div>`;
 }
@@ -483,20 +1090,22 @@ const ROLE_META = {
 };
 function renderDebate(d) {
   if (!d) return '';
-  if (!d.enabled) return `<div class="debate-skip">🗣 控辩裁：<b>不启动辩论</b> — ${esc(d.skip_reason)}</div>`;
+  if (!d.enabled) return VIEW_EXAM ? '' : `<div class="debate-skip">🗣 控辩裁：<b>不启动辩论</b> — ${esc(d.skip_reason)}</div>`;
   const downgrade = /降级/.test(d.verdict);
   const exch = d.exchanges.map(e => {
     const meta = ROLE_META[e.role] || { icon: '·', cls: '', tag: e.role };
     return `<div class="exch ${meta.cls}"><div class="exch-role">${meta.icon} ${esc(meta.tag)}<span class="stance">${esc(e.stance)}</span></div><div class="exch-text">${esc(e.text)}</div></div>`;
   }).join('');
   const realAgent = REPORT?.report_meta?.real_agent;
-  return `<div class="debate">
-    <div class="debate-head">🗣 控辩裁三方对质 <span class="kind-tag ${realAgent ? 'real' : 'script'}">${realAgent ? '真·LLM多Agent' : '脚本演示·真版切LLM'}</span> <span class="muted">（${d.rounds}轮封顶 · 申诉Agent=误报过滤器）</span>
+  const inner = `<div class="debate-head">🗣 控辩裁三方对质 <span class="kind-tag ${realAgent ? 'real' : 'script'}">${realAgent ? '真·LLM多Agent' : '脚本演示·真版切LLM'}</span> <span class="muted">（${d.rounds}轮封顶 · 申诉Agent=误报过滤器）</span>
       <span class="verdict ${downgrade ? 'down' : 'keep'}">裁定：${esc(d.verdict)}</span></div>
     <div class="exch-list">${exch}</div>
     <div class="verdict-reason ${downgrade ? 'down' : ''}">▸ ${esc(d.verdict_reason)}</div>
-    <div class="muted" style="padding:6px 12px;font-size:11px">裁判防偏见：控辩材料位置交换二次裁决，不一致判平→降级线索；裁判与辩手用不同模型（防自我偏好）。</div>
-  </div>`;
+    <div class="muted" style="padding:6px 12px;font-size:11px">裁判防偏见：控辩材料位置交换二次裁决，不一致判平→降级线索；裁判与辩手用不同模型（防自我偏好）。</div>`;
+  if (VIEW_EXAM) {
+    return `<details class="debate-exam-optional"><summary class="muted">🗣 监管对质参考（院端可忽略 · 点击展开）</summary><div class="debate">${inner}</div></details>`;
+  }
+  return `<div class="debate">${inner}</div>`;
 }
 
 function distractorCard(d) {
@@ -514,9 +1123,20 @@ function jumpToLoc(loc) {
   activeTab = tab; renderTabs(); renderDoc(tab);
   const m = loc.match(/第\s*([\d]+)/);
   setTimeout(() => {
+    document.querySelectorAll('.fee-table tr.bbox-highlight').forEach(r => r.classList.remove('bbox-highlight'));
     const row = m && $('#fee-row-' + m[1]);
-    if (row) { row.scrollIntoView({ block: 'center', behavior: 'smooth' }); row.style.transition = 'background .3s'; const o = row.style.background; row.style.background = '#ffe9a8'; setTimeout(() => row.style.background = o, 900); }
-    else { $('.doc-body').scrollTop = 0; }
+    if (row) {
+      row.scrollIntoView({ block: 'center', behavior: 'smooth' });
+      row.classList.add('bbox-highlight');
+      const bboxRaw = row.getAttribute('data-bbox');
+      if (bboxRaw) {
+        try {
+          const bb = JSON.parse(bboxRaw);
+          row.title = `OCR 坐标 [x=${bb[0]}, y=${bb[1]}, w=${bb[2]}, h=${bb[3]}] · 页 ${row.getAttribute('data-page') || 1}`;
+        } catch (_) { /* ignore */ }
+      }
+      setTimeout(() => row.classList.remove('bbox-highlight'), 2400);
+    } else { $('.doc-body').scrollTop = 0; }
   }, 60);
 }
 
@@ -533,16 +1153,32 @@ const btnAuditBar = $('#btnAuditBar');
 if (btnAuditBar) btnAuditBar.onclick = () => runAudit();
 $('#btnReset').onclick = () => location.reload();
 // 双模式
-$$('.mode-btn').forEach(b => b.onclick = () => { MODE = b.dataset.mode; $$('.mode-btn').forEach(x => x.classList.toggle('active', x === b)); });
+function setMode(mode) {
+  if (mode === MODE) return;
+  MODE = mode;
+  sessionStorage.setItem('yingyan_mode', mode);
+  applyModeUI();
+  if (REPORT) runAudit();
+}
+$$('.mode-btn').forEach(b => b.onclick = () => setMode(b.dataset.mode));
+$$('.rtab').forEach(b => b.onclick = () => switchReportView(b.dataset.view));
 // v2 工具
 $('#btnInject').onclick = () => { INJECT = true; runAudit(); };
 $('#btnLLM').onclick = () => runAudit({ llm: true });
-$('#btnIngest').onclick = showIngest;
+const btnRag = $('#btnRag');
+if (btnRag) btnRag.onclick = () => runAudit({ rag: true });
+const btnIngest = $('#btnIngest');
+if (btnIngest) btnIngest.onclick = showIngest;
 $('#btnFacts').onclick = showFacts;
 $('#btnBench').onclick = showBench;
 $('#btnInstitution').onclick = showInstitution;
 $('#btnGovernance').onclick = showGovernance;
-$('#btnExport').onclick = () => { window.open('/api/export/checklist' + (MODE === 'exam' ? '?mode=exam' : ''), '_blank'); };
+const btnRuleCatalog = $('#btnRuleCatalog');
+if (btnRuleCatalog) btnRuleCatalog.onclick = () => showRuleCatalog();
+$('#btnExport').onclick = () => {
+  const q = MODE === 'exam' ? `?mode=exam&case_id=${encodeURIComponent(CURRENT_CASE)}` : `?case_id=${encodeURIComponent(CURRENT_CASE)}`;
+  window.open('/api/export/checklist' + q, '_blank');
+};
 $('#btnPitch').onclick = showPitch;
 $('#modalRoot').onclick = (e) => { if (e.target.id === 'modalRoot') closeModal(); };
 
@@ -554,31 +1190,173 @@ function openModal(title, html) {
 window.closeModal = () => $('#modalRoot').classList.add('hidden');
 
 async function showIngest() {
-  const conn = await fetch('/api/connectors').then(r => r.json());
-  const connRows = conn.connectors.map(c => `<div class="conn-row"><span class="conn-name">${esc(c.name)}</span><span class="conn-status ${c.status.ready ? 'ok' : 'na'}">${c.status.ready ? '可用' : '待配置'}</span><button class="v2btn" onclick="ingestConnector('${esc(c.id)}')" ${c.status.ready ? '' : 'disabled'}>拉取</button><div class="muted" style="flex-basis:100%;font-size:11px">${esc(c.status.note)}</div></div>`).join('');
-  openModal('📥 导入患者材料（输入端）', `
-    <p class="muted">材料怎么进来：①扫描件/PDF/照片走多模态解析 ②直接粘结构化JSON ③从医院HIS/EMR拉取。三条入口统一产出 medical_record，再交事实层+引擎稽核。<b>数据不出域</b>：解析与稽核均本地，患者数据不外发。</p>
-    <div class="ingest-sec"><div class="facts-h">① 扫描件 / 照片 / PDF（多模态解析）${conn.vision_ready ? '<span class="conn-status ok">视觉模型就绪</span>' : '<span class="conn-status na">未配视觉模型</span>'}</div>
-      <input type="file" id="ingestFile" accept="image/*,application/pdf" class="case-select" style="max-width:none;width:100%">
-      <div class="muted" style="font-size:11px;margin-top:4px">配 ANTHROPIC_API_KEY 即用 Claude 视觉真解析；未配则给出接 PP-StructureV3/RAGFlow DeepDoc 的契约。解析结果带每字段源锚点(page/bbox/ocr_conf)，喂事实层。</div>
-      <div id="ingestFileResult" class="ingest-result"></div></div>
-    <div class="ingest-sec"><div class="facts-h">② 粘贴结构化 JSON（medical_record）</div>
-      <textarea id="ingestJson" class="ingest-ta" placeholder='{"case_meta":{...},"front_page":{...},"fee_list":{"items":[...]}}'></textarea>
-      <button class="v2btn" onclick="ingestJson()">导入并稽核</button>
-      <div id="ingestJsonResult" class="ingest-result"></div></div>
-    <div class="ingest-sec"><div class="facts-h">③ 从医院系统拉取（HIS / EMR / FHIR · 接口已留好）</div>
-      <input id="ingestEnc" class="case-select" style="max-width:none;width:240px" placeholder="就诊号/住院号(可空,mock用样例)">
-      ${connRows}
-      <div id="ingestConnResult" class="ingest-result"></div></div>`);
-  setTimeout(() => { const f = document.getElementById('ingestFile'); if (f) f.onchange = ingestFile; }, 50);
+  const [conn, slots] = await Promise.all([
+    fetch('/api/connectors').then(r => r.json()),
+    fetch('/api/intake/slots').then(r => r.json()),
+  ]);
+  const slotOpts = (slots.slots || []).map(s => `<option value="${esc(s.id)}">${esc(s.label)}</option>`).join('');
+  openModal('📥 一键导入材料', `
+    <p class="muted">拖入或选择多个文件，系统自动识别是<strong>费用清单 / 病案首页 / 医嘱 / 病程</strong>等哪一块，合并填入材料包。支持 <b>PDF · JSON · CSV · 图片</b>（L1 解析需 sidecar：<code>bash prototype/ppstructure/run.sh</code>）。</p>
+    <p class="note-line"><a href="/intake.html" class="linkish">→ 打开完整材料导入中心</a>（批量队列 · 服务状态 · 解析预览）</p>
+    <div class="intake-drop" id="intakeDrop">
+      <input type="file" id="intakeFiles" multiple accept=".json,.csv,.txt,.pdf,image/*,application/json,text/csv,text/plain,application/pdf" hidden>
+      <div class="intake-drop-inner">
+        <img src="/brand/icons/scan.svg" alt="" width="40" height="40">
+        <strong>拖拽文件到此处</strong>
+        <span class="muted">或点击选择 · 可多选</span>
+        <span class="intake-drop-hint">费用清单.pdf · 病案首页.json · 医嘱扫描件.jpg …</span>
+      </div>
+    </div>
+    <div id="intakeQueue" class="intake-queue hidden"></div>
+    <div class="intake-actions">
+      <label class="intake-merge-lbl"><input type="checkbox" id="intakeMerge" checked> 合并到已有导入件（追加而非覆盖）</label>
+      <button class="v2btn accent" id="btnIntakeRun" type="button" disabled>识别并填入 →</button>
+    </div>
+    <div id="intakeBatchResult" class="ingest-result"></div>
+    <details class="ingest-advanced"><summary>高级入口（JSON 粘贴 / HIS 拉取 / 单文件视觉）</summary>
+      <div class="ingest-sec"><div class="facts-h">粘贴 medical_record JSON</div>
+        <textarea id="ingestJson" class="ingest-ta" placeholder='{"case_meta":{...},"front_page":{...},"fee_list":{"items":[...]}}'></textarea>
+        <button class="v2btn" type="button" onclick="ingestJson()">导入 JSON</button>
+        <div id="ingestJsonResult" class="ingest-result"></div></div>
+      <div class="ingest-sec"><div class="facts-h">医院系统拉取 ${conn.vision_ready ? '<span class="conn-status ok">视觉就绪</span>' : ''}</div>
+        <input id="ingestEnc" class="case-select" style="max-width:none;width:240px" placeholder="就诊号(可空)">
+        ${conn.connectors.map(c => `<div class="conn-row"><span class="conn-name">${esc(c.name)}</span><button class="v2btn" type="button" onclick="ingestConnector('${esc(c.id)}')" ${c.status.ready ? '' : 'disabled'}>拉取</button></div>`).join('')}
+        <div id="ingestConnResult" class="ingest-result"></div></div>
+    </details>`);
+  initIntakeDrop(slotOpts);
 }
-async function ingestFile(e) {
-  const file = e.target.files[0]; if (!file) return;
-  const out = document.getElementById('ingestFileResult'); out.innerHTML = '<span class="muted">解析中…</span>';
-  const b64 = await new Promise(res => { const r = new FileReader(); r.onload = () => res(r.result.split(',')[1]); r.readAsDataURL(file); });
-  const r = await fetch('/api/ingest', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ type: 'document', fileBase64: b64, mime: file.type }) }).then(x => x.json());
-  ingestDone(r, out);
+
+let INTAKE_QUEUE = [];
+
+function initIntakeDrop(slotOptsHtml) {
+  INTAKE_QUEUE = [];
+  const drop = document.getElementById('intakeDrop');
+  const input = document.getElementById('intakeFiles');
+  const queue = document.getElementById('intakeQueue');
+  const btnRun = document.getElementById('btnIntakeRun');
+  if (!drop || !input) return;
+
+  const renderQueue = () => {
+    if (!INTAKE_QUEUE.length) {
+      queue.classList.add('hidden');
+      btnRun.disabled = true;
+      return;
+    }
+    queue.classList.remove('hidden');
+    btnRun.disabled = false;
+    queue.innerHTML = INTAKE_QUEUE.map((f, i) => `
+      <div class="intake-row" data-idx="${i}">
+        <span class="intake-fname" title="${esc(f.name)}">${esc(f.name)}</span>
+        <span class="intake-fsize muted">${(f.size / 1024).toFixed(1)} KB</span>
+        <select class="intake-slot case-select" data-idx="${i}" title="可手动改分类">
+          <option value="">自动识别</option>${slotOptsHtml}
+        </select>
+        <button type="button" class="intake-rm" data-idx="${i}" title="移除">✕</button>
+      </div>`).join('');
+    queue.querySelectorAll('.intake-rm').forEach(b => b.onclick = () => {
+      INTAKE_QUEUE.splice(Number(b.dataset.idx), 1);
+      renderQueue();
+    });
+  };
+
+  const addFiles = (fileList) => {
+    for (const file of fileList) INTAKE_QUEUE.push(file);
+    renderQueue();
+  };
+
+  drop.onclick = () => input.click();
+  input.onchange = (e) => { addFiles(e.target.files); input.value = ''; };
+  drop.ondragover = (e) => { e.preventDefault(); drop.classList.add('dragover'); };
+  drop.ondragleave = () => drop.classList.remove('dragover');
+  drop.ondrop = (e) => {
+    e.preventDefault();
+    drop.classList.remove('dragover');
+    if (e.dataTransfer?.files?.length) addFiles(e.dataTransfer.files);
+  };
+
+  btnRun.onclick = () => runIntakeBatch();
+  renderQueue();
 }
+
+async function fileToPayload(file, slotOverride) {
+  const b64 = await new Promise((res, rej) => {
+    const r = new FileReader();
+    r.onload = () => res(r.result.split(',')[1]);
+    r.onerror = rej;
+    r.readAsDataURL(file);
+  });
+  return { name: file.name, mime: file.type || 'application/octet-stream', fileBase64: b64, slotOverride: slotOverride || undefined };
+}
+
+async function runIntakeBatch() {
+  const out = document.getElementById('intakeBatchResult');
+  const btn = document.getElementById('btnIntakeRun');
+  if (!INTAKE_QUEUE.length) return;
+  btn.disabled = true;
+  out.innerHTML = '<span class="muted">识别分类并解析中…</span>';
+  const merge = document.getElementById('intakeMerge')?.checked;
+  const selects = document.querySelectorAll('.intake-slot');
+  const files = await Promise.all(INTAKE_QUEUE.map((f, i) => {
+    const sel = [...selects].find(s => Number(s.dataset.idx) === i);
+    return fileToPayload(f, sel?.value || '');
+  }));
+  try {
+    const r = await fetch('/api/intake/batch', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ files, merge }),
+    }).then(x => x.json());
+    renderIntakeBatchResult(r, out);
+    if (r.record) intakeApplyRecord(r);
+  } catch (e) {
+    out.innerHTML = `<div class="ingest-err">✗ ${esc(e.message)}</div>`;
+  }
+  btn.disabled = false;
+}
+
+function renderIntakeBatchResult(r, out) {
+  if (!r.ok && !r.record) {
+    out.innerHTML = `<div class="ingest-err">✗ ${esc(r.error || r.errors?.join('；') || '导入失败')}</div>`;
+    return;
+  }
+  const rows = (r.items || []).map(it => {
+    const cls = it.ok ? 'ok' : 'err';
+    const c = it.classification || {};
+    return `<div class="intake-result-row ${cls}"><span>${esc(it.name)}</span> → <b>${esc(c.slotLabel || c.slot || '?')}</b>
+      <span class="muted">${esc((it.log || []).join(' · '))}</span>${it.error ? `<span class="ingest-err-inline">${esc(it.error)}</span>` : ''}</div>`;
+  }).join('');
+  const filled = (r.slotsFilled || []).map(s =>
+    `<span class="intake-slot-badge" data-tab="${esc(s.tab || '')}">${esc(s.label)}</span>`).join('');
+  out.innerHTML = `
+    ${r.errors?.length ? `<div class="ingest-err">部分失败：${esc(r.errors.join('；'))}</div>` : ''}
+    ${r.warnings?.length ? `<div class="muted" style="margin:8px 0">${esc(r.warnings.join(' · '))}</div>` : ''}
+    <div class="ingest-ok">✓ 已填入 ${(r.slotsFilled || []).length} 个材料区块${r.record?.front_page?.patient_name ? ' · ' + esc(r.record.front_page.patient_name) : ''}</div>
+    <div class="intake-filled">${filled || '<span class="muted">暂无有效字段</span>'}</div>
+    <div class="intake-result-list">${rows}</div>
+    ${!r.validation?.ok ? `<div class="muted">契约提示：${esc((r.validation?.errors || []).join('；'))}</div>` : ''}`;
+  out.querySelectorAll('.intake-slot-badge[data-tab]').forEach(b => {
+    if (b.dataset.tab) b.onclick = () => { activeTab = b.dataset.tab; closeModal(); renderTabs(); renderDoc(activeTab); };
+  });
+}
+
+function intakeApplyRecord(r) {
+  if (![...$('#caseSelect').options].some(o => o.value === 'uploaded')) {
+    const opt = document.createElement('option');
+    opt.value = 'uploaded';
+    opt.textContent = '📥 导入的材料';
+    $('#caseSelect').appendChild(opt);
+  }
+  setTimeout(async () => {
+    await loadCase('uploaded');
+    setWorkflowStep(1);
+    if ((r.slotsFilled || []).length) {
+      activeTab = r.slotsFilled[0].tab || 'fee';
+      renderTabs();
+      renderDoc(activeTab);
+    }
+  }, 400);
+}
+
 window.ingestJson = async () => {
   const out = document.getElementById('ingestJsonResult'); out.innerHTML = '<span class="muted">校验中…</span>';
   const r = await fetch('/api/ingest', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ type: 'structured', json: document.getElementById('ingestJson').value }) }).then(x => x.json());
@@ -605,7 +1383,7 @@ function ingestDone(r, out) {
 
 async function showFacts() {
   const c = await fetch('/api/caseobject').then(r => r.json());
-  const feeRows = c.fee_lines.map(f => `<tr><td class="ln">${f.id}</td><td>${esc(f.name)}</td><td class="num">${f.amount.toFixed(2)}</td><td><span class="anchor-chip">${esc(f.anchor.doc)}·${esc(f.anchor.locator)}</span></td><td><span class="ocr-chip ${f.anchor.ocr_conf < 0.8 ? 'lo' : 'hi'}">OCR ${f.anchor.ocr_conf}${f.anchor.ocr_conf < 0.8 ? ' ⚠人工核对' : ''}</span></td></tr>`).join('');
+  const feeRows = c.fee_lines.map(f => `<tr><td class="ln">${f.id}</td><td>${esc(f.name)}</td><td class="num">${f.amount.toFixed(2)}</td><td><span class="anchor-chip">${esc(f.anchor.doc)}·${esc(f.anchor.locator)}</span></td><td><span class="ocr-chip ${f.anchor.ocr_conf < 0.8 ? 'lo' : 'hi'}">OCR ${f.anchor.ocr_conf}${f.anchor.bbox ? ' ⌖' : ''}${f.anchor.ocr_conf < 0.8 ? ' ⚠' : ''}</span></td></tr>`).join('');
   const inj = (c.flags.injection_suspects || []).length;
   const html = `
     <p class="muted">事实层把材料包一次性编译为类型化"稽核案卷对象"，<b>每条事实自带源锚点(文档/定位/OCR置信度)</b>——证据定位从"LLM临场摘录"变为"事实自身携带出处"，三要素门禁的"证据定位"成为数据结构的硬字段。规则在对象上跑，不重读全文（token降一个量级、判定可复现）。</p>
@@ -659,7 +1437,7 @@ async function showInstitution() {
   const d = await fetch('/api/institution').then(r => r.json());
   const s = d.summary;
   const maxRuleAmt = Math.max(1, ...d.top_rules.map(r => r.amount));
-  const ruleBars = d.top_rules.slice(0, 8).map(r => `<div class="ins-bar-row"><span class="ins-bar-label">${esc(r.rule_id)} ${esc(r.rule_name)}</span><span class="ins-bar-track"><span class="ins-bar-fill" style="width:${Math.round(r.amount / maxRuleAmt * 100)}%"></span></span><span class="ins-bar-val">¥${fmt(r.amount)}<span class="muted"> ·${r.cases}案</span></span></div>`).join('');
+  const ruleBars = d.top_rules.slice(0, 8).map(r => `<div class="ins-bar-row"><span class="ins-bar-label">${ruleLink(r.rule_id, { compact: true })} ${esc(r.rule_name)}</span><span class="ins-bar-track"><span class="ins-bar-fill" style="width:${Math.round(r.amount / maxRuleAmt * 100)}%"></span></span><span class="ins-bar-val">¥${fmt(r.amount)}<span class="muted"> ·${r.cases}案</span></span></div>`).join('');
   const maxDomAmt = Math.max(1, ...d.by_domain.map(x => x.amount));
   const domBars = d.by_domain.map(x => `<div class="ins-bar-row"><span class="ins-bar-label">${esc(x.domain)}</span><span class="ins-bar-track"><span class="ins-bar-fill dom" style="width:${Math.round(x.amount / maxDomAmt * 100)}%"></span></span><span class="ins-bar-val">¥${fmt(x.amount)}<span class="muted"> ·疑点${x.suspected}</span></span></div>`).join('');
   const deptRows = d.by_dept.map(x => `<tr><td>${esc(x.dept)}</td><td class="num">${x.cases}</td><td class="num">${x.suspected}</td><td class="num">${x.clue}</td><td class="num">¥${fmt(x.amount)}</td></tr>`).join('');
@@ -698,11 +1476,17 @@ async function showGovernance() {
     const btns = e.status === 'shadow'
       ? `<button class="act adopt" onclick="governanceAction('${esc(e.rule_id)}','restore')">✓ 复审通过·恢复在役</button><button class="act reject" onclick="governanceAction('${esc(e.rule_id)}','retire')">⊗ 确认下线</button>`
       : `<button class="act adopt" onclick="governanceAction('${esc(e.rule_id)}','restore')">✓ 复审恢复·重新在役</button>`;
-    return `<div class="gv-card"><div class="gv-head"><span class="gv-badge ${sm.cls}">${sm.label}</span><b class="rid">${esc(e.rule_id)}</b> ${esc(e.rule_name)}</div>
+    return `<div class="gv-card"><div class="gv-head"><span class="gv-badge ${sm.cls}">${sm.label}</span>${ruleLink(e.rule_id)}</div>
       <div class="gv-reason">${esc(e.reason || '')}</div><div class="gv-flow">${hist}</div><div class="actions">${btns}<span class="act-tip muted"></span></div></div>`;
   }).join('') : '<div class="cov-statement" style="color:var(--green)">全部 58 条规则均在役（active）。某规则被复核驳回 ≥3 次会自动转入 shadow 观察期、在此复审——目前无规则进观察期/下线。</div>';
+  const restoreHints = (d.restore_hints || []).map(h =>
+    `<div class="exam-banner">✓ ${ruleLink(h.rule_id, { compact: true })} 巩固链建议恢复在役：${esc((h.rationale || '').slice(0, 100))}… <button type="button" class="rect-btn accent" onclick="governanceAction('${esc(h.rule_id)}','restore')">人工 restore</button></div>`
+  ).join('');
+  const overlayKeys = Object.keys(d.overlay?.patches || {});
   const html = `
-    <p class="muted">规则本身也有治理生命周期（三审三验+在役治理）。误报闭环的执行端在这里<b>落盘可追溯</b>：复核驳回≥3次自动转 shadow（只观察不计分），人工复审后<b>恢复在役</b>或<b>确认下线</b>（下线后不再 fire）。</p>
+    <p class="muted">误报链：驳回≥3→auto shadow→误报 Agent→overlay。巩固链：采纳≥3且近10条驳回≤1→巩固 Agent→restore 建议（须人工点 restore）。</p>
+    ${restoreHints}
+    ${overlayKeys.length ? `<div class="cov-statement">📎 overlay 预览：${overlayKeys.map(esc).join('、')}</div>` : ''}
     <div class="gv-machine">📐 规则状态机：${esc(d.model)}</div>
     <div class="bench-kpis">
       <div class="bkpi green"><div class="n">${d.summary.total_rules - d.summary.shadow - d.summary.deprecated}</div><div class="l">在役 active</div></div>
@@ -731,10 +1515,11 @@ function renderReviewFlow(stats) {
   const totals = stats?.totals || {};
   const flagged = stats?.flagged_rules || [];
   const has = (totals['采纳'] || 0) + (totals['驳回'] || 0) + (totals['补材料'] || 0) > 0;
-  return `<div class="facts-h" style="margin-top:14px">🔁 复核反馈回流（误报闭环 · 恒识式"规则沉淀"的对偶=淘汰坏规则）</div>
-    ${has ? `<div class="cov-statement">累计：采纳 ${totals['采纳'] || 0} · 驳回 ${totals['驳回'] || 0} · 补材料 ${totals['补材料'] || 0}（持久化于 data/review_feedback.json）</div>
-    ${flagged.length ? `<div class="ingest-err">🌓 已自动转 <b>shadow 观察期</b>的高误报规则（驳回≥${stats.threshold || 3}次自动 re_review · 已落盘 data/rule_states.json）：${flagged.map(f => `<b>${esc(f.rule_id)}</b>(驳回${f.rejected})`).join('、')}<div class="muted" style="margin-top:5px">↳ 这些规则在稽核时仍跑、仍展示证据链，但<b>不再计入疑点/金额</b>（沉底置灰）。到「🗂 规则治理」页人工复审：<b>恢复在役</b>或<b>确认下线</b>——误报闭环从"标记"走到"执行"再到"可追溯治理"。</div></div>` : '<div class="cov-statement" style="color:var(--green)">暂无规则达到 re_review 阈值（无规则进观察期）。</div>'}` :
-      `<div class="cov-statement muted">暂无复核反馈。点任一疑点卡的 采纳/驳回(填原因)/补材料 即开始沉淀——驳回原因回流，某规则被驳回≥3次自动标"高误报待复审"。这把"规则沉淀"从口号做成可见闭环。</div>`}`;
+  return `<div class="facts-h" style="margin-top:14px">🔁 规则沉淀双链（驳回=误报淘汰 · 采纳=规则巩固）</div>
+    ${has ? `<div class="cov-statement">累计：采纳 ${totals['采纳'] || 0} · 驳回 ${totals['驳回'] || 0} · 补材料 ${totals['补材料'] || 0}（缓冲不入队）</div>
+    <div class="muted" style="font-size:12px;margin-bottom:8px">误报链：有效驳回≥${stats.threshold || 3} → shadow + 误报 Agent · 巩固链：采纳≥3 且近10条驳回≤1 → 巩固 Agent</div>
+    ${flagged.length ? `<div class="ingest-err">🌓 shadow 观察期：${flagged.map(f => `${ruleLink(f.rule_id, { compact: true })}(驳回${f.rejected})`).join('、')} → 到「规则治理」restore 或「登记整改/疑点卡」继续巩固链</div>` : ''}` :
+      `<div class="cov-statement muted">暂无复核反馈。稽核模式点 采纳/驳回；体检模式到「登记整改」提交成立/不成立。</div>`}`;
 }
 function showPitch() {
   const html = `

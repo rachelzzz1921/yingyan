@@ -9,6 +9,9 @@ node_modules/
 
 # 运行期复核反馈（用户标注，非源码）
 data/review_feedback.json
+data/exam_rectification.json
+data/rule_precipitation_queue.json
+data/rule_patch_overlay.json
 
 # 运行期规则治理状态(三态落盘,非源)
 data/rule_states.json

@@ -48,7 +48,7 @@
 | M02 | Phase3 多角色测评(P1/P3/P5/P6)+尼尔森审计+SUS78 | U | ✅DONE(PERSONA_FEEDBACK.md+USABILITY_AUDIT.md) |
 | M03 | Phase4 RICE+Kano建议(12条,采纳7)→DECISIONS.md | U | ✅DONE |
 | M04 | Phase5 采纳项落地(合议/覆盖度/关系/分级 + 移动端头部S3/对比度S4) | U | ✅DONE |
-| M05 | Phase6 迭代报告(KPT+遗漏扫描) | U | DOING |
+| M05 | Phase6 迭代报告(KPT+遗漏扫描) | U | ✅DONE(iter-21) |
 
 ## DONE（iter-5 · 骨科备演案例）
 | # | 内容 | 来源 | 状态 |
@@ -211,6 +211,39 @@
 | # | 内容 | 来源 | 状态 |
 |---|---|---|---|
 | UX-1 | logo溢出修复+做真logo:header "鹰眼"两字溢出46px方框→换成鹰眼SVG标志(白色眼形轮廓+青色虹膜+鹰眉,brand青accent),.logo去字体样式+overflow:hidden;配套favicon.svg(navy底鹰眼,浏览器标签页) | U(点选logo"做个logo字也不要溢出") | ✅DONE(浏览器验无溢出+截图) |
+
+## DONE（iter-GIAC · 增量调优 · GIAC 五件套）
+| # | 内容 | 来源 | 状态 |
+|---|---|---|---|
+| G1 | 内部案卷编号 `YY-{SCOPE}-{DOMAIN}-{SEQ}` + case_registry.json + intake 自动 INT 号 | U(GIAC) | ✅DONE |
+| G2 | PII 脱敏 pii-redact.js — 送 LLM 前脱敏姓名/证件/住院号 | U(GIAC) | ✅DONE |
+| G3 | RAG as_of 入院日过滤 kb/as-of.js + retrieval + L5 评测 Q21/Q22 | U(GIAC) | ✅DONE |
+| G4 | Parse QA parse-qa.js — intake 写入 parse_quality + 置信惩罚 + UI 警告 | U(GIAC) | ✅DONE |
+| G5 | 合规前置 compliance-gate.js C-001~C-005 确定性 + UI compliance_flags | U(GIAC) | ✅DONE |
+| G6 | LLM context-budget.js token 预算 + context_manifest | U(GIAC) | ✅DONE |
+| G7 | AuditBench 扩至 20 案卷 + 全案 expected_findings.json | U(GIAC) | ✅DONE |
+| G8 | 驳回→eval 草案 queue + dashboard 确认/忽略 UI | U(GIAC) | ✅DONE |
+| G9 | YHF G1 shadow strict 开启 + 10 core rules 聚合 | U(GIAC) | ✅DONE |
+| G10 | GET /api/maturity + dashboard 工程成熟度/GIAC 卡片 | U(GIAC) | ✅DONE |
+| G11 | `bash yhf/run.sh --strict` G0+G4+G1 全 PASS | R | ✅DONE |
+
+## DONE（iter-21 · Intake/OCR 链闭环）
+| # | 内容 | 来源 | 状态 |
+|---|---|---|---|
+| I21-1 | PP-Structure sidecar lite+tesseract 路径 + install-paddle Py≤3.12 说明 | U | ✅DONE |
+| I21-2 | demo 费用清单 PNG/PDF + `scripts/verify-intake-bbox.js` E2E | S | ✅DONE(PDF 3行 bbox PASS) |
+| I21-3 | ppstructure-mapper OCR 词行分列解析 → anchor.bbox | S | ✅DONE |
+| I21-4 | 双入口：intake.html 完整页 + 主工作台快速导入弹窗 | U | ✅DONE |
+| I21-5 | 疑点 jumpToLoc → 费用行 `.bbox-highlight` + OCR 坐标 tooltip | S | ✅DONE |
+| I21-6 | 顶栏 L1✓(engine) / L1— honest 提示 | S | ✅DONE |
+
+### 案卷编号规范（registry 单一事实来源）
+```
+YY-{SCOPE}-{DOMAIN}-{SEQ:03d}
+SCOPE: DEMO | BENCH | INT | LIVE
+DOMAIN: NSCLC | ORTHO | DRG | CLEAN | …（见 case_registry.json）
+SEQ: 001–999 按 DOMAIN 递增，禁止手填重复
+```
 
 ## BACKLOG / DEFERRED（写明理由）
 | # | 内容 | 理由 |

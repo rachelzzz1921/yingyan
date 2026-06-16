@@ -16,6 +16,8 @@
 
 const { genDebate } = require('./debate');
 const { compileCaseObject } = require('./case-object');
+const { applyComplianceGate } = require('./compliance-gate');
+const { applyParseQAToConfidence } = require('./parse-qa');
 
 // ---------- 工具函数 ----------
 function parseDate(s) {
@@ -1089,7 +1091,7 @@ function attachAnchors(finding, caseObj) {
   }
   return minOcr;
 }
-function computeConfidence(finding, minOcr) {
+function computeConfidence(finding, minOcr, parseQuality) {
   let c = finding.status === '疑点' ? 82 : 55;
   const ev = finding.evidence?.length || 0;
   c += ev >= 3 ? 6 : ev >= 2 ? 3 : 0;
@@ -1099,6 +1101,8 @@ function computeConfidence(finding, minOcr) {
   if (finding._cove?.all_pass) c += 2;
   // OCR置信度传播：关键证据低置信→降级并提示人工核对
   if (minOcr < 0.85) { c = Math.round(c * (0.6 + minOcr * 0.4)); finding._low_ocr = true; }
+  c = applyParseQAToConfidence(c, parseQuality);
+  if (finding._compliance_conf_cap) c = Math.min(c, finding._compliance_conf_cap);
   return Math.max(5, Math.min(100, Math.round(c)));
 }
 
@@ -1197,6 +1201,7 @@ function runAudit(record, rulesArray, options = {}) {
   const trace = [];
   const retiredSet = new Set(options.retiredRules || []); // iter16 已下线(deprecated)规则：复审确认高误报后停用，不再fire
   for (const ruleId of Object.keys(ruleCheckers)) {
+    if (!rules[ruleId]) { trace.push({ rule_id: ruleId, rule_name: '(未加载)', hits: 0, ms: 0, skipped: true }); continue; }
     if (retiredSet.has(ruleId)) { trace.push({ rule_id: ruleId, rule_name: rules[ruleId]?.rule_name, hits: 0, ms: 0, retired: true }); continue; }
     const t0 = Date.now();
     const got = ruleCheckers[ruleId](ctx) || [];
@@ -1208,17 +1213,21 @@ function runAudit(record, rulesArray, options = {}) {
   // doc08宏观① 合议层：一笔钱被多规则命中→合并1主疑点+佐证视角、金额去重（必须在计金额前）
   const rec = reconcile(findings);
   const merged = rec.findings;
+  const parseQuality = record.case_meta?.parse_quality || options.parseQuality || null;
+
+  applyComplianceGate(merged, ctx);
 
   // 升·iter12 规则状态机：复核高频驳回的规则进 shadow 态（只观察不计分）——误报闭环从"标记"到"执行"
   const shadowSet = new Set(options.shadowRules || []);
 
   // 逐发现（合议后）：控辩裁 + CoVe + 锚点 + 置信度
   for (const f of merged) {
+    if (parseQuality?.level && parseQuality.level !== 'ok') f._parse_qa_warn = true;
     f.debate = genDebate(f, rules[f.rule_id]);
     f._cove = genCoVe(f);
     f.cove = f._cove;
     const minOcr = attachAnchors(f, caseObj);
-    f.confidence = computeConfidence(f, minOcr);
+    f.confidence = computeConfidence(f, minOcr, parseQuality);
     f.min_ocr_conf = Number(minOcr.toFixed(2));
     f.priority_score = Number(((f.amount_involved || 0) * (f.confidence / 100)).toFixed(1)); // 升6 金额×置信
     if (shadowSet.has(f.rule_id)) {
@@ -1244,7 +1253,8 @@ function runAudit(record, rulesArray, options = {}) {
     report_meta: {
       case_id: record.case_meta?.case_id,
       patient: `${record.front_page.patient_name} ${record.front_page.sex} ${record.front_page.age}岁`,
-      audit_engine: '鹰眼·医保基金稽核智能体 v0.4（事实层+路由+合议层+覆盖度+控辩裁+CoVe+置信）',
+      audit_engine: '鹰眼·医保基金稽核智能体 v0.5（事实层+合规前置+ParseQA+路由+合议层+控辩裁+CoVe+置信）',
+      parse_quality: parseQuality,
       audit_scope: `本次住院（${record.front_page.admit_time?.slice(0,10)} ~ ${record.front_page.discharge_time?.slice(0,10)}）全部费用与病历材料`,
       human_baseline_minutes: 40,
       agent_seconds: 90,

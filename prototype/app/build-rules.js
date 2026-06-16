@@ -7,6 +7,7 @@
 const fs = require('fs');
 const path = require('path');
 const yaml = require('js-yaml');
+const { enrichRulesDoc } = require('./engine/rule-catalog');
 
 const YAML_PATH = path.resolve(__dirname, '../data/rules/rules.yaml');
 const JSON_PATH = path.resolve(__dirname, '../data/rules/rules.json');
@@ -29,8 +30,11 @@ try {
       }
     }
   }
-  fs.writeFileSync(JSON_PATH, JSON.stringify(doc, null, 2), 'utf8');
-  console.log(`✅ 转换成功：${doc.rules.length} 条规则 → ${path.relative(process.cwd(), JSON_PATH)}`);
+  const enriched = enrichRulesDoc(doc);
+  fs.writeFileSync(JSON_PATH, JSON.stringify(enriched, null, 2), 'utf8');
+  console.log(`✅ 转换成功：${enriched.rules.length} 条规则 → ${path.relative(process.cwd(), JSON_PATH)}`);
+  const withCatalog = enriched.rules.filter(r => r.catalog?.display_title).length;
+  console.log(`   规则目录 catalog：${withCatalog}/${enriched.rules.length} 条已命名`);
   if (coreMerged) console.log(`   核心 test_cases 合并：${coreMerged} 条规则`);
   // 校验关键字段完整性
   const missing = doc.rules.filter(r => !r.rule_id || !r.rule_name || !r.layer || !r.violation_type);

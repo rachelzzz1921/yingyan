@@ -24,6 +24,7 @@ const path = require('path');
 })();
 
 const { ragConfig, canUseSupabase, canUseStepfun } = require('../prototype/app/kb/config');
+const { canEmbed } = require('../prototype/app/kb/embedding-provider');
 const supabase = require('../prototype/app/kb/supabase-client');
 const stepfun = require('../prototype/app/kb/stepfun-client');
 
@@ -90,16 +91,44 @@ function flattenKB() {
     const alias = DOMAIN_ALIAS[d.domain] || d.domain;
     const ver = (d.version || '').includes('2025') ? '2025' : '';
     for (const it of d.items || []) {
-      if (it.no == null) continue;
-      for (const refId of [`KB1-问题清单${ver}-${alias}-${it.no}`, `KB1-问题清单${alias}-${it.no}`]) {
+      if (it.no != null) {
+        for (const refId of [`KB1-问题清单${ver}-${alias}-${it.no}`, `KB1-问题清单${alias}-${it.no}`]) {
+          rows.push({
+            kb_layer: 'PL',
+            ref_id: refId,
+            layer: '问题清单',
+            doc_name: d.domain,
+            text: `[${d.domain}清单序号${it.no}·${it.type}] ${it.text}`,
+            verify_status: it.verify || d.verify_status,
+            metadata: { domain: d.domain, item_no: it.no, type: it.type },
+            corpus_version: cfg.corpusVersion,
+          });
+        }
+      } else if (it.text) {
+        const refId = `KB1-问题清单-${alias}-${it.type || '项'}-${rows.filter(r => r.kb_layer === 'PL' && r.ref_id.includes(alias)).length + 1}`;
         rows.push({
           kb_layer: 'PL',
           ref_id: refId,
           layer: '问题清单',
           doc_name: d.domain,
-          text: `[${d.domain}清单序号${it.no}·${it.type}] ${it.text}`,
+          text: `[${d.domain}·${it.type || '问题项'}] ${it.text}`,
           verify_status: it.verify || d.verify_status,
-          metadata: { domain: d.domain, item_no: it.no, type: it.type },
+          metadata: { domain: d.domain, type: it.type },
+          corpus_version: cfg.corpusVersion,
+        });
+      }
+    }
+    const summary = (d.official_example ? d.official_example + ' ' : '') + (d.items || []).map(i => i.text).join(' / ');
+    for (const k of [`KB1-问题清单${alias}(行业B类·待官方核)`, `KB1-问题清单${alias}(旁证·待官方核)`]) {
+      if (!rows.some(r => r.ref_id === k) && summary.trim()) {
+        rows.push({
+          kb_layer: 'PL',
+          ref_id: k,
+          layer: '问题清单',
+          doc_name: d.domain,
+          text: summary.slice(0, 400),
+          verify_status: d.verify_status,
+          metadata: { domain: d.domain, kind: 'summary' },
           corpus_version: cfg.corpusVersion,
         });
       }
@@ -198,7 +227,17 @@ async function main() {
     console.warn('⚠️ kb_chunks 写入失败（embedding 可后续补）:', await chunkRes.text());
   } else {
     const chunkSaved = await chunkRes.json();
-    console.log(`✅ Supabase kb_chunks: ${chunkSaved.length} 条（embedding 待阶跃同步）`);
+    console.log(`✅ Supabase kb_chunks: ${chunkSaved.length} 条`);
+  }
+
+  if (!process.argv.includes('--no-embed') && canEmbed()) {
+    console.log('🔢 写入 pgvector embedding（DashScope）…');
+    require('child_process').execSync('node scripts/embed-kb-chunks.js', {
+      stdio: 'inherit',
+      cwd: path.resolve(__dirname, '..'),
+    });
+  } else if (!canEmbed()) {
+    console.warn('⚠️ 未配置 DASHSCOPE_API_KEY，跳过 pgvector。配置后运行: node scripts/embed-kb-chunks.js');
   }
 
   if (syncStepfun) {

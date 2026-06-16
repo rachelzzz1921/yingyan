@@ -1,0 +1,43 @@
+{
+  "report_meta": {
+    "case_id": "YY-ICU-001",
+    "gold_standard": true,
+    "gold_standard_note": "Oracle 引擎自动生成，供 YHF/shadow 使用",
+    "summary": {
+      "suspected_count": 3,
+      "clue_count": 0,
+      "total_findings": 3
+    }
+  },
+  "findings": [
+    {
+      "rule_id": "ICU-302",
+      "rule_name": "按小时计价监护项目时长虚计",
+      "status": "疑点",
+      "amount_involved": 1200,
+      "violation_type": "重复收费"
+    },
+    {
+      "rule_id": "ICU-302",
+      "rule_name": "按小时计价监护项目时长虚计",
+      "status": "疑点",
+      "amount_involved": 640,
+      "violation_type": "重复收费"
+    },
+    {
+      "rule_id": "ICU-301",
+      "rule_name": "特级护理重复收取一般专项护理费",
+      "status": "疑点",
+      "amount_involved": 300,
+      "violation_type": "重复收费"
+    }
+  ],
+  "correctly_not_flagged": [
+    {
+      "item": "重症监护费（费用清单第6行，600元）",
+      "tempting_rule": "ICU-303 非ICU患者收重症监护费",
+      "why_not_flagged": "病案首页（重症医学科ICU-03床）与病程记录均载明患者确已收入ICU、有明确收治记录 → 重症监护费收取有据，正确不报（ICU-303 除外情形）。",
+      "demo_value": "★主动讲：重症监护费看着高，但病程有ICU收治记录就该收——ICU-303只打\"非ICU患者却收ICU费\"，不误伤真ICU患者。同例心电监测计费=实际时长也正确不报。"
+    }
+  ]
+}

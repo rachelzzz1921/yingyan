@@ -1,0 +1,50 @@
+{
+  "report_meta": {
+    "case_id": "YY-PHARM-001",
+    "gold_standard": true,
+    "gold_standard_note": "Oracle 引擎自动生成，供 YHF/shadow 使用",
+    "summary": {
+      "suspected_count": 2,
+      "clue_count": 2,
+      "total_findings": 4
+    }
+  },
+  "findings": [
+    {
+      "rule_id": "P-303",
+      "rule_name": "生活用品串换为医保药品",
+      "status": "疑点",
+      "amount_involved": 85,
+      "violation_type": "串换项目"
+    },
+    {
+      "rule_id": "P-303",
+      "rule_name": "生活用品串换为医保药品",
+      "status": "疑点",
+      "amount_involved": 60,
+      "violation_type": "串换项目"
+    },
+    {
+      "rule_id": "P-302",
+      "rule_name": "回流药二次销售",
+      "status": "线索",
+      "amount_involved": 100,
+      "violation_type": "欺诈骗保/串换"
+    },
+    {
+      "rule_id": "P-301",
+      "rule_name": "药店空刷医保凭证骗保",
+      "status": "线索",
+      "amount_involved": 38,
+      "violation_type": "虚构医药服务项目"
+    }
+  ],
+  "correctly_not_flagged": [
+    {
+      "item": "二甲双胍片（医保结算第3行，90元）",
+      "tempting_rule": "P-303 串换 / P-301 空刷",
+      "why_not_flagged": "进销存载明实际售出即「二甲双胍片」本身（医保目录内药品）、销售凭证齐备、追溯码完整、有门诊慢特病处方支持 → 真实售药，正确不报。",
+      "demo_value": "★主动讲：同一张医保结算单，口罩/保健品串换药品报、空刷报，真实卖的二甲双胍不报——靠\"结算名目 vs 实际销售/进销存/追溯码\"硬比对，不误伤真实售药。"
+    }
+  ]
+}

@@ -25,6 +25,11 @@ function ragConfig() {
     stepfunVectorStoreName: env('STEPFUN_VECTOR_STORE_NAME', 'yingyan-kb'),
     ragflowUrl: env('RAGFLOW_URL'),
     ragflowApiKey: env('RAGFLOW_API_KEY'),
+    embeddingProvider: env('RAG_EMBEDDING_PROVIDER', 'dashscope'),
+    embeddingModel: env('RAG_EMBEDDING_MODEL', 'text-embedding-v3'),
+    embeddingDimensions: Number(env('RAG_EMBEDDING_DIMENSIONS', '1024')),
+    dashscopeApiKey: env('DASHSCOPE_API_KEY'),
+    zhipuApiKey: env('ZHIPU_API_KEY'),
   };
 }
 

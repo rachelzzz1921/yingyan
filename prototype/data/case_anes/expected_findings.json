@@ -1,0 +1,64 @@
+{
+  "report_meta": {
+    "case_id": "YY-ANES-001",
+    "gold_standard": true,
+    "gold_standard_note": "Oracle 引擎自动生成，供 YHF/shadow 使用",
+    "summary": {
+      "suspected_count": 5,
+      "clue_count": 1,
+      "total_findings": 6
+    }
+  },
+  "findings": [
+    {
+      "rule_id": "M-301",
+      "rule_name": "麻醉收费时长超实际麻醉记录时长",
+      "status": "疑点",
+      "amount_involved": 300,
+      "violation_type": "重复收费"
+    },
+    {
+      "rule_id": "M-302",
+      "rule_name": "麻醉监测重复收费（内涵已含）",
+      "status": "疑点",
+      "amount_involved": 150,
+      "violation_type": "重复收费"
+    },
+    {
+      "rule_id": "M-303",
+      "rule_name": "麻醉药品收费数量超实际使用",
+      "status": "疑点",
+      "amount_involved": 90,
+      "violation_type": "虚构医药服务项目或重复收费"
+    },
+    {
+      "rule_id": "M-302",
+      "rule_name": "麻醉监测重复收费（内涵已含）",
+      "status": "疑点",
+      "amount_involved": 80,
+      "violation_type": "重复收费"
+    },
+    {
+      "rule_id": "M-302",
+      "rule_name": "麻醉监测重复收费（内涵已含）",
+      "status": "疑点",
+      "amount_involved": 60,
+      "violation_type": "重复收费"
+    },
+    {
+      "rule_id": "M-304",
+      "rule_name": "无麻醉恢复室收取麻醉恢复室监护费",
+      "status": "线索",
+      "amount_involved": 150,
+      "violation_type": "超标准收费"
+    }
+  ],
+  "correctly_not_flagged": [
+    {
+      "item": "患者自控镇痛泵PCA（费用清单第12行，200元）",
+      "tempting_rule": "M-302 麻醉内涵重复收费",
+      "why_not_flagged": "术后患者自控镇痛泵（PCA）是独立于麻醉项目的术后镇痛操作，有麻醉医嘱（T04）与记录支持，不属全身麻醉/术中监测的收费内涵步骤 → 不构成重复收费，正确不报。",
+      "demo_value": "★主动讲：同在麻醉单上，气管插管/心电监测报（内涵已含另收），术后镇痛泵不报（独立操作）——内涵边界拿捏精准，不误伤合规项。"
+    }
+  ]
+}

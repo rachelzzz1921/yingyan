@@ -1,0 +1,349 @@
+{
+  "case_meta": {
+    "case_id": "YY-BENCH-CLEAN-001",
+    "case_title": "NSCLC住院化疗·完全合规对照件（AuditBench干净件）",
+    "disclaimer": "虚构数据。本件为AuditBench评测集的'干净件'——全部合规，鹰眼应输出0疑点0线索（误报红线=0）。",
+    "embedded_violation_count": 0,
+    "distractor_count": 1,
+    "settlement_summary": {
+      "total_amount": 9200,
+      "insurance_paid_amount": 9200,
+      "currency": "CNY",
+      "settle_type": "住院·按项目付费"
+    }
+  },
+  "front_page": {
+    "doc_type": "病案首页",
+    "hospital": "示范市第一人民医院（虚构）",
+    "hospital_level": "三级甲等",
+    "patient_name": "李秀英",
+    "sex": "女",
+    "age": 58,
+    "birth_date": "1968-05-02",
+    "insurance_type": "职工基本医疗保险",
+    "admission_no": "ZY20260410-0112",
+    "admit_time": "2026-04-10 09:00",
+    "discharge_time": "2026-04-16 10:00",
+    "actual_inpatient_days": 6,
+    "admit_dept": "肿瘤内科",
+    "bed_no": "肿瘤内科-08床",
+    "principal_diagnosis": {
+      "name": "左肺腺癌",
+      "icd10": "C34.301",
+      "tnm_stage": "cT2N2M1a，IVA期",
+      "note": "EGFR 19del阳性"
+    },
+    "other_diagnosis": [
+      {
+        "name": "恶性肿瘤化学治疗",
+        "icd10": "Z51.101"
+      }
+    ],
+    "attending_physician": "王医生（主治医师）",
+    "chief_physician": "赵主任（主任医师）",
+    "previous_admissions": [
+      {
+        "admission_no": "ZY20260320-0099",
+        "admit_time": "2026-03-20 14:00",
+        "discharge_time": "2026-03-22 11:00",
+        "principal_diagnosis": "左肺腺癌 IVA期",
+        "summary": "第1周期化疗（培美曲塞+卡铂），过程顺利。3周后返院第2周期。",
+        "purpose": "第1周期化疗"
+      }
+    ]
+  },
+  "admission_note": {
+    "doc_type": "入院记录",
+    "record_time": "2026-04-10 10:00",
+    "chief_complaint": "确诊左肺腺癌2月，第1周期化疗后21天，为行第2周期化疗入院。",
+    "present_illness": "患者左肺腺癌IVA期，EGFR 19del阳性，第1周期化疗（培美曲塞+卡铂）后恢复可，无骨髓抑制。今为行第2周期化疗入院。",
+    "past_history": "无特殊。否认药物过敏。",
+    "physical_exam": "T36.5 P72 R18 BP120/76。神清，KPS 90。双肺呼吸音清。",
+    "preliminary_diagnosis": [
+      "左肺腺癌（IVA期，EGFR 19del阳性）",
+      "恶性肿瘤化学治疗"
+    ],
+    "treatment_plan": "完善检查；行第2周期化疗培美曲塞+卡铂；继续奥希替尼靶向治疗（EGFR 19del阳性，有指征）。"
+  },
+  "progress_notes": [
+    {
+      "date": "2026-04-10",
+      "type": "首次病程记录",
+      "author": "王医生",
+      "text": "患者左肺腺癌IVA期EGFR 19del阳性，入院行第2周期化疗。护理级别：二级护理。基因检测报告（EGFR 19del阳性）已归档，奥希替尼靶向治疗有明确指征。"
+    },
+    {
+      "date": "2026-04-11",
+      "type": "日常病程记录",
+      "author": "王医生",
+      "text": "血常规正常，肝肾功能正常。今行第2周期化疗：培美曲塞0.8g+卡铂0.45g 静脉滴注。我院药房备药充足，院内供药。"
+    },
+    {
+      "date": "2026-04-13",
+      "type": "日常病程记录",
+      "author": "王医生",
+      "text": "患者化疗后无明显不良反应。继续奥希替尼80mg qd 口服。"
+    },
+    {
+      "date": "2026-04-16",
+      "type": "出院记录",
+      "author": "王医生",
+      "text": "第2周期化疗顺利，达出院标准，今日10:00出院。嘱继续奥希替尼，3周后返院。"
+    }
+  ],
+  "long_term_orders": {
+    "doc_type": "长期医嘱单",
+    "items": [
+      {
+        "order_id": "L01",
+        "start": "2026-04-10 10:00",
+        "stop": "2026-04-16 10:00",
+        "content": "肿瘤内科护理常规",
+        "doctor": "王医生"
+      },
+      {
+        "order_id": "L02",
+        "start": "2026-04-10 10:00",
+        "stop": "2026-04-16 10:00",
+        "content": "二级护理",
+        "doctor": "王医生"
+      },
+      {
+        "order_id": "L05",
+        "start": "2026-04-11 11:00",
+        "stop": "2026-04-14 11:00",
+        "content": "注射用头孢呋辛钠 1.5g + 0.9%氯化钠100ml ivgtt bid",
+        "doctor": "王医生"
+      },
+      {
+        "order_id": "L06",
+        "start": "2026-04-13 10:00",
+        "stop": "2026-04-16 10:00",
+        "content": "奥希替尼片 80mg po qd（靶向治疗，EGFR 19del阳性）",
+        "doctor": "赵主任"
+      }
+    ]
+  },
+  "temporary_orders": {
+    "doc_type": "临时医嘱单",
+    "items": [
+      {
+        "order_id": "T01",
+        "time": "2026-04-10 10:30",
+        "content": "血常规、生化全套、EGFR基因检测复核",
+        "doctor": "王医生"
+      },
+      {
+        "order_id": "T04",
+        "time": "2026-04-11 09:00",
+        "content": "培美曲塞二钠 0.8g + 0.9%氯化钠250ml ivgtt（化疗D1，院内供药）",
+        "doctor": "王医生"
+      },
+      {
+        "order_id": "T05",
+        "time": "2026-04-11 10:30",
+        "content": "卡铂 0.45g + 5%葡萄糖250ml ivgtt（化疗D1）",
+        "doctor": "王医生"
+      }
+    ]
+  },
+  "nursing_records": {
+    "doc_type": "护理记录单",
+    "nursing_level_executed": "二级护理（每2小时巡视一次，每日测量生命体征2次）",
+    "note": "护理记录与二级护理医嘱一致。",
+    "entries": [
+      {
+        "date": "2026-04-10",
+        "vitals_count": 2,
+        "round_interval_h": 2,
+        "text": "入院，二级护理，宣教。"
+      },
+      {
+        "date": "2026-04-11",
+        "vitals_count": 2,
+        "round_interval_h": 2,
+        "text": "化疗D1，输注培美曲塞、卡铂，无不适。"
+      },
+      {
+        "date": "2026-04-13",
+        "vitals_count": 2,
+        "round_interval_h": 2,
+        "text": "开始口服奥希替尼。"
+      },
+      {
+        "date": "2026-04-16",
+        "vitals_count": 1,
+        "round_interval_h": 2,
+        "text": "出院。"
+      }
+    ]
+  },
+  "lab_reports": [
+    {
+      "doc_type": "检验报告",
+      "report_id": "LAB-20260411-0011",
+      "report_time": "2026-04-11 07:30",
+      "category": "血常规",
+      "results": [
+        {
+          "item": "白细胞 WBC",
+          "value": 5.8,
+          "unit": "10⁹/L",
+          "ref": "3.5–9.5",
+          "flag": "正常"
+        },
+        {
+          "item": "中性粒细胞绝对值 ANC",
+          "value": 3.9,
+          "unit": "10⁹/L",
+          "ref": "1.8–6.3",
+          "flag": "正常"
+        }
+      ]
+    }
+  ],
+  "pathology_report": {
+    "doc_type": "病理报告",
+    "report_id": "PATH-20260205-0003",
+    "report_time": "2026-02-05",
+    "specimen": "左肺穿刺活检",
+    "microscopic": "腺样排列异型细胞。",
+    "immunohistochemistry": "TTF-1(+) NapsinA(+)。",
+    "diagnosis": "（左肺穿刺）腺癌。",
+    "note": "病理确诊腺癌。"
+  },
+  "gene_test_report": {
+    "doc_type": "基因检测报告",
+    "status": "已归档",
+    "report_id": "GENE-20260208-0002",
+    "report_time": "2026-02-08",
+    "result": "EGFR 外显子19缺失（19del）阳性；ALK阴性；ROS1阴性。",
+    "note": "★EGFR 19del阳性——奥希替尼有明确靶点检测依据，T-201不触发（合规）。"
+  },
+  "fee_list": {
+    "doc_type": "费用清单（医保结算明细）",
+    "settle_date": "2026-04-16",
+    "items": [
+      {
+        "line_no": 1,
+        "fee_date": "2026-04-10~04-16",
+        "category": "床位费",
+        "item_name": "床位费（三人间）",
+        "spec": "-",
+        "qty": 6,
+        "unit": "日",
+        "unit_price": 50,
+        "amount": 300,
+        "insurance_class": "医保",
+        "linked_order": "L01",
+        "flag": "正常"
+      },
+      {
+        "line_no": 2,
+        "fee_date": "2026-04-10~04-16",
+        "category": "护理费",
+        "item_name": "二级护理",
+        "spec": "-",
+        "qty": 6,
+        "unit": "日",
+        "unit_price": 12,
+        "amount": 72,
+        "insurance_class": "医保",
+        "linked_order": "L02",
+        "flag": "正常（收费等级=医嘱等级）"
+      },
+      {
+        "line_no": 3,
+        "fee_date": "2026-04-11",
+        "category": "西药费",
+        "item_name": "注射用培美曲塞二钠",
+        "spec": "0.5g",
+        "qty": 2,
+        "unit": "支",
+        "unit_price": 1300,
+        "amount": 2600,
+        "insurance_class": "医保乙",
+        "linked_order": "T04",
+        "flag": "正常（院内供药，清单含此药，无转嫁）"
+      },
+      {
+        "line_no": 4,
+        "fee_date": "2026-04-11",
+        "category": "西药费",
+        "item_name": "注射用卡铂",
+        "spec": "0.1g",
+        "qty": 5,
+        "unit": "支",
+        "unit_price": 52,
+        "amount": 260,
+        "insurance_class": "医保乙",
+        "linked_order": "T05",
+        "flag": "正常"
+      },
+      {
+        "line_no": 5,
+        "fee_date": "2026-04-13",
+        "category": "西药费",
+        "item_name": "奥希替尼片",
+        "spec": "80mg",
+        "qty": 28,
+        "unit": "片",
+        "unit_price": 168,
+        "amount": 4704,
+        "insurance_class": "医保乙",
+        "linked_order": "L06",
+        "flag": "正常（EGFR 19del阳性，有靶点检测依据）"
+      },
+      {
+        "line_no": 6,
+        "fee_date": "2026-04-11~04-13",
+        "category": "西药费",
+        "item_name": "注射用头孢呋辛钠",
+        "spec": "1.5g",
+        "qty": 6,
+        "unit": "支",
+        "unit_price": 30,
+        "amount": 180,
+        "insurance_class": "医保甲",
+        "linked_order": "L05",
+        "flag": "正常（1.5g bid×3天=6支，结算6支一致）"
+      },
+      {
+        "line_no": 7,
+        "fee_date": "2026-04-10",
+        "category": "检验费",
+        "item_name": "血常规",
+        "spec": "-",
+        "qty": 1,
+        "unit": "次",
+        "unit_price": 25,
+        "amount": 25,
+        "insurance_class": "医保",
+        "linked_order": "T01",
+        "flag": "正常"
+      }
+    ],
+    "absent_items_note": "逐行核对：培美曲塞已在第3行院内结算，无院外购药转嫁；无出院后计费；无超量；护理等级与医嘱一致。本件为干净件，应0疑点0线索。",
+    "total_amount": 8141
+  },
+  "discharge_summary": {
+    "doc_type": "出院小结",
+    "admit_date": "2026-04-10",
+    "discharge_date": "2026-04-16",
+    "discharge_diagnosis": [
+      "左肺腺癌（IVA期，EGFR 19del阳性）",
+      "恶性肿瘤化学治疗（第2周期）"
+    ],
+    "hospital_course": "第2周期化疗顺利，奥希替尼靶向治疗（EGFR 19del阳性有指征）。好转出院。",
+    "discharge_orders": [
+      "奥希替尼片 80mg qd 带药28天",
+      "3周后返院"
+    ],
+    "discharge_meds": [
+      {
+        "name": "奥希替尼片 80mg×28片",
+        "note": "EGFR阳性有指征，对应费用清单第5行"
+      }
+    ]
+  }
+}

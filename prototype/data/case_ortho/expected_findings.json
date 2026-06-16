@@ -1,0 +1,43 @@
+{
+  "report_meta": {
+    "case_id": "YY-DEMO-ORTHO-001",
+    "gold_standard": true,
+    "gold_standard_note": "Oracle 引擎自动生成，供 YHF/shadow 使用",
+    "summary": {
+      "suspected_count": 3,
+      "clue_count": 0,
+      "total_findings": 3
+    }
+  },
+  "findings": [
+    {
+      "rule_id": "A-107",
+      "rule_name": "串换药品/耗材/诊疗项目",
+      "status": "疑点",
+      "amount_involved": 3200,
+      "violation_type": "串换药品耗材诊疗项目"
+    },
+    {
+      "rule_id": "A-106",
+      "rule_name": "分解项目收费",
+      "status": "疑点",
+      "amount_involved": 1200,
+      "violation_type": "分解项目收费"
+    },
+    {
+      "rule_id": "A-101",
+      "rule_name": "重复收费—项目内涵已包含",
+      "status": "疑点",
+      "amount_involved": 680,
+      "violation_type": "重复收费"
+    }
+  ],
+  "correctly_not_flagged": [
+    {
+      "item": "椎体穿刺套管针（费用清单第8行，收1个）",
+      "tempting_rule": "A-109 耗材数量 / A-107 串换",
+      "why_not_flagged": "手术记录载明实际使用「椎体穿刺套管针」1个，与结算数量一致，且材质(国产)与结算名目相符——数量、材质均无异常 → 正确不报。",
+      "demo_value": "★骨科备演价值：同样是耗材，球囊收2用1报、穿刺针收1用1不报——数量与手术记录逐项硬比对，对错分明，无医学指征争议空间。能正确\"不报\"才显稽核可信。"
+    }
+  ]
+}

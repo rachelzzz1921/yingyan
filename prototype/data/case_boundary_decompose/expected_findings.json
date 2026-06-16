@@ -1,0 +1,14 @@
+{
+  "report_meta": {
+    "case_id": "YY-BENCH-EDGE-DEC-001",
+    "gold_standard": true,
+    "gold_standard_note": "Oracle 引擎自动生成，供 YHF/shadow 使用",
+    "summary": {
+      "suspected_count": 0,
+      "clue_count": 0,
+      "total_findings": 0
+    }
+  },
+  "findings": [],
+  "correctly_not_flagged": []
+}

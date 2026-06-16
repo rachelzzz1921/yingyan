@@ -7,7 +7,7 @@
 
 const fs = require('fs');
 const path = require('path');
-const { DEFAULTS, loadGateConfig } = require('../lib/paths');
+const { DEFAULTS, loadGateConfig, REPO_ROOT } = require('../lib/paths');
 const { resolveRunOptions } = require('../lib/modes');
 
 function loadJSON(p) {
@@ -38,20 +38,9 @@ function discoverCases(dataDir, skipIds) {
 
 function loadEngineContext(dataDir) {
   const rulesDoc = loadJSON(path.join(dataDir, 'rules/rules.json'));
-  const kb1 = loadJSON(path.join(dataDir, 'kb/kb1_policies.json'));
-  let kb2 = { entries: [] };
-  try { kb2 = loadJSON(path.join(dataDir, 'kb/kb2_clinical.json')); } catch (_) {}
-  const policyTexts = {};
-  const policyVerified = {};
-  for (const e of kb1.entries || []) {
-    policyTexts[e.ref_id] = e.text;
-    policyVerified[e.ref_id] = (e.verify_status || '').startsWith('✅');
-  }
-  for (const e of kb2.entries || []) {
-    policyTexts[e.kb2_id] = e.text;
-    policyVerified[e.kb2_id] = (e.verify_status || '').startsWith('✅');
-  }
-  return { rules: rulesDoc.rules, policyTexts, policyVerified };
+  const retrieval = require(path.join(REPO_ROOT, 'prototype/app/kb/retrieval'));
+  const maps = retrieval.loadJsonKB(dataDir);
+  return { rules: rulesDoc.rules, policyTexts: maps.policyTexts, policyVerified: maps.policyVerified };
 }
 
 function countExpectedSuspected(expected) {

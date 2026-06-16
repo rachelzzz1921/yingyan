@@ -32,10 +32,16 @@ function loadGateConfig() {
       if (m) coreRules.push(m[1]);
     }
   }
+  const ragMinRecall = raw.match(/G4_rag_recall:[\s\S]*?min_recall:\s*([\d.]+)/);
+  const ragK = raw.match(/G4_rag_recall:[\s\S]*?\n\s+k:\s*(\d+)/);
+  const ragEnabled = /G4_rag_recall:[\s\S]*?enabled:\s*true/.test(raw);
   return {
     skip_case_ids: skip,
     shadow_max_fpr: maxFprMatch ? parseFloat(maxFprMatch[1]) : 0.10,
     core_rules: coreRules,
+    rag_enabled: ragEnabled,
+    rag_min_recall: ragMinRecall ? parseFloat(ragMinRecall[1]) : 0.75,
+    rag_k: ragK ? parseInt(ragK[1], 10) : 8,
   };
 }
 

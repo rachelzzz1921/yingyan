@@ -14,6 +14,9 @@
  */
 'use strict';
 
+const { piiRedact } = require('./pii-redact');
+const { applyContextBudget } = require('./context-budget');
+
 const MODEL = process.env.YINGYAN_MODEL || 'claude-sonnet-4-6';
 const API_URL = 'https://api.anthropic.com/v1/messages';
 
@@ -32,22 +35,18 @@ function buildSystemPrompt() {
 }
 
 function buildUserPrompt(record, rules, kb) {
-  // 传精简规则（id/name/layer/violation_type/trigger_logic/exclusions/policy_basis）
-  const slimRules = rules.map(r => ({
-    rule_id: r.rule_id, rule_name: r.rule_name, layer: r.layer, risk_level: r.risk_level,
-    violation_type: r.violation_type, trigger_logic: r.trigger_logic, exclusions: r.exclusions,
-    policy_basis: r.policy_basis, output_modes: r.output_modes,
-  }));
+  const safeRecord = piiRedact(record);
   const policyKB = {};
   for (const e of (kb?.entries || [])) policyKB[e.ref_id] = e.text;
+  const budgeted = applyContextBudget({ rules, policyKB, record: safeRecord });
 
   return [
     '## 稽核规则库（节选字段）',
-    '```json', JSON.stringify(slimRules), '```',
+    '```json', JSON.stringify(budgeted.rules), '```',
     '## 政策条款知识库 policy_kb（report中policy.text只能引用这里的原文）',
-    '```json', JSON.stringify(policyKB), '```',
-    '## 待稽核材料包（多模态解析后的结构化数据）',
-    '```json', JSON.stringify(record), '```',
+    '```json', JSON.stringify(budgeted.policyKB), '```',
+    '## 待稽核材料包（已脱敏）',
+    '```json', JSON.stringify(budgeted.record), '```',
     '## 任务',
     '逐条执行规则，对本材料包做三方交叉验证（费用↔医嘱/执行记录、费用↔诊断/病历、费用↔手术/操作记录）。',
     '先跑F类L1确定性规则建立锚点，再跑L2语义规则。命中后强制取证、过三要素门禁、风险分级。',
@@ -55,6 +54,7 @@ function buildUserPrompt(record, rules, kb) {
     '{"findings":[{"rule_id","rule_name","violation_type","layer","risk_level","status":"疑点|线索","amount_involved":number,"evidence":[{"type","loc","text"}],"policy":[{"ref","text"}],"reasoning","needs_more":[],"disposal_suggestion"}],',
     '"correctly_not_flagged":[{"item","tempting_rule","why_not_flagged"}]}',
     'evidence.loc要具体到"费用清单第N行""病程记录YYYY-MM-DD""检验报告ID"等可复核定位；policy.ref用规则policy_basis里的引用ID，policy.text从policy_kb取原文。',
+    budgeted.context_manifest ? `## context_manifest\n\`\`\`json\n${JSON.stringify(budgeted.context_manifest)}\n\`\`\`` : '',
   ].join('\n');
 }
 
@@ -62,6 +62,18 @@ async function llmAudit(record, rules, opts = {}) {
   const key = process.env.ANTHROPIC_API_KEY;
   if (!key) throw new Error('未配置 ANTHROPIC_API_KEY');
   if (typeof fetch !== 'function') throw new Error('当前 Node 不支持全局 fetch（需 Node18+）');
+
+  const userPrompt = buildUserPrompt(record, rules, opts.kb);
+  const contextMatch = userPrompt.match(/```json\n(\{"budget"[\s\S]*?"sections"[\s\S]*?\})\n```/);
+  let context_manifest = null;
+  try {
+    const budgeted = applyContextBudget({
+      rules,
+      policyKB: Object.fromEntries((opts.kb?.entries || []).map(e => [e.ref_id, e.text])),
+      record: piiRedact(record),
+    });
+    context_manifest = budgeted.context_manifest;
+  } catch (_) {}
 
   const resp = await fetch(API_URL, {
     method: 'POST',
@@ -74,7 +86,7 @@ async function llmAudit(record, rules, opts = {}) {
       model: MODEL,
       max_tokens: 8000,
       system: buildSystemPrompt(),
-      messages: [{ role: 'user', content: buildUserPrompt(record, rules, opts.kb) }],
+      messages: [{ role: 'user', content: userPrompt }],
     }),
   });
   if (!resp.ok) {
@@ -103,6 +115,7 @@ async function llmAudit(record, rules, opts = {}) {
       case_id: record.case_meta?.case_id,
       patient: `${record.front_page.patient_name} ${record.front_page.sex} ${record.front_page.age}岁`,
       audit_engine: `鹰眼·医保基金稽核智能体（LLM语义路径 · ${MODEL}）`,
+      context_manifest,
       human_baseline_minutes: 40, agent_seconds: 90,
       summary: {
         total_findings: findings.length,

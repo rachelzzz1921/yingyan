@@ -5,7 +5,7 @@
  *
  * API:
  *   GET  /api/case      → 模拟病历包（多模态解析后的结构化材料）
- *   GET  /api/rules     → 全量规则（meta + 41条）
+ *   GET  /api/rules     → 全量规则（meta + catalog）；?id= 单条 ?q= 搜索
  *   GET  /api/kb        → KB1 政策知识库（条款原文，供报告引证）
  *   GET  /api/expected  → 金标准稽核结果
  *   POST /api/audit     → 运行稽核引擎，返回结构化报告
@@ -31,10 +31,18 @@ const path = require('path');
   } catch (e) { /* 无 .env 则跳过 */ }
 })();
 const { runAudit } = require('./engine/audit-engine');
+const precipService = require('./engine/rule-precipitation-service');
 const { ingestStructured, ingestDocument } = require('./engine/ingest');
+const { processIntakeBatch } = require('./engine/intake-batch');
+const { INTAKE_SLOTS } = require('./engine/intake-classifier');
 const { listConnectors, getConnector } = require('./connectors/hospital');
 const { isReady: llmReady, providerName } = require('./engine/llm-provider');
-const { loadPolicyMaps, status: kbStatus, keywordSearch } = require('./kb/retrieval');
+const { loadPolicyMaps, status: kbStatus, keywordSearch, semanticSearch, loadJsonKB, parseAdmitDate, filterPolicyMaps } = require('./kb/retrieval');
+const { enrichPolicyContext } = require('./kb/analysis-bridge');
+const { enrichRulesDoc } = require('./engine/rule-catalog');
+const { bootstrapRegistry, registryStats, CASE_ID_ALIAS } = require('./engine/case-id');
+const evalDraftService = require('./engine/eval-draft-service');
+const { runParseQA } = require('./engine/parse-qa');
 
 const PORT = process.env.PORT || 3700;
 const DATA = path.resolve(__dirname, '../data');
@@ -59,73 +67,76 @@ const DOC_CATALOG = {
 
 // ---------- 数据加载（启动时一次，热重载用 ?fresh=1） ----------
 function loadJSON(p) { return JSON.parse(fs.readFileSync(p, 'utf8')); }
+function discoverAllCases(dataDir) {
+  const cases = {};
+  const expectedByCase = {};
+  if (!fs.existsSync(dataDir)) return { cases, expectedByCase };
+  for (const name of fs.readdirSync(dataDir)) {
+    if (!name.startsWith('case_')) continue;
+    const full = path.join(dataDir, name);
+    try { if (!fs.statSync(full).isDirectory()) continue; } catch { continue; }
+    const recPath = path.join(full, 'medical_record.json');
+    if (!fs.existsSync(recPath)) continue;
+    const folderId = name.replace(/^case_/, '');
+    const id = CASE_ID_ALIAS[folderId] || folderId;
+    cases[id] = loadJSON(recPath);
+    const expPath = path.join(full, 'expected_findings.json');
+    if (fs.existsSync(expPath)) expectedByCase[id] = loadJSON(expPath);
+  }
+  return { cases, expectedByCase };
+}
+
+function auditContextForRecord(record) {
+  const asOf = parseAdmitDate(record);
+  const filtered = filterPolicyMaps(DB.policyMapsRaw, asOf);
+  const parseQuality = record.case_meta?.parse_quality || runParseQA(record);
+  return {
+    policyTexts: filtered.policyTexts,
+    policyVerified: filtered.policyVerified,
+    parseQuality,
+    as_of: asOf ? asOf.toISOString().slice(0, 10) : null,
+  };
+}
+
+function runAuditForRecord(record, extra = {}) {
+  const ctx = auditContextForRecord(record);
+  let rules = rulesWithOverlay(DB.rulesDoc.rules);
+  if (extra.examMode) rules = filterRulesForExam(rules).active;
+  return runAudit(record, rules, {
+    policyTexts: ctx.policyTexts,
+    policyVerified: ctx.policyVerified,
+    parseQuality: ctx.parseQuality,
+    shadowRules: extra.shadowRules ?? currentShadowRules(),
+    retiredRules: extra.retiredRules ?? currentRetiredRules(),
+    ...extra,
+  });
+}
+
 function loadAll() {
-  const record = loadJSON(path.join(DATA, 'case_NSCLC/medical_record.json'));
-  let cleanRecord = null;
-  try { cleanRecord = loadJSON(path.join(DATA, 'case_clean/medical_record.json')); } catch (e) {}
-  let orthoRecord = null;
-  try { orthoRecord = loadJSON(path.join(DATA, 'case_ortho/medical_record.json')); } catch (e) {}
-  let drgRecord = null;
-  try { drgRecord = loadJSON(path.join(DATA, 'case_drg/medical_record.json')); } catch (e) {}
-  let imgRecord = null;
-  try { imgRecord = loadJSON(path.join(DATA, 'case_imaging/medical_record.json')); } catch (e) {}
-  let edgeEgfr = null, edgeGcsf = null;
-  try { edgeEgfr = loadJSON(path.join(DATA, 'case_edge_egfr/medical_record.json')); } catch (e) {}
-  try { edgeGcsf = loadJSON(path.join(DATA, 'case_edge_gcsf/medical_record.json')); } catch (e) {}
-  let anesRecord = null;
-  try { anesRecord = loadJSON(path.join(DATA, 'case_anes/medical_record.json')); } catch (e) {}
-  let pharmRecord = null;
-  try { pharmRecord = loadJSON(path.join(DATA, 'case_pharmacy/medical_record.json')); } catch (e) {}
-  let icuRecord = null;
-  try { icuRecord = loadJSON(path.join(DATA, 'case_icu/medical_record.json')); } catch (e) {}
-  const rulesDoc = loadJSON(path.join(DATA, 'rules/rules.json'));
+  bootstrapRegistry(DATA);
+  const { cases, expectedByCase } = discoverAllCases(DATA);
+  const record = cases.main || cases[Object.keys(cases)[0]];
+  const rulesDoc = enrichRulesDoc(loadJSON(path.join(DATA, 'rules/rules.json')));
   const kb1 = loadJSON(path.join(DATA, 'kb/kb1_policies.json'));
   let kb2 = { entries: [] };
   try { kb2 = loadJSON(path.join(DATA, 'kb/kb2_clinical.json')); } catch (e) {}
   let pl = { domains: [] };
   try { pl = loadJSON(path.join(DATA, 'kb/kb1_problem_lists.json')); } catch (e) {}
-  let expected = null;
-  try { expected = loadJSON(path.join(DATA, 'case_NSCLC/expected_findings.json')); } catch (e) {}
-  // 构造 政策原文/核验状态 查找表（KB1 法规目录 + KB2 临床指南，供报告一跳取齐证据）
-  const policyTexts = {};
-  const policyVerified = {};
-  for (const e of kb1.entries || []) {
-    policyTexts[e.ref_id] = e.text;
-    policyVerified[e.ref_id] = (e.verify_status || '').startsWith('✅');
-  }
-  for (const e of kb2.entries || []) {
-    policyTexts[e.kb2_id] = e.text;
-    policyVerified[e.kb2_id] = (e.verify_status || '').startsWith('✅');
-  }
-  // 问题清单：按 序号 建引用ID（供专科规则引官方逐字措辞）
-  const DOMAIN_ALIAS = { '麻醉': '麻醉', '重症医学': '重症', '定点零售药店': '药店', '医学影像': '影像', '肿瘤': '肿瘤', '心血管内科': '心血管', '血液净化': '血净', '康复': '康复', '临床检验': '检验' };
-  for (const d of pl.domains || []) {
-    const alias = DOMAIN_ALIAS[d.domain] || d.domain;
-    const ver = (d.version || '').includes('2025') ? '2025' : '';
-    const dverified = (d.verify_status || '').startsWith('✅');
-    for (const it of d.items || []) {
-      if (it.no != null) {
-        for (const k of [`KB1-问题清单${ver}-${alias}-${it.no}`, `KB1-问题清单${alias}-${it.no}`]) {
-          policyTexts[k] = `[${d.domain}清单序号${it.no}·${it.type}] ${it.text}`;
-          policyVerified[k] = dverified && (it.verify ? it.verify.startsWith('✅') || it.verify.includes('已核实') : true);
-        }
-      }
-    }
-    // 领域级摘要引用（心血管/血净等无逐条序号的）
-    const summary = (d.official_example ? d.official_example + ' ' : '') + (d.items || []).map(i => i.text).join(' / ');
-    for (const k of [`KB1-问题清单${alias}(行业B类·待官方核)`, `KB1-问题清单${alias}(旁证·待官方核)`]) policyTexts[k] = summary.slice(0, 400);
-  }
-  const cases = { main: record };
-  if (cleanRecord) cases.clean = cleanRecord;
-  if (orthoRecord) cases.ortho = orthoRecord;
-  if (drgRecord) cases.drg = drgRecord;
-  if (imgRecord) cases.imaging = imgRecord;
-  if (edgeEgfr) cases.edge_egfr = edgeEgfr;
-  if (edgeGcsf) cases.edge_gcsf = edgeGcsf;
-  if (anesRecord) cases.anes = anesRecord;
-  if (pharmRecord) cases.pharmacy = pharmRecord;
-  if (icuRecord) cases.icu = icuRecord;
-  return { record, cleanRecord, cases, rulesDoc, kb1, kb2, problemLists: pl, expected, policyTexts, policyVerified };
+  const policyMapsRaw = loadJsonKB(DATA);
+  const expected = expectedByCase.main || null;
+  return {
+    record,
+    cases,
+    expectedByCase,
+    rulesDoc,
+    kb1,
+    kb2,
+    problemLists: pl,
+    expected,
+    policyTexts: policyMapsRaw.policyTexts,
+    policyVerified: policyMapsRaw.policyVerified,
+    policyMapsRaw,
+  };
 }
 let DB = loadAll();
 
@@ -135,6 +146,7 @@ async function refreshLiveKB() {
     if (maps.source === 'supabase') {
       DB.policyTexts = maps.policyTexts;
       DB.policyVerified = maps.policyVerified;
+      DB.policyMapsRaw = { ...DB.policyMapsRaw, policyTexts: maps.policyTexts, policyVerified: maps.policyVerified };
       DB.kbSource = 'supabase';
       console.log(`  ▸ KB Live（Supabase）${maps.entry_count} 条 ref_id`);
     } else {
@@ -298,7 +310,7 @@ function institutionPortrait(DB) {
   for (const id of Object.keys(DB.cases)) {
     if (id === 'uploaded') continue;                       // 跳过临时导入件
     const rec = DB.cases[id];
-    const rep = runAudit(rec, DB.rulesDoc.rules, { policyTexts: DB.policyTexts, policyVerified: DB.policyVerified });
+    const rep = runAuditForRecord(rec);
     const s = rep.report_meta.summary;
     const dept = rec.front_page?.admit_dept || '—';
     const domain = rec.case_meta?.specialty || DOMAIN_BY_ID[id] || '其他';
@@ -372,9 +384,115 @@ function examDisposal(t) {
     .replace(/建议作为伪造变造线索移交[；;]?/g, '建议院端重点自查该材料真实性、留存说明材料；')
     .replace(/移交(欺诈骗保|伪造变造)?线索/g, '院端重点自查并留存说明')
     .replace(/建议责令退回/g, '建议飞检前主动退回')
+    .replace(/建议移交/g, '建议院端自查并留存说明')
     .replace(/责令退回/g, '主动退回')
+    .replace(/移交骗保/g, '院端自查（飞检前主动说明）')
+    .replace(/移交欺诈骗保/g, '院端自查（飞检前主动说明）')
     .replace(/移交/g, '院端自查（必要时主动说明）')
     .replace(/责令/g, '主动');
+}
+
+// 体检模式：院端自查规则子集（排除监管演示/院外零售等）
+const EXAM_EXCLUDED_PREFIXES = ['E-', 'P-'];
+function filterRulesForExam(rules) {
+  const excluded = [];
+  const active = rules.filter(r => {
+    const skip = EXAM_EXCLUDED_PREFIXES.some(p => r.rule_id.startsWith(p));
+    if (skip) excluded.push(r.rule_id);
+    return !skip;
+  });
+  return { active, excluded, total: rules.length, used: active.length };
+}
+
+function loadExamRectification() {
+  const fp = path.join(DATA, 'exam_rectification.json');
+  try { return loadJSON(fp); } catch (e) { return { entries: {} }; }
+}
+function saveExamRectification(store) {
+  fs.writeFileSync(path.join(DATA, 'exam_rectification.json'), JSON.stringify(store, null, 2), 'utf8');
+}
+function examRectKey(caseId, findingId) { return `${caseId}::${findingId}`; }
+
+const JUDGMENT_TO_REVIEW = { '成立': '采纳', '不成立': '驳回', '部分成立': '补材料' };
+
+function loadReviewStore() {
+  try { return loadJSON(path.join(DATA, 'review_feedback.json')); } catch (e) { return { entries: [] }; }
+}
+function saveReviewStore(store) {
+  fs.writeFileSync(path.join(DATA, 'review_feedback.json'), JSON.stringify(store, null, 2), 'utf8');
+}
+
+/** 整改登记里的「人工判断对错」同步到 review_feedback，驱动双链沉淀 */
+async function syncJudgmentToReview(entry) {
+  if (!entry.judgment || !JUDGMENT_TO_REVIEW[entry.judgment]) return null;
+  const action = JUDGMENT_TO_REVIEW[entry.judgment];
+  const reason = entry.judgment_reason || entry.rectify_note || '';
+  if (action === '驳回' && !reason.trim()) return { error: '判断「不成立」须填写理由（将回流规则治理）' };
+  if (action === '补材料') {
+    const store = loadReviewStore();
+    store.entries.push({
+      finding_id: entry.finding_id, rule_id: entry.rule_id, case_id: entry.case_id,
+      action, reason, source: 'rectification', judgment: entry.judgment,
+      ts: new Date().toISOString(),
+    });
+    saveReviewStore(store);
+    return { action, stats: reviewStats(store), chain: precipService.ruleChainProgress(store, entry.rule_id, loadRuleStates()), precip: null, buffered: true };
+  }
+  const store = loadReviewStore();
+  store.entries.push({
+    finding_id: entry.finding_id, rule_id: entry.rule_id, case_id: entry.case_id,
+    action, reason, source: 'rectification', judgment: entry.judgment,
+    ts: new Date().toISOString(),
+  });
+  saveReviewStore(store);
+  const st = loadRuleStates();
+  autoShadowFromReview(store, entry.rule_id);
+  const result = await precipService.processReviewFeedback(DATA, {
+    ruleId: entry.rule_id,
+    reviewStore: store,
+    ruleStates: st,
+    rulesDoc: DB.rulesDoc.rules,
+    collectFeedback: collectRuleFeedback,
+    trigger: 'rectification',
+  });
+  return { action, stats: reviewStats(store), ...result };
+}
+
+function collectRuleFeedback(ruleId) {
+  const review = loadReviewStore();
+  const rect = loadExamRectification();
+  const fromReview = (review.entries || []).filter(e => e.rule_id === ruleId);
+  const fromRect = Object.values(rect.entries || {}).filter(e => e.rule_id === ruleId && e.judgment);
+  return [...fromReview, ...fromRect];
+}
+
+function rulesWithOverlay(baseRules) {
+  return precipService.applyOverlaysToRules(baseRules, precipService.loadRuleOverlay(DATA));
+}
+
+function saveRectificationEntry(body) {
+  const store = loadExamRectification();
+  const key = examRectKey(body.case_id, body.finding_id);
+  const prev = store.entries[key] || {};
+  const entry = {
+    case_id: body.case_id,
+    finding_id: body.finding_id,
+    rule_id: body.rule_id || prev.rule_id || '',
+    rule_name: body.rule_name || prev.rule_name || '',
+    amount_involved: body.amount_involved ?? prev.amount_involved,
+    deadline: body.deadline ?? prev.deadline ?? '',
+    status: body.status || prev.status || '待整改',
+    judgment: body.judgment ?? prev.judgment ?? '',
+    judgment_reason: body.judgment_reason ?? prev.judgment_reason ?? '',
+    rectify_note: body.rectify_note ?? prev.rectify_note ?? '',
+    owner: body.owner ?? prev.owner ?? '',
+    submitted: body.submitted ?? prev.submitted ?? false,
+    updated_at: new Date().toISOString(),
+  };
+  if (body.submitted && entry.judgment) entry.submitted_at = new Date().toISOString();
+  store.entries[key] = entry;
+  saveExamRectification(store);
+  return entry;
 }
 // ---------- 文书化输出：稽核《疑点核查清单》/ 体检《自查整改清单》（同一引擎两种口径）----------
 function renderChecklist(rep, record, mode) {
@@ -397,7 +515,16 @@ function renderChecklist(rep, record, mode) {
     L.push(`- **推理过程**：${f.reasoning}`);
     if (f.needs_more?.length) L.push(`- **${exam ? '建议补全材料' : '需调阅材料'}**：${f.needs_more.join('；')}`);
     L.push(`- **${exam ? '自查整改建议' : '处置建议'}**：${exam ? examDisposal(f.disposal_suggestion) : (f.disposal_suggestion || '')}`);
-    L.push(`- **${exam ? '院端整改状态' : '机构申诉/复核意见'}**：${exam ? '☐ 已整改　☐ 已主动退回　☐ 补全材料后复核' : '☐ 采纳　☐ 驳回（原因：________）　☐ 存疑补材料'}\n`);
+    if (exam) {
+      const rk = examRectKey(rep.report_meta?.case_id || 'main', f.finding_id);
+      const rect = (rep._exam_rectification || {})[rk] || {};
+      L.push(`- **整改时限**：${rect.deadline || '—'}　**整改状态**：${rect.status || '待整改'}`);
+      if (rect.judgment) L.push(`- **人工判断**：${rect.judgment}${rect.judgment_reason ? '（' + rect.judgment_reason + '）' : ''}`);
+      if (rect.rectify_note) L.push(`- **院端说明**：${rect.rectify_note}`);
+    } else {
+      L.push(`- **机构申诉/复核意见**：☐ 采纳　☐ 驳回（原因：________）　☐ 存疑补材料`);
+    }
+    L.push('');
   });
   L.push(`---\n*本清单由鹰眼自动生成，每条${exam ? '风险点' : '疑点'}均附三要素证据链，${exam ? '院端可据此飞检前自查整改' : '可直接落条款对质'}。政策条款原文取自知识库，未凭记忆生成。*`);
   return L.join('\n');
@@ -415,40 +542,221 @@ const server = http.createServer(async (req, res) => {
       return sendJSON(res, DB.cases[id] || DB.record);
     }
     if (p === '/api/cases') return sendJSON(res, Object.keys(DB.cases).map(k => ({ id: k, title: DB.cases[k].case_meta?.case_title, violations: DB.cases[k].case_meta?.embedded_violation_count })));
-    if (p === '/api/rules') return sendJSON(res, DB.rulesDoc);
+    if (p === '/api/rules') {
+      const id = url.searchParams.get('id');
+      const q = (url.searchParams.get('q') || '').trim();
+      if (id) {
+        const rule = DB.rulesDoc.rules.find(r => r.rule_id === id);
+        if (!rule) return sendJSON(res, { error: 'rule not found', rule_id: id }, 404);
+        return sendJSON(res, {
+          rule,
+          meta: {
+            naming_convention: DB.rulesDoc.meta?.naming_convention,
+            rule_families: DB.rulesDoc.meta?.rule_families,
+          },
+        });
+      }
+      if (q) {
+        const ql = q.toLowerCase();
+        const hits = DB.rulesDoc.rules.filter(r =>
+          r.rule_id.toLowerCase().includes(ql)
+          || (r.rule_name || '').includes(q)
+          || (r.catalog?.display_title || '').includes(q)
+          || (r.catalog?.family_label || '').includes(q)
+        ).slice(0, 24);
+        return sendJSON(res, { query: q, hits });
+      }
+      return sendJSON(res, DB.rulesDoc);
+    }
     if (p === '/api/kb') return sendJSON(res, DB.kb1);
     if (p === '/api/kb2') return sendJSON(res, DB.kb2);
     if (p === '/api/kb/status') return sendJSON(res, await kbStatus(DATA));
-    if (p === '/api/kb/search') {
+    if (p === '/api/kb/search' || p === '/api/kb/semantic') {
       const q = url.searchParams.get('q') || '';
       const layer = url.searchParams.get('layer') || null;
-      const prefix = layer === 'KB2' ? 'KB2' : layer === 'KB1' ? 'KB1' : null;
-      return sendJSON(res, { query: q, hits: keywordSearch(q, DB.policyTexts, { kbLayerPrefix: prefix }) });
+      const hits = await semanticSearch(q, { kbLayer: layer, policyTexts: DB.policyTexts, limit: Number(url.searchParams.get('limit') || 8) });
+      return sendJSON(res, { query: q, hits });
     }
     if (p === '/api/expected') return sendJSON(res, DB.expected || { error: 'no expected file' });
 
     // 事实层：稽核案卷对象
     if (p === '/api/caseobject') {
       const id = url.searchParams.get('id') || 'main';
-      return sendJSON(res, runAudit(DB.cases[id] || DB.record, DB.rulesDoc.rules, { policyTexts: DB.policyTexts, policyVerified: DB.policyVerified }).case_object);
+      return sendJSON(res, runAuditForRecord(DB.cases[id] || DB.record).case_object);
     }
 
-    // 复核反馈闭环：采纳/驳回/补材料 持久化 + 驳回回流统计（恒识式"规则沉淀"对偶=淘汰坏规则）
+    // 复核反馈闭环：采纳/驳回/补材料 → 双链沉淀（驳回≥3 / 采纳≥3且窗口内驳回≤1）
     if (p === '/api/review' && req.method === 'POST') {
       const body = await readBody(req);
-      const fp = path.join(DATA, 'review_feedback.json');
-      let store = { entries: [] };
-      try { store = loadJSON(fp); } catch (e) {}
-      const entry = { finding_id: body.finding_id, rule_id: body.rule_id, case_id: body.case_id, action: body.action, reason: body.reason || '', ts: body.ts || new Date().toISOString() };
+      if (body.action === '驳回' && !(body.reason || '').trim()) {
+        return sendJSON(res, { error: '驳回须填写理由' }, 400);
+      }
+      const store = loadReviewStore();
+      const entry = {
+        finding_id: body.finding_id, rule_id: body.rule_id, case_id: body.case_id,
+        action: body.action, reason: body.reason || '', source: body.source || 'audit_review',
+        ts: body.ts || new Date().toISOString(),
+      };
       store.entries.push(entry);
-      fs.writeFileSync(fp, JSON.stringify(store, null, 2), 'utf8');
-      const ruleStates = autoShadowFromReview(store, body.rule_id);  // iter16：本次被复核的规则若驳回≥阈值→自动转shadow并落盘
-      return sendJSON(res, { ok: true, total: store.entries.length, stats: reviewStats(store), rule_states: ruleStates.states });
+      saveReviewStore(store);
+      const st = loadRuleStates();
+      let precipResult = null;
+      let evalDraft = null;
+      if (body.action === '驳回') {
+        autoShadowFromReview(store, body.rule_id);
+        evalDraft = evalDraftService.appendEvalDraft({
+          case_id: body.case_id,
+          rule_id: body.rule_id,
+          finding_id: body.finding_id,
+          reject_reason: body.reason,
+          gold_draft: { expected_status: '不输出', note: body.reason },
+        });
+      }
+      if (body.action !== '补材料') {
+        precipResult = await precipService.processReviewFeedback(DATA, {
+          ruleId: body.rule_id,
+          reviewStore: store,
+          ruleStates: st,
+          rulesDoc: DB.rulesDoc.rules,
+          collectFeedback: collectRuleFeedback,
+          trigger: 'audit',
+        });
+      } else {
+        precipResult = { chain: precipService.ruleChainProgress(store, body.rule_id, st), precip: null, buffered: true };
+      }
+      return sendJSON(res, {
+        ok: true,
+        total: store.entries.length,
+        stats: reviewStats(store),
+        rule_states: st.states,
+        chain: precipResult.chain,
+        precip: precipResult.precip,
+        buffered: !!precipResult.buffered,
+        eval_draft: evalDraft,
+      });
     }
     if (p === '/api/review') {
-      let store = { entries: [] };
-      try { store = loadJSON(path.join(DATA, 'review_feedback.json')); } catch (e) {}
-      return sendJSON(res, { entries: store.entries, stats: reviewStats(store) });
+      const store = loadReviewStore();
+      const st = loadRuleStates();
+      const stats = reviewStats(store);
+      const chains = {};
+      for (const id of Object.keys(stats.by_rule || {})) {
+        chains[id] = precipService.ruleChainProgress(store, id, st);
+      }
+      return sendJSON(res, { entries: store.entries, stats, chains });
+    }
+
+    // 体检模式：院端整改登记（含人工判断 → 回流 review + 规则沉淀队列）
+    if (p === '/api/rectification' && req.method === 'POST') {
+      const body = await readBody(req);
+      if (!body.case_id || !body.finding_id) return sendJSON(res, { error: 'case_id 与 finding_id 必填' }, 400);
+      const entry = saveRectificationEntry(body);
+      let reviewSync = null;
+      if (body.submitted && body.judgment) {
+        reviewSync = await syncJudgmentToReview(entry);
+        if (reviewSync?.error) return sendJSON(res, { error: reviewSync.error }, 400);
+      }
+      return sendJSON(res, { ok: true, entry, review_sync: reviewSync });
+    }
+    if (p === '/api/rectification') {
+      const caseId = url.searchParams.get('case_id') || 'main';
+      const store = loadExamRectification();
+      const entries = {};
+      for (const [k, v] of Object.entries(store.entries || {})) {
+        if (v.case_id === caseId || k.startsWith(caseId + '::')) entries[k] = v;
+      }
+      const review = reviewStats(loadReviewStore());
+      const precip = precipService.getPrecipitationSummary(DATA);
+      return sendJSON(res, {
+        case_id: caseId, entries, review_stats: review,
+        precipitation: precip,
+      });
+    }
+    // 兼容旧路径
+    if (p === '/api/exam-rectification' && req.method === 'POST') {
+      const body = await readBody(req);
+      if (!body.case_id || !body.finding_id) return sendJSON(res, { error: 'case_id 与 finding_id 必填' }, 400);
+      const entry = saveRectificationEntry(body);
+      return sendJSON(res, { ok: true, entry });
+    }
+    if (p === '/api/exam-rectification') {
+      const caseId = url.searchParams.get('case_id') || 'main';
+      const store = loadExamRectification();
+      const entries = {};
+      for (const [k, v] of Object.entries(store.entries || {})) {
+        if (v.case_id === caseId || k.startsWith(caseId + '::')) entries[k] = v;
+      }
+      return sendJSON(res, { case_id: caseId, entries });
+    }
+
+    // 规则沉淀 · 双链 API
+    if (p === '/api/rule-precipitation/run' && req.method === 'POST') {
+      const body = await readBody(req);
+      const ruleId = body.rule_id;
+      const track = body.track === 'adopt' ? 'adopt' : 'reject';
+      if (!ruleId) return sendJSON(res, { error: 'rule_id 必填' }, 400);
+      const rule = DB.rulesDoc.rules.find(r => r.rule_id === ruleId);
+      if (!rule) return sendJSON(res, { error: '规则不存在' }, 404);
+      const store = loadReviewStore();
+      const st = loadRuleStates();
+      const chain = precipService.ruleChainProgress(store, ruleId, st);
+      const feedback = collectRuleFeedback(ruleId);
+      const stats = {
+        adopted: chain.adopted, rejected: chain.rejected,
+        effective_rejected: chain.effective_rejected,
+        recent_rejects: chain.adopt.window_rejects,
+      };
+      try {
+        const result = await precipService.maybeEnqueueAndRun(DATA, {
+          ruleId, track, trigger: body.trigger || 'manual', rule, feedback, stats,
+          governanceStatus: ruleStatus(st, ruleId), force: true,
+        });
+        return sendJSON(res, { ok: true, track, draft: result.draft, queue_item: result.item, chain });
+      } catch (e) {
+        return sendJSON(res, { error: e.message, needsKey: !!e.needsKey }, e.needsKey ? 503 : 500);
+      }
+    }
+    if (p === '/api/rule-precipitation/enqueue' && req.method === 'POST') {
+      const body = await readBody(req);
+      const track = body.track === 'adopt' ? 'adopt' : 'reject';
+      const ruleId = body.rule_id;
+      const rule = DB.rulesDoc.rules.find(r => r.rule_id === ruleId);
+      if (!rule) return sendJSON(res, { error: '规则不存在' }, 404);
+      const store = loadReviewStore();
+      const st = loadRuleStates();
+      const chain = precipService.ruleChainProgress(store, ruleId, st);
+      const stats = {
+        adopted: chain.adopted, rejected: chain.rejected,
+        effective_rejected: chain.effective_rejected,
+        recent_rejects: chain.adopt.window_rejects,
+      };
+      const result = await precipService.maybeEnqueueAndRun(DATA, {
+        ruleId, track, trigger: 'manual', rule,
+        feedback: collectRuleFeedback(ruleId), stats,
+        governanceStatus: ruleStatus(st, ruleId), force: true,
+      });
+      return sendJSON(res, { ok: true, track, ...result });
+    }
+    if (p === '/api/rule-precipitation') {
+      const ruleId = url.searchParams.get('rule_id') || null;
+      return sendJSON(res, precipService.getPrecipitationSummary(DATA, ruleId));
+    }
+    if (p === '/api/rule-precipitation/apply' && req.method === 'POST') {
+      const body = await readBody(req);
+      const resolved = precipService.resolveDraft(DATA, body.draft_id, body.action === 'dismiss' ? 'dismiss' : 'approve', body.note || '');
+      if (resolved.error) return sendJSON(res, { error: resolved.error }, 404);
+      return sendJSON(res, {
+        ok: true,
+        draft: resolved.draft,
+        track: resolved.track,
+        overlay: resolved.overlay,
+        note: resolved.draft.resolution === 'dismissed'
+          ? '草案已忽略'
+          : '已写入 rule_patch_overlay.json 预览（源 rules.json 未改）',
+      });
+    }
+    if (p === '/api/rule-overlay') {
+      return sendJSON(res, precipService.loadRuleOverlay(DATA));
     }
 
     // iter16 规则三态治理：查看治理状态 + 反向流（复审通过恢复active / 确认下线deprecated / 手动转shadow）
@@ -477,7 +785,14 @@ const server = http.createServer(async (req, res) => {
       const summary = { active: '默认(未列出即在役)', shadow: entries.filter(e => e.status === 'shadow').length, deprecated: entries.filter(e => e.status === 'deprecated').length, total_rules: DB.rulesDoc.rules.length };
       // iter19 治理操作流水：把各规则的流转 history 聚合成一条时间线（审计台账，谁/何时/把哪条规则怎么改）
       const audit_log = entries.flatMap(e => (e.history || []).map(h => ({ rule_id: e.rule_id, rule_name: e.rule_name, ...h }))).sort((a, b) => (b.ts || '').localeCompare(a.ts || ''));
-      return sendJSON(res, { model: DB.rulesDoc.meta?.governance_model?.state_machine || 'draft→in_review→shadow→active→re_review/deprecated', summary, entries, audit_log });
+      const precip = precipService.getPrecipitationSummary(DATA);
+      const restore_hints = (precip.adopt_drafts || [])
+        .filter(d => d.recommendation === 'restore_active' && d.resolution !== 'dismissed' && d.resolution !== 'approved_for_merge')
+        .map(d => ({ rule_id: d.rule_id, draft_id: d.id, rationale: d.rationale }));
+      return sendJSON(res, {
+        model: DB.rulesDoc.meta?.governance_model?.state_machine || 'draft→in_review→shadow→active→re_review/deprecated',
+        summary, entries, audit_log, restore_hints, overlay: precip.overlay,
+      });
     }
 
     // 任务台账 · 交互管理 API
@@ -658,12 +973,49 @@ const server = http.createServer(async (req, res) => {
     }
 
     // YHF 变更门禁（Oracle 模式，与 bench 关注点分离）
+    if (p === '/api/eval-drafts') {
+      const q = evalDraftService.loadQueue();
+      if (req.method === 'POST') {
+        const body = await readBody(req);
+        if (body.action === 'confirm' && body.id) {
+          return sendJSON(res, { ok: true, item: evalDraftService.confirmDraft(body.id, DATA) });
+        }
+        if (body.action === 'ignore' && body.id) {
+          return sendJSON(res, { ok: true, item: evalDraftService.updateDraftStatus(body.id, 'ignored') });
+        }
+        return sendJSON(res, { error: 'action 须为 confirm|ignore 且带 id' }, 400);
+      }
+      return sendJSON(res, q);
+    }
+
+    if (p === '/api/maturity') {
+      try {
+        const { runYhfGate } = require(path.resolve(__dirname, '../../yhf/index.js'));
+        const yhf = await runYhfGate({ layers: ['engine', 'rag', 'shadow'] });
+        const benchIds = Object.keys(DB.cases).filter(k => k !== 'uploaded');
+        const goldCount = benchIds.filter(id => DB.expectedByCase?.[id]).length;
+        const reg = registryStats();
+        return sendJSON(res, {
+          giac_themes: ['上下文工程(as_of+预算)', '四类评测(YHF)', '合规前置', '垂直ParseQA'],
+          g0: yhf.engine?.gates?.G0_clean_zero_fp,
+          g4: yhf.rag?.gates?.G4_rag_recall,
+          g1: yhf.shadow?.gates?.G1_shadow_fpr,
+          bench_cases: benchIds.length,
+          gold_ratio: goldCount / Math.max(benchIds.length, 1),
+          registry: reg,
+          shadow_summary: yhf.shadow?.summary,
+        });
+      } catch (e) {
+        return sendJSON(res, { error: e.message }, 500);
+      }
+    }
+
     if (p === '/api/yhf') {
       try {
         const { runYhfGate } = require(path.resolve(__dirname, '../../yhf/index.js'));
         const layers = (url.searchParams.get('layers') || 'engine,rule,prompt').split(',');
         const ruleId = url.searchParams.get('rule') || undefined;
-        return sendJSON(res, runYhfGate({ layers, ruleId }));
+        return sendJSON(res, await runYhfGate({ layers, ruleId }));
       } catch (e) {
         return sendJSON(res, { error: e.message, hint: '从仓库根目录启动 server 或检查 yhf/' }, 500);
       }
@@ -676,18 +1028,21 @@ const server = http.createServer(async (req, res) => {
       for (const id of Object.keys(DB.cases)) {
         const rec = DB.cases[id];
         const t0 = Date.now();
-        const rep = runAudit(rec, DB.rulesDoc.rules, { policyTexts: DB.policyTexts, policyVerified: DB.policyVerified });
+        const rep = runAuditForRecord(rec);
         const ms = Date.now() - t0;
         const expectViolations = rec.case_meta?.embedded_violation_count ?? null;
         const isClean = expectViolations === 0;
-        const falsePositives = isClean ? rep.findings.length : null;
+        const falsePositives = isClean ? rep.report_meta.summary.suspected_count : null;
         if (isClean && falsePositives > 0) benchOk = false;
         cases.push({
           id, title: rec.case_meta?.case_title, is_clean: isClean,
           expected_violations: expectViolations,
           found_suspected: rep.report_meta.summary.suspected_count,
           found_clue: rep.report_meta.summary.clue_count,
-          false_positives: falsePositives, latency_ms: ms,
+          false_positives: falsePositives,
+          has_gold: !!DB.expectedByCase?.[id],
+          parse_quality: rep.report_meta.parse_quality?.level || 'ok',
+          latency_ms: ms,
           routing: `${rep.report_meta.routing.activated_count}/${rep.report_meta.routing.total}`,
         });
       }
@@ -706,8 +1061,15 @@ const server = http.createServer(async (req, res) => {
     // 文书化输出：稽核《疑点核查清单》(飞检对质) / 体检《自查整改清单》(院端自查)
     if (p === '/api/export/checklist') {
       const exMode = url.searchParams.get('mode') === 'exam' ? 'exam' : 'audit';
-      const rep = runAudit(DB.record, DB.rulesDoc.rules, { policyTexts: DB.policyTexts, policyVerified: DB.policyVerified });
-      const md = renderChecklist(rep, DB.record, exMode);
+      const caseId = url.searchParams.get('case_id') || 'main';
+      const record = DB.cases[caseId] || DB.record;
+      let rules = rulesWithOverlay(DB.rulesDoc.rules);
+      if (exMode === 'exam') rules = filterRulesForExam(rules).active;
+      const rep = runAuditForRecord(record, { examMode: exMode === 'exam' });
+      rep.report_meta.case_id = caseId;
+      if (exMode === 'exam') rep._exam_rectification = loadExamRectification().entries || {};
+      rep.report_meta.overlay_rules = Object.keys(precipService.loadRuleOverlay(DATA).patches || {});
+      const md = renderChecklist(rep, record, exMode);
       const fname = exMode === 'exam' ? '自查整改清单.md' : '疑点核查清单.md';
       res.writeHead(200, { 'Content-Type': 'text/markdown; charset=utf-8', 'Content-Disposition': "attachment; filename=\"yingyan-checklist.md\"; filename*=UTF-8''" + encodeURIComponent(fname) });
       return res.end(md);
@@ -739,7 +1101,7 @@ const server = http.createServer(async (req, res) => {
           return sendJSON(res, report);
         } catch (e) {
           // 诚实区分：无 key → 明确告知"真·语义分析需配 key"，并回退确定性引擎(标注其推理为模板)
-          const report = runAudit(record, DB.rulesDoc.rules, { policyTexts: DB.policyTexts, policyVerified: DB.policyVerified });
+          const report = runAuditForRecord(record);
           report.report_meta.engine_mode = e.needsKey
             ? '⚠ 真·LLM语义分析未启用（需配 ANTHROPIC_API_KEY）→ 当前为确定性规则引擎（检测为真·计算，自然语言推理为模板脚本）'
             : '确定性引擎（LLM路径失败，已回退）：' + e.message;
@@ -749,13 +1111,42 @@ const server = http.createServer(async (req, res) => {
         }
       }
 
-      const report = runAudit(record, DB.rulesDoc.rules, { policyTexts: DB.policyTexts, policyVerified: DB.policyVerified, shadowRules: currentShadowRules(), retiredRules: currentRetiredRules() });
+      const caseId = body.caseId || 'main';
+      let rules = rulesWithOverlay(DB.rulesDoc.rules);
+      if (mode === 'exam') {
+        const filt = filterRulesForExam(rules);
+        rules = filt.active;
+        var examFilterMeta = { total: filt.total, used: filt.used, excluded: filt.excluded };
+      }
+      const overlayIds = Object.keys(precipService.loadRuleOverlay(DATA).patches || {});
+      const useRag = url.searchParams.get('rag') === '1' || body.rag === true;
+      const ctx = auditContextForRecord(record);
+      let policyTexts = ctx.policyTexts;
+      let policyVerified = ctx.policyVerified;
+      let ragMeta = null;
+      if (useRag) {
+        const enriched = await enrichPolicyContext(record, rules, policyTexts, policyVerified);
+        policyTexts = enriched.policyTexts;
+        policyVerified = enriched.policyVerified;
+        ragMeta = { query: enriched.rag_query, hits: enriched.rag_hits };
+      }
+      const report = runAudit(record, rules, {
+        policyTexts,
+        policyVerified,
+        parseQuality: ctx.parseQuality,
+        shadowRules: currentShadowRules(),
+        retiredRules: currentRetiredRules(),
+      });
+      if (ragMeta) report.report_meta.rag = ragMeta;
       report.report_meta.engine_mode = mode === 'exam'
-        ? '体检模式（院端自查·确定性规则引擎）'
+        ? `体检模式（院端自查·${examFilterMeta.used}/${examFilterMeta.total} 条院端规则子集）`
         : '确定性规则引擎：检测=真·规则计算(时间/数量/内涵/合议) · 自然语言推理/控辩裁/CoVe=模板脚本（真·Agent语义推理请切"真·语义分析(LLM)"）';
       report.report_meta.analysis_kind = 'deterministic+template';
       report.report_meta.real_agent = false;
       report.report_meta.panel = mode === 'exam' ? '体检' : '稽核';
+      report.report_meta.case_id = caseId;
+      if (mode === 'exam') report.report_meta.exam_rule_filter = examFilterMeta;
+      if (overlayIds.length) report.report_meta.overlay_rules = overlayIds;
       report.report_meta.elapsed_ms = Date.now() - t0;
       report.report_meta.injected = !!body.inject;
       return sendJSON(res, report);
@@ -763,6 +1154,21 @@ const server = http.createServer(async (req, res) => {
 
     // 输入端：医院连接器清单
     if (p === '/api/connectors') return sendJSON(res, { connectors: listConnectors(), vision_ready: llmReady(), provider: providerName() });
+
+    // 一键 Intake：批量拖入 → 自动分类 → 合并 medical_record
+    if (p === '/api/intake/slots') {
+      return sendJSON(res, { slots: INTAKE_SLOTS.filter(s => s.id !== 'unknown').map(s => ({ id: s.id, label: s.label, tab: s.tab })) });
+    }
+    if (p === '/api/intake/batch' && req.method === 'POST') {
+      const body = await readBody(req);
+      const base = body.merge && DB.cases.uploaded ? DB.cases.uploaded : null;
+      const result = await processIntakeBatch(body.files || [], { baseRecord: base });
+      if (result.record) {
+        DB.cases.uploaded = result.record;
+        result.caseId = 'uploaded';
+      }
+      return sendJSON(res, result);
+    }
 
     // 输入端：材料摄取（结构化/多模态/医院连接器）→ 结构化 medical_record，注册为 uploaded 案卷
     if (p === '/api/ingest' && req.method === 'POST') {
@@ -786,7 +1192,19 @@ const server = http.createServer(async (req, res) => {
       return sendJSON(res, result);
     }
 
-    if (p === '/api/health') return sendJSON(res, { ok: true, rules: DB.rulesDoc.rules.length, cases: Object.keys(DB.cases).length, llm_ready: llmReady(), vision_ready: llmReady(), provider: providerName() });
+    if (p === '/api/health') {
+      let pp = { reachable: false };
+      try { pp = await require('./engine/ppstructure-client').health(); } catch (_) {}
+      return sendJSON(res, {
+        ok: true,
+        rules: DB.rulesDoc.rules.length,
+        cases: Object.keys(DB.cases).length,
+        llm_ready: llmReady(),
+        vision_ready: llmReady(),
+        provider: providerName(),
+        ppstructure: pp,
+      });
+    }
 
     // 静态文件
     let file = p === '/' ? path.join(PUBLIC, 'index.html') : path.join(PUBLIC, p);

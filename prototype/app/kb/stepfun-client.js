@@ -67,21 +67,48 @@ async function uploadTextFile(filename, content) {
   return data;
 }
 
-async function addFileToVectorStore(vectorStoreId, fileId, description = '') {
+async function retrieveFile(fileId) {
+  return api('GET', `/files/${fileId}`);
+}
+
+async function waitForFileReady(fileId, { timeoutMs = 180000, intervalMs = 3000 } = {}) {
+  const deadline = Date.now() + timeoutMs;
+  while (Date.now() < deadline) {
+    const file = await retrieveFile(fileId);
+    const status = file.status || file.state;
+    if (status === 'success' || status === 'processed') return file;
+    if (status === 'failed' || status === 'error') {
+      throw new Error(`StepFun file ${fileId} parse failed: ${file.error || status}`);
+    }
+    await new Promise(r => setTimeout(r, intervalMs));
+  }
+  throw new Error(`StepFun file ${fileId} parse timeout after ${timeoutMs}ms`);
+}
+
+async function addFileToVectorStore(vectorStoreId, fileId, description = '', { retries = 15, intervalMs = 4000 } = {}) {
   const cfg = ragConfig();
   const form = new FormData();
   form.append('file_ids', fileId);
   if (description) form.append('description', description);
-  const res = await fetch(`${cfg.stepfunBaseUrl.replace(/\/$/, '')}/vector_stores/${vectorStoreId}/files`, {
-    method: 'POST',
-    headers: authHeaders(),
-    body: form,
-  });
-  const text = await res.text();
-  let data = null;
-  try { data = text ? JSON.parse(text) : null; } catch { data = text; }
-  if (!res.ok) throw new Error(`StepFun add to vector store ${res.status}: ${text}`);
-  return data;
+  const url = `${cfg.stepfunBaseUrl.replace(/\/$/, '')}/vector_stores/${vectorStoreId}/files`;
+  for (let attempt = 1; attempt <= retries; attempt++) {
+    const res = await fetch(url, {
+      method: 'POST',
+      headers: authHeaders(),
+      body: form,
+    });
+    const text = await res.text();
+    let data = null;
+    try { data = text ? JSON.parse(text) : null; } catch { data = text; }
+    if (res.ok) return data;
+    const msg = typeof data === 'object' ? JSON.stringify(data) : text;
+    const retryable = msg.includes('not parsed') || msg.includes('try again');
+    if (!retryable || attempt === retries) {
+      throw new Error(`StepFun add to vector store ${res.status}: ${msg}`);
+    }
+    await new Promise(r => setTimeout(r, intervalMs));
+  }
+  return null;
 }
 
 /** 将 KB 条目批量同步到阶跃 Vector Store（语义层托管 RAG） */
@@ -89,8 +116,9 @@ async function syncEntriesToVectorStore(entries) {
   if (!canUseStepfun()) return { ok: false, reason: 'missing_stepfun_key' };
   const store = await ensureVectorStore();
   const lines = entries.map(e => `[${e.ref_id}]\n${e.text}`).join('\n\n---\n\n');
-  const file = await uploadTextFile(`yingyan-kb-${Date.now()}.txt`, lines);
+  const file = await uploadTextFile(`yingyan_kb_${Date.now()}.txt`, lines);
   const fileId = file.id || file.file_id;
+  await waitForFileReady(fileId);
   await addFileToVectorStore(store.id, fileId, `yingyan corpus sync ${entries.length} entries`);
   return { ok: true, vector_store_id: store.id, file_id: fileId, entry_count: entries.length };
 }
