@@ -4,6 +4,22 @@
 
 ---
 
+## iter-24 — 批量初筛队列 + 治理快照
+
+**SMART目标**：多案卷批量稽核队列 + 进度条 UI · 治理快照 API/导出 · gate strict PASS。
+
+**1. 本轮完成**：
+- `audit-batch.js` + `POST/GET /api/audit/batch`（live/oracle 双模式）
+- dashboard「批量初筛」页：进度条 + 轮询 + 最近任务
+- `governance-snapshot.js` + `GET /api/governance/snapshot` + 导出脚本
+- `scripts/verify-audit-batch.js`
+
+**2. 测试**：`node scripts/verify-audit-batch.js --inline` · `bash yhf/run.sh --strict`
+
+**3. iter-25 计划**：治理 Supabase 落库 + 鉴权 · PP-Structure 生产 OCR · 批量导出 PDF
+
+---
+
 ## iter-23 — B07c LLM shadow + as_of + embed + 规则沉淀 demo
 
 **SMART目标**：LLM 路径接 shadow 治理（与确定性一致）· as_of 验通 · embed dry-run · 沉淀 Agent template demo · gate strict PASS。

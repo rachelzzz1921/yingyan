@@ -15,3 +15,7 @@ data/rule_patch_overlay.json
 
 # 运行期规则治理状态(三态落盘,非源)
 data/rule_states.json
+
+# 治理快照导出（脚本生成，非源码）
+data/governance_snapshots/
+data/audit_batch_jobs.json

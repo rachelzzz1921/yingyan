@@ -113,6 +113,11 @@ a:hover{color:var(--yy-iris);text-decoration:underline}
 .bench-table a.btn-sm{display:inline-block;padding:4px 10px;border-radius:6px;background:var(--yy-ink);color:#fff;font-size:10px;font-weight:700;text-decoration:none}
 .bench-table a.btn-sm:hover{background:var(--yy-iris-d)}
 
+.batch-progress{height:10px;background:#e8edf2;border-radius:999px;overflow:hidden;margin:8px 0}
+.batch-progress-fill{height:100%;background:linear-gradient(90deg,var(--yy-iris),#3d8bfd);transition:width .35s ease;border-radius:999px}
+.batch-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:4px}
+.batch-job-row{display:flex;align-items:center;gap:12px;padding:6px 0;border-bottom:1px solid var(--yy-line);font-size:12px}
+
 .brand-showcase{display:grid;grid-template-columns:140px 1fr;gap:24px;align-items:start;margin-bottom:24px}
 .brand-logo-box{background:linear-gradient(135deg,#061829,var(--yy-ink));border-radius:16px;padding:24px;display:flex;align-items:center;justify-content:center}
 .brand-logo-box img{width:96px;height:96px}

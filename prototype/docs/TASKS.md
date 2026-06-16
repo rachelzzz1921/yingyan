@@ -255,6 +255,14 @@
 | I23-3 | embed-kb-chunks `--dry-run` + check-kb-env as_of 行 | S | ✅DONE |
 | I23-4 | 规则沉淀 template demo（`demo-rule-precipitation.js`） | S(T5-3) | ✅DONE |
 
+## DONE（iter-24 · 批量队列 + 治理快照）
+| # | 内容 | 来源 | 状态 |
+|---|---|---|---|
+| I24-1 | 批量稽核队列 `audit-batch.js` + `/api/audit/batch`（live/oracle） | S(T7-1) | ✅DONE |
+| I24-2 | dashboard「批量初筛」进度条 + 轮询 UI | S(T7-1) | ✅DONE |
+| I24-3 | 治理快照 API + `export-governance-snapshot.js`（T8-1 轻量） | S(T8-1) | ✅DONE |
+| I24-4 | `verify-audit-batch.js` 验收脚本 | S | ✅DONE |
+
 ### 案卷编号规范（registry 单一事实来源）
 ```
 YY-{SCOPE}-{DOMAIN}-{SEQ:03d}

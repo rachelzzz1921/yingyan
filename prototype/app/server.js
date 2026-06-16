@@ -42,6 +42,8 @@ const { enrichPolicyContext } = require('./kb/analysis-bridge');
 const { enrichRulesDoc } = require('./engine/rule-catalog');
 const { bootstrapRegistry, registryStats, syncRegistryFromCases, CASE_ID_ALIAS } = require('./engine/case-id');
 const evalDraftService = require('./engine/eval-draft-service');
+const auditBatch = require('./engine/audit-batch');
+const { buildGovernanceSnapshot } = require('./engine/governance-snapshot');
 const { runParseQA } = require('./engine/parse-qa');
 
 const PORT = process.env.PORT || 3700;
@@ -110,6 +112,44 @@ function runAuditForRecord(record, extra = {}) {
     retiredRules: extra.retiredRules ?? currentRetiredRules(),
     ...extra,
   });
+}
+
+/** iter-24：批量队列单案卷运行（live=治理叠加 / oracle=纯引擎） */
+function runBatchCase(caseId, mode) {
+  const rec = DB.cases[caseId];
+  if (!rec) throw new Error(`未知案卷 ${caseId}`);
+  const t0 = Date.now();
+  let rep;
+  if (mode === 'oracle') {
+    let rules = rulesWithOverlay(DB.rulesDoc.rules);
+    const ctx = auditContextForRecord(rec);
+    rep = runAudit(rec, rules, {
+      policyTexts: ctx.policyTexts,
+      policyVerified: ctx.policyVerified,
+      parseQuality: ctx.parseQuality,
+      shadowRules: [],
+      retiredRules: [],
+    });
+  } else {
+    rep = runAuditForRecord(rec);
+  }
+  const ms = Date.now() - t0;
+  const expectViolations = rec.case_meta?.embedded_violation_count ?? null;
+  const isClean = expectViolations === 0;
+  const summary = rep.report_meta.summary || {};
+  return {
+    id: caseId,
+    title: rec.case_meta?.case_title,
+    is_clean: isClean,
+    found_suspected: summary.suspected_count ?? 0,
+    found_clue: summary.clue_count ?? 0,
+    shadow_count: summary.shadow_count ?? 0,
+    false_positives: isClean ? (summary.suspected_count ?? 0) : null,
+    latency_ms: ms,
+    routing: rep.report_meta.routing
+      ? `${rep.report_meta.routing.activated_count}/${rep.report_meta.routing.total}`
+      : null,
+  };
 }
 
 function loadAll() {
@@ -1055,6 +1095,36 @@ const server = http.createServer(async (req, res) => {
       } catch (e) {
         return sendJSON(res, { error: e.message, hint: '从仓库根目录启动 server 或检查 yhf/' }, 500);
       }
+    }
+
+    // iter-24 批量稽核队列 + 进度
+    const batchPath = p.match(/^\/api\/audit\/batch(?:\/([^/]+))?$/);
+    if (batchPath) {
+      const jobId = batchPath[1];
+      if (!jobId && req.method === 'GET') {
+        return sendJSON(res, { jobs: auditBatch.listJobs(12) });
+      }
+      if (!jobId && req.method === 'POST') {
+        const body = await readBody(req);
+        const skip = new Set(body.skip || ['uploaded']);
+        let caseIds = body.caseIds;
+        if (body.all || !caseIds?.length) {
+          caseIds = Object.keys(DB.cases).filter(id => !skip.has(id));
+        }
+        const job = auditBatch.createJob(caseIds, { mode: body.mode || 'live' });
+        auditBatch.startJobAsync(job.id, (cid, mode) => Promise.resolve(runBatchCase(cid, mode)));
+        return sendJSON(res, { ok: true, job: auditBatch.getJob(job.id) });
+      }
+      if (jobId && req.method === 'GET') {
+        const job = auditBatch.getJob(jobId);
+        if (!job) return sendJSON(res, { error: 'job 不存在' }, 404);
+        return sendJSON(res, job);
+      }
+      return sendJSON(res, { error: 'method not allowed' }, 405);
+    }
+
+    if (p === '/api/governance/snapshot') {
+      return sendJSON(res, buildGovernanceSnapshot(DATA));
     }
 
     // AuditBench 评测：跑全部案卷，出指标盘（干净件误报=0 红线）

@@ -5,6 +5,7 @@
 const NAV = [
   { id: 'overview', icon: '📊', label: '总览', group: '监控' },
   { id: 'bench', icon: '🧪', label: 'AuditBench', group: '监控' },
+  { id: 'batch', icon: '📦', label: '批量初筛', group: '监控' },
   { id: 'yhf', icon: '🔒', label: 'YHF 门禁', group: '监控' },
   { id: 'roadmap', icon: '🗺', label: '迭代路线', group: '规划', doc: 'roadmap' },
   { id: 'tasks', icon: '📋', label: '任务台账', group: '规划' },
@@ -45,9 +46,8 @@ const ROADMAP_TASKS = {
 
 const PHASES = [
   { id: 'P1', name: 'YHF', status: 'done' }, { id: 'P2', name: '品牌', status: 'done' },
-  { id: 'P3', name: 'UI', status: 'done' }, { id: 'P4', name: '评测闭环', status: 'current' },
-  { id: 'P5', name: '治理语义', status: 'pending' }, { id: 'P6', name: '输入专科', status: 'pending' },
-  { id: 'P7', name: '批量', status: 'pending' }, { id: 'P8', name: '生产', status: 'pending' },
+  { id: 'P3', name: 'UI', status: 'done' },   { id: 'P4', name: '评测闭环', status: 'done' }, { id: 'P5', name: '治理语义', status: 'done' },
+  { id: 'P6', name: '输入专科', status: 'done' }, { id: 'P7', name: '批量', status: 'current' }, { id: 'P8', name: '生产', status: 'pending' },
 ];
 
 const DOC_LINKS = {
@@ -472,6 +472,120 @@ function benchViewHTML(bench) {
     </div>`;
 }
 
+let batchPollTimer = null;
+
+function batchProgressHTML(job) {
+  if (!job) return '<p class="muted">尚未启动批量任务</p>';
+  const pct = job.progress_pct ?? 0;
+  const statusLabel = { pending: '排队', running: '运行中', done: '完成', failed: '失败' }[job.status] || job.status;
+  const rows = (job.results || []).map(r => `<tr class="${r.error ? 'warn' : ''}">
+    <td>${r.is_clean ? '🟢' : '🔴'} ${esc(r.title || r.id)}</td>
+    <td class="num">${r.error ? '—' : r.found_suspected}</td>
+    <td class="num">${r.error ? '—' : (r.shadow_count ?? 0)}</td>
+    <td class="num">${r.latency_ms ?? 0}ms</td>
+    <td>${r.error ? esc(r.error) : `<a class="btn-sm" href="/?case=${encodeURIComponent(r.id)}">打开</a>`}</td>
+  </tr>`).join('');
+  const sum = job.summary;
+  return `
+    <div class="batch-head"><span class="badge teal">${esc(job.mode)} · ${esc(statusLabel)}</span>
+      <code style="font-size:11px">${esc(job.id)}</code></div>
+    <div class="batch-progress" aria-label="进度 ${pct}%"><div class="batch-progress-fill" style="width:${pct}%"></div></div>
+    <p class="muted" style="margin:8px 0 12px">${job.done}/${job.total} 案卷 · ${pct}%</p>
+    ${sum ? `<div class="bench-kpis" style="margin-bottom:12px">
+      <div class="bkpi"><div class="n">${sum.cases_run}</div><div class="l">完成</div></div>
+      <div class="bkpi warn"><div class="n">${sum.suspected_total}</div><div class="l">疑点合计</div></div>
+      <div class="bkpi"><div class="n">${sum.shadow_total}</div><div class="l">shadow</div></div>
+      <div class="bkpi green"><div class="n">${sum.clean_false_positives}</div><div class="l">干净误报</div></div>
+    </div>` : ''}
+    <div class="card" style="padding:0;overflow:auto;max-height:360px">
+      <table class="bench-table"><thead><tr><th>案卷</th><th class="num">疑点</th><th class="num">shadow</th><th class="num">时延</th><th>操作</th></tr></thead>
+      <tbody>${rows || '<tr><td colspan="5" class="muted">等待结果…</td></tr>'}</tbody></table>
+    </div>`;
+}
+
+function batchViewHTML() {
+  return `
+    <div class="doc-toolbar"><h2 style="margin:0">批量初筛队列</h2>
+      <span class="badge teal">live=治理叠加 · oracle=纯引擎</span></div>
+    <p class="muted" style="margin:0 0 12px">飞检/院端批量跑案卷初筛，后台顺序执行并实时刷新进度条（非 LLM，省额度）。</p>
+    <div class="action-row" style="margin-bottom:16px">
+      <button type="button" class="action-btn" id="btnBatchLive">▶ 全部案卷 · live</button>
+      <button type="button" class="action-btn secondary" id="btnBatchOracle">▶ 全部案卷 · oracle</button>
+      <button type="button" class="action-btn secondary" id="btnBatchRefresh">↻ 刷新任务列表</button>
+    </div>
+    <div id="batchLivePanel">${batchProgressHTML(null)}</div>
+    <article class="card" style="margin-top:16px"><h3 style="margin:0 0 8px">最近任务</h3><div id="batchJobList"><p class="muted">加载中…</p></div></article>
+    <div class="action-row">
+      <button type="button" class="action-btn secondary" onclick="navigate('bench')">🧪 AuditBench</button>
+      <button type="button" class="action-btn secondary" onclick="navigate('institution')">🏥 机构画像</button>
+    </div>`;
+}
+
+async function startBatchJob(mode) {
+  const res = await fetch('/api/audit/batch', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ all: true, skip: ['uploaded'], mode }),
+  });
+  const data = await res.json();
+  if (!data.ok) throw new Error(data.error || '启动失败');
+  return data.job;
+}
+
+async function pollBatchJob(jobId, panelEl) {
+  if (batchPollTimer) clearInterval(batchPollTimer);
+  const tick = async () => {
+    const job = await fetchJSON(`/api/audit/batch/${encodeURIComponent(jobId)}`);
+    if (panelEl) panelEl.innerHTML = batchProgressHTML(job);
+    if (job.status === 'done' || job.status === 'failed') {
+      clearInterval(batchPollTimer);
+      batchPollTimer = null;
+      await refreshBatchJobList();
+    }
+  };
+  await tick();
+  batchPollTimer = setInterval(tick, 600);
+}
+
+async function refreshBatchJobList() {
+  const el = document.getElementById('batchJobList');
+  if (!el) return;
+  const data = await fetchJSON('/api/audit/batch');
+  const jobs = data.jobs || [];
+  if (!jobs.length) {
+    el.innerHTML = '<p class="muted">暂无历史任务</p>';
+    return;
+  }
+  el.innerHTML = jobs.map(j => `<div class="batch-job-row">
+    <button type="button" class="link-sm link-btn batch-show" data-id="${esc(j.id)}">${esc(j.id)}</button>
+    <span>${esc(j.mode)} · ${esc(j.status)} · ${j.done}/${j.total}</span>
+  </div>`).join('');
+  el.querySelectorAll('.batch-show').forEach(btn => {
+    btn.onclick = () => {
+      const panel = document.getElementById('batchLivePanel');
+      pollBatchJob(btn.dataset.id, panel);
+    };
+  });
+}
+
+function bindBatchView(root) {
+  const panel = root.querySelector('#batchLivePanel');
+  root.querySelector('#btnBatchLive')?.addEventListener('click', async () => {
+    try {
+      const job = await startBatchJob('live');
+      await pollBatchJob(job.id, panel);
+    } catch (e) { alert(e.message); }
+  });
+  root.querySelector('#btnBatchOracle')?.addEventListener('click', async () => {
+    try {
+      const job = await startBatchJob('oracle');
+      await pollBatchJob(job.id, panel);
+    } catch (e) { alert(e.message); }
+  });
+  root.querySelector('#btnBatchRefresh')?.addEventListener('click', () => refreshBatchJobList());
+  refreshBatchJobList();
+}
+
 function yhfViewHTML(yhf, bench) {
   const cases = (yhf.engine?.cases || []).map(c => `<tr class="${c.pass ? '' : 'warn'}">
     <td>${esc(c.case_id)}</td><td class="num">${c.found_suspected}</td><td>${c.is_clean ? '🟢' : '🔴'}</td>
@@ -723,6 +837,13 @@ async function renderView(id) {
     let html = '';
     if (id === 'overview') html = overviewHTML(cache);
     else if (id === 'bench') html = benchViewHTML(cache.bench);
+    else if (id === 'batch') {
+      html = batchViewHTML();
+      root.innerHTML = `<div class="view-panel active">${html}</div>`;
+      bindDocCards(root);
+      bindBatchView(root);
+      return;
+    }
     else if (id === 'yhf') html = yhfViewHTML(cache.yhf, cache.bench);
     else if (id === 'institution') html = institutionViewHTML(cache.inst);
     else if (id === 'governance') {
