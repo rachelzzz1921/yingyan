@@ -152,6 +152,27 @@ function bootstrapRegistry(dataDir = DATA_DIR) {
   return loadRegistry();
 }
 
+function syncRegistryFromCases(dataDir = DATA_DIR) {
+  const reg = loadRegistry();
+  const known = new Set(reg.entries.map(e => e.folder).filter(Boolean));
+  for (const { folder, folderId, apiId } of discoverCaseFolders(dataDir)) {
+    if (known.has(folder)) continue;
+    const scope = folder.includes('clean') || folder.includes('boundary') || folder.includes('edge') || folder.includes('violation')
+      ? 'BENCH' : 'BENCH';
+    registerExisting({
+      folder,
+      api_id: apiId,
+      scope,
+      domain: folderId.toUpperCase().replace(/-/g, '_').slice(0, 12),
+      bench_tier: folder.includes('clean') || folder.includes('boundary') || folder.includes('edge') ? 'boundary' : 'violation',
+      internal_id: formatId(scope, folderId.toUpperCase().replace(/-/g, '_').slice(0, 8), nextSeq(reg.entries, scope, folderId.toUpperCase().replace(/-/g, '_').slice(0, 8))),
+      pii_token: makePiiToken(),
+      created_at: new Date().toISOString(),
+    });
+  }
+  return loadRegistry();
+}
+
 function registryStats() {
   const reg = loadRegistry();
   const entries = reg.entries || [];
@@ -173,6 +194,7 @@ module.exports = {
   ensureRecordMeta,
   discoverCaseFolders,
   bootstrapRegistry,
+  syncRegistryFromCases,
   registryStats,
   formatId,
 };

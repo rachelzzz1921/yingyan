@@ -434,6 +434,10 @@ h1,h2,h3{font-weight:700;letter-spacing:-.02em}
 .ingest-advanced{margin-top:16px;font-size:12px}
 .ingest-advanced summary{cursor:pointer;font-weight:600;color:var(--ink2);padding:8px 0}
 .bbox-dot{font-size:10px;color:var(--iris);cursor:help}
+.rchip.offline,.rule-link.offline{opacity:.55;text-decoration:line-through;border-style:dashed}
+.rule-offline-tag{font-size:9px;margin-left:3px;padding:1px 4px;border-radius:4px;background:#fee2e2;color:#991b1b;font-weight:700;text-decoration:none}
+.routing-offline-sep{margin:0 4px}
+.compliance-chip{display:inline-block;font-size:10px;padding:2px 6px;margin:2px 4px 0 0;border-radius:6px;background:#fef3c7;color:#92400e;border:1px solid #fcd34d}
 .fee-table tr.bbox-highlight{outline:2px solid var(--iris);outline-offset:-2px;background:linear-gradient(90deg,rgba(45,212,191,.18),rgba(255,233,168,.35))!important;animation:bboxPulse 1.2s ease-in-out 2}
 @keyframes bboxPulse{0%,100%{outline-color:var(--iris)}50%{outline-color:#f59e0b}}
 .conn-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:7px 0;border-bottom:1px dashed var(--line)}

@@ -237,6 +237,16 @@
 | I21-5 | 疑点 jumpToLoc → 费用行 `.bbox-highlight` + OCR 坐标 tooltip | S | ✅DONE |
 | I21-6 | 顶栏 L1✓(engine) / L1— honest 提示 | S | ✅DONE |
 
+## DONE（iter-22 · GIAC 精进 + 江苏 KB + 治理/G2）
+| # | 内容 | 来源 | 状态 |
+|---|---|---|---|
+| I22-1 | 江苏护理价 KB1（苏医保发2025-20）+ audit-engine/MockHIS 真价 Ⅱ30/Ⅰ65/特160/Ⅲ22 | U(iter-20) | ✅DONE |
+| I22-2 | 江苏 DRG 负面清单措辞修正（非独立收费负面清单文件） | U(iter-20) | ✅DONE |
+| I22-3 | B07d routing 条 deprecated 规则显「已下线」 | S | ✅DONE |
+| I22-4 | GIAC：case_registry syncRegistryFromCases + PII 沉淀 Agent 脱敏 | S | ✅DONE |
+| I22-5 | /api/maturity 接 G2 eval baseline + L1 sidecar 状态 | S(T4-4) | ✅DONE |
+| I22-6 | 规则沉淀双链 UI/Agent/overlay 已有；dashboard G2 卡片 | S | ✅DONE |
+
 ### 案卷编号规范（registry 单一事实来源）
 ```
 YY-{SCOPE}-{DOMAIN}-{SEQ:03d}

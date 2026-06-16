@@ -45,7 +45,7 @@ class MockHISConnector extends HospitalConnector {
         temporary_orders: { items: [] },
         nursing_records: { nursing_level_executed: '二级护理', entries: [] },
         lab_reports: [], pathology_report: {}, gene_test_report: { status: '不适用' },
-        fee_list: { items: [{ line_no: 1, fee_date: '2026-05-01~05-06', category: '护理费', item_name: '二级护理', qty: 5, unit: '日', unit_price: 12, amount: 60, insurance_class: '医保', linked_order: 'L01' }], total_amount: 60 },
+        fee_list: { items: [{ line_no: 1, fee_date: '2026-05-01~05-06', category: '护理费', item_name: '二级护理', qty: 5, unit: '日', unit_price: 30, amount: 150, insurance_class: '医保', linked_order: 'L01' }], total_amount: 150 },
         discharge_summary: { discharge_date: '2026-05-06', discharge_diagnosis: ['社区获得性肺炎'] },
       },
       pull_log: [`MockHIS: 按就诊号 ${id} 拉取病案首页/医嘱/收费/检验/病程并映射为 medical_record`],

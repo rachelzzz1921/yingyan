@@ -40,7 +40,7 @@ const { isReady: llmReady, providerName } = require('./engine/llm-provider');
 const { loadPolicyMaps, status: kbStatus, keywordSearch, semanticSearch, loadJsonKB, parseAdmitDate, filterPolicyMaps } = require('./kb/retrieval');
 const { enrichPolicyContext } = require('./kb/analysis-bridge');
 const { enrichRulesDoc } = require('./engine/rule-catalog');
-const { bootstrapRegistry, registryStats, CASE_ID_ALIAS } = require('./engine/case-id');
+const { bootstrapRegistry, registryStats, syncRegistryFromCases, CASE_ID_ALIAS } = require('./engine/case-id');
 const evalDraftService = require('./engine/eval-draft-service');
 const { runParseQA } = require('./engine/parse-qa');
 
@@ -114,6 +114,7 @@ function runAuditForRecord(record, extra = {}) {
 
 function loadAll() {
   bootstrapRegistry(DATA);
+  syncRegistryFromCases(DATA);
   const { cases, expectedByCase } = discoverAllCases(DATA);
   const record = cases.main || cases[Object.keys(cases)[0]];
   const rulesDoc = enrichRulesDoc(loadJSON(path.join(DATA, 'rules/rules.json')));
@@ -991,15 +992,23 @@ const server = http.createServer(async (req, res) => {
     if (p === '/api/maturity') {
       try {
         const { runYhfGate } = require(path.resolve(__dirname, '../../yhf/index.js'));
+        const { runPromptHarness } = require(path.resolve(__dirname, '../../yhf/harness/l1-prompt'));
         const yhf = await runYhfGate({ layers: ['engine', 'rag', 'shadow'] });
+        const l1Prompt = runPromptHarness();
+        let pp = { reachable: false };
+        try { pp = await require('./engine/ppstructure-client').health(); } catch (_) {}
         const benchIds = Object.keys(DB.cases).filter(k => k !== 'uploaded');
         const goldCount = benchIds.filter(id => DB.expectedByCase?.[id]).length;
         const reg = registryStats();
         return sendJSON(res, {
-          giac_themes: ['上下文工程(as_of+预算)', '四类评测(YHF)', '合规前置', '垂直ParseQA'],
+          giac_themes: ['上下文工程(as_of+预算)', '四类评测(YHF)', '合规前置', '垂直ParseQA', 'Intake/L1'],
           g0: yhf.engine?.gates?.G0_clean_zero_fp,
           g4: yhf.rag?.gates?.G4_rag_recall,
           g1: yhf.shadow?.gates?.G1_shadow_fpr,
+          g2: l1Prompt.gates?.G2_prompt_pass,
+          g2_pass_rate: l1Prompt.pass_rate,
+          g2_source: l1Prompt.source || l1Prompt.message,
+          l1_sidecar: pp.reachable ? (pp.recommended_engine || 'ok') : null,
           bench_cases: benchIds.length,
           gold_ratio: goldCount / Math.max(benchIds.length, 1),
           registry: reg,

@@ -5,6 +5,7 @@
 const fs = require('fs');
 const path = require('path');
 const { callLLM, isReady } = require('./llm-provider');
+const { redactString } = require('./pii-redact');
 
 const PROMPT_REJECT = path.resolve(__dirname, '../../../prompts/规则沉淀-驳回.md');
 const PROMPT_ADOPT = path.resolve(__dirname, '../../../prompts/规则沉淀-采纳.md');
@@ -42,8 +43,8 @@ function buildPayload(rule, feedback, stats, governanceStatus) {
     feedback: (feedback || []).slice(-20).map(f => ({
       action: f.action,
       judgment: f.judgment,
-      reason: f.reason || f.judgment_reason,
-      rectify_note: f.rectify_note,
+      reason: redactString(f.reason || f.judgment_reason || ''),
+      rectify_note: redactString(f.rectify_note || ''),
       case_id: f.case_id,
       finding_id: f.finding_id,
       source: f.source,

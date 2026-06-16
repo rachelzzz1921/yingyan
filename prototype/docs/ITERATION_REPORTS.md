@@ -4,6 +4,24 @@
 
 ---
 
+## iter-22 — GIAC 精进 + 江苏 KB + G2/B07d
+
+**SMART目标**：江苏护理价真导入、GIAC 七项可演示精进、routing 下线标、dashboard G2；gate strict PASS。
+
+**1. 本轮完成**：
+- KB1 `KB1-江苏-护理价格2025`（苏医保发2025-20 特160/Ⅰ65/Ⅱ30/Ⅲ22）+ `jiangsu-prices.js` + A-105 引擎单价
+- MockHIS 二级护理 12→30元/日；DRG 负面清单措辞修正
+- routing 条：deprecated 规则 chip 标「已下线」
+- `syncRegistryFromCases` 补 bench 案卷 meta；沉淀 Agent feedback PII 脱敏
+- `/api/maturity` + dashboard：G2（eval baseline_lowtemp）+ L1 sidecar
+- `yhf/harness/l1-prompt.js` 支持 prompts.*.cases 结构
+
+**2. 测试**：`bash yhf/run.sh --strict` PASS
+
+**3. iter-23 计划**：规则沉淀 LLM demo 验收 · Supabase as_of 验通 · embed 脚本 · B07c LLM shadow
+
+---
+
 ## iter-21 — Intake/OCR 链闭环（PP-Structure lite + OCR 词行 bbox）
 
 **SMART目标**：拖入 demo 费用 PDF → intake batch → fee_list.anchor.bbox 非空 → 稽核点击证据高亮费用行；gate strict PASS。

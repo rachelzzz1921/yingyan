@@ -188,17 +188,21 @@ function maturitySectionHTML(m) {
   if (!m) return '';
   const pct = Math.round((m.gold_ratio || 0) * 100);
   const g1 = m.g1 ? 'PASS' : 'FAIL';
+  const g2label = m.g2 == null ? '—' : (m.g2 ? 'PASS' : 'report');
+  const g2rate = m.g2_pass_rate != null ? `${Math.round(m.g2_pass_rate * 100)}%` : '无缓存';
+  const l1 = m.l1_sidecar ? `L1✓ ${m.l1_sidecar}` : 'L1—';
   const themes = (m.giac_themes || []).join(' · ');
   return `<section class="card"><div class="card-head"><h2 class="section-title">工程成熟度 · GIAC 对齐</h2><span class="badge-live">/api/maturity</span></div>
     <div class="kpi-grid kpi-compact" style="margin-bottom:10px">
       ${kpiCard('G0 零误报', m.g0 ? 'PASS' : 'FAIL', m.g0 ? 'pass' : 'fail', '干净件红线')}
       ${kpiCard('G4 RAG', m.g4 ? 'PASS' : 'FAIL', m.g4 ? 'pass' : 'fail', 'recall@8')}
       ${kpiCard('G1 Shadow', g1, m.g1 ? 'pass' : 'fail', `${m.shadow_summary?.passed ?? '—'}/${m.shadow_summary?.total ?? '—'} 规则`)}
+      ${kpiCard('G2 Prompt', g2label, m.g2 ? 'pass' : '', `eval ${g2rate}`)}
+      ${kpiCard('L1 解析', l1, m.l1_sidecar ? 'pass' : '', 'ppstructure sidecar')}
       ${kpiCard('Bench 案卷', m.bench_cases ?? '—', 'accent', 'AuditBench 20')}
       ${kpiCard('Gold 覆盖', pct + '%', pct >= 90 ? 'pass' : '', `${m.registry?.total ?? '—'} 注册`)}
-      ${kpiCard('Parse QA', '已接入', 'pass', 'intake + 置信惩罚')}
     </div>
-    <p class="muted" style="margin:0;font-size:12px">GIAC 主题：${esc(themes)}</p></section>`;
+    <p class="muted" style="margin:0;font-size:12px">GIAC 主题：${esc(themes)}${m.g2_source ? ` · G2 源：${esc(m.g2_source)}` : ''}</p></section>`;
 }
 
 async function loadDoc(id, full) {

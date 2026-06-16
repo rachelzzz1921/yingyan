@@ -17,6 +17,7 @@
 const { genDebate } = require('./debate');
 const { compileCaseObject } = require('./case-object');
 const { applyComplianceGate } = require('./compliance-gate');
+const { JIANGSU_NURSING_PRICE, REF_ID: JIANGSU_NURSING_REF } = require('../kb/jiangsu-prices');
 const { applyParseQAToConfidence } = require('./parse-qa');
 
 // ---------- 工具函数 ----------
@@ -1189,7 +1190,10 @@ function runAudit(record, rulesArray, options = {}) {
   const ctx = {
     record, rules, caseObj,
     caseId: (record.case_meta?.case_id || 'CASE').replace(/[^A-Z0-9]/gi, '').slice(-8),
-    params: { nursing_price: { '二级护理': 12.0, '三级护理': 8.0 } },
+    params: {
+      nursing_price: { ...JIANGSU_NURSING_PRICE },
+      nursing_price_ref: JIANGSU_NURSING_REF,
+    },
     policyTexts: options.policyTexts || {},
     policyVerified: options.policyVerified || {},
   };

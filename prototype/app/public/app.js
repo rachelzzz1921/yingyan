@@ -13,15 +13,24 @@ function ruleDisplayTitle(ruleId) {
   return r?.catalog?.display_title || (r ? `${r.rule_name}（${ruleId}）` : ruleId);
 }
 
+let RULE_GOV = {};
+
+function ruleGovStatus(ruleId) {
+  return RULE_GOV[ruleId]?.status || 'active';
+}
+
 function ruleLink(ruleId, opts = {}) {
   if (!ruleId) return '';
   const compact = !!opts.compact;
+  const offline = opts.offline || ruleGovStatus(ruleId) === 'deprecated';
   const r = RULE_MAP[ruleId];
   const title = ruleDisplayTitle(ruleId);
   if (compact) {
     const hit = opts.hit ? ' hit' : '';
-    const tip = opts.locateHint ? '点击查看规则 · 旁 ↗ 定位疑点' : '查看规则说明';
-    return `<button type="button" class="rule-link rule-link-compact rchip${hit}" data-rule-id="${esc(ruleId)}" title="${esc(tip)}：${esc(title)}">${esc(ruleId)}</button>`;
+    const off = offline ? ' offline' : '';
+    const tip = opts.locateHint ? '点击查看规则 · 旁 ↗ 定位疑点' : (offline ? '规则已下线 deprecated' : '查看规则说明');
+    const suffix = offline ? '<span class="rule-offline-tag">已下线</span>' : '';
+    return `<button type="button" class="rule-link rule-link-compact rchip${hit}${off}" data-rule-id="${esc(ruleId)}" title="${esc(tip)}：${esc(title)}">${esc(ruleId)}${suffix}</button>`;
   }
   const name = r?.catalog ? `${r.catalog.family_label} · ${r.rule_name}` : (r?.rule_name || ruleId);
   return `<button type="button" class="rule-link" data-rule-id="${esc(ruleId)}" title="查看规则说明：${esc(title)}"><span class="rule-id-chip">${esc(ruleId)}</span><span class="rule-name-chip">${esc(name)}</span></button>`;
@@ -299,11 +308,13 @@ async function init() {
   try {
     const savedMode = sessionStorage.getItem('yingyan_mode');
     if (savedMode === 'exam' || savedMode === 'audit') MODE = savedMode;
-    const [health, rules, cases] = await Promise.all([
+    const [health, rules, cases, gov] = await Promise.all([
       fetch('/api/health').then(r => r.json()),
       fetch('/api/rules').then(r => r.json()),
       fetch('/api/cases').then(r => r.json()),
+      fetch('/api/rule-governance').then(r => r.json()).catch(() => ({ entries: [] })),
     ]);
+    RULE_GOV = Object.fromEntries((gov.entries || []).map(e => [e.rule_id, e]));
     RULES = rules;
     refreshRuleMap();
     const l1Ok = health.ppstructure?.reachable;
@@ -870,14 +881,22 @@ function reportHeroHTML(report, s, exam) {
 function routingBar(routing, exam) {
   if (!routing) return '';
   const firedIds = new Set((REPORT.findings || []).flatMap(f => [f.rule_id, ...(f.corroborations || []).map(c => c.rule_id)]));
-  const chips = (routing.activated || []).map(id => ruleLink(id, { compact: true, hit: firedIds.has(id) })).join('');
+  const retired = new Set(REPORT?.report_meta?.summary?.retired_rules || []);
+  const activated = routing.activated || [];
+  const chips = activated.map(id => ruleLink(id, {
+    compact: true,
+    hit: firedIds.has(id),
+    offline: retired.has(id) || ruleGovStatus(id) === 'deprecated',
+  })).join('');
+  const offlineOnly = [...retired].filter(id => !activated.includes(id))
+    .map(id => ruleLink(id, { compact: true, offline: true })).join('');
   const sc = routing.short_circuit;
   const label = exam ? '院端规则路由' : '触发器路由（三级短路）';
   const sub = exam
     ? `本案激活 ${routing.activated_count} 条院端相关规则${sc ? '，' + sc.saved + ' 条跳过' : ''} · 红=已出风险点`
     : `全 ${routing.total} 条，本案只<b>激活 ${routing.activated_count} 条</b>，${sc ? sc.saved + ' 零成本跳过' : '其余跳过'}（90秒承诺的工程基础）`;
   return `<div class="routing-bar">🔀 <b>${label}</b>：${sub}
-    <div class="routing-chips">${chips}</div>
+    <div class="routing-chips">${chips}${offlineOnly ? `<span class="routing-offline-sep muted">· 已下线</span>${offlineOnly}` : ''}</div>
     ${sc && !exam ? `<span class="muted">L1确定性 ${sc.level1_L1_deterministic} · L2语义候选 ${sc.level3_L2_llm_candidates}（朴素实现需全 ${routing.total} 条调LLM）· 红=已命中</span>` : '<span class="muted">红=已出疑点/线索</span>'}</div>`;
 }
 function renderRagSection(m) {

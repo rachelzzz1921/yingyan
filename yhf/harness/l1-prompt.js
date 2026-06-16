@@ -17,7 +17,7 @@ function findLatestResult() {
   for (const dir of dirs) {
     if (!fs.existsSync(dir)) continue;
     for (const f of fs.readdirSync(dir)) {
-      if (!f.endsWith('.json') || f.includes('raw')) continue;
+      if (!f.endsWith('.json') || f.includes('raw') || f.startsWith('gate_')) continue;
       const fp = path.join(dir, f);
       const st = fs.statSync(fp);
       if (!best || st.mtimeMs > best.mtimeMs) best = { fp, mtimeMs: st.mtimeMs };
@@ -28,16 +28,27 @@ function findLatestResult() {
 
 function summarizeEvalJson(data) {
   if (!data) return null;
-  const rows = data.results || (Array.isArray(data.cases) ? [{ cases: data.cases }] : []);
-  let total = 0, green = 0;
-  for (const block of rows) {
+  let total = 0;
+  let green = 0;
+  const blocks = [];
+  if (data.results) blocks.push(...(Array.isArray(data.results) ? data.results : [data.results]));
+  if (data.prompts && typeof data.prompts === 'object') {
+    for (const p of Object.values(data.prompts)) {
+      if (p?.cases) blocks.push({ cases: p.cases });
+    }
+  }
+  if (Array.isArray(data.cases)) blocks.push({ cases: data.cases });
+  for (const block of blocks) {
     for (const c of block.cases || []) {
       total++;
       const rate = c.all_green_rate ?? c.pass_rate;
       if (typeof rate === 'number' && rate >= 1) green++;
-      else if (c.per_assert) {
-        const rates = Object.values(c.per_assert).map(a => a.rate);
+      else if (c.perAssert || c.per_assert) {
+        const rates = Object.values(c.perAssert || c.per_assert).map(a => a.rate);
         if (rates.length && rates.every(r => r >= 1)) green++;
+      } else if (c.byModel) {
+        const allOk = c.byModel.every(m => (m.all_green?.pass ?? 0) === (m.all_green?.total ?? 0));
+        if (allOk) green++;
       }
     }
   }
