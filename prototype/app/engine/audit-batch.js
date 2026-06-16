@@ -175,6 +175,53 @@ function renderBatchReportMarkdown(job) {
   return lines.join('\n');
 }
 
+function escHtml(s) {
+  return String(s ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+
+function renderBatchReportHtml(job) {
+  if (!job) return '<!DOCTYPE html><html><body><p>任务不存在</p></body></html>';
+  const sum = job.summary || {};
+  const rows = (job.results || []).map(r => {
+    if (r.error) {
+      return `<tr class="err"><td>${escHtml(r.id)}</td><td colspan="5">❌ ${escHtml(r.error)}</td></tr>`;
+    }
+    return `<tr><td>${escHtml(r.title || r.id)}</td><td class="num">${r.found_suspected}</td><td class="num">${r.found_clue ?? 0}</td><td class="num">${r.shadow_count ?? 0}</td><td class="num">${r.latency_ms}ms</td><td>${r.is_clean ? '🟢 干净' : '🔴 违规'}</td></tr>`;
+  }).join('');
+  const g0 = sum.red_line_clean_zero_fp ? 'PASS' : 'FAIL';
+  return `<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="UTF-8"><title>鹰眼 · 批量初筛报告</title>
+<style>
+  :root{--ink:#0B2A4A;--iris:#2DD4BF;--line:#e2e8f0;--muted:#64748b}
+  *{box-sizing:border-box} body{font-family:"Noto Sans SC",system-ui,sans-serif;margin:0;padding:32px;color:var(--ink);background:#f8fafc}
+  .sheet{max-width:920px;margin:0 auto;background:#fff;border:1px solid var(--line);border-radius:12px;padding:28px 32px}
+  h1{margin:0 0 8px;font-size:22px} .sub{color:var(--muted);font-size:13px;margin-bottom:20px}
+  .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:16px 0 24px}
+  .kpi{border:1px solid var(--line);border-radius:10px;padding:12px;text-align:center}
+  .kpi .n{font-size:22px;font-weight:800;font-variant-numeric:tabular-nums}
+  .kpi .l{font-size:11px;color:var(--muted);margin-top:4px}
+  table{width:100%;border-collapse:collapse;font-size:13px}
+  th,td{border-bottom:1px solid var(--line);padding:10px 8px;text-align:left}
+  th{background:#f0f4f8;font-size:12px} .num{text-align:right;font-variant-numeric:tabular-nums}
+  .err td{color:#b91c1c} .foot{margin-top:20px;font-size:11px;color:var(--muted)}
+  .noprint{margin-bottom:16px} @media print{ .noprint{display:none!important} body{padding:0;background:#fff} .sheet{border:none;box-shadow:none} }
+</style></head><body>
+<div class="sheet">
+  <div class="noprint"><button onclick="window.print()" style="padding:8px 16px;border-radius:8px;border:1px solid var(--ink);background:var(--ink);color:#fff;font-weight:700;cursor:pointer">🖨 打印 / 另存为 PDF</button></div>
+  <h1>鹰眼 · 批量初筛报告</h1>
+  <p class="sub">任务 ${escHtml(job.id)} · 模式 ${escHtml(job.mode)} · ${job.done}/${job.total} 案卷 · ${escHtml(job.updated_at || job.created_at)}</p>
+  <div class="kpis">
+    <div class="kpi"><div class="n">${sum.suspected_total ?? 0}</div><div class="l">疑点合计</div></div>
+    <div class="kpi"><div class="n">${sum.clue_total ?? 0}</div><div class="l">线索合计</div></div>
+    <div class="kpi"><div class="n">${sum.shadow_total ?? 0}</div><div class="l">shadow</div></div>
+    <div class="kpi"><div class="n">${g0}</div><div class="l">G0 红线</div></div>
+  </div>
+  <table><thead><tr><th>案卷</th><th class="num">疑点</th><th class="num">线索</th><th class="num">shadow</th><th class="num">时延</th><th>备注</th></tr></thead>
+  <tbody>${rows || '<tr><td colspan="6">无结果</td></tr>'}</tbody></table>
+  <p class="foot">由鹰眼批量初筛队列生成 · 浏览器「打印 → 另存为 PDF」即可下发院端</p>
+</div></body></html>`;
+}
+
 module.exports = {
   JOBS_PATH,
   createJob,
@@ -184,4 +231,5 @@ module.exports = {
   startJobAsync,
   rollupSummary,
   renderBatchReportMarkdown,
+  renderBatchReportHtml,
 };

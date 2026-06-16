@@ -271,6 +271,14 @@
 | I25-3 | 批量初筛 Markdown 导出 `/api/audit/batch/:id/export` | S | ✅DONE |
 | I25-4 | `check-ppstructure-prod.js` 生产就绪检查 | S(B04) | ✅DONE |
 
+## DONE（iter-26 · PDF/HTML + RLS + L1 Docker）
+| # | 内容 | 来源 | 状态 |
+|---|---|---|---|
+| I26-1 | 批量初筛 HTML 打印/PDF（`?format=html` + 看板按钮） | S | ✅DONE |
+| I26-2 | governance RLS 写收紧 migration + apply 脚本 | S(T8-1) | ✅DONE |
+| I26-3 | L1 Docker/compose + `l1-production.js` + `/api/l1/production` | S(B04) | ✅DONE |
+| I26-4 | `verify-iter26.js` 验收 | S | ✅DONE |
+
 ### 案卷编号规范（registry 单一事实来源）
 ```
 YY-{SCOPE}-{DOMAIN}-{SEQ:03d}

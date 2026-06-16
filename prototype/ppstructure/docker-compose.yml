@@ -1,0 +1,10 @@
+# 鹰眼 L1 sidecar · 生产 compose（iter-26）
+# 用法：cd prototype/ppstructure && docker compose up -d --build
+services:
+  l1-parser:
+    build: .
+    ports:
+      - "${PPSTRUCTURE_PORT:-8787}:8787"
+    environment:
+      PPSTRUCTURE_MODE: ${PPSTRUCTURE_MODE:-auto}
+    restart: unless-stopped

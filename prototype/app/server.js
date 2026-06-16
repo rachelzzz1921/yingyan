@@ -1059,7 +1059,9 @@ const server = http.createServer(async (req, res) => {
         const yhf = await runYhfGate({ layers: ['engine', 'rag', 'shadow'] });
         const l1Prompt = runPromptHarness();
         let pp = { reachable: false };
+        let l1Prod = null;
         try { pp = await require('./engine/ppstructure-client').health(); } catch (_) {}
+        try { l1Prod = await require('./engine/l1-production').runL1ProductionCheck(); } catch (_) {}
         const benchIds = Object.keys(DB.cases).filter(k => k !== 'uploaded');
         const goldCount = benchIds.filter(id => DB.expectedByCase?.[id]).length;
         const reg = registryStats();
@@ -1088,6 +1090,7 @@ const server = http.createServer(async (req, res) => {
           as_of: as_of_self_check,
           governance_auth: adminTokenConfigured() ? 'token' : 'demo_open',
           governance_remote: await govSync.remoteStatus(),
+          l1_production: l1Prod,
         });
       } catch (e) {
         return sendJSON(res, { error: e.message }, 500);
@@ -1110,6 +1113,11 @@ const server = http.createServer(async (req, res) => {
     if (batchExportMatch && req.method === 'GET') {
       const job = auditBatch.getJob(batchExportMatch[1]);
       if (!job) return sendJSON(res, { error: 'job 不存在' }, 404);
+      const format = url.searchParams.get('format') || 'md';
+      if (format === 'html') {
+        res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
+        return res.end(auditBatch.renderBatchReportHtml(job));
+      }
       const md = auditBatch.renderBatchReportMarkdown(job);
       const fname = `yingyan-batch-${job.id}.md`;
       res.writeHead(200, {
@@ -1340,6 +1348,11 @@ const server = http.createServer(async (req, res) => {
         result.caseId = 'uploaded';
       }
       return sendJSON(res, result);
+    }
+
+    if (p === '/api/l1/production') {
+      const { runL1ProductionCheck } = require('./engine/l1-production');
+      return sendJSON(res, await runL1ProductionCheck());
     }
 
     if (p === '/api/health') {

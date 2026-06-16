@@ -47,7 +47,7 @@ const ROADMAP_TASKS = {
 const PHASES = [
   { id: 'P1', name: 'YHF', status: 'done' }, { id: 'P2', name: '品牌', status: 'done' },
   { id: 'P3', name: 'UI', status: 'done' },   { id: 'P4', name: '评测闭环', status: 'done' }, { id: 'P5', name: '治理语义', status: 'done' },
-  { id: 'P6', name: '输入专科', status: 'done' }, { id: 'P7', name: '批量', status: 'done' }, { id: 'P8', name: '生产', status: 'current' },
+  { id: 'P6', name: '输入专科', status: 'done' }, { id: 'P7', name: '批量', status: 'done' }, { id: 'P8', name: '生产', status: 'done' },
 ];
 
 const DOC_LINKS = {
@@ -488,7 +488,10 @@ function batchProgressHTML(job) {
   </tr>`).join('');
   const sum = job.summary;
   const exportBtn = (job.status === 'done' || job.status === 'failed')
-    ? `<a class="action-btn secondary" style="margin-top:8px;display:inline-block" href="/api/audit/batch/${encodeURIComponent(job.id)}/export">📄 导出 Markdown 报告</a>`
+    ? `<div class="action-row" style="margin-top:10px">
+      <a class="action-btn secondary" href="/api/audit/batch/${encodeURIComponent(job.id)}/export">📄 Markdown</a>
+      <a class="action-btn" target="_blank" href="/api/audit/batch/${encodeURIComponent(job.id)}/export?format=html">🖨 打印/PDF</a>
+    </div>`
     : '';
   return `
     <div class="batch-head"><span class="badge teal">${esc(job.mode)} · ${esc(statusLabel)}</span>
@@ -666,7 +669,7 @@ function governanceViewHTML(gov, drafts) {
     <div class="gov-list">${cards}</div>
     <section class="card" style="margin-top:16px">
       <h3 class="section-title" style="margin:0 0 8px">Supabase 治理落库</h3>
-      <p class="muted" style="margin:0 0 10px;font-size:11px">push 本地 rule_states → DB；配 YINGYAN_ADMIN_TOKEN 后写操作需令牌</p>
+      <p class="muted" style="margin:0 0 10px;font-size:11px">push 本地 rule_states → DB（service_role 写入 · anon 只读 · 快照表禁 anon）</p>
       <div id="govSyncStatus" class="muted">检测中…</div>
       <div class="action-row" style="margin-top:10px">
         <button type="button" class="action-btn secondary" id="btnGovPush">↑ push 到 Supabase</button>

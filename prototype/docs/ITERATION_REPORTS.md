@@ -4,6 +4,21 @@
 
 ---
 
+## iter-26 — 批量 PDF/HTML + 治理 RLS + L1 生产部署
+
+**SMART目标**：批量报告浏览器打印 PDF · governance RLS 写收紧 · Docker L1 sidecar · gate PASS。
+
+**1. 本轮完成**：
+- `renderBatchReportHtml` + `?format=html` 一键打印/PDF
+- migration `20260616000002_governance_rls.sql` + `apply-governance-grants.sh`
+- `l1-production.js` + `/api/l1/production` + Docker/compose + `deploy-ppstructure.sh`
+
+**2. 测试**：`node scripts/verify-iter26.js` · `bash yhf/run.sh --strict`
+
+**3. iter-27 计划**：机构画像 PDF · 治理 Supabase Auth JWT · 批量队列并发
+
+---
+
 ## iter-25 — 治理 Supabase 落库 + 鉴权 + 批量导出
 
 **SMART目标**：治理 push/pull Supabase · YINGYAN_ADMIN_TOKEN 鉴权 · 批量 Markdown 导出 · PP-Structure 生产检查 · gate PASS。

@@ -33,6 +33,20 @@ PPSTRUCTURE_URL=http://127.0.0.1:8787   # Node 客户端地址
 PPSTRUCTURE_MODE=auto          # auto | lite | ppstructure
 ```
 
+## 生产部署（Docker · iter-26）
+
+```bash
+# 推荐：Python 3.12 容器 + tesseract 中文包
+cd prototype/ppstructure
+docker compose up -d --build
+# 或：bash ../../scripts/deploy-ppstructure.sh
+
+# 完整 PP-StructureV3：容器内 Python≤3.12 后执行
+docker compose exec l1-parser bash install-paddle.sh
+```
+
+验收：`node scripts/check-ppstructure-prod.js` · `GET /api/l1/production`
+
 ## 完整能力（推荐生产）
 
 ```bash
