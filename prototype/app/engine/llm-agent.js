@@ -121,8 +121,20 @@ async function llmAgentAudit(record, rules, opts = {}) {
   });
   // doc08 合议层：LLM 独立判断常对同一笔钱多角度命中（如白蛋白 A-108+A-110）→ 合并去重
   let merged = findings, reconciliation_log = [];
-  try { const { reconcile } = require('./audit-engine'); const r = reconcile(findings); merged = r.findings; reconciliation_log = r.reconciliation_log; } catch (e) { /* 合议失败不阻断 */ }
-  const suspected = merged.filter(f => f.status === '疑点'), clues = merged.filter(f => f.status === '线索');
+  const { reconcile, applyPostAuditGovernance } = require('./audit-engine');
+  try {
+    const r = reconcile(findings);
+    merged = r.findings;
+    reconciliation_log = r.reconciliation_log;
+  } catch (e) { /* 合议失败不阻断 */ }
+  const gov = applyPostAuditGovernance(merged, {
+    shadowRules: opts.shadowRules,
+    retiredRules: opts.retiredRules,
+    policyTexts: opts.policyTexts,
+    policyVerified: opts.policyVerified,
+  });
+  merged = gov.findings;
+  const suspected = gov.suspected, clues = gov.clues;
   findings = merged;
   return {
     report_meta: {
@@ -132,7 +144,7 @@ async function llmAgentAudit(record, rules, opts = {}) {
       engine_mode: `真·LLM语义分析（Agent读病历自由文本推理 · ${MODEL}）`, real_agent: true, llm_provider: MODEL,
       context_manifest,
       human_baseline_minutes: 40, agent_seconds: 90, elapsed_ms: Date.now() - t0,
-      summary: { total_findings: findings.length, suspected_count: suspected.length, clue_count: clues.length, suspected_amount: Number(suspected.reduce((s, f) => s + (f.amount_involved || 0), 0).toFixed(2)), clue_amount_flagged: Number(clues.reduce((s, f) => s + (f.amount_involved || 0), 0).toFixed(2)) },
+      summary: { ...gov.summary, suspected_amount: gov.summary.suspected_amount, clue_amount_flagged: gov.summary.clue_amount_flagged },
     },
     findings, correctly_not_flagged: [], real_agent: true,
   };

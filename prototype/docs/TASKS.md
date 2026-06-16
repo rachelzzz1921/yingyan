@@ -247,6 +247,14 @@
 | I22-5 | /api/maturity 接 G2 eval baseline + L1 sidecar 状态 | S(T4-4) | ✅DONE |
 | I22-6 | 规则沉淀双链 UI/Agent/overlay 已有；dashboard G2 卡片 | S | ✅DONE |
 
+## DONE（iter-23 · B07c + as_of + embed + 沉淀 demo）
+| # | 内容 | 来源 | 状态 |
+|---|---|---|---|
+| I23-1 | B07c：`applyPostAuditGovernance` + LLM 路径 shadow/retired 一致 | S(T5-1) | ✅DONE |
+| I23-2 | as_of：`/api/kb/as-of` + verify-as-of + maturity 自检 | S | ✅DONE |
+| I23-3 | embed-kb-chunks `--dry-run` + check-kb-env as_of 行 | S | ✅DONE |
+| I23-4 | 规则沉淀 template demo（`demo-rule-precipitation.js`） | S(T5-3) | ✅DONE |
+
 ### 案卷编号规范（registry 单一事实来源）
 ```
 YY-{SCOPE}-{DOMAIN}-{SEQ:03d}
@@ -267,7 +275,7 @@ SEQ: 001–999 按 DOMAIN 递增，禁止手填重复
 | B07 | ~~re_review真联动规则状态机(flagged→自动转shadow态只观察不计分)~~ | ✅iter-12已完成(runAudit shadowRules,实测A-105扣留¥104,安全缺省回归PASS) |
 | B07b | ~~shadow/复审结论落盘:status三态(draft/shadow/active)+复审恢复反向流+规则质检页三态流转~~ | ✅iter-16已完成(用overlay rule_states.json分离定义与状态,而非改rules.yaml源;auto-shadow落盘+restore/retire反向流+🗂规则治理页) |
 | B07d | ~~restore后驳回计数清零 + 治理操作audit log~~ + deprecated规则在routing显"下线"标 | 前两项✅iter-19完成(ack_rejects计数清零+治理操作流水);routing显下线标仍待做(P3小项) |
-| B07c | LLM路径(/api/audit?mode=llm)也接shadow(post-process llmAgentAudit findings) | P2：确定性主路已接,LLM慢路径后补,省额度 |
+| B07c | ~~LLM路径(/api/audit?mode=llm)也接shadow(post-process llmAgentAudit findings)~~ | ✅iter-23已完成(applyPostAuditGovernance 共用) |
 | B08 | ~~机构汇总画像一页(多案卷聚合院端体检:高频违规TOP/涉及金额/科室分布)~~ | ✅iter-14已完成(/api/institution+🏥机构画像模态,受检8案/疑点18/¥21913/5领域) |
 | B08b | 机构画像接导出PDF/真实趋势同比(需多时间断面数据底座) | P2：本轮静态聚合屏显，趋势需历史数据 |
 | B09 | 驳回原因内联输入框(替原生prompt) | P2：demo用prompt够用，UX优化 |

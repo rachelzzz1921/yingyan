@@ -1216,13 +1216,8 @@ function runAudit(record, rulesArray, options = {}) {
 
   // doc08宏观① 合议层：一笔钱被多规则命中→合并1主疑点+佐证视角、金额去重（必须在计金额前）
   const rec = reconcile(findings);
-  const merged = rec.findings;
+  let merged = rec.findings;
   const parseQuality = record.case_meta?.parse_quality || options.parseQuality || null;
-
-  applyComplianceGate(merged, ctx);
-
-  // 升·iter12 规则状态机：复核高频驳回的规则进 shadow 态（只观察不计分）——误报闭环从"标记"到"执行"
-  const shadowSet = new Set(options.shadowRules || []);
 
   // 逐发现（合议后）：控辩裁 + CoVe + 锚点 + 置信度
   for (const f of merged) {
@@ -1234,23 +1229,16 @@ function runAudit(record, rulesArray, options = {}) {
     f.confidence = computeConfidence(f, minOcr, parseQuality);
     f.min_ocr_conf = Number(minOcr.toFixed(2));
     f.priority_score = Number(((f.amount_involved || 0) * (f.confidence / 100)).toFixed(1)); // 升6 金额×置信
-    if (shadowSet.has(f.rule_id)) {
-      f.shadow = true;
-      f.shadow_reason = '该规则因复核高频驳回（≥阈值）已转入观察期（shadow 态）：仍检测并完整展示证据链，但暂不计入疑点/金额，等待规则复审（re_review）。这是"误报回流"的执行端——坏规则被自动降权，而非继续误伤。';
-    }
   }
 
-  merged.sort((a, b) => {
-    if (!!a.shadow !== !!b.shadow) return a.shadow ? 1 : -1; // shadow（观察期）一律沉底
-    if (a.status !== b.status) return a.status === '疑点' ? -1 : 1;
-    return (b.priority_score || 0) - (a.priority_score || 0);
+  const gov = applyPostAuditGovernance(merged, {
+    shadowRules: options.shadowRules,
+    retiredRules: options.retiredRules,
+    policyTexts: ctx.policyTexts,
+    policyVerified: ctx.policyVerified,
   });
-
-  // shadow 态发现不计入疑点/线索（只观察），但保留在 findings 中透明展示
-  const active = merged.filter(f => !f.shadow);
-  const shadowed = merged.filter(f => f.shadow);
-  const suspected = active.filter(f => f.status === '疑点');
-  const clues = active.filter(f => f.status === '线索');
+  merged = gov.findings;
+  const { suspected, clues, shadowed, summary: govSummary } = gov;
   const coverage = coverageManifest(routing, record, merged); // doc08宏观②
 
   return {
@@ -1268,17 +1256,9 @@ function runAudit(record, rulesArray, options = {}) {
       coverage,                                    // 覆盖度声明
       summary: {
         raw_findings_before_merge: findings.length,
-        total_findings: merged.length,
         merged_count: findings.length - merged.length,
-        suspected_count: suspected.length,
-        clue_count: clues.length,
-        shadow_count: shadowed.length,
-        shadow_rules: [...shadowSet],
-        shadow_amount_withheld: money(shadowed.reduce((s, f) => s + (f.amount_involved || 0), 0)),
-        retired_rules: [...retiredSet],
-        suspected_amount: money(suspected.reduce((s, f) => s + (f.amount_involved || 0), 0)),
-        clue_amount_flagged: money(clues.reduce((s, f) => s + (f.amount_involved || 0), 0)),
         amount_if_double_counted: money(rec.reconciliation_log.reduce((s, l) => s + (l.amount_if_double_counted - l.amount_once), 0) + suspected.reduce((s, f) => s + (f.amount_involved || 0), 0)),
+        ...govSummary,
       },
     },
     findings: merged,
@@ -1288,4 +1268,54 @@ function runAudit(record, rulesArray, options = {}) {
   };
 }
 
-module.exports = { runAudit, parseDate, computeExpectedQty, compileCaseObject, reconcile };
+const SHADOW_REASON = '该规则因复核高频驳回（≥阈值）已转入观察期（shadow 态）：仍检测并完整展示证据链，但暂不计入疑点/金额，等待规则复审（re_review）。这是"误报回流"的执行端——坏规则被自动降权，而非继续误伤。';
+
+/** B07c：确定性/LLM 共用 —— 合规前置 + shadow 观察期 + 汇总统计 */
+function applyPostAuditGovernance(findings, options = {}) {
+  const shadowSet = new Set(options.shadowRules || []);
+  const retiredSet = new Set(options.retiredRules || []);
+  const merged = (findings || []).filter(f => !retiredSet.has(f.rule_id));
+
+  applyComplianceGate(merged, {
+    policyTexts: options.policyTexts || {},
+    policyVerified: options.policyVerified || {},
+  });
+
+  for (const f of merged) {
+    if (shadowSet.has(f.rule_id)) {
+      f.shadow = true;
+      f.shadow_reason = SHADOW_REASON;
+    }
+  }
+
+  merged.sort((a, b) => {
+    if (!!a.shadow !== !!b.shadow) return a.shadow ? 1 : -1;
+    if (a.status !== b.status) return a.status === '疑点' ? -1 : 1;
+    return (b.priority_score || 0) - (a.priority_score || 0);
+  });
+
+  const active = merged.filter(f => !f.shadow);
+  const shadowed = merged.filter(f => f.shadow);
+  const suspected = active.filter(f => f.status === '疑点');
+  const clues = active.filter(f => f.status === '线索');
+
+  return {
+    findings: merged,
+    suspected,
+    clues,
+    shadowed,
+    summary: {
+      total_findings: merged.length,
+      suspected_count: suspected.length,
+      clue_count: clues.length,
+      shadow_count: shadowed.length,
+      shadow_rules: [...shadowSet],
+      shadow_amount_withheld: money(shadowed.reduce((s, f) => s + (f.amount_involved || 0), 0)),
+      retired_rules: [...retiredSet],
+      suspected_amount: money(suspected.reduce((s, f) => s + (f.amount_involved || 0), 0)),
+      clue_amount_flagged: money(clues.reduce((s, f) => s + (f.amount_involved || 0), 0)),
+    },
+  };
+}
+
+module.exports = { runAudit, parseDate, computeExpectedQty, compileCaseObject, reconcile, applyPostAuditGovernance };

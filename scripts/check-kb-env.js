@@ -67,3 +67,16 @@ const zhipu = process.env.ZHIPU_API_KEY;
 const sf = process.env.SILICONFLOW_API_KEY;
 const embOk = (emb === 'dashscope' && dash) || (emb === 'zhipu' && zhipu) || (emb === 'siliconflow' && sf);
 console.log('Embedding:', embOk ? `${emb} 已配置` : `${emb} 未配置（推荐 siliconflow 或 dashscope）`);
+
+const { loadJsonKB } = require('../prototype/app/kb/retrieval');
+const { filterPolicyMaps } = require('../prototype/app/kb/as-of');
+try {
+  const maps = loadJsonKB(path.resolve(__dirname, '../prototype/data'));
+  const early = filterPolicyMaps(maps, new Date('2024-06-01'));
+  const late = filterPolicyMaps(maps, new Date('2025-06-01'));
+  const ref = 'KB1-江苏-护理价格2025';
+  const asOfOk = !early.policyTexts[ref] && !!late.policyTexts[ref];
+  console.log('as_of 自检:', asOfOk ? '✅ 江苏护理 2025 前不含 / 2025 后含' : '⚠️  运行 node scripts/verify-as-of.js 排查');
+} catch (e) {
+  console.log('as_of 自检: 跳过（', e.message, ')');
+}

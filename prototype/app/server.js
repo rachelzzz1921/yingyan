@@ -570,6 +570,23 @@ const server = http.createServer(async (req, res) => {
       return sendJSON(res, DB.rulesDoc);
     }
     if (p === '/api/kb') return sendJSON(res, DB.kb1);
+    if (p === '/api/kb/as-of') {
+      const admit = url.searchParams.get('admit') || '2025-06-01';
+      const asOf = new Date(admit + 'T00:00:00');
+      const filtered = filterPolicyMaps(DB.policyMapsRaw, asOf);
+      const jiangsuRef = 'KB1-江苏-护理价格2025';
+      const fullCount = Object.keys(DB.policyMapsRaw.policyTexts || {}).length;
+      const filteredCount = Object.keys(filtered.policyTexts || {}).length;
+      return sendJSON(res, {
+        admit,
+        as_of: isNaN(asOf.getTime()) ? null : admit,
+        total_refs_full: fullCount,
+        total_refs_effective: filteredCount,
+        excluded_count: fullCount - filteredCount,
+        jiangsu_nursing_effective: !!filtered.policyTexts[jiangsuRef],
+        sample_ref: jiangsuRef,
+      });
+    }
     if (p === '/api/kb2') return sendJSON(res, DB.kb2);
     if (p === '/api/kb/status') return sendJSON(res, await kbStatus(DATA));
     if (p === '/api/kb/search' || p === '/api/kb/semantic') {
@@ -1000,6 +1017,15 @@ const server = http.createServer(async (req, res) => {
         const benchIds = Object.keys(DB.cases).filter(k => k !== 'uploaded');
         const goldCount = benchIds.filter(id => DB.expectedByCase?.[id]).length;
         const reg = registryStats();
+        const asOfEarly = filterPolicyMaps(DB.policyMapsRaw, new Date('2024-06-01'));
+        const asOfLate = filterPolicyMaps(DB.policyMapsRaw, new Date('2025-06-01'));
+        const jiangsuRef = 'KB1-江苏-护理价格2025';
+        const as_of_self_check = {
+          ref: jiangsuRef,
+          excluded_before_2025: !asOfEarly.policyTexts[jiangsuRef],
+          included_after_2025: !!asOfLate.policyTexts[jiangsuRef],
+          pass: !asOfEarly.policyTexts[jiangsuRef] && !!asOfLate.policyTexts[jiangsuRef],
+        };
         return sendJSON(res, {
           giac_themes: ['上下文工程(as_of+预算)', '四类评测(YHF)', '合规前置', '垂直ParseQA', 'Intake/L1'],
           g0: yhf.engine?.gates?.G0_clean_zero_fp,
@@ -1013,6 +1039,7 @@ const server = http.createServer(async (req, res) => {
           gold_ratio: goldCount / Math.max(benchIds.length, 1),
           registry: reg,
           shadow_summary: yhf.shadow?.summary,
+          as_of: as_of_self_check,
         });
       } catch (e) {
         return sendJSON(res, { error: e.message }, 500);
@@ -1105,7 +1132,19 @@ const server = http.createServer(async (req, res) => {
       if (mode === 'llm') {
         try {
           const { llmAgentAudit } = require('./engine/llm-agent');
-          const report = await llmAgentAudit(record, DB.rulesDoc.rules, { kb: DB.kb1, policyVerified: DB.policyVerified });
+          const ctx = auditContextForRecord(record);
+          const filteredKb = {
+            entries: (DB.kb1.entries || []).filter(e => ctx.policyTexts[e.ref_id]),
+          };
+          const report = await llmAgentAudit(record, DB.rulesDoc.rules, {
+            kb: filteredKb.entries.length ? filteredKb : DB.kb1,
+            policyVerified: ctx.policyVerified,
+            policyTexts: ctx.policyTexts,
+            shadowRules: currentShadowRules(),
+            retiredRules: currentRetiredRules(),
+          });
+          report.report_meta.as_of = ctx.as_of;
+          report.report_meta.shadow_governance = true;
           report.report_meta.elapsed_ms = Date.now() - t0;
           return sendJSON(res, report);
         } catch (e) {

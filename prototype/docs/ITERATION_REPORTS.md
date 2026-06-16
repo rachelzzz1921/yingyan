@@ -4,6 +4,23 @@
 
 ---
 
+## iter-23 — B07c LLM shadow + as_of + embed + 规则沉淀 demo
+
+**SMART目标**：LLM 路径接 shadow 治理（与确定性一致）· as_of 验通 · embed dry-run · 沉淀 Agent template demo · gate strict PASS。
+
+**1. 本轮完成**：
+- `applyPostAuditGovernance` 确定性/LLM 共用（合规前置 + shadow + 汇总）
+- `/api/audit?mode=llm` 传 shadow/retired + as_of 过滤 KB
+- `/api/kb/as-of` + `/api/maturity.as_of` 自检
+- `scripts/verify-as-of.js` · `verify-llm-shadow.js` · `demo-rule-precipitation.js`
+- `embed-kb-chunks.js --dry-run` · `check-kb-env.js` as_of 行
+
+**2. 测试**：见 iter-23 验收命令
+
+**3. iter-24 计划**：批量队列 · 治理落盘 DB · PP-Structure 真 OCR（生产）
+
+---
+
 ## iter-22 — GIAC 精进 + 江苏 KB + G2/B07d
 
 **SMART目标**：江苏护理价真导入、GIAC 七项可演示精进、routing 下线标、dashboard G2；gate strict PASS。

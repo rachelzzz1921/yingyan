@@ -42,16 +42,23 @@ async function fetchChunksNeedingEmbed() {
 }
 
 async function main() {
+  const dryRun = process.argv.includes('--dry-run');
   if (!canUseSupabase()) {
     console.error('❌ 缺少 Supabase 配置');
     process.exit(1);
   }
-  if (!canEmbed()) {
+  if (!canEmbed() && !dryRun) {
     console.error('❌ 缺少 DASHSCOPE_API_KEY（或 ZHIPU + RAG_EMBEDDING_PROVIDER=zhipu）');
     process.exit(1);
   }
 
   const chunks = await fetchChunksNeedingEmbed();
+  const embedded = await supabase.countEmbeddedChunks().catch(() => null);
+  if (dryRun) {
+    console.log(`ℹ️  dry-run：待向量化 ${chunks.length} 条，已 embedded=${embedded ?? '?'}`);
+    console.log(chunks.length ? '   去掉 --dry-run 并配置 embedding key 后执行写入' : '✅ 无待处理 chunk');
+    return;
+  }
   if (!chunks.length) {
     console.log('✅ 所有 chunk 已有 embedding，无需处理');
     return;
