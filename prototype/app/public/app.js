@@ -169,6 +169,14 @@ let RECORD = null, RULES = null, REPORT = null, FLAGGED_LINES = new Set();
 let RULE_MAP = {};
 let MODE = 'audit', INJECT = false, CURRENT_CASE = 'main';
 let RECT_MAP = {}, REPORT_VIEW = 'report', PRECIP_DATA = { items: [], drafts: [] };
+let REPORT_PAGE = 0, FINDING_PAGE = 0;
+let LAST_RUN_PROFILE = 'standard';
+const REPORT_PAGES = [
+  { id: 'overview', label: '总览' },
+  { id: 'findings', label: '疑点' },
+  { id: 'shield', label: '不报' },
+  { id: 'detail', label: '详情' },
+];
 
 const CASE_LABELS = {
   main: '肿瘤主线 · NSCLC', clean: '干净对照件', ortho: '骨科备演 · PKP', drg: 'DRG高套 · 重症肺炎',
@@ -182,6 +190,10 @@ function setWorkflowStep(n) {
     const s = Number(el.dataset.step);
     el.classList.toggle('active', s === n);
     el.classList.toggle('done', s < n);
+  });
+  $$('.qk-item').forEach(el => {
+    const s = Number(el.dataset.qk);
+    el.classList.toggle('active', s === Math.min(n, 3));
   });
 }
 
@@ -526,6 +538,7 @@ async function runAudit(opts = {}) {
   const btn = $('#btnAudit');
   const btnBar = $('#btnAuditBar');
   const rag = !!opts.rag;
+  LAST_RUN_PROFILE = opts.super ? 'super' : (opts.llm ? 'llm' : (rag ? 'rag' : (INJECT ? 'inject' : 'standard')));
   btn.disabled = true; btn.textContent = opts.llm ? 'LLM 分析中…' : (rag ? 'RAG 增强稽核中…' : '稽核中…');
   if (btnBar) { btnBar.disabled = true; btnBar.textContent = rag ? 'RAG 稽核中…' : '稽核中…'; }
   setWorkflowStep(2);
@@ -551,13 +564,24 @@ async function runAudit(opts = {}) {
     const q = opts.llm ? '?mode=llm' : (rag ? '?rag=1' : (MODE === 'exam' ? '?mode=exam' : ''));
     if (opts.llm) { const log = $('#scanLog'); if (log) { const d = document.createElement('div'); d.textContent = '› 🧠 真·LLM Agent 读病历自由文本推理中（稽核→CoVe→控辩裁，多次模型调用，较慢）…'; log.appendChild(d); } }
     if (rag) { const log = $('#scanLog'); if (log) { const d = document.createElement('div'); d.textContent = '› 📚 RAG 语义检索：案卷关键词 → pgvector 召回 KB1/KB2/问题清单条目…'; log.appendChild(d); } }
-    const report = await fetch('/api/audit' + q, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ inject: INJECT, caseId: CURRENT_CASE }) }).then(r => r.json());
+    const report = await fetch('/api/audit' + q, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ inject: INJECT, caseId: CURRENT_CASE, rag: !!opts.super || rag }) }).then(r => r.json());
+    if (opts.super && !report.report_meta.real_agent) {
+      const llm = await fetch('/api/audit?mode=llm', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ inject: INJECT, caseId: CURRENT_CASE }) }).then(r => r.json());
+      report.report_meta.super_llm = llm?.report_meta?.real_agent ? 'ok' : 'fallback';
+      report.report_meta.super_fused = true;
+      report.report_meta.engine_mode = (llm?.report_meta?.real_agent ? '超级增强：LLM+RAG+对抗防护' : '超级增强：RAG+对抗防护（LLM未启用）');
+    } else if (opts.super) {
+      report.report_meta.super_fused = true;
+      report.report_meta.engine_mode = '超级增强：LLM+RAG+对抗防护';
+    }
     INJECT = false;
     REPORT = report;
     FLAGGED_LINES = collectFlaggedLines(report);
     if (MODE === 'exam') await loadRectification(CURRENT_CASE);
     if (MODE === 'exam') await loadPrecipitationData();
     await sleep(250);
+    REPORT_PAGE = 0;
+    FINDING_PAGE = 0;
     renderReport(report);
     renderTabs();
     setWorkflowStep(3);
@@ -578,7 +602,7 @@ function collectFlaggedLines(report) {
   return set;
 }
 
-let VIEW_EXAM = false; // iter20：当前是否体检（院端自查）视角——同一引擎，监管/院端两种措辞
+let VIEW_EXAM = false;
 function renderReport(report) {
   const m = report.report_meta, s = m.summary;
   const exam = m.panel === '体检'; VIEW_EXAM = exam;
@@ -599,7 +623,19 @@ function renderReport(report) {
     { n: RULES.rules.length, l: '已跑规则数', c: '', icon: 'rules' },
   ];
 
-  $('#reportBody').innerHTML = `
+  const nav = $('#reportPagerNav');
+  const pOverview = $('#page-overview');
+  const pFindings = $('#page-findings');
+  const pShield = $('#page-shield');
+  const pDetail = $('#page-detail');
+  if (!nav || !pOverview || !pFindings || !pShield || !pDetail) return;
+
+  nav.innerHTML = REPORT_PAGES.map((p, i) =>
+    `<button type="button" class="pager-tab ${REPORT_PAGE === i ? 'active' : ''}" data-page="${i}">${p.label}</button>`
+  ).join('');
+  $$('.pager-tab', nav).forEach(b => b.onclick = () => switchReportPage(Number(b.dataset.page)));
+
+  pOverview.innerHTML = `
     ${reportHeroHTML(report, s, exam)}
     <div class="compare-banner">
       <div class="compare-col human"><span class="big">40<small>分钟</small></span><span>人工逐页审阅</span></div>
@@ -607,21 +643,41 @@ function renderReport(report) {
       <div class="compare-col agent"><span class="big">${(m.elapsed_ms != null && m.elapsed_ms < 1000) ? m.elapsed_ms + '<small>ms</small>' : '90<small>秒</small>'}</span><span>鹰眼 AI 初筛（实测 ${m.elapsed_ms ?? '—'}ms）</span></div>
     </div>
     <div class="mode-banner ${m.real_agent ? 'real' : (m.llm_needs_key ? 'warn' : 'det')}">${m.real_agent ? '🧠 真·LLM语义分析' : (m.llm_needs_key ? '⚠ 真·语义分析未启用' : '⚙ 确定性规则引擎')} · ${esc(m.engine_mode || '')}</div>
+    ${renderSuperAuditStatus(m)}
     ${exam ? `<div class="exam-banner">🏥 <b>体检模式</b>：院端规则子集 ${m.exam_rule_filter?.used ?? '—'}/${m.exam_rule_filter?.total ?? '—'} 条。报告审阅完成后，请进入 <button type="button" class="linkish" onclick="switchReportView('rectification')">→ 登记整改</button> 填写整改时限、人工判断对错（回流规则治理）。</div>` : ''}
-    ${m.injected ? `<div class="exam-banner" style="background:var(--red-bg);color:var(--red);border-color:#f0c4c0">🪤 已注入对抗演示：材料中混入"写给AI的小抄"，看 E-503 如何把它当成证据。</div>` : ''}
     ${(m.overlay_rules || []).length ? `<div class="exam-banner">📎 规则 overlay 预览已合并：${m.overlay_rules.map(esc).join('、')}</div>` : ''}
     <div class="summary-cards">${cards.map(c => `<div class="scard ${c.c}"><img class="scard-icon" src="/brand/icons/${c.icon || 'rules'}.svg" alt="" width="28" height="28"><div class="scard-body"><div class="n">${c.n}</div><div class="l">${c.l}</div></div></div>`).join('')}</div>
-    ${s.merged_count ? `<div class="recon-banner">🔗 <b>合议层</b>：合并前 ${s.raw_findings_before_merge} 条原始命中 → 去重后 <b>${s.total_findings} 条</b>（${s.merged_count} 条同笔费用多规则命中已合并）。疑点金额按费用行去重 <b>¥${fmt(s.suspected_amount)}</b>——若像传统做法各规则各算各的，会虚高到 <b style="color:var(--red)">¥${fmt(s.amount_if_double_counted)}</b>。<span class="muted">一笔钱一主疑点，杜绝"算三遍夸大"的对质把柄。</span></div>` : ''}
-    ${s.shadow_count ? `<div class="shadow-banner">🌓 <b>规则状态机·观察期（shadow）</b>：${s.shadow_count} 条命中来自被复核高频驳回的规则（${esc((s.shadow_rules || []).join('、'))}）——已自动转入观察期，<b>暂不计入疑点/金额</b>（本可计 ¥${fmt(s.shadow_amount_withheld)}，已扣留待复审 re_review）。证据链仍完整展示但置灰沉底。<span class="muted">这是"误报回流"的执行端：坏规则被自动降权，而非继续误伤——闭环从"标记"走到"执行"。</span></div>` : ''}
+  `;
+
+  const findings = report.findings || [];
+  const cur = findings[FINDING_PAGE];
+  pFindings.innerHTML = cur ? `
+    <div class="findings-pager-head">
+      <h3 class="sect-title"><img src="/brand/icons/doubt.svg" alt="" width="18" height="18" style="vertical-align:-3px"> ${exam ? '风险点与线索（院端自查）' : '疑点与线索'} <span class="muted">${FINDING_PAGE + 1}/${findings.length}</span></h3>
+      <div>
+        <button class="v2btn" id="btnFindingPrev" type="button" ${FINDING_PAGE <= 0 ? 'disabled' : ''}>‹</button>
+        <button class="v2btn" id="btnFindingNext" type="button" ${FINDING_PAGE >= findings.length - 1 ? 'disabled' : ''}>›</button>
+      </div>
+    </div>
+    ${findingCard(cur)}
+  ` : `<div class="empty">本案未命中疑点</div>`;
+  $('#btnFindingPrev')?.addEventListener('click', () => { FINDING_PAGE = Math.max(0, FINDING_PAGE - 1); renderReport(report); switchReportPage(1, true); });
+  $('#btnFindingNext')?.addEventListener('click', () => { FINDING_PAGE = Math.min(findings.length - 1, FINDING_PAGE + 1); renderReport(report); switchReportPage(1, true); });
+
+  pShield.innerHTML = `<div class="findings-section"><h3 class="sect-title green"><img src="/brand/icons/ok.svg" alt="" width="18" height="18" style="vertical-align:-3px"> 正确「不报」（误报防控 · 宁漏报不误报）</h3><div id="distractorList">${(report.correctly_not_flagged || []).map(distractorCard).join('')}</div></div>`;
+  pDetail.innerHTML = `
+    ${s.merged_count ? `<div class="recon-banner">🔗 <b>合议层</b>：合并前 ${s.raw_findings_before_merge} 条原始命中 → 去重后 <b>${s.total_findings} 条</b>（${s.merged_count} 条同笔费用多规则命中已合并）。疑点金额按费用行去重 <b>¥${fmt(s.suspected_amount)}</b>——若像传统做法各规则各算各的，会虚高到 <b style="color:var(--red)">¥${fmt(s.amount_if_double_counted)}</b>。</div>` : ''}
+    ${s.shadow_count ? `<div class="shadow-banner">🌓 <b>规则状态机·观察期（shadow）</b>：${s.shadow_count} 条命中来自被复核高频驳回规则，暂不计入疑点/金额（扣留 ¥${fmt(s.shadow_amount_withheld)}）。</div>` : ''}
     ${routingBar(m.routing, exam)}
     ${renderRagSection(m)}
-    <div class="findings-section"><h3 class="sect-title"><img src="/brand/icons/doubt.svg" alt="" width="18" height="18" style="vertical-align:-3px"> ${exam ? '风险点与线索（院端自查）' : '疑点与线索'} <span class="muted">${findingSummaryLine(s)}</span></h3><div id="findingsList">${report.findings.map(findingCard).join('')}</div></div>
-    <div class="findings-section"><h3 class="sect-title green"><img src="/brand/icons/ok.svg" alt="" width="18" height="18" style="vertical-align:-3px"> 正确「不报」（误报防控 · 宁漏报不误报）</h3><div id="distractorList">${(report.correctly_not_flagged || []).map(distractorCard).join('')}</div></div>
     ${renderCoverage(m.coverage)}
   `;
+
   $$('.f-head').forEach(el => el.onclick = () => el.parentElement.classList.toggle('open'));
   $$('.ev-loc').forEach(el => el.onclick = () => jumpToLoc(el.dataset.loc));
   const first = $('.finding'); if (first) first.classList.add('open');
+  switchReportPage(REPORT_PAGE, true);
+
   if (exam) {
     $('#reportTabs')?.classList.remove('hidden');
     $('#reportEmpty').classList.add('hidden');
@@ -631,6 +687,40 @@ function renderReport(report) {
     $('#reportTabs')?.classList.add('hidden');
     $('#rectificationBody')?.classList.add('hidden');
   }
+}
+
+function renderSuperAuditStatus(m) {
+  const superOn = !!(m?.report_meta?.super_fused || m?.super_fused || LAST_RUN_PROFILE === 'super');
+  if (!superOn) return '';
+  const llmOn = m?.super_llm === 'ok' || m?.real_agent;
+  const ragOn = !!(m?.rag?.hits?.length || /RAG/.test(m?.engine_mode || ''));
+  const injectOn = !!m?.injected;
+  const cell = (label, on) => `<div class="super-pill ${on ? 'on' : 'off'}"><span class="dot"></span>${label}</div>`;
+  return `<div class="super-status">
+    <div class="super-title">⚡ 超级增强稽核状态</div>
+    <div class="super-grid">
+      ${cell('LLM 语义', llmOn)}
+      ${cell('RAG 增强', ragOn)}
+      ${cell('注入防护', injectOn)}
+    </div>
+  </div>`;
+}
+
+function switchReportPage(idx, keepScroll = false) {
+  REPORT_PAGE = Math.max(0, Math.min(idx, REPORT_PAGES.length - 1));
+  REPORT_PAGES.forEach((p, i) => {
+    const el = document.getElementById(`page-${p.id}`);
+    if (!el) return;
+    el.classList.toggle('hidden', i !== REPORT_PAGE);
+    if (!keepScroll && i === REPORT_PAGE) el.scrollTop = 0;
+  });
+  const nav = $('#reportPagerNav');
+  if (nav) $$('.pager-tab', nav).forEach((b, i) => b.classList.toggle('active', i === REPORT_PAGE));
+  $('#pageHint').textContent = REPORT_PAGES[REPORT_PAGE].label;
+  const prev = $('#btnPagePrev');
+  const next = $('#btnPageNext');
+  if (prev) prev.disabled = REPORT_PAGE <= 0;
+  if (next) next.disabled = REPORT_PAGE >= REPORT_PAGES.length - 1;
 }
 
 window.switchReportView = (view, opts = {}) => {
@@ -1189,6 +1279,10 @@ $('#btnInject').onclick = () => { INJECT = true; runAudit(); };
 $('#btnLLM').onclick = () => runAudit({ llm: true });
 const btnRag = $('#btnRag');
 if (btnRag) btnRag.onclick = () => runAudit({ rag: true });
+const btnSuperAudit = $('#btnSuperAudit');
+if (btnSuperAudit) btnSuperAudit.onclick = () => { INJECT = true; runAudit({ super: true, rag: true }); };
+$('#btnPagePrev')?.addEventListener('click', () => switchReportPage(REPORT_PAGE - 1));
+$('#btnPageNext')?.addEventListener('click', () => switchReportPage(REPORT_PAGE + 1));
 const btnIngest = $('#btnIngest');
 if (btnIngest) btnIngest.onclick = showIngest;
 $('#btnFacts').onclick = showFacts;

@@ -36,6 +36,7 @@
   <div class="v2bar-group v2bar-primary">
     <span class="v2bar-label">主流程</span>
     <button class="v2btn accent" id="btnAuditBar" type="button">▶ 开始稽核</button>
+    <button class="v2btn accent real" id="btnSuperAudit" type="button" title="LLM + RAG + 对抗注入防护融合稽核">⚡ 超级增强稽核</button>
     <a href="/dashboard.html" class="v2btn accent" title="项目看板">项目看板</a>
     <button class="v2btn" id="btnBench" type="button">AuditBench</button>
   </div>
@@ -69,6 +70,11 @@
   <div class="wf-step" data-step="3"><span class="wf-num">3</span><span class="wf-text">看报告</span></div>
   <div class="wf-arrow wf-exam-only hidden">→</div>
   <div class="wf-step wf-exam-only hidden" data-step="4"><span class="wf-num">4</span><span class="wf-text">登记整改</span></div>
+</div>
+<div class="quick-checklist" id="quickChecklist">
+  <div class="qk-item active" data-qk="1">① 选案卷</div>
+  <div class="qk-item" data-qk="2">② 开始稽核 / 超级增强</div>
+  <div class="qk-item" data-qk="3">③ 看报告并定位证据</div>
 </div>
 
 <div class="case-meta-bar hidden" id="caseMetaBar"></div>
@@ -107,19 +113,19 @@
     </div>
 
     <div id="reportBody" class="report hidden">
-      <div class="compare-banner">
-        <div class="compare-col human"><span class="big">40<small>分钟</small></span><span>人工逐页审阅</span></div>
-        <div class="vs">VS</div>
-        <div class="compare-col agent"><span class="big" id="agentTime">90<small>秒</small></span><span>鹰眼 AI 初筛</span></div>
-      </div>
-      <div class="summary-cards" id="summaryCards"></div>
-      <div class="findings-section">
-        <h3 class="sect-title">⚠ 疑点与线索 <span class="muted" id="findingCount"></span></h3>
-        <div id="findingsList"></div>
-      </div>
-      <div class="findings-section">
-        <h3 class="sect-title green">✓ 正确"不报"（误报防控）</h3>
-        <div id="distractorList"></div>
+      <div class="report-pager" id="reportPager">
+        <div class="report-pager-nav" id="reportPagerNav"></div>
+        <div class="report-pager-body" id="reportPagerBody">
+          <section class="report-page" id="page-overview"></section>
+          <section class="report-page hidden" id="page-findings"></section>
+          <section class="report-page hidden" id="page-shield"></section>
+          <section class="report-page hidden" id="page-detail"></section>
+        </div>
+        <div class="report-pager-foot">
+          <button class="v2btn" id="btnPagePrev" type="button">↑ 上一页</button>
+          <span class="muted" id="pageHint">总览</span>
+          <button class="v2btn accent" id="btnPageNext" type="button">下一页 ↓</button>
+        </div>
       </div>
     </div>
 
