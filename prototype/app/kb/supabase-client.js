@@ -152,6 +152,49 @@ async function ping() {
   }
 }
 
+async function upsertGovernanceStates(rows) {
+  if (!rows.length) return 0;
+  const now = new Date().toISOString();
+  const payload = rows.map(r => ({
+    rule_id: r.rule_id,
+    status: r.status || 'active',
+    reason: r.reason || null,
+    ack_rejects: r.ack_rejects || 0,
+    history: r.history || [],
+    updated_at: r.updated_at || now,
+    synced_at: now,
+  }));
+  const url = `${apiBase()}/governance_rule_states?on_conflict=rule_id`;
+  const cfg = ragConfig();
+  const key = cfg.supabaseServiceKey;
+  const res = await fetch(url, {
+    method: 'POST',
+    headers: {
+      ...headers(true),
+      Prefer: 'resolution=merge-duplicates,return=representation',
+    },
+    body: JSON.stringify(payload),
+  });
+  if (!res.ok) throw new Error(`upsertGovernanceStates ${res.status}: ${await res.text()}`);
+  const data = await res.json();
+  return Array.isArray(data) ? data.length : payload.length;
+}
+
+async function listGovernanceStates() {
+  return rest('GET', 'governance_rule_states', {
+    query: 'select=rule_id,status,reason,ack_rejects,history,updated_at,synced_at&order=rule_id.asc',
+    service: false,
+  }) || [];
+}
+
+async function insertGovernanceSnapshot(snapshot, source = 'local') {
+  const rows = await rest('POST', 'governance_snapshots', {
+    body: { snapshot, source },
+    service: true,
+  });
+  return Array.isArray(rows) ? rows[0] : rows;
+}
+
 module.exports = {
   canUseSupabase,
   upsertEntries,
@@ -163,4 +206,7 @@ module.exports = {
   rpcKbMatch,
   patchChunkEmbedding,
   ping,
+  upsertGovernanceStates,
+  listGovernanceStates,
+  insertGovernanceSnapshot,
 };

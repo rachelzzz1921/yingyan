@@ -47,7 +47,7 @@ const ROADMAP_TASKS = {
 const PHASES = [
   { id: 'P1', name: 'YHF', status: 'done' }, { id: 'P2', name: '品牌', status: 'done' },
   { id: 'P3', name: 'UI', status: 'done' },   { id: 'P4', name: '评测闭环', status: 'done' }, { id: 'P5', name: '治理语义', status: 'done' },
-  { id: 'P6', name: '输入专科', status: 'done' }, { id: 'P7', name: '批量', status: 'current' }, { id: 'P8', name: '生产', status: 'pending' },
+  { id: 'P6', name: '输入专科', status: 'done' }, { id: 'P7', name: '批量', status: 'done' }, { id: 'P8', name: '生产', status: 'current' },
 ];
 
 const DOC_LINKS = {
@@ -473,6 +473,7 @@ function benchViewHTML(bench) {
 }
 
 let batchPollTimer = null;
+let lastBatchJobId = null;
 
 function batchProgressHTML(job) {
   if (!job) return '<p class="muted">尚未启动批量任务</p>';
@@ -486,6 +487,9 @@ function batchProgressHTML(job) {
     <td>${r.error ? esc(r.error) : `<a class="btn-sm" href="/?case=${encodeURIComponent(r.id)}">打开</a>`}</td>
   </tr>`).join('');
   const sum = job.summary;
+  const exportBtn = (job.status === 'done' || job.status === 'failed')
+    ? `<a class="action-btn secondary" style="margin-top:8px;display:inline-block" href="/api/audit/batch/${encodeURIComponent(job.id)}/export">📄 导出 Markdown 报告</a>`
+    : '';
   return `
     <div class="batch-head"><span class="badge teal">${esc(job.mode)} · ${esc(statusLabel)}</span>
       <code style="font-size:11px">${esc(job.id)}</code></div>
@@ -500,7 +504,7 @@ function batchProgressHTML(job) {
     <div class="card" style="padding:0;overflow:auto;max-height:360px">
       <table class="bench-table"><thead><tr><th>案卷</th><th class="num">疑点</th><th class="num">shadow</th><th class="num">时延</th><th>操作</th></tr></thead>
       <tbody>${rows || '<tr><td colspan="5" class="muted">等待结果…</td></tr>'}</tbody></table>
-    </div>`;
+    </div>${exportBtn}`;
 }
 
 function batchViewHTML() {
@@ -533,6 +537,7 @@ async function startBatchJob(mode) {
 }
 
 async function pollBatchJob(jobId, panelEl) {
+  lastBatchJobId = jobId;
   if (batchPollTimer) clearInterval(batchPollTimer);
   const tick = async () => {
     const job = await fetchJSON(`/api/audit/batch/${encodeURIComponent(jobId)}`);
@@ -659,8 +664,51 @@ function governanceViewHTML(gov, drafts) {
       ${kpiCard('deprecated', gov.summary?.deprecated ?? 0, '', '已下线')}
     </div>
     <div class="gov-list">${cards}</div>
+    <section class="card" style="margin-top:16px">
+      <h3 class="section-title" style="margin:0 0 8px">Supabase 治理落库</h3>
+      <p class="muted" style="margin:0 0 10px;font-size:11px">push 本地 rule_states → DB；配 YINGYAN_ADMIN_TOKEN 后写操作需令牌</p>
+      <div id="govSyncStatus" class="muted">检测中…</div>
+      <div class="action-row" style="margin-top:10px">
+        <button type="button" class="action-btn secondary" id="btnGovPush">↑ push 到 Supabase</button>
+        <button type="button" class="action-btn secondary" id="btnGovPull">↓ pull 覆盖本地</button>
+      </div>
+    </section>
     ${evalDraftsHTML(drafts)}
     <div class="action-row"><a class="action-btn" href="/">🗂 打开工作台 · 规则治理</a></div>`;
+}
+
+async function bindGovernanceSync(root) {
+  const statusEl = root.querySelector('#govSyncStatus');
+  const refresh = async () => {
+    try {
+      const st = await fetchJSON('/api/governance/sync/status');
+      if (!st.configured) statusEl.textContent = 'Supabase 未配置 — 仅本地 JSON 落盘';
+      else if (!st.reachable) statusEl.textContent = `Supabase 不可达：${st.error || '请执行 migration 20260616000001_governance.sql'}`;
+      else statusEl.textContent = `✅ 已连接 · 远程 ${st.rule_state_count ?? 0} 条治理状态 · KB ${st.kb_entries ?? '—'} 条`;
+    } catch (e) {
+      statusEl.textContent = '检测失败：' + e.message;
+    }
+  };
+  await refresh();
+  const sync = async (direction) => {
+    const headers = { 'content-type': 'application/json' };
+    const token = localStorage.getItem('yingyan_admin_token');
+    if (token) headers['X-Yingyan-Token'] = token;
+    const res = await fetch('/api/governance/sync', {
+      method: 'POST',
+      headers,
+      body: JSON.stringify({ direction }),
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || res.statusText);
+    alert(direction === 'push' ? `已 push ${data.pushed ?? 0} 条` : `已 pull ${data.pulled ?? 0} 条`);
+    await refresh();
+  };
+  root.querySelector('#btnGovPush')?.addEventListener('click', () => sync('push').catch(e => alert(e.message)));
+  root.querySelector('#btnGovPull')?.addEventListener('click', () => {
+    if (!confirm('pull 将用 Supabase 覆盖本地 rule_states.json，继续？')) return;
+    sync('pull').catch(e => alert(e.message));
+  });
 }
 
 async function bindEvalDraftActions(root) {
@@ -852,6 +900,7 @@ async function renderView(id) {
       root.innerHTML = `<div class="view-panel active">${html}</div>`;
       bindDocCards(root);
       await bindEvalDraftActions(root);
+      await bindGovernanceSync(root);
       return;
     }
     else if (id === 'docs') html = await docsHubHTML();

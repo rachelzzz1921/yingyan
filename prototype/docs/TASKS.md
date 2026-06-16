@@ -263,6 +263,14 @@
 | I24-3 | 治理快照 API + `export-governance-snapshot.js`（T8-1 轻量） | S(T8-1) | ✅DONE |
 | I24-4 | `verify-audit-batch.js` 验收脚本 | S | ✅DONE |
 
+## DONE（iter-25 · 治理 DB + 鉴权 + 批量导出）
+| # | 内容 | 来源 | 状态 |
+|---|---|---|---|
+| I25-1 | Supabase `governance_rule_states` + push/pull 同步 | S(T8-1) | ✅DONE |
+| I25-2 | `YINGYAN_ADMIN_TOKEN` 治理写鉴权 + 看板 sync UI | S(T8-1) | ✅DONE |
+| I25-3 | 批量初筛 Markdown 导出 `/api/audit/batch/:id/export` | S | ✅DONE |
+| I25-4 | `check-ppstructure-prod.js` 生产就绪检查 | S(B04) | ✅DONE |
+
 ### 案卷编号规范（registry 单一事实来源）
 ```
 YY-{SCOPE}-{DOMAIN}-{SEQ:03d}

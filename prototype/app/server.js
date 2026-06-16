@@ -44,6 +44,8 @@ const { bootstrapRegistry, registryStats, syncRegistryFromCases, CASE_ID_ALIAS }
 const evalDraftService = require('./engine/eval-draft-service');
 const auditBatch = require('./engine/audit-batch');
 const { buildGovernanceSnapshot } = require('./engine/governance-snapshot');
+const govSync = require('./engine/governance-sync');
+const { adminTokenConfigured, enforceAdmin } = require('./engine/admin-auth');
 const { runParseQA } = require('./engine/parse-qa');
 
 const PORT = process.env.PORT || 3700;
@@ -819,6 +821,7 @@ const server = http.createServer(async (req, res) => {
 
     // iter16 规则三态治理：查看治理状态 + 反向流（复审通过恢复active / 确认下线deprecated / 手动转shadow）
     if (p === '/api/rule-governance' && req.method === 'POST') {
+      if (!enforceAdmin(req, res, sendJSON)) return;
       const body = await readBody(req);
       const action = body.action; // restore | retire | shadow
       const toMap = { restore: 'active', retire: 'deprecated', shadow: 'shadow' };
@@ -834,7 +837,10 @@ const server = http.createServer(async (req, res) => {
         dirty = true;
       }
       if (dirty) saveRuleStates(st);
-      return sendJSON(res, { ok: true, changed: dirty, rule_id: body.rule_id, status: ruleStatus(st, body.rule_id), states: st.states });
+      if (dirty) {
+        govSync.pushToRemote(DATA).catch(() => { /* Supabase 可选，失败不阻断 */ });
+      }
+      return sendJSON(res, { ok: true, changed: dirty, rule_id: body.rule_id, status: ruleStatus(st, body.rule_id), states: st.states, auth_mode: adminTokenConfigured() ? 'token' : 'demo_open' });
     }
     if (p === '/api/rule-governance') {
       const st = loadRuleStates();
@@ -1080,6 +1086,8 @@ const server = http.createServer(async (req, res) => {
           registry: reg,
           shadow_summary: yhf.shadow?.summary,
           as_of: as_of_self_check,
+          governance_auth: adminTokenConfigured() ? 'token' : 'demo_open',
+          governance_remote: await govSync.remoteStatus(),
         });
       } catch (e) {
         return sendJSON(res, { error: e.message }, 500);
@@ -1098,6 +1106,18 @@ const server = http.createServer(async (req, res) => {
     }
 
     // iter-24 批量稽核队列 + 进度
+    const batchExportMatch = p.match(/^\/api\/audit\/batch\/([^/]+)\/export$/);
+    if (batchExportMatch && req.method === 'GET') {
+      const job = auditBatch.getJob(batchExportMatch[1]);
+      if (!job) return sendJSON(res, { error: 'job 不存在' }, 404);
+      const md = auditBatch.renderBatchReportMarkdown(job);
+      const fname = `yingyan-batch-${job.id}.md`;
+      res.writeHead(200, {
+        'Content-Type': 'text/markdown; charset=utf-8',
+        'Content-Disposition': `attachment; filename="${fname}"; filename*=UTF-8''${encodeURIComponent('批量初筛报告.md')}`,
+      });
+      return res.end(md);
+    }
     const batchPath = p.match(/^\/api\/audit\/batch(?:\/([^/]+))?$/);
     if (batchPath) {
       const jobId = batchPath[1];
@@ -1124,7 +1144,19 @@ const server = http.createServer(async (req, res) => {
     }
 
     if (p === '/api/governance/snapshot') {
-      return sendJSON(res, buildGovernanceSnapshot(DATA));
+      const snap = buildGovernanceSnapshot(DATA);
+      const remote = await govSync.remoteStatus();
+      return sendJSON(res, { ...snap, remote, auth_mode: adminTokenConfigured() ? 'token' : 'demo_open' });
+    }
+    if (p === '/api/governance/sync/status') {
+      return sendJSON(res, await govSync.remoteStatus());
+    }
+    if (p === '/api/governance/sync' && req.method === 'POST') {
+      if (!enforceAdmin(req, res, sendJSON)) return;
+      const body = await readBody(req);
+      const direction = body.direction || 'push';
+      const result = await govSync.syncGovernance(DATA, direction);
+      return sendJSON(res, result);
     }
 
     // AuditBench 评测：跑全部案卷，出指标盘（干净件误报=0 红线）

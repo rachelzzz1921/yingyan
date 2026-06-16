@@ -4,6 +4,23 @@
 
 ---
 
+## iter-25 — 治理 Supabase 落库 + 鉴权 + 批量导出
+
+**SMART目标**：治理 push/pull Supabase · YINGYAN_ADMIN_TOKEN 鉴权 · 批量 Markdown 导出 · PP-Structure 生产检查 · gate PASS。
+
+**1. 本轮完成**：
+- migration `governance_rule_states` + `governance_snapshots`
+- `governance-sync.js` + `/api/governance/sync` + 看板 push/pull
+- `admin-auth.js` 保护治理写操作；变更后自动 push
+- `GET /api/audit/batch/:id/export` Markdown 报告
+- `check-ppstructure-prod.js` · `sync-governance-to-supabase.js`
+
+**2. 测试**：`node scripts/verify-governance-sync.js` · `bash yhf/run.sh --strict`
+
+**3. iter-26 计划**：真 OCR 生产部署 · 批量 PDF 渲染 · 治理 RLS 写策略
+
+---
+
 ## iter-24 — 批量初筛队列 + 治理快照
 
 **SMART目标**：多案卷批量稽核队列 + 进度条 UI · 治理快照 API/导出 · gate strict PASS。

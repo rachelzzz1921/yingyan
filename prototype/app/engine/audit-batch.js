@@ -137,6 +137,44 @@ function startJobAsync(jobId, runOne) {
   return getJob(jobId);
 }
 
+function renderBatchReportMarkdown(job) {
+  if (!job) return '# 批量初筛\n\n任务不存在\n';
+  const sum = job.summary || {};
+  const lines = [
+    '# 鹰眼 · 批量初筛报告',
+    '',
+    `- 任务 ID：\`${job.id}\``,
+    `- 模式：**${job.mode}**（live=治理叠加 · oracle=纯引擎）`,
+    `- 状态：${job.status} · ${job.done}/${job.total} 案卷`,
+    `- 生成时间：${job.updated_at || job.created_at}`,
+    '',
+    '## 汇总',
+    '',
+    `| 指标 | 值 |`,
+    `|---|---|`,
+    `| 疑点合计 | ${sum.suspected_total ?? '—'} |`,
+    `| 线索合计 | ${sum.clue_total ?? '—'} |`,
+    `| shadow 观察 | ${sum.shadow_total ?? '—'} |`,
+    `| 干净误报 | ${sum.clean_false_positives ?? '—'} |`,
+    `| G0 红线 | ${sum.red_line_clean_zero_fp ? '✅ PASS' : '❌ FAIL'} |`,
+    `| 均时延 | ${sum.avg_latency_ms ?? '—'} ms |`,
+    '',
+    '## 案卷明细',
+    '',
+    '| 案卷 | 疑点 | 线索 | shadow | 时延 | 备注 |',
+    '|---|---:|---:|---:|---:|---|',
+  ];
+  for (const r of job.results || []) {
+    if (r.error) {
+      lines.push(`| ${r.id} | — | — | — | — | ❌ ${r.error} |`);
+    } else {
+      lines.push(`| ${r.title || r.id} | ${r.found_suspected} | ${r.found_clue ?? 0} | ${r.shadow_count ?? 0} | ${r.latency_ms}ms | ${r.is_clean ? '🟢 干净' : '🔴 违规'} |`);
+    }
+  }
+  lines.push('', '---', '*由鹰眼批量初筛队列自动生成 · 可打印为 PDF 或导入飞检台账*');
+  return lines.join('\n');
+}
+
 module.exports = {
   JOBS_PATH,
   createJob,
@@ -145,4 +183,5 @@ module.exports = {
   runJob,
   startJobAsync,
   rollupSummary,
+  renderBatchReportMarkdown,
 };
