@@ -7,6 +7,12 @@ let QUEUE = [];
 let SLOTS = [];
 let LAST_RECORD = null;
 
+async function refreshHealth() {
+  const health = await fetch('/api/health').then(r => r.json()).catch(() => ({}));
+  renderStatus(health);
+  renderServiceCard(health);
+}
+
 async function init() {
   const [health, slots] = await Promise.all([
     fetch('/api/health').then(r => r.json()).catch(() => ({})),
@@ -18,6 +24,7 @@ async function init() {
   bindDropZone();
   $('#btnRun').onclick = runBatch;
   $('#btnClear').onclick = () => { QUEUE = []; renderQueue(); };
+  setInterval(refreshHealth, 15000);
 }
 
 function renderStatus(h) {

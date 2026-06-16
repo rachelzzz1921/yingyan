@@ -306,7 +306,10 @@ async function init() {
     ]);
     RULES = rules;
     refreshRuleMap();
-    $('#health').textContent = `规则 ${rules.rules.length} · 案卷 ${cases.length} · ${health.llm_ready ? 'LLM 就绪' : '确定性引擎'}${health.ppstructure?.reachable ? ` · L1✓(${health.ppstructure.recommended_engine || 'ok'})` : ' · L1—(sidecar 未启动)'}`;
+    const l1Ok = health.ppstructure?.reachable;
+    const healthEl = $('#health');
+    healthEl.textContent = `规则 ${rules.rules.length} · 案卷 ${cases.length} · ${health.llm_ready ? 'LLM 就绪' : '确定性引擎'}${l1Ok ? ` · L1✓(${health.ppstructure.recommended_engine || 'ok'})` : ' · L1—(sidecar 未启动)'}`;
+    healthEl.title = l1Ok ? 'L1 解析 sidecar 已连接' : '启动: cd prototype/ppstructure && bash run.sh';
     $('#caseSelect').innerHTML = cases.map(c => {
       const lbl = CASE_LABELS[c.id] || c.id;
       const vio = c.violations === 0 ? '干净' : `${c.violations}违规`;
