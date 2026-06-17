@@ -3,6 +3,7 @@
 const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
+const { isReadonlyRuntime } = require('./runtime-env');
 
 const DATA_DIR = path.resolve(__dirname, '../../data');
 const REGISTRY_PATH = path.join(DATA_DIR, 'case_registry.json');
@@ -19,6 +20,7 @@ function loadRegistry() {
 }
 
 function saveRegistry(reg) {
+  if (isReadonlyRuntime()) return;
   fs.writeFileSync(REGISTRY_PATH, JSON.stringify(reg, null, 2), 'utf8');
 }
 

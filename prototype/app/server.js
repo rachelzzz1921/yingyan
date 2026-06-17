@@ -47,6 +47,7 @@ const { buildGovernanceSnapshot } = require('./engine/governance-snapshot');
 const govSync = require('./engine/governance-sync');
 const { adminTokenConfigured, enforceAdmin } = require('./engine/admin-auth');
 const { runParseQA } = require('./engine/parse-qa');
+const { isReadonlyRuntime } = require('./engine/runtime-env');
 
 const PORT = process.env.PORT || 3700;
 const DATA = path.resolve(__dirname, '../data');
@@ -173,8 +174,10 @@ function runBatchCase(caseId, mode) {
 }
 
 function loadAll() {
-  bootstrapRegistry(DATA);
-  syncRegistryFromCases(DATA);
+  if (!isReadonlyRuntime()) {
+    bootstrapRegistry(DATA);
+    syncRegistryFromCases(DATA);
+  }
   const { cases, expectedByCase } = discoverAllCases(DATA);
   const record = cases.main || cases[Object.keys(cases)[0]];
   const rulesDoc = enrichRulesDoc(loadJSON(path.join(DATA, 'rules/rules.json')));
