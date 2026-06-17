@@ -66,7 +66,8 @@ if (optionalMissing.length) {
 const bundleChecks = [
   'prototype/app/bundle/docs/ROADMAP.md',
   'prototype/app/bundle/prototype/docs/TASKS.md',
-  'prototype/app/bundle/yhf/README.md',
+  'prototype/app/bundle/yhf/overview.md',
+  'prototype/app/bundle/eval/overview.md',
 ];
 const bundleMissing = bundleChecks.filter((rel) => !fs.existsSync(path.join(ROOT, rel)));
 if (bundleMissing.length) {

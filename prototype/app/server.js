@@ -55,8 +55,15 @@ const PUBLIC = path.resolve(__dirname, 'public');
 const REPO_ROOT = path.resolve(__dirname, '../..');
 const BUNDLE_ROOT = path.resolve(__dirname, 'bundle');
 
+/** Vercel 函数包会忽略 README.md，构建时改名为 overview.md */
+const BUNDLE_FILE_ALIASES = {
+  'eval/README.md': 'eval/overview.md',
+  'yhf/README.md': 'yhf/overview.md',
+};
+
 function resolveRepoFile(rel) {
-  const bundled = path.join(BUNDLE_ROOT, rel);
+  const bundledRel = BUNDLE_FILE_ALIASES[rel] || rel;
+  const bundled = path.join(BUNDLE_ROOT, bundledRel);
   if (fs.existsSync(bundled)) return bundled;
   return path.join(REPO_ROOT, rel);
 }

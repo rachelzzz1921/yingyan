@@ -15,20 +15,20 @@ const PUBLIC = path.join(APP, 'public');
 const DEPLOY_SEEDS = path.join(DATA, 'deploy');
 const BUNDLE = path.join(APP, 'bundle');
 
-/** 与 server.js DOC_CATALOG 及看板依赖的仓库文件对齐 */
+/** 与 server.js DOC_CATALOG 及看板依赖的仓库文件对齐（README.md 在 Vercel 函数包中会被忽略，复制时改名） */
 const REPO_FILES_FOR_BUNDLE = [
-  'docs/ROADMAP.md',
-  'docs/00-项目主文档.md',
-  'docs/06-Pitch文案.md',
-  'docs/07-架构升级蓝图.md',
-  'prototype/docs/TASKS.md',
-  'yhf/README.md',
-  'eval/README.md',
-  'eval/OPEN_ISSUES.md',
-  'assets/brand/DESIGN.md',
-  'assets/brand/DESIGN-v2-gpt.md',
-  'assets/brand/APPLICATION.md',
-  'prompts/品牌元素生成.md',
+  ['docs/ROADMAP.md', 'docs/ROADMAP.md'],
+  ['docs/00-项目主文档.md', 'docs/00-项目主文档.md'],
+  ['docs/06-Pitch文案.md', 'docs/06-Pitch文案.md'],
+  ['docs/07-架构升级蓝图.md', 'docs/07-架构升级蓝图.md'],
+  ['prototype/docs/TASKS.md', 'prototype/docs/TASKS.md'],
+  ['yhf/README.md', 'yhf/overview.md'],
+  ['eval/README.md', 'eval/overview.md'],
+  ['eval/OPEN_ISSUES.md', 'eval/OPEN_ISSUES.md'],
+  ['assets/brand/DESIGN.md', 'assets/brand/DESIGN.md'],
+  ['assets/brand/DESIGN-v2-gpt.md', 'assets/brand/DESIGN-v2-gpt.md'],
+  ['assets/brand/APPLICATION.md', 'assets/brand/APPLICATION.md'],
+  ['prompts/品牌元素生成.md', 'prompts/品牌元素生成.md'],
 ];
 
 function copyFile(src, dest) {
@@ -65,8 +65,8 @@ function seedRuntimeData() {
 function syncRuntimeBundle() {
   if (fs.existsSync(BUNDLE)) fs.rmSync(BUNDLE, { recursive: true, force: true });
   let n = 0;
-  for (const rel of REPO_FILES_FOR_BUNDLE) {
-    if (copyFile(path.join(ROOT, rel), path.join(BUNDLE, rel))) n++;
+  for (const [srcRel, destRel] of REPO_FILES_FOR_BUNDLE) {
+    if (copyFile(path.join(ROOT, srcRel), path.join(BUNDLE, destRel))) n++;
   }
   const evalResultsSrc = path.join(ROOT, 'eval/results');
   const evalResultsDest = path.join(BUNDLE, 'eval/results');
