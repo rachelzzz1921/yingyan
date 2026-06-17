@@ -62,15 +62,63 @@ const DOC_LINKS = {
 let cache = {};
 let currentView = 'overview';
 let docFullMode = {};
+let loadDataPromise = null;
+const DASH_CACHE_KEY = 'yingyan_dashboard_cache_v1';
 
 function esc(s) {
   return String(s ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 }
 
-async function fetchJSON(url) {
-  const r = await fetch(url);
+async function fetchJSON(url, timeoutMs = 4000) {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), timeoutMs);
+  let r;
+  try {
+    r = await fetch(url, { signal: controller.signal });
+  } finally {
+    clearTimeout(timer);
+  }
   if (!r.ok) throw new Error(r.status + ' ' + url);
   return r.json();
+}
+
+function saveCacheSnapshot() {
+  try {
+    const snapshot = {
+      bench: cache.bench,
+      yhf: cache.yhf,
+      health: cache.health,
+      inst: cache.inst,
+      gov: cache.gov,
+      tasks: cache.tasks,
+      kb: cache.kb,
+      maturity: cache.maturity,
+      at: cache.at instanceof Date ? cache.at.toISOString() : new Date().toISOString(),
+      _coreLoaded: !!cache._coreLoaded,
+    };
+    sessionStorage.setItem(DASH_CACHE_KEY, JSON.stringify(snapshot));
+  } catch (_) {}
+}
+
+function hydrateCacheSnapshot() {
+  try {
+    const raw = sessionStorage.getItem(DASH_CACHE_KEY);
+    if (!raw) return;
+    const snapshot = JSON.parse(raw);
+    if (!snapshot || !snapshot._coreLoaded) return;
+    cache = {
+      bench: snapshot.bench,
+      yhf: snapshot.yhf,
+      health: snapshot.health,
+      inst: snapshot.inst,
+      gov: snapshot.gov,
+      tasks: snapshot.tasks,
+      kb: snapshot.kb,
+      maturity: snapshot.maturity,
+      at: new Date(snapshot.at || Date.now()),
+      _coreLoaded: true,
+    };
+  } catch (_) {}
 }
 
 function mdToHtml(src) {
@@ -169,19 +217,51 @@ function navigate(id) {
   history.replaceState(null, '', `#${id}`);
 }
 
-async function loadData() {
-  const [bench, yhf, health, inst, gov, tasks, kb, maturity] = await Promise.all([
-    fetchJSON('/api/bench'),
-    fetchJSON('/api/yhf'),
-    fetchJSON('/api/health'),
-    fetchJSON('/api/institution'),
-    fetchJSON('/api/rule-governance'),
-    fetchJSON('/api/tasks').catch(() => ({ tasks: [], summary: {}, meta: {} })),
-    fetchJSON('/api/kb/status').catch(() => null),
-    fetchJSON('/api/maturity').catch(() => null),
+function fallbackCoreData() {
+  return {
+    bench: { cases: [], meta: { total_cases: 0, clean_false_positive_total: 0, avg_latency_ms: 0, red_line_clean_zero_fp: false } },
+    yhf: { overall_pass: false, generated: Date.now(), engine: { gates: {}, cases: [], meta: { total_cases: 0, avg_latency_ms: 0, clean_false_positive_total: 0 } }, shadow: null, prompt: null, rule: { missing_test_cases: 0, total_rules: 0, core_rules: [] } },
+    health: { rules: 0, rules_count: 0, llm_ready: false, llm_provider: '' },
+    inst: { hospital: '机构画像', summary: { audited_cases: 0, suspected_total: 0, amount_total: 0, clean_pass: 0 }, top_rules: [] },
+    gov: { model: 'local', summary: { total_rules: 0, shadow: 0, deprecated: 0 }, entries: [] },
+    tasks: { tasks: [], summary: {}, meta: {} },
+    kb: null,
+    maturity: null,
+  };
+}
+
+async function loadData(force = false) {
+  if (loadDataPromise && !force) return loadDataPromise;
+  const run = (async () => {
+  const fallback = fallbackCoreData();
+  const settled = await Promise.allSettled([
+    fetchJSON('/api/bench', 3500),
+    fetchJSON('/api/yhf', 3500),
+    fetchJSON('/api/health', 2500),
+    fetchJSON('/api/institution', 3000),
+    fetchJSON('/api/rule-governance', 3000),
+    fetchJSON('/api/tasks', 2500),
+    fetchJSON('/api/kb/status', 2500),
+    fetchJSON('/api/maturity', 2500),
   ]);
-  cache = { bench, yhf, health, inst, gov, tasks, kb, maturity, at: new Date() };
+  const [bench, yhf, health, inst, gov, tasks, kb, maturity] = settled.map((r, i) => {
+    const keyOrder = ['bench', 'yhf', 'health', 'inst', 'gov', 'tasks', 'kb', 'maturity'];
+    const key = keyOrder[i];
+    return r.status === 'fulfilled' ? r.value : fallback[key];
+  });
+  cache = { bench, yhf, health, inst, gov, tasks, kb, maturity, at: new Date(), _coreLoaded: true };
+  saveCacheSnapshot();
   return cache;
+  })();
+  loadDataPromise = run.finally(() => { loadDataPromise = null; });
+  return loadDataPromise;
+}
+
+function warmCoreDataInBackground() {
+  if (cache._coreLoaded || loadDataPromise) return;
+  loadData().then(() => {
+    if (document.getElementById('dashContent')) renderView(currentView);
+  }).catch(() => {});
 }
 
 function maturitySectionHTML(m) {
@@ -881,9 +961,17 @@ function docPageShell(title, excerpt, bodyHtml, docId, doc) {
 
 async function renderView(id) {
   const root = document.getElementById('dashContent');
-  root.innerHTML = '<div class="card"><p class="muted">加载中…</p></div>';
+  const needsCoreData = new Set(['overview', 'bench', 'batch', 'yhf', 'institution', 'governance', 'gate_report']);
+  const hasCore = !!cache._coreLoaded;
+  if (!hasCore && needsCoreData.has(id)) {
+    if (!cache.bench) cache = { ...fallbackCoreData(), at: new Date(), _coreLoaded: false };
+    warmCoreDataInBackground();
+    if (!root.innerHTML.trim()) root.innerHTML = '<div class="card"><p class="muted">加载中…</p></div>';
+  } else {
+    root.innerHTML = '<div class="card"><p class="muted">加载中…</p></div>';
+  }
   try {
-    if (!cache.bench) await loadData();
+    if (needsCoreData.has(id) && !cache._coreLoaded && !cache.bench) await loadData();
     const item = NAV.find(n => n.id === id);
     let html = '';
     if (id === 'overview') html = overviewHTML(cache);
@@ -1004,5 +1092,6 @@ function navigateFromHash() {
 window.addEventListener('hashchange', navigateFromHash);
 window.addEventListener('popstate', navigateFromHash);
 
+hydrateCacheSnapshot();
 navigateFromHash();
 setInterval(refreshAll, 60000);

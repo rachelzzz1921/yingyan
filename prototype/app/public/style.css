@@ -156,7 +156,8 @@ h1,h2,h3{font-weight:700;letter-spacing:-.02em}
 @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
 
 /* 报告 */
-.report{padding:16px 20px;overflow-y:auto;flex:1}
+.report{padding:16px 20px;overflow-y:auto;flex:1;position:relative}
+.scan-overlay{position:absolute;inset:0;z-index:5;background:#fff;overflow:auto}
 .report-pager{display:flex;flex-direction:column;height:100%}
 .report-pager-nav{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px}
 .pager-tab{font-size:12px;padding:6px 10px;border:1px solid var(--line);border-radius:8px;background:#fff;color:var(--muted);cursor:pointer}
@@ -308,6 +309,13 @@ h1,h2,h3{font-weight:700;letter-spacing:-.02em}
 @keyframes fill{to{width:100%}}
 .scan-log{font-size:12px;color:var(--muted);text-align:left;max-width:340px;margin:0 auto;font-family:ui-monospace,monospace}
 .scan-log div{opacity:0;animation:appear .3s forwards}
+.scan-wait{font-size:12px;margin-top:10px;text-align:center}
+.llm-shadow-banner{display:flex;align-items:center;gap:8px;font-size:12.5px;padding:9px 13px;border-radius:9px;margin-bottom:12px;line-height:1.5}
+.llm-shadow-banner[data-state="pending"]{background:#eef3fb;border:1px solid #cdddf3;color:#2a5599}
+.llm-shadow-banner[data-state="done"]{background:#ecfdf5;border:1px solid #c5ebd9;color:#0d7a52}
+.llm-shadow-banner[data-state="failed"]{background:var(--amber-bg,#fdf6e7);border:1px solid #f0d9a8;color:#7a4d00}
+.llm-shadow-spin{width:12px;height:12px;border-radius:50%;border:2px solid #b9cdec;border-top-color:#2a5599;animation:llmspin .8s linear infinite;flex:none}
+@keyframes llmspin{to{transform:rotate(360deg)}}
 
 @keyframes appear{to{opacity:1}}
 /* ===== v2.0 UI ===== */

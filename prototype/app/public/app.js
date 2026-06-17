@@ -171,6 +171,10 @@ let MODE = 'audit', INJECT = false, CURRENT_CASE = 'main';
 let RECT_MAP = {}, REPORT_VIEW = 'report', PRECIP_DATA = { items: [], drafts: [] };
 let REPORT_PAGE = 0, FINDING_PAGE = 0;
 let LAST_RUN_PROFILE = 'standard';
+let APP_HEALTH = { llm_ready: false };
+let scanWaitTimer = null;
+let AUDIT_RUN_ID = 0;
+let llmShadowTimer = null;
 const REPORT_PAGES = [
   { id: 'overview', label: '总览' },
   { id: 'findings', label: '疑点' },
@@ -326,6 +330,7 @@ async function init() {
       fetch('/api/cases').then(r => r.json()),
       fetch('/api/rule-governance').then(r => r.json()).catch(() => ({ entries: [] })),
     ]);
+    APP_HEALTH = health;
     RULE_GOV = Object.fromEntries((gov.entries || []).map(e => [e.rule_id, e]));
     RULES = rules;
     refreshRuleMap();
@@ -534,18 +539,116 @@ const pill = (c) => `<span class="pill ${/乙|甲/.test(c) ? 'yi' : ''}">${esc(c
 const flagCell = (f) => /升高|偏低|异常/.test(f) ? `<span style="color:var(--red)">${esc(f)}</span>` : `<span class="muted">${esc(f)}</span>`;
 
 // ---------- 运行稽核 ----------
+const REPORT_PAGER_SHELL = `<div class="report-pager" id="reportPager">
+  <div class="report-pager-nav" id="reportPagerNav"></div>
+  <div class="report-pager-body" id="reportPagerBody">
+    <section class="report-page" id="page-overview"></section>
+    <section class="report-page hidden" id="page-findings"></section>
+    <section class="report-page hidden" id="page-shield"></section>
+    <section class="report-page hidden" id="page-detail"></section>
+  </div>
+  <div class="report-pager-foot">
+    <button class="v2btn" id="btnPagePrev" type="button">↑ 上一页</button>
+    <span class="muted" id="pageHint">总览</span>
+    <button class="v2btn accent" id="btnPageNext" type="button">下一页 ↓</button>
+  </div>
+</div>`;
+
+function ensureReportPagerShell() {
+  const rb = $('#reportBody');
+  if (!rb) return;
+  if ($('#reportPagerNav') && $('#page-overview')) return;
+  rb.innerHTML = REPORT_PAGER_SHELL;
+  bindReportPagerControls();
+}
+
+function bindReportPagerControls() {
+  const prev = $('#btnPagePrev');
+  const next = $('#btnPageNext');
+  if (prev) prev.onclick = () => switchReportPage(REPORT_PAGE - 1);
+  if (next) next.onclick = () => switchReportPage(REPORT_PAGE + 1);
+}
+
+function showScanOverlay() {
+  ensureReportPagerShell();
+  const rb = $('#reportBody');
+  rb.classList.remove('hidden');
+  let ov = $('#scanOverlay');
+  if (!ov) {
+    ov = document.createElement('div');
+    ov.id = 'scanOverlay';
+    ov.className = 'scan-overlay';
+    rb.appendChild(ov);
+  }
+  ov.innerHTML = scanningHTML() + '<p class="scan-wait muted" id="scanWait">准备启动引擎…</p>';
+  ov.classList.remove('hidden');
+}
+
+function hideScanOverlay() {
+  $('#scanOverlay')?.classList.add('hidden');
+}
+
+function scanAppend(msg) {
+  const log = $('#scanLog');
+  if (!log) return;
+  const d = document.createElement('div');
+  d.style.animationDelay = '0s';
+  d.textContent = '› ' + msg;
+  log.appendChild(d);
+}
+
+function startScanWaitTicker(label, hint) {
+  stopScanWaitTicker();
+  const t0 = Date.now();
+  scanAppend(label + (hint ? `（${hint}）` : ''));
+  scanWaitTimer = setInterval(() => {
+    const sec = Math.floor((Date.now() - t0) / 1000);
+    const waitEl = $('#scanWait');
+    if (waitEl) waitEl.textContent = `引擎计算中… 已等待 ${sec}s`;
+  }, 500);
+}
+
+function stopScanWaitTicker() {
+  if (scanWaitTimer) {
+    clearInterval(scanWaitTimer);
+    scanWaitTimer = null;
+  }
+}
+
+async function auditFetch(query, body, timeoutMs) {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), timeoutMs);
+  try {
+    const res = await fetch('/api/audit' + query, {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      signal: controller.signal,
+      body: JSON.stringify(body),
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || res.statusText || '稽核失败');
+    return data;
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
 async function runAudit(opts = {}) {
   const btn = $('#btnAudit');
   const btnBar = $('#btnAuditBar');
+  const btnSuper = $('#btnSuperAudit');
   const rag = !!opts.rag;
+  // shadow 提速：LLM/超级增强先用「确定性+RAG」秒出首屏，真·LLM 作为影子后台跑完再静默合并
+  const wantsLLM = !!(opts.llm || opts.super);
+  const myRunId = ++AUDIT_RUN_ID;
+  if (llmShadowTimer) { clearInterval(llmShadowTimer); llmShadowTimer = null; }
   LAST_RUN_PROFILE = opts.super ? 'super' : (opts.llm ? 'llm' : (rag ? 'rag' : (INJECT ? 'inject' : 'standard')));
-  btn.disabled = true; btn.textContent = opts.llm ? 'LLM 分析中…' : (rag ? 'RAG 增强稽核中…' : '稽核中…');
-  if (btnBar) { btnBar.disabled = true; btnBar.textContent = rag ? 'RAG 稽核中…' : '稽核中…'; }
+  btn.disabled = true; btn.textContent = opts.llm ? 'LLM 分析中…' : (opts.super ? '超级增强中…' : (rag ? 'RAG 增强稽核中…' : '稽核中…'));
+  if (btnBar) { btnBar.disabled = true; btnBar.textContent = opts.super ? '超级增强中…' : (rag ? 'RAG 稽核中…' : '稽核中…'); }
+  if (btnSuper) btnSuper.disabled = true;
   setWorkflowStep(2);
-  $('#reportEmpty').classList.add('hidden'); $('#reportBody').classList.add('hidden');
-  // 扫描动画
-  const rb = $('#reportBody'); rb.classList.remove('hidden');
-  rb.innerHTML = scanningHTML();
+  $('#reportEmpty').classList.add('hidden');
+  showScanOverlay();
   const logEl = $('#scanLog');
   const steps = ['加载材料包 · 多模态解析 {费用行, 医嘱项, 病程文本, 检验/病理报告}…',
     '跑 F 类 L1 确定性规则（时间/数量/互斥/频次）建立校验锚点…',
@@ -555,42 +658,117 @@ async function runAudit(opts = {}) {
     '命中疑点 → 强制取证（回查原文定位）→ 三要素门禁…',
     '误报防控：核对除外情形（贝伐无需靶点 / 放化疗周期白名单）…',
     '风险分级、生成结构化报告…'];
-  for (let i = 0; i < steps.length; i++) {
-    await sleep(150);
-    const d = document.createElement('div'); d.style.animationDelay = '0s'; d.textContent = '› ' + steps[i]; logEl.appendChild(d);
-  }
-  // 调接口（带模式 + 注入开关）
+  // 首屏走「即时路」：super→mode=super（含RAG）；llm→标准（秒出）；其余按原模式
+  const fastQ = opts.super ? '?mode=super' : (rag ? '?rag=1' : (MODE === 'exam' ? '?mode=exam' : ''));
+  const fastBody = { inject: INJECT || !!opts.super, caseId: CURRENT_CASE, rag: !!opts.super || rag };
+  const fastTimeout = (opts.super || rag) ? 30000 : 15000;
+  const waitHint = opts.super ? 'RAG + 对抗防护融合' : (rag ? 'RAG 向量检索中' : (opts.llm ? '先出确定性首屏，LLM 后台分析' : '规则引擎'));
+  startScanWaitTicker('已提交稽核任务', waitHint);
+  const fastPromise = auditFetch(fastQ, fastBody, fastTimeout);
   try {
-    const q = opts.llm ? '?mode=llm' : (rag ? '?rag=1' : (MODE === 'exam' ? '?mode=exam' : ''));
-    if (opts.llm) { const log = $('#scanLog'); if (log) { const d = document.createElement('div'); d.textContent = '› 🧠 真·LLM Agent 读病历自由文本推理中（稽核→CoVe→控辩裁，多次模型调用，较慢）…'; log.appendChild(d); } }
-    if (rag) { const log = $('#scanLog'); if (log) { const d = document.createElement('div'); d.textContent = '› 📚 RAG 语义检索：案卷关键词 → pgvector 召回 KB1/KB2/问题清单条目…'; log.appendChild(d); } }
-    const report = await fetch('/api/audit' + q, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ inject: INJECT, caseId: CURRENT_CASE, rag: !!opts.super || rag }) }).then(r => r.json());
-    if (opts.super && !report.report_meta.real_agent) {
-      const llm = await fetch('/api/audit?mode=llm', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ inject: INJECT, caseId: CURRENT_CASE }) }).then(r => r.json());
-      report.report_meta.super_llm = llm?.report_meta?.real_agent ? 'ok' : 'fallback';
-      report.report_meta.super_fused = true;
-      report.report_meta.engine_mode = (llm?.report_meta?.real_agent ? '超级增强：LLM+RAG+对抗防护' : '超级增强：RAG+对抗防护（LLM未启用）');
-    } else if (opts.super) {
-      report.report_meta.super_fused = true;
-      report.report_meta.engine_mode = '超级增强：LLM+RAG+对抗防护';
+    for (let i = 0; i < steps.length; i++) {
+      await sleep(80);
+      if (logEl) {
+        const d = document.createElement('div'); d.style.animationDelay = '0s'; d.textContent = '› ' + steps[i]; logEl.appendChild(d);
+      }
     }
+    if (opts.super) scanAppend('⚡ 超级增强：RAG 召回 + 注入对抗 + 规则合议…');
+    else if (rag) scanAppend('📚 RAG 语义检索：案卷关键词 → pgvector 召回 KB 条目…');
+    if (wantsLLM) scanAppend('🧠 真·LLM 语义分析转入后台影子运行（先看确定性结果，完成后自动合并）…');
+    const report = await fastPromise;
+    stopScanWaitTicker();
+    if (myRunId !== AUDIT_RUN_ID) return;
+    if (!report?.report_meta) throw new Error('服务端返回格式异常');
     INJECT = false;
+    if (wantsLLM) report.report_meta.llm_shadow = 'pending';
     REPORT = report;
     FLAGGED_LINES = collectFlaggedLines(report);
     if (MODE === 'exam') await loadRectification(CURRENT_CASE);
     if (MODE === 'exam') await loadPrecipitationData();
-    await sleep(250);
+    await sleep(150);
     REPORT_PAGE = 0;
     FINDING_PAGE = 0;
+    hideScanOverlay();
     renderReport(report);
     renderTabs();
     setWorkflowStep(3);
+    if (wantsLLM) {
+      setLlmShadowBanner('pending', '🧠 真·LLM 语义分析后台运行中…（通常 1–2 分钟，完成后自动更新报告）');
+      launchLlmShadow(myRunId, { inject: fastBody.inject, caseId: CURRENT_CASE, fused: !!opts.super });
+    }
   } catch (e) {
-    rb.innerHTML = `<div class="empty">稽核失败：${esc(e.message)}</div>`;
+    stopScanWaitTicker();
+    if (myRunId !== AUDIT_RUN_ID) return;
+    hideScanOverlay();
+    const rb = $('#reportBody');
+    const msg = e.name === 'AbortError'
+      ? '稽核超时：接口响应过慢，请稍后重试或改用标准稽核'
+      : e.message;
+    if (rb) {
+      ensureReportPagerShell();
+      rb.classList.remove('hidden');
+      $('#page-overview').innerHTML = `<div class="empty">稽核失败：${esc(msg)}</div>`;
+      REPORT_PAGES.forEach((p, i) => {
+        const el = document.getElementById(`page-${p.id}`);
+        if (el) el.classList.toggle('hidden', i !== 0);
+      });
+    }
     setWorkflowStep(1);
   }
   btn.disabled = false; btn.textContent = '▶ 重新稽核';
   if (btnBar) { btnBar.disabled = false; btnBar.textContent = '▶ 开始稽核'; }
+  if (btnSuper) btnSuper.disabled = false;
+}
+
+// LLM 影子运行：后台拉真·LLM 报告，完成后静默合并进当前报告（带运行号防竞态）
+async function launchLlmShadow(runId, { inject, caseId, fused }) {
+  const t0 = Date.now();
+  if (llmShadowTimer) clearInterval(llmShadowTimer);
+  llmShadowTimer = setInterval(() => {
+    if (runId !== AUDIT_RUN_ID) { clearInterval(llmShadowTimer); llmShadowTimer = null; return; }
+    const sec = Math.floor((Date.now() - t0) / 1000);
+    setLlmShadowBanner('pending', `🧠 真·LLM 语义分析后台运行中… 已等待 ${sec}s（完成后自动更新报告）`);
+  }, 1000);
+  try {
+    const llm = await auditFetch('?mode=llm', { inject, caseId }, 180000);
+    if (llmShadowTimer) { clearInterval(llmShadowTimer); llmShadowTimer = null; }
+    if (runId !== AUDIT_RUN_ID) return;
+    if (!llm?.report_meta) throw new Error('LLM 返回格式异常');
+    if (!llm.report_meta.real_agent) {
+      const why = llm.report_meta.llm_needs_key ? '（需配置 ANTHROPIC_API_KEY，已保留确定性结果）' : '（LLM 路径回退，已保留确定性结果）';
+      setLlmShadowBanner('failed', `⚠ 真·LLM 语义分析未启用${why}`);
+      return;
+    }
+    llm.report_meta.llm_shadow = 'done';
+    llm.report_meta.super_fused = fused || llm.report_meta.super_fused;
+    llm.report_meta.super_llm = 'ok';
+    REPORT = llm;
+    FLAGGED_LINES = collectFlaggedLines(llm);
+    REPORT_PAGE = 0;
+    FINDING_PAGE = 0;
+    renderReport(llm);
+    renderTabs();
+    setLlmShadowBanner('done', `✅ 真·LLM 语义分析已完成并合并（耗时 ${Math.round((Date.now() - t0) / 1000)}s · ${esc(llm.report_meta.llm_provider || 'LLM')}）`);
+  } catch (e) {
+    if (llmShadowTimer) { clearInterval(llmShadowTimer); llmShadowTimer = null; }
+    if (runId !== AUDIT_RUN_ID) return;
+    const msg = e.name === 'AbortError' ? '后台分析超时' : e.message;
+    setLlmShadowBanner('failed', `⚠ 真·LLM 语义分析未完成：${esc(msg)}（已保留确定性结果）`);
+  }
+}
+
+function setLlmShadowBanner(state, msg) {
+  const host = document.getElementById('page-overview');
+  if (!host) return;
+  let el = document.getElementById('llmShadowBanner');
+  if (!el) {
+    el = document.createElement('div');
+    el.id = 'llmShadowBanner';
+    el.className = 'llm-shadow-banner';
+    host.prepend(el);
+  }
+  el.dataset.state = state;
+  el.innerHTML = `${state === 'pending' ? '<span class="llm-shadow-spin"></span>' : ''}<span>${msg}</span>`;
 }
 
 function collectFlaggedLines(report) {
@@ -604,6 +782,9 @@ function collectFlaggedLines(report) {
 
 let VIEW_EXAM = false;
 function renderReport(report) {
+  ensureReportPagerShell();
+  hideScanOverlay();
+  $('#reportBody')?.classList.remove('hidden');
   const m = report.report_meta, s = m.summary;
   const exam = m.panel === '体检'; VIEW_EXAM = exam;
   $('#engineMode').textContent = m.engine_mode || '';
@@ -661,8 +842,10 @@ function renderReport(report) {
     </div>
     ${findingCard(cur)}
   ` : `<div class="empty">本案未命中疑点</div>`;
-  $('#btnFindingPrev')?.addEventListener('click', () => { FINDING_PAGE = Math.max(0, FINDING_PAGE - 1); renderReport(report); switchReportPage(1, true); });
-  $('#btnFindingNext')?.addEventListener('click', () => { FINDING_PAGE = Math.min(findings.length - 1, FINDING_PAGE + 1); renderReport(report); switchReportPage(1, true); });
+  const prevFinding = $('#btnFindingPrev');
+  const nextFinding = $('#btnFindingNext');
+  if (prevFinding) prevFinding.onclick = () => { FINDING_PAGE = Math.max(0, FINDING_PAGE - 1); renderReport(report); switchReportPage(1, true); };
+  if (nextFinding) nextFinding.onclick = () => { FINDING_PAGE = Math.min(findings.length - 1, FINDING_PAGE + 1); renderReport(report); switchReportPage(1, true); };
 
   pShield.innerHTML = `<div class="findings-section"><h3 class="sect-title green"><img src="/brand/icons/ok.svg" alt="" width="18" height="18" style="vertical-align:-3px"> 正确「不报」（误报防控 · 宁漏报不误报）</h3><div id="distractorList">${(report.correctly_not_flagged || []).map(distractorCard).join('')}</div></div>`;
   pDetail.innerHTML = `
@@ -1281,8 +1464,7 @@ const btnRag = $('#btnRag');
 if (btnRag) btnRag.onclick = () => runAudit({ rag: true });
 const btnSuperAudit = $('#btnSuperAudit');
 if (btnSuperAudit) btnSuperAudit.onclick = () => { INJECT = true; runAudit({ super: true, rag: true }); };
-$('#btnPagePrev')?.addEventListener('click', () => switchReportPage(REPORT_PAGE - 1));
-$('#btnPageNext')?.addEventListener('click', () => switchReportPage(REPORT_PAGE + 1));
+bindReportPagerControls();
 const btnIngest = $('#btnIngest');
 if (btnIngest) btnIngest.onclick = showIngest;
 $('#btnFacts').onclick = showFacts;

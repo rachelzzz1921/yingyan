@@ -53,6 +53,24 @@ const DATA = path.resolve(__dirname, '../data');
 const PUBLIC = path.resolve(__dirname, 'public');
 const REPO_ROOT = path.resolve(__dirname, '../..');
 
+const _apiCache = {};
+function cachedAsync(key, ttlMs, fn) {
+  const slot = _apiCache[key] || (_apiCache[key] = { at: 0, value: null, promise: null });
+  const now = Date.now();
+  if (slot.value != null && now - slot.at < ttlMs) return Promise.resolve(slot.value);
+  if (slot.promise) return slot.promise;
+  slot.promise = Promise.resolve(fn()).then((v) => {
+    slot.value = v;
+    slot.at = Date.now();
+    slot.promise = null;
+    return v;
+  }).catch((e) => {
+    slot.promise = null;
+    throw e;
+  });
+  return slot.promise;
+}
+
 const DOC_CATALOG = {
   roadmap: { file: 'docs/ROADMAP.md', title: '迭代路线图', group: '规划' },
   tasks: { file: 'prototype/docs/TASKS.md', title: '任务台账', group: '规划', excerptLines: 180 },
@@ -630,7 +648,7 @@ const server = http.createServer(async (req, res) => {
       });
     }
     if (p === '/api/kb2') return sendJSON(res, DB.kb2);
-    if (p === '/api/kb/status') return sendJSON(res, await kbStatus(DATA));
+    if (p === '/api/kb/status') return sendJSON(res, await cachedAsync('kbStatus', 60000, () => kbStatus(DATA)));
     if (p === '/api/kb/search' || p === '/api/kb/semantic') {
       const q = url.searchParams.get('q') || '';
       const layer = url.searchParams.get('layer') || null;
@@ -1054,6 +1072,7 @@ const server = http.createServer(async (req, res) => {
 
     if (p === '/api/maturity') {
       try {
+        const payload = await cachedAsync('maturity', 120000, async () => {
         const { runYhfGate } = require(path.resolve(__dirname, '../../yhf/index.js'));
         const { runPromptHarness } = require(path.resolve(__dirname, '../../yhf/harness/l1-prompt'));
         const yhf = await runYhfGate({ layers: ['engine', 'rag', 'shadow'] });
@@ -1074,7 +1093,7 @@ const server = http.createServer(async (req, res) => {
           included_after_2025: !!asOfLate.policyTexts[jiangsuRef],
           pass: !asOfEarly.policyTexts[jiangsuRef] && !!asOfLate.policyTexts[jiangsuRef],
         };
-        return sendJSON(res, {
+        return {
           giac_themes: ['上下文工程(as_of+预算)', '四类评测(YHF)', '合规前置', '垂直ParseQA', 'Intake/L1'],
           g0: yhf.engine?.gates?.G0_clean_zero_fp,
           g4: yhf.rag?.gates?.G4_rag_recall,
@@ -1091,7 +1110,9 @@ const server = http.createServer(async (req, res) => {
           governance_auth: adminTokenConfigured() ? 'token' : 'demo_open',
           governance_remote: await govSync.remoteStatus(),
           l1_production: l1Prod,
+        };
         });
+        return sendJSON(res, payload);
       } catch (e) {
         return sendJSON(res, { error: e.message }, 500);
       }
@@ -1267,6 +1288,41 @@ const server = http.createServer(async (req, res) => {
           report.report_meta.elapsed_ms = Date.now() - t0;
           return sendJSON(res, report);
         }
+      }
+
+      if (mode === 'super') {
+        const caseId = body.caseId || 'main';
+        const rules = rulesWithOverlay(DB.rulesDoc.rules);
+        const overlayIds = Object.keys(precipService.loadRuleOverlay(DATA).patches || {});
+        const ctx = auditContextForRecord(record);
+        let policyTexts = ctx.policyTexts;
+        let policyVerified = ctx.policyVerified;
+        let ragMeta = null;
+        const enriched = await enrichPolicyContext(record, rules, policyTexts, policyVerified);
+        policyTexts = enriched.policyTexts;
+        policyVerified = enriched.policyVerified;
+        ragMeta = { query: enriched.rag_query, hits: enriched.rag_hits };
+        const report = runAudit(record, rules, {
+          policyTexts,
+          policyVerified,
+          parseQuality: ctx.parseQuality,
+          shadowRules: currentShadowRules(),
+          retiredRules: currentRetiredRules(),
+        });
+        if (ragMeta) report.report_meta.rag = ragMeta;
+        report.report_meta.super_fused = true;
+        report.report_meta.super_llm = llmReady() ? 'deferred' : 'fallback';
+        report.report_meta.engine_mode = llmReady()
+          ? '超级增强：RAG+对抗防护+规则合议（LLM 语义请点「真·语义分析」）'
+          : '超级增强：RAG+对抗防护（LLM 未配置）';
+        report.report_meta.analysis_kind = 'deterministic+template+rag';
+        report.report_meta.real_agent = false;
+        report.report_meta.panel = '稽核';
+        report.report_meta.case_id = caseId;
+        if (overlayIds.length) report.report_meta.overlay_rules = overlayIds;
+        report.report_meta.elapsed_ms = Date.now() - t0;
+        report.report_meta.injected = !!body.inject;
+        return sendJSON(res, report);
       }
 
       const caseId = body.caseId || 'main';
