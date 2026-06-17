@@ -1,0 +1,6 @@
+gh-pages-build/
+eval/results/raw/
+eval/results/*.json
+supabase/.temp/
+**/__pycache__/
+.git.local-backup/

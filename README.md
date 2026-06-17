@@ -50,29 +50,24 @@ node server.js
 # 项目看板 http://localhost:3700/dashboard.html
 ```
 
-### GitHub 网站式预览（推送即上线，最简单）
+### 在线预览（Vercel，推荐）
 
-推送 `main` 后，GitHub Actions 自动构建并发布 **GitHub Pages**，浏览器直接打开：
+推送 `main` 后自动部署，或本地一键：
 
-**https://rachelzzz1921.github.io/yingyan/**
+```bash
+npx vercel --prod
+```
 
-| 页面 | 地址 |
-|------|------|
-| 稽核工作台 | `/` |
-| 项目看板 | `/dashboard.html` |
-| 材料导入 | `/intake.html` |
+预览地址：
 
-**一次性启用：** 仓库 **Settings → Pages → Build and deployment → Source: GitHub Actions**。
+- 稽核工作台：**https://yingyan.vercel.app/**
+- 项目看板：**https://yingyan.vercel.app/dashboard.html**
 
-> **重要：** GitHub **免费套餐**下，**私有仓库不能开 Pages**（会报 `Failed to create deployment` / `plan does not support GitHub Pages`）。  
-> 别的项目能直接用 `xxx.github.io`，多半是因为仓库是 **Public**，或账号有 **GitHub Pro**。  
-> 若要坚持私有代码又要网页预览，可选：① 升级 Pro；② 另建一个 **Public** 的 `yingyan-preview` 仓库存静态页（主仓仍 Private）。
+在 Vercel 项目 **Settings → Environment Variables** 可配置 `MINIMAX_API_KEY` / `ANTHROPIC_API_KEY` 以启用真·LLM 稽核（未配置时自动走确定性引擎）。
 
-说明：
+### GitHub Pages（备选）
 
-- Pages 站点 URL 可被直接访问（演示用静态快照）；写入类 API 在 Pages 上为只读。
-- 完整交互（稽核写入、批量队列、治理同步等）仍用本地 `node server.js`。
-- 本地试构建：`cd prototype/app && npm ci && npm run build:rules && node ../../scripts/build-github-pages.mjs`
+私有仓库免费套餐无法开 Pages，见 README 说明。公开仓库可用 Actions 发布到 `github.io/yingyan`。
 
 ### Prompt 评测
 ```bash

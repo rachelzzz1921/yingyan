@@ -1434,9 +1434,14 @@ const server = http.createServer(async (req, res) => {
   }
 });
 
+if (require.main === module) {
 server.listen(PORT, async () => {
   await refreshLiveKB();
   console.log(`\n  鹰眼·稽核工作台已启动`);
   console.log(`  ▸ http://localhost:${PORT}`);
   console.log(`  ▸ 规则 ${DB.rulesDoc.rules.length} 条 | KB ${DB.kbSource || 'json'} | LLM ${llmReady() ? providerName() : '未配置(确定性引擎)'}\n`);
 });
+} else {
+  refreshLiveKB().catch((e) => console.warn('[kb] refreshLiveKB:', e.message));
+  module.exports = server;
+}
