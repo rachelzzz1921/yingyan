@@ -5,7 +5,8 @@
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
-    "build:rules": "node build-rules.js"
+    "build:rules": "node build-rules.js",
+    "build:vercel": "node ../../scripts/prepare-vercel.mjs"
   },
   "license": "MIT",
   "devDependencies": {

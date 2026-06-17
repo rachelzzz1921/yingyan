@@ -1,0 +1,27 @@
+{
+  "entries": {
+    "main::F-main-001": {
+      "case_id": "main",
+      "finding_id": "F-main-001",
+      "rule_id": "T-201",
+      "deadline": "2026-06-22",
+      "status": "整改中",
+      "updated_at": "2026-06-15T03:49:49.252Z"
+    },
+    "main::F-main-002": {
+      "case_id": "main",
+      "finding_id": "F-main-002",
+      "rule_id": "T-201",
+      "rule_name": "",
+      "deadline": "2026-06-20",
+      "status": "整改中",
+      "judgment": "不成立",
+      "judgment_reason": "外院已做基因检测，本包缺报告应降为线索",
+      "rectify_note": "",
+      "owner": "",
+      "submitted": true,
+      "updated_at": "2026-06-15T04:19:29.667Z",
+      "submitted_at": "2026-06-15T04:19:29.670Z"
+    }
+  }
+}

@@ -4,6 +4,7 @@
 'use strict';
 const fs = require('fs');
 const path = require('path');
+const { isReadonlyRuntime } = require('./runtime-env');
 const { runRejectPrecipitationAgent, runAdoptPrecipitationAgent } = require('./rule-precipitation-agent');
 
 const REJECT_THRESHOLD = 3;
@@ -47,6 +48,7 @@ function loadPrecipQueue(dataDir) {
 }
 
 function savePrecipQueue(dataDir, q) {
+  if (isReadonlyRuntime()) return;
   fs.writeFileSync(precipPaths(dataDir).queue, JSON.stringify(q, null, 2), 'utf8');
 }
 
@@ -55,6 +57,7 @@ function loadRuleOverlay(dataDir) {
 }
 
 function saveRuleOverlay(dataDir, overlay) {
+  if (isReadonlyRuntime()) return;
   fs.writeFileSync(precipPaths(dataDir).overlay, JSON.stringify(overlay, null, 2), 'utf8');
 }
 

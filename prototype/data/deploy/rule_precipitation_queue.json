@@ -1,0 +1,145 @@
+{
+  "reject_items": [
+    {
+      "id": "RP-1781497186477",
+      "rule_id": "T-201",
+      "status": "draft_ready",
+      "trigger": "manual",
+      "created_at": "2026-06-15T04:19:46.477Z",
+      "draft_id": "RD-1781497186477",
+      "track": "reject"
+    },
+    {
+      "id": "RP-R-1781500297271",
+      "rule_id": "A-105",
+      "track": "reject",
+      "status": "draft_ready",
+      "trigger": "audit_reject",
+      "created_at": "2026-06-15T05:11:37.271Z",
+      "draft_id": "RD-R-1781500308804",
+      "updated_at": "2026-06-15T05:11:48.804Z"
+    }
+  ],
+  "adopt_items": [
+    {
+      "id": "RP-A-1781500327741",
+      "rule_id": "B-201",
+      "track": "adopt",
+      "status": "draft_ready",
+      "trigger": "audit_adopt",
+      "created_at": "2026-06-15T05:12:07.741Z",
+      "draft_id": "RD-A-1781500340958",
+      "updated_at": "2026-06-15T05:12:20.958Z"
+    }
+  ],
+  "reject_drafts": [
+    {
+      "rule_id": "T-201",
+      "recommendation": "refine_trigger",
+      "confidence": 0.9,
+      "rationale": "根据人工反馈，规则在处理外院已做基因检测但本包缺报告的场景时过于严格，误将线索情况判定为疑点。反馈显示该情况应降为线索而非疑点，且反馈意见一致（驳回1次，理由相同），因此建议修订触发逻辑以更准确地反映实际临床场景。",
+      "patches": {
+        "trigger_logic": "修改第3点中的分流逻辑：\n   IF 无任何检测报告 且 药已用 → 疑点(违反指导原则\"不得未做检测盲目用药\")\n   IF 报告存在但靶点阴性/野生型 仍用 → 疑点(无适应症/无指征)\n   IF 病历提示\"外院已检测\"但本包无报告 → 线索(列调阅清单:外院基因检测报告，理由：外院检测结果可作为参考依据)"
+      },
+      "governance_action": {
+        "suggest_status": "active",
+        "reason": "规则整体逻辑合理，仅需优化对部分场景的处理方式。"
+      },
+      "suggested_test_cases": [
+        {
+          "type": "negative",
+          "scene": "患者在本院无基因检测报告，但病历显示外院已做基因检测。",
+          "expected": "线索"
+        },
+        {
+          "type": "positive",
+          "scene": "患者在本院及外院均无基因检测报告，且已使用靶向药物。",
+          "expected": "疑点"
+        }
+      ],
+      "human_review_checklist": [
+        "政策合规审：修订后的触发逻辑符合KB1和KB2的政策要求。",
+        "临床合理审：修订后的逻辑更符合临床实际，避免误伤已在外院检测的患者。",
+        "工程可执行审：修订后的触发逻辑可被系统正确执行，并准确输出三态。"
+      ],
+      "agent_mode": "llm",
+      "llm_needs_key": false,
+      "id": "RD-1781497186477",
+      "created_at": "2026-06-15T04:19:46.477Z",
+      "track": "reject"
+    },
+    {
+      "track": "reject",
+      "rule_id": "A-105",
+      "recommendation": "refine_exclusions",
+      "confidence": 0.9,
+      "rationale": "反馈3个样本均被驳回，表明规则存在误伤问题。现有排除条款仅涵盖病情变化导致的护理升级，但未考虑其他合理场景，如患者特殊需求或临时护理调整。需进一步细化排除条件以减少误报。",
+      "patches": {
+        "exclusions_append": "患者因特殊需求或临时护理调整导致护理等级变化，且有合理医嘱及记录支撑的"
+      },
+      "governance_action": {
+        "suggest_status": "active",
+        "reason": "规则基础合理，但需优化排除条件以减少误报。建议在优化后继续运行并观察效果。"
+      },
+      "suggested_test_cases": [
+        {
+          "type": "negative",
+          "scene": "患者因特殊需求（如过敏反应）临时升级护理等级，有明确医嘱及记录支撑",
+          "expected": "不输出"
+        },
+        {
+          "type": "negative",
+          "scene": "患者因临时护理调整（如术后观察期）升级护理等级，有合理记录及医嘱",
+          "expected": "不输出"
+        }
+      ],
+      "human_review_checklist": [
+        "政策合规审",
+        "临床合理审",
+        "工程可执行审"
+      ],
+      "agent_mode": "llm",
+      "llm_needs_key": false,
+      "id": "RD-R-1781500308804",
+      "created_at": "2026-06-15T05:11:48.804Z",
+      "trigger": "audit_reject"
+    }
+  ],
+  "adopt_drafts": [
+    {
+      "track": "adopt",
+      "rule_id": "B-201",
+      "recommendation": "confirm_active",
+      "confidence": 0.95,
+      "rationale": "规则命中准确且无驳回案例，采纳充分。规则逻辑清晰，触发条件明确，政策依据充分，采纳样本表明其有效性。",
+      "patches": {},
+      "governance_action": {
+        "suggest_status": "active",
+        "reason": "规则当前处于 active 状态，且采纳充分，建议维持 active 状态。"
+      },
+      "suggested_test_cases": [
+        {
+          "type": "positive",
+          "scene": "患者使用人血白蛋白，但病历中无明确支持其符合医保目录备注中'限重症'的诊断或治疗记录。",
+          "expected": "疑点"
+        },
+        {
+          "type": "positive",
+          "scene": "患者使用某药品，但病历中无符合医保目录备注中'限特定年龄段'的年龄记录。",
+          "expected": "疑点"
+        }
+      ],
+      "confidence_boost_note": "规则逻辑清晰，触发条件明确，采纳样本表明其有效性。",
+      "human_review_checklist": [
+        "政策合规审",
+        "临床合理审",
+        "工程可执行审"
+      ],
+      "agent_mode": "llm",
+      "llm_needs_key": false,
+      "id": "RD-A-1781500340958",
+      "created_at": "2026-06-15T05:12:20.958Z",
+      "trigger": "audit_adopt"
+    }
+  ]
+}

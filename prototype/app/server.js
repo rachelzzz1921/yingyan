@@ -265,7 +265,7 @@ const RULE_STATES_FP = () => path.join(DATA, 'rule_states.json');
 function loadRuleStates() {
   try { const d = loadJSON(RULE_STATES_FP()); return d.states ? d : { states: {} }; } catch (e) { return { states: {} }; }
 }
-function saveRuleStates(store) { fs.writeFileSync(RULE_STATES_FP(), JSON.stringify(store, null, 2), 'utf8'); }
+function saveRuleStates(store) { if (isReadonlyRuntime()) return; fs.writeFileSync(RULE_STATES_FP(), JSON.stringify(store, null, 2), 'utf8'); }
 function ruleStatus(store, ruleId) { return store.states?.[ruleId]?.status || 'active'; }
 // 状态变更并落盘流转 history（by: auto(re_review) | human(复审)）
 function transitionRule(store, ruleId, to, by, reason) {
@@ -330,6 +330,7 @@ function loadTasksBoard() {
   return { meta: { smart_goal: '', updated_at: new Date().toISOString() }, tasks: [] };
 }
 function saveTasksBoard(store) {
+  if (isReadonlyRuntime()) return;
   store.meta = store.meta || {};
   store.meta.updated_at = new Date().toISOString();
   fs.writeFileSync(TASKS_BOARD_FP(), JSON.stringify(store, null, 2), 'utf8');
@@ -473,6 +474,7 @@ function loadExamRectification() {
   try { return loadJSON(fp); } catch (e) { return { entries: {} }; }
 }
 function saveExamRectification(store) {
+  if (isReadonlyRuntime()) return;
   fs.writeFileSync(path.join(DATA, 'exam_rectification.json'), JSON.stringify(store, null, 2), 'utf8');
 }
 function examRectKey(caseId, findingId) { return `${caseId}::${findingId}`; }
@@ -483,6 +485,7 @@ function loadReviewStore() {
   try { return loadJSON(path.join(DATA, 'review_feedback.json')); } catch (e) { return { entries: [] }; }
 }
 function saveReviewStore(store) {
+  if (isReadonlyRuntime()) return;
   fs.writeFileSync(path.join(DATA, 'review_feedback.json'), JSON.stringify(store, null, 2), 'utf8');
 }
 

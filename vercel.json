@@ -1,12 +1,12 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "installCommand": "cd prototype/app && npm ci",
-  "buildCommand": "cd prototype/app && npm run build:rules",
+  "buildCommand": "node scripts/prepare-vercel.mjs",
   "outputDirectory": "prototype/app/public",
   "functions": {
     "api/index.js": {
       "maxDuration": 60,
-      "includeFiles": "prototype/data/**,prototype/docs/**,yhf/**,docs/**,eval/**,assets/**,prompts/**"
+      "includeFiles": "prototype/**,yhf/**,docs/**,eval/**,assets/**,prompts/**,scripts/verify-vercel-bundle.mjs"
     }
   },
   "rewrites": [

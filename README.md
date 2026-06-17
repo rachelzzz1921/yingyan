@@ -52,10 +52,11 @@ node server.js
 
 ### 在线预览（Vercel，推荐）
 
-推送 `main` 后自动部署，或本地一键：
+推送 `main` 后自动构建部署（`scripts/prepare-vercel.mjs`：规则编译 + 种子数据 + 打包校验）。
 
 ```bash
 npx vercel --prod
+# 或本地预检：cd prototype/app && npm run build:vercel
 ```
 
 预览地址：

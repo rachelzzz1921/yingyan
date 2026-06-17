@@ -1,0 +1,114 @@
+{
+  "jobs": [
+    {
+      "id": "BATCH-mqgr9zfl-6935",
+      "status": "done",
+      "mode": "oracle",
+      "case_ids": [
+        "clean",
+        "main",
+        "drg"
+      ],
+      "total": 3,
+      "done": 3,
+      "failed": 0,
+      "progress_pct": 100,
+      "created_at": "2026-06-16T14:47:05.123Z",
+      "updated_at": "2026-06-16T14:47:05.228Z",
+      "results": [
+        {
+          "id": "clean",
+          "found_suspected": 0,
+          "found_clue": 0,
+          "shadow_count": 0,
+          "is_clean": true,
+          "false_positives": 0,
+          "latency_ms": 52
+        },
+        {
+          "id": "main",
+          "found_suspected": 5,
+          "found_clue": 2,
+          "shadow_count": 0,
+          "is_clean": false,
+          "false_positives": null,
+          "latency_ms": 34
+        },
+        {
+          "id": "drg",
+          "found_suspected": 1,
+          "found_clue": 0,
+          "shadow_count": 0,
+          "is_clean": false,
+          "false_positives": null,
+          "latency_ms": 4
+        }
+      ],
+      "errors": [],
+      "summary": {
+        "cases_run": 3,
+        "suspected_total": 6,
+        "clue_total": 2,
+        "shadow_total": 0,
+        "clean_false_positives": 0,
+        "avg_latency_ms": 30,
+        "red_line_clean_zero_fp": true
+      }
+    },
+    {
+      "id": "BATCH-mqgro4eo-9478",
+      "status": "done",
+      "mode": "oracle",
+      "case_ids": [
+        "clean",
+        "main",
+        "drg"
+      ],
+      "total": 3,
+      "done": 3,
+      "failed": 0,
+      "progress_pct": 100,
+      "created_at": "2026-06-16T14:58:04.753Z",
+      "updated_at": "2026-06-16T14:58:04.767Z",
+      "results": [
+        {
+          "id": "clean",
+          "found_suspected": 0,
+          "found_clue": 0,
+          "shadow_count": 0,
+          "is_clean": true,
+          "false_positives": 0,
+          "latency_ms": 5
+        },
+        {
+          "id": "main",
+          "found_suspected": 5,
+          "found_clue": 2,
+          "shadow_count": 0,
+          "is_clean": false,
+          "false_positives": null,
+          "latency_ms": 3
+        },
+        {
+          "id": "drg",
+          "found_suspected": 1,
+          "found_clue": 0,
+          "shadow_count": 0,
+          "is_clean": false,
+          "false_positives": null,
+          "latency_ms": 1
+        }
+      ],
+      "errors": [],
+      "summary": {
+        "cases_run": 3,
+        "suspected_total": 6,
+        "clue_total": 2,
+        "shadow_total": 0,
+        "clean_false_positives": 0,
+        "avg_latency_ms": 3,
+        "red_line_clean_zero_fp": true
+      }
+    }
+  ]
+}

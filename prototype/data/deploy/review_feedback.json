@@ -1,0 +1,85 @@
+{
+  "entries": [
+    {
+      "finding_id": "F-main-002",
+      "rule_id": "T-201",
+      "case_id": "main",
+      "action": "驳回",
+      "reason": "外院已做基因检测，本包缺报告应降为线索",
+      "source": "rectification",
+      "judgment": "不成立",
+      "ts": "2026-06-15T04:19:29.671Z"
+    },
+    {
+      "finding_id": "F-ORTHO001-002",
+      "rule_id": "A-106",
+      "case_id": "ortho",
+      "action": "采纳",
+      "reason": "",
+      "ts": "2026-06-15T04:24:47.225Z"
+    },
+    {
+      "finding_id": "F-test-1",
+      "rule_id": "A-105",
+      "case_id": "main",
+      "action": "驳回",
+      "reason": "测试误报理由1",
+      "source": "audit_review",
+      "ts": "2026-06-15T05:11:31.416Z"
+    },
+    {
+      "finding_id": "F-t1",
+      "rule_id": "A-105",
+      "case_id": "main",
+      "action": "驳回",
+      "reason": "误报1",
+      "source": "audit_review",
+      "ts": "2026-06-15T05:11:37.145Z"
+    },
+    {
+      "finding_id": "F-t2",
+      "rule_id": "A-105",
+      "case_id": "main",
+      "action": "驳回",
+      "reason": "误报2",
+      "source": "audit_review",
+      "ts": "2026-06-15T05:11:37.244Z"
+    },
+    {
+      "finding_id": "F-t3",
+      "rule_id": "A-105",
+      "case_id": "main",
+      "action": "驳回",
+      "reason": "误报3",
+      "source": "audit_review",
+      "ts": "2026-06-15T05:11:48.895Z"
+    },
+    {
+      "finding_id": "F-a1",
+      "rule_id": "B-201",
+      "case_id": "main",
+      "action": "采纳",
+      "reason": "命中准确",
+      "source": "audit_review",
+      "ts": "2026-06-15T05:12:07.710Z"
+    },
+    {
+      "finding_id": "F-a2",
+      "rule_id": "B-201",
+      "case_id": "main",
+      "action": "采纳",
+      "reason": "",
+      "source": "audit_review",
+      "ts": "2026-06-15T05:12:07.726Z"
+    },
+    {
+      "finding_id": "F-a3",
+      "rule_id": "B-201",
+      "case_id": "main",
+      "action": "采纳",
+      "reason": "",
+      "source": "audit_review",
+      "ts": "2026-06-15T05:12:07.740Z"
+    }
+  ]
+}
