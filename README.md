@@ -62,13 +62,17 @@ node server.js
 | 项目看板 | `/dashboard.html` |
 | 材料导入 | `/intake.html` |
 
-首次启用：仓库 **Settings → Pages → Build and deployment → Source: GitHub Actions**（推送本仓库的 `pages.yml` 后通常会自动出现）。
+**一次性启用：** 仓库 **Settings → Pages → Build and deployment → Source: GitHub Actions**。
+
+> **重要：** GitHub **免费套餐**下，**私有仓库不能开 Pages**（会报 `Failed to create deployment` / `plan does not support GitHub Pages`）。  
+> 别的项目能直接用 `xxx.github.io`，多半是因为仓库是 **Public**，或账号有 **GitHub Pro**。  
+> 若要坚持私有代码又要网页预览，可选：① 升级 Pro；② 另建一个 **Public** 的 `yingyan-preview` 仓库存静态页（主仓仍 Private）。
 
 说明：
 
-- 仓库可保持 **Private**；代码不公开，但 Pages 站点 URL 在免费套餐下通常可被直接访问（演示用静态快照，写入类 API 为只读）。
+- Pages 站点 URL 可被直接访问（演示用静态快照）；写入类 API 在 Pages 上为只读。
 - 完整交互（稽核写入、批量队列、治理同步等）仍用本地 `node server.js`。
-- 本地也可试构建：`cd prototype/app && npm ci && npm run build:rules && node ../../scripts/build-github-pages.mjs`
+- 本地试构建：`cd prototype/app && npm ci && npm run build:rules && node ../../scripts/build-github-pages.mjs`
 
 ### Prompt 评测
 ```bash
