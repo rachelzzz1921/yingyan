@@ -27,6 +27,8 @@ const REQUIRED = [
   'yhf/index.js',
   'yhf/run.sh',
   'docs/ROADMAP.md',
+  'prototype/app/bundle/docs/ROADMAP.md',
+  'prototype/app/bundle/prototype/docs/TASKS.md',
   'eval/README.md',
   'eval/OPEN_ISSUES.md',
 ];
@@ -59,6 +61,18 @@ if (missing.length) {
 const optionalMissing = OPTIONAL_BUT_EXPECTED.filter((rel) => !fs.existsSync(path.join(ROOT, rel)));
 if (optionalMissing.length) {
   console.warn('  ⚠ 可选运行态 JSON 未生成（将使用引擎默认值）：', optionalMissing.join(', '));
+}
+
+const bundleChecks = [
+  'prototype/app/bundle/docs/ROADMAP.md',
+  'prototype/app/bundle/prototype/docs/TASKS.md',
+  'prototype/app/bundle/yhf/README.md',
+];
+const bundleMissing = bundleChecks.filter((rel) => !fs.existsSync(path.join(ROOT, rel)));
+if (bundleMissing.length) {
+  console.error('Vercel 看板文档 bundle 不完整：');
+  for (const m of bundleMissing) console.error('  -', m);
+  process.exit(1);
 }
 
 const cases = listCaseRecords().length;

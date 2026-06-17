@@ -19,3 +19,6 @@ data/rule_states.json
 # 治理快照导出（脚本生成，非源码）
 data/governance_snapshots/
 data/audit_batch_jobs.json
+
+# Vercel 构建时生成的运行时 bundle（非源码）
+app/bundle/

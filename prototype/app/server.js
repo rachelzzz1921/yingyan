@@ -53,6 +53,19 @@ const PORT = process.env.PORT || 3700;
 const DATA = path.resolve(__dirname, '../data');
 const PUBLIC = path.resolve(__dirname, 'public');
 const REPO_ROOT = path.resolve(__dirname, '../..');
+const BUNDLE_ROOT = path.resolve(__dirname, 'bundle');
+
+function resolveRepoFile(rel) {
+  const bundled = path.join(BUNDLE_ROOT, rel);
+  if (fs.existsSync(bundled)) return bundled;
+  return path.join(REPO_ROOT, rel);
+}
+
+function resolveRepoDir(relDir) {
+  const bundled = path.join(BUNDLE_ROOT, relDir);
+  if (fs.existsSync(bundled)) return bundled;
+  return path.join(REPO_ROOT, relDir);
+}
 
 const _apiCache = {};
 function cachedAsync(key, ttlMs, fn) {
@@ -983,7 +996,7 @@ const server = http.createServer(async (req, res) => {
     // 看板文档 API
     if (p === '/api/docs') {
       const list = Object.entries(DOC_CATALOG).map(([id, m]) => {
-        const fp = path.join(REPO_ROOT, m.file);
+        const fp = resolveRepoFile(m.file);
         return { id, title: m.title, group: m.group, exists: fs.existsSync(fp) };
       });
       return sendJSON(res, { docs: list });
@@ -993,7 +1006,7 @@ const server = http.createServer(async (req, res) => {
       const meta = DOC_CATALOG[id];
       if (!meta) return sendJSON(res, { error: 'unknown doc id' }, 404);
       const wantFull = url.searchParams.get('full') === '1';
-      const fp = path.join(REPO_ROOT, meta.file);
+      const fp = resolveRepoFile(meta.file);
       if (!fs.existsSync(fp)) {
         if (meta.optional || meta.live === 'yhf') {
           return sendJSON(res, { id, title: meta.title, content: '', missing: true, live: meta.live || null });
@@ -1010,7 +1023,7 @@ const server = http.createServer(async (req, res) => {
       return sendJSON(res, { id, title: meta.title, group: meta.group, content, excerpt, totalLines: lines.length });
     }
     if (p === '/api/eval/status') {
-      const dir = path.join(REPO_ROOT, 'eval/results');
+      const dir = resolveRepoDir('eval/results');
       let latest = null;
       try {
         for (const f of fs.readdirSync(dir)) {
@@ -1020,22 +1033,24 @@ const server = http.createServer(async (req, res) => {
           if (!latest || st.mtimeMs > latest.mtimeMs) latest = { file: f, mtime: st.mtime.toISOString(), size: st.size };
         }
       } catch (_) {}
-      return sendJSON(res, { latest, open_issues: fs.existsSync(path.join(REPO_ROOT, 'eval/OPEN_ISSUES.md')) });
+      return sendJSON(res, { latest, open_issues: fs.existsSync(resolveRepoFile('eval/OPEN_ISSUES.md')) });
     }
     if (p === '/brand/logo-mark.svg' || p === '/brand/logo.svg') {
       const name = path.basename(p);
-      const fp = path.join(REPO_ROOT, 'assets/brand', name);
+      const fp = resolveRepoFile(path.join('assets/brand', name));
       if (fs.existsSync(fp)) return sendFile(res, fp);
     }
     if (p.startsWith('/brand/')) {
       const rel = p.slice('/brand/'.length).replace(/\.\./g, '');
       const pub = path.join(PUBLIC, 'brand', rel);
       if (pub.startsWith(path.join(PUBLIC, 'brand')) && fs.existsSync(pub)) return sendFile(res, pub);
-      const asset = path.join(REPO_ROOT, 'assets/brand', rel);
-      if (asset.startsWith(path.join(REPO_ROOT, 'assets/brand')) && fs.existsSync(asset)) return sendFile(res, asset);
+      const asset = resolveRepoFile(path.join('assets/brand', rel));
+      if (asset.startsWith(path.join(BUNDLE_ROOT, 'assets/brand')) || asset.startsWith(path.join(REPO_ROOT, 'assets/brand'))) {
+        if (fs.existsSync(asset)) return sendFile(res, asset);
+      }
     }
     if (p === '/api/brand/gpt-v2') {
-      const dir = path.join(REPO_ROOT, 'assets/brand/gpt-v2');
+      const dir = resolveRepoDir('assets/brand/gpt-v2');
       const expected = [
         { file: '01-naming-logo.png', caption: '命名 · Logo 三方向' },
         { file: '02-colors-typography.png', caption: '色板 · 排版' },

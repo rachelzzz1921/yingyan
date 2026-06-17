@@ -939,7 +939,15 @@ async function docViewHTML(docId) {
     if (!cache.yhf) await loadData();
     return gateReportLiveHTML(cache.yhf);
   }
-  const doc = await loadDoc(docId);
+  let doc;
+  try {
+    doc = await loadDoc(docId);
+  } catch (e) {
+    return `<div class="card"><p style="color:var(--red)">文档加载失败：${esc(e.message)}</p><p class="muted">若为 Vercel 预览，请确认最新部署已完成；本地请从 prototype/app 运行 node server.js。</p></div>`;
+  }
+  if (!doc.content && doc.missing) {
+    return `<div class="card"><p class="muted">「${esc(doc.title || docId)}」暂无静态文档，请使用看板内动态视图或本地仓库文件。</p></div>`;
+  }
   let extra = '';
   if (docId === 'roadmap') extra = `<section class="card" style="margin-top:16px"><div class="task-board">${await roadmapTasksPreviewHTML()}</div></section>`;
   if (docId === 'pitch') extra = `<section class="card brand-pitch-cover" style="margin-top:16px"><h3 style="margin:0 0 8px">Deck 封面预览</h3><div class="pitch-cover-mock"><img src="/brand/gpt-v2/04-applications.png" alt="Pitch 参考"><div class="pitch-cover-overlay"><img src="/brand/logo-mark.svg" width="64" height="64" alt=""><h4>鹰眼 EagleEye Audit</h4><p>让每一分救命钱，都查得有据</p></div></div><p class="muted" style="margin-top:10px;font-size:11px">完整物料请用 04-applications.png 在 Canva / Keynote 排版 · 见品牌规范页 Phase E</p></section>`;
