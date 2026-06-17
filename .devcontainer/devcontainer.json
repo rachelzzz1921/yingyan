@@ -1,11 +1,12 @@
 {
-  "name": "鹰眼 · 私有预览",
+  "name": "鹰眼 · GitHub 网站预览",
   "image": "mcr.microsoft.com/devcontainers/javascript-node:20",
   "forwardPorts": [3700],
   "portsAttributes": {
     "3700": {
-      "label": "稽核工作台",
-      "onAutoForward": "openBrowser"
+      "label": "鹰眼工作台",
+      "onAutoForward": "openBrowser",
+      "visibility": "private"
     }
   },
   "postCreateCommand": "cd prototype/app && npm ci && npm run build:rules",
@@ -15,6 +16,9 @@
       "settings": {
         "terminal.integrated.defaultProfile.linux": "bash"
       }
+    },
+    "codespaces": {
+      "openFiles": []
     }
   },
   "remoteEnv": {

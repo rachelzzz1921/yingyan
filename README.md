@@ -50,18 +50,26 @@ node server.js
 # 项目看板 http://localhost:3700/dashboard.html
 ```
 
-### GitHub 私有预览（Codespaces，不上公网）
+### GitHub 网站式预览（私有仓库，不挂第三方公网）
 
-仓库保持 **Private**；在 GitHub 内用 **Codespaces** 启动，预览端口仅对你（及被授权的协作者）可见，不部署公网站点。
+仓库保持 **Private**。用 GitHub 自带的 **Codespaces** 启动后，会得到一个**真正的网站地址**（浏览器直接打开），例如：
 
-1. 打开私有仓库：`https://github.com/rachelzzz1921/yingyan`
-2. 点击 **Code** → **Codespaces** → **Create codespace on main**
-3. 环境启动后会自动执行 `npm ci`、`build:rules` 并启动服务
-4. 在 Codespaces 里打开端口 **3700**：
-   - 工作台：`/`
-   - 看板：`/dashboard.html`
+`https://<你的codespace名>-3700.app.github.dev`
 
-说明：不使用 Render/Vercel 等公网托管；预览只在 GitHub Codespaces 会话内可用。
+该链接 **visibility=private**：只有能访问此私有仓库的 GitHub 账号才能打开，不部署到 Render/Vercel 等第三方。
+
+**操作步骤：**
+
+1. 打开：`https://github.com/rachelzzz1921/yingyan`
+2. 点 **Code** → **Codespaces** → **Create codespace on main**
+3. 等待环境初始化（自动 `npm ci` + `build:rules` + `npm start`）
+4. 底部 **Ports** 面板里，3700 端口会自动转发；点地球图标或 **Open in Browser**
+5. 预览地址：
+   - 稽核工作台：`/` 
+   - 项目看板：`/dashboard.html`
+   - 材料导入：`/intake.html`
+
+本地开发仍是 `http://localhost:3700`，与 Codespaces 网站预览互不影响。
 
 ### Prompt 评测
 ```bash
