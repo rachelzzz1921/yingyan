@@ -1,0 +1,24 @@
+{
+  "name": "鹰眼 · 私有预览",
+  "image": "mcr.microsoft.com/devcontainers/javascript-node:20",
+  "forwardPorts": [3700],
+  "portsAttributes": {
+    "3700": {
+      "label": "稽核工作台",
+      "onAutoForward": "openBrowser"
+    }
+  },
+  "postCreateCommand": "cd prototype/app && npm ci && npm run build:rules",
+  "postAttachCommand": "cd prototype/app && npm start",
+  "customizations": {
+    "vscode": {
+      "settings": {
+        "terminal.integrated.defaultProfile.linux": "bash"
+      }
+    }
+  },
+  "remoteEnv": {
+    "RAG_MODE": "json",
+    "NODE_ENV": "development"
+  }
+}
