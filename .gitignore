@@ -28,6 +28,7 @@ pnpm-debug.log*
 # Build/cache output
 dist/
 build/
+gh-pages-build/
 coverage/
 .cache/
 .turbo/

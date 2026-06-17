@@ -50,26 +50,25 @@ node server.js
 # 项目看板 http://localhost:3700/dashboard.html
 ```
 
-### GitHub 网站式预览（私有仓库，不挂第三方公网）
+### GitHub 网站式预览（推送即上线，最简单）
 
-仓库保持 **Private**。用 GitHub 自带的 **Codespaces** 启动后，会得到一个**真正的网站地址**（浏览器直接打开），例如：
+推送 `main` 后，GitHub Actions 自动构建并发布 **GitHub Pages**，浏览器直接打开：
 
-`https://<你的codespace名>-3700.app.github.dev`
+**https://rachelzzz1921.github.io/yingyan/**
 
-该链接 **visibility=private**：只有能访问此私有仓库的 GitHub 账号才能打开，不部署到 Render/Vercel 等第三方。
+| 页面 | 地址 |
+|------|------|
+| 稽核工作台 | `/` |
+| 项目看板 | `/dashboard.html` |
+| 材料导入 | `/intake.html` |
 
-**操作步骤：**
+首次启用：仓库 **Settings → Pages → Build and deployment → Source: GitHub Actions**（推送本仓库的 `pages.yml` 后通常会自动出现）。
 
-1. 打开：`https://github.com/rachelzzz1921/yingyan`
-2. 点 **Code** → **Codespaces** → **Create codespace on main**
-3. 等待环境初始化（自动 `npm ci` + `build:rules` + `npm start`）
-4. 底部 **Ports** 面板里，3700 端口会自动转发；点地球图标或 **Open in Browser**
-5. 预览地址：
-   - 稽核工作台：`/` 
-   - 项目看板：`/dashboard.html`
-   - 材料导入：`/intake.html`
+说明：
 
-本地开发仍是 `http://localhost:3700`，与 Codespaces 网站预览互不影响。
+- 仓库可保持 **Private**；代码不公开，但 Pages 站点 URL 在免费套餐下通常可被直接访问（演示用静态快照，写入类 API 为只读）。
+- 完整交互（稽核写入、批量队列、治理同步等）仍用本地 `node server.js`。
+- 本地也可试构建：`cd prototype/app && npm ci && npm run build:rules && node ../../scripts/build-github-pages.mjs`
 
 ### Prompt 评测
 ```bash
