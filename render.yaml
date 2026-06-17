@@ -1,0 +1,20 @@
+# Render Blueprint — 连接私有 GitHub 仓库后一键部署在线预览
+# 文档：https://render.com/docs/blueprint-spec
+services:
+  - type: web
+    name: yingyan-preview
+    runtime: docker
+    dockerfilePath: ./prototype/app/Dockerfile
+    dockerContext: .
+    plan: free
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: RAG_MODE
+        value: json
+      - key: PORT
+        value: "3700"
+    # 可选：在 Render Dashboard 为私有预览加 BASIC_AUTH 或注入 LLM/Supabase 密钥
+    # - key: MINIMAX_API_KEY
+    #   sync: false

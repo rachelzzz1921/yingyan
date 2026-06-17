@@ -50,6 +50,25 @@ node server.js
 # 项目看板 http://localhost:3700/dashboard.html
 ```
 
+### 在线预览（私有 GitHub 仓库 + Render）
+
+仓库保持 **Private**；预览站点由 [Render](https://render.com) 托管（免费 HTTPS 域名，与 GitHub 仓库可见性独立）。
+
+1. 登录 [Render Dashboard](https://dashboard.render.com/) → **New** → **Blueprint**
+2. 连接 GitHub 账号，选择私有仓库 `rachelzzz1921/yingyan`（需授权私有仓库访问）
+3. Render 读取根目录 `render.yaml`，创建服务 `yingyan-preview`
+4. 部署完成后访问：`https://yingyan-preview.onrender.com`（域名以 Dashboard 为准）
+5. 之后每次 `git push main` 会自动重新部署
+
+云端默认 `RAG_MODE=json`（离线 KB，无需 Supabase）。若需 LLM/RAG Live，在 Render 环境变量中配置 `.env.example` 里的密钥。
+
+本地验证 Docker 构建：
+
+```bash
+docker build -f prototype/app/Dockerfile -t yingyan-preview .
+docker run --rm -p 3700:3700 yingyan-preview
+```
+
 ### Prompt 评测
 ```bash
 cd eval
