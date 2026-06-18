@@ -92,7 +92,11 @@ function flattenKB() {
     const ver = (d.version || '').includes('2025') ? '2025' : '';
     for (const it of d.items || []) {
       if (it.no != null) {
-        for (const refId of [`KB1-问题清单${ver}-${alias}-${it.no}`, `KB1-问题清单${alias}-${it.no}`]) {
+        const refIds = [...new Set([
+          `KB1-问题清单${ver}-${alias}-${it.no}`,
+          `KB1-问题清单${alias}-${it.no}`,
+        ])];
+        for (const refId of refIds) {
           rows.push({
             kb_layer: 'PL',
             ref_id: refId,
@@ -135,7 +139,26 @@ function flattenKB() {
     }
   }
 
-  return rows.map(normalizeRow);
+  return dedupeRowsByRefId(rows.map(normalizeRow));
+}
+
+function dedupeRowsByRefId(rows) {
+  const byRef = new Map();
+  for (const row of rows) {
+    const prev = byRef.get(row.ref_id);
+    if (!prev) {
+      byRef.set(row.ref_id, row);
+      continue;
+    }
+    // 同一 ref_id：问题清单优先保留 KB1 层（爬虫 policy 条目字段更全）
+    const keep = row.kb_layer === 'KB1' ? row : prev.kb_layer === 'KB1' ? prev : row;
+    byRef.set(row.ref_id, keep);
+  }
+  const deduped = [...byRef.values()];
+  if (deduped.length < rows.length) {
+    console.log(`ℹ️ ref_id 去重: ${rows.length} → ${deduped.length}（${rows.length - deduped.length} 条重复已合并）`);
+  }
+  return deduped;
 }
 
 const ROW_KEYS = [

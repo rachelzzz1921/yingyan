@@ -26,11 +26,12 @@ const { ragConfig, canUseSupabase } = require('../prototype/app/kb/config');
 const { canEmbed, embedTexts } = require('../prototype/app/kb/embedding-provider');
 const supabase = require('../prototype/app/kb/supabase-client');
 
-async function fetchChunksNeedingEmbed() {
+async function fetchChunksNeedingEmbed(offset = 0) {
   const cfg = ragConfig();
   const base = cfg.supabaseUrl.replace(/\/$/, '');
   const apiBase = base.includes('supabase.co') ? `${base}/rest/v1` : base;
-  const url = `${apiBase}/kb_chunks?select=ref_id,chunk_index,content,corpus_version,embedding&corpus_version=eq.${encodeURIComponent(cfg.corpusVersion)}&limit=500`;
+  const pageSize = 1000;
+  const url = `${apiBase}/kb_chunks?select=ref_id,chunk_index,content,corpus_version,embedding&corpus_version=eq.${encodeURIComponent(cfg.corpusVersion)}&embedding=is.null&limit=${pageSize}&offset=${offset}`;
   const key = cfg.supabaseServiceKey;
   const headers = key === 'local-dev-postgres'
     ? {}
@@ -38,7 +39,19 @@ async function fetchChunksNeedingEmbed() {
   const res = await fetch(url, { headers });
   if (!res.ok) throw new Error(`fetch chunks ${res.status}: ${await res.text()}`);
   const rows = await res.json();
-  return rows.filter(r => !r.embedding);
+  return Array.isArray(rows) ? rows : [];
+}
+
+async function fetchAllChunksNeedingEmbed() {
+  const all = [];
+  let offset = 0;
+  for (;;) {
+    const page = await fetchChunksNeedingEmbed(offset);
+    all.push(...page);
+    if (page.length < 1000) break;
+    offset += 1000;
+  }
+  return all;
 }
 
 async function main() {
@@ -52,7 +65,7 @@ async function main() {
     process.exit(1);
   }
 
-  const chunks = await fetchChunksNeedingEmbed();
+  let chunks = await fetchAllChunksNeedingEmbed();
   const embedded = await supabase.countEmbeddedChunks().catch(() => null);
   if (dryRun) {
     console.log(`ℹ️  dry-run：待向量化 ${chunks.length} 条，已 embedded=${embedded ?? '?'}`);
@@ -63,11 +76,16 @@ async function main() {
     console.log('✅ 所有 chunk 已有 embedding，无需处理');
     return;
   }
-  console.log(`🔢 待向量化 ${chunks.length} 条 chunk…`);
 
   const BATCH = 10;
-  for (let i = 0; i < chunks.length; i += BATCH) {
-    const batch = chunks.slice(i, i + BATCH);
+  let done = 0;
+  for (;;) {
+    if (!chunks.length) {
+      chunks = await fetchAllChunksNeedingEmbed();
+      if (!chunks.length) break;
+    }
+    if (!done) console.log(`🔢 待向量化 ${chunks.length} 条 chunk…`);
+    const batch = chunks.slice(0, BATCH);
     const vectors = await embedTexts(batch.map(c => c.content));
     for (let j = 0; j < batch.length; j++) {
       const c = batch[j];
@@ -75,10 +93,12 @@ async function main() {
       if (!vec?.length) continue;
       await supabase.patchChunkEmbedding(c.ref_id, c.chunk_index, c.corpus_version, vec);
     }
-    console.log(`  … ${Math.min(i + BATCH, chunks.length)}/${chunks.length}`);
+    done += batch.length;
+    chunks = chunks.slice(BATCH);
+    console.log(`  … 已处理 ${done} 条`);
   }
-  const embedded = await supabase.countEmbeddedChunks();
-  console.log(`\n✅ 完成，embedded_chunks=${embedded}`);
+  const embeddedCount = await supabase.countEmbeddedChunks();
+  console.log(`\n✅ 完成，embedded_chunks=${embeddedCount}`);
 }
 
 main().catch(e => {

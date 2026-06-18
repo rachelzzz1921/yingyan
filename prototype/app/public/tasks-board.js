@@ -12,7 +12,35 @@ const TASK_COLS = [
 let tasksFilter = { phase: 'all', priority: 'all', hideDone: false };
 let tasksViewMode = 'list'; // list | kanban
 
-async function apiTasks(method, path, body) {
+function askDeferReason() {
+  return new Promise((resolve) => {
+    const overlay = document.createElement('div');
+    overlay.className = 'tk-modal-overlay';
+    overlay.innerHTML = `
+      <div class="tk-modal" role="dialog">
+        <h3 style="margin:0 0 8px;font-size:16px">⏸ 搁置理由（必填）</h3>
+        <p class="muted" style="margin:0 0 10px;font-size:12px">写入任务台账，便于后续恢复时追溯。</p>
+        <textarea id="tkDeferInput" rows="4" style="width:100%;padding:10px;border:1px solid var(--yy-line);border-radius:8px;font:inherit"></textarea>
+        <div style="display:flex;gap:8px;margin-top:12px;justify-content:flex-end">
+          <button type="button" class="action-btn secondary" id="tkDeferCancel">取消</button>
+          <button type="button" class="action-btn" id="tkDeferOk">确认搁置</button>
+        </div>
+      </div>`;
+    document.body.appendChild(overlay);
+    const ta = overlay.querySelector('#tkDeferInput');
+    ta?.focus();
+    const close = (val) => { overlay.remove(); resolve(val); };
+    overlay.querySelector('#tkDeferCancel').onclick = () => close(null);
+    overlay.querySelector('#tkDeferOk').onclick = () => {
+      const r = (ta?.value || '').trim();
+      if (!r) { ta.style.borderColor = '#DC4A3D'; ta.focus(); return; }
+      close(r);
+    };
+    overlay.addEventListener('click', (e) => { if (e.target === overlay) close(null); });
+  });
+}
+
+async function apiTasks(method = 'GET', path = '', body) {
   const r = await fetch('/api/tasks' + (path || ''), {
     method,
     headers: body ? { 'Content-Type': 'application/json' } : {},
@@ -253,9 +281,6 @@ function bindTasksBoard(root) {
         await patchTaskStatus(id, status);
         navigate('tasks');
       } catch (err) {
-        // #region agent log
-        fetch('http://127.0.0.1:7664/ingest/82cc9e84-dfb6-4801-8348-532350165d81',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'2726bf'},body:JSON.stringify({sessionId:'2726bf',location:'tasks-board.js:check',message:'patch failed',data:{id,status,err:String(err.message)},timestamp:Date.now(),hypothesisId:'H4'})}).catch(()=>{});
-        // #endregion
         toast(root, '保存失败：' + err.message);
         navigate('tasks');
       }
@@ -276,8 +301,8 @@ function bindTasksBoard(root) {
         if (cur) {
           await patchTaskStatus(id, 'todo');
         } else {
-          const reason = prompt('搁置理由', '') || '';
-          if (!reason.trim()) return;
+          const reason = await askDeferReason();
+          if (!reason) return;
           await patchTaskStatus(id, 'deferred', { deferred_reason: reason });
         }
       }
@@ -325,3 +350,9 @@ function toast(root, msg) {
   t.classList.add('show');
   setTimeout(() => t.classList.remove('show'), 2200);
 }
+
+window.DashTasks = {
+  roadmapTasksPreviewHTML,
+  tasksBoardHTML,
+  bindTasksBoard,
+};

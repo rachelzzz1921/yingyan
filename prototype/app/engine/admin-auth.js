@@ -6,6 +6,14 @@ function adminTokenConfigured() {
   return isConfigured(process.env.YINGYAN_ADMIN_TOKEN);
 }
 
+function serviceKeyConfigured() {
+  return isConfigured(process.env.SUPABASE_SERVICE_ROLE_KEY);
+}
+
+function authRequired() {
+  return adminTokenConfigured() || serviceKeyConfigured();
+}
+
 function readAdminToken(req) {
   const h = req.headers || {};
   const raw = h['x-yingyan-token'] || h['x-yingyan-admin-token'] || '';
@@ -15,16 +23,23 @@ function readAdminToken(req) {
   return m ? m[1].trim() : '';
 }
 
-/** demo 未配 token 时放行；生产配 YINGYAN_ADMIN_TOKEN 后治理写操作需令牌 */
+/** demo 未配令牌时放行；生产可用 YINGYAN_ADMIN_TOKEN 或 Supabase Service Role（Bearer） */
 function checkAdmin(req) {
-  if (!adminTokenConfigured()) {
+  if (!authRequired()) {
     return { ok: true, mode: 'demo_open' };
   }
   const token = readAdminToken(req);
-  if (token !== process.env.YINGYAN_ADMIN_TOKEN.trim()) {
-    return { ok: false, status: 401, error: '需要 YINGYAN_ADMIN_TOKEN（Header: X-Yingyan-Token 或 Authorization: Bearer）' };
+  if (adminTokenConfigured() && token === process.env.YINGYAN_ADMIN_TOKEN.trim()) {
+    return { ok: true, mode: 'yingyan_token' };
   }
-  return { ok: true, mode: 'token' };
+  if (serviceKeyConfigured() && token === process.env.SUPABASE_SERVICE_ROLE_KEY.trim()) {
+    return { ok: true, mode: 'supabase_service' };
+  }
+  return {
+    ok: false,
+    status: 401,
+    error: '需要 YINGYAN_ADMIN_TOKEN 或 SUPABASE_SERVICE_ROLE_KEY（Header: X-Yingyan-Token 或 Authorization: Bearer）',
+  };
 }
 
 function enforceAdmin(req, res, sendJSON) {
@@ -36,4 +51,4 @@ function enforceAdmin(req, res, sendJSON) {
   return true;
 }
 
-module.exports = { adminTokenConfigured, checkAdmin, enforceAdmin, readAdminToken };
+module.exports = { adminTokenConfigured, serviceKeyConfigured, authRequired, checkAdmin, enforceAdmin, readAdminToken };

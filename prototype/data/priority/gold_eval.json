@@ -1,0 +1,198 @@
+{
+  "version": "2.0",
+  "scenarios": [
+    {
+      "id": "G1",
+      "description": "挂床住院 · 主观嫌疑 · 疑点 · tier1",
+      "record": {
+        "case_meta": { "case_id": "G1", "case_title": "G1-挂床住院", "embedded_violation_count": 1 },
+        "front_page": {
+          "patient_name": "测试甲", "admit_dept": "内科", "admit_time": "2026-01-01", "discharge_time": "2026-01-10",
+          "principal_diagnosis": { "name": "虚假住院测试" }
+        },
+        "fee_list": { "items": [{ "line_no": 1, "item_name": "住院床位费", "amount": 5000 }] },
+        "nursing_records": { "entries": [] },
+        "long_term_orders": { "items": [] }
+      },
+      "raw_findings": [{
+        "finding_id": "F-G1-001", "rule_id": "C-302", "status": "疑点", "risk_level": "高",
+        "violation_type": "虚假住院/挂床住院",
+        "amount_involved": 5000,
+        "evidence": [
+          { "type": "病历页", "loc": "护理记录", "text": "在院时段与结算住院日矛盾" },
+          { "type": "费用行", "loc": "第1行", "text": "住院结算但无对应在院诊疗" }
+        ],
+        "policy": [{ "ref": "KB-条例40", "text": "欺诈骗保相关条款（演示）" }],
+        "reasoning": "有住院结算但护理/医嘱与在院时段矛盾，疑挂床住院。",
+        "needs_more": []
+      }],
+      "expect": {
+        "finding_count": 1,
+        "status": "疑点",
+        "violation_nature": "主观嫌疑",
+        "enters_api_score": true,
+        "tier": 1,
+        "disposition_contains": "移交"
+      }
+    },
+    {
+      "id": "G2",
+      "description": "重复收费 · 非主观差错",
+      "record": {
+        "case_meta": { "case_id": "G2", "case_title": "G2-重复收费" },
+        "front_page": { "patient_name": "测试乙", "admit_dept": "检验科", "principal_diagnosis": { "name": "检验" } },
+        "fee_list": { "items": [] }
+      },
+      "raw_findings": [{
+        "finding_id": "F-G2-001", "rule_id": "A-101", "status": "疑点", "risk_level": "高",
+        "violation_type": "重复收费",
+        "amount_involved": 680,
+        "evidence": [
+          { "type": "费用行", "loc": "第12行", "text": "血气分析" },
+          { "type": "费用行", "loc": "第13行", "text": "钾钠氯检测" }
+        ],
+        "policy": [{ "ref": "KB-条例38-三", "text": "重复收费（38条）" }],
+        "reasoning": "血气分析项目内涵已含电解质检测。",
+        "needs_more": []
+      }],
+      "expect": {
+        "status": "疑点",
+        "violation_nature": "非主观差错",
+        "disposition_contains": "退回"
+      }
+    },
+    {
+      "id": "G2b",
+      "description": "重复收费反复出现 · 升级主观嫌疑",
+      "store_override": {
+        "audit_records": [
+          { "case_id": "G2b-h1", "findings_snapshot": [{ "violation_type": "重复收费", "status": "疑点" }] },
+          { "case_id": "G2b-h2", "findings_snapshot": [{ "violation_type": "重复收费", "status": "疑点" }] },
+          { "case_id": "G2b-h3", "findings_snapshot": [{ "violation_type": "重复收费", "status": "疑点" }] }
+        ],
+        "cases": {
+          "G2b-h1": { "dept": "检验科" },
+          "G2b-h2": { "dept": "检验科" },
+          "G2b-h3": { "dept": "检验科" }
+        }
+      },
+      "record": {
+        "case_meta": { "case_id": "G2b", "case_title": "G2b-重复收费大面积" },
+        "front_page": { "patient_name": "测试乙b", "admit_dept": "检验科", "principal_diagnosis": { "name": "检验" } },
+        "fee_list": { "items": [] }
+      },
+      "raw_findings": [{
+        "finding_id": "F-G2b-001", "rule_id": "A-101", "status": "疑点", "risk_level": "高",
+        "violation_type": "重复收费",
+        "amount_involved": 680,
+        "evidence": [
+          { "type": "费用行", "loc": "第12行", "text": "血气分析" },
+          { "type": "费用行", "loc": "第13行", "text": "钾钠氯检测" }
+        ],
+        "policy": [{ "ref": "KB-条例38-三", "text": "重复收费（38条）" }],
+        "reasoning": "同一机构检验科反复出现同类重复收费。",
+        "needs_more": []
+      }],
+      "expect": {
+        "status": "疑点",
+        "violation_nature": "主观嫌疑",
+        "nature_upgraded": true,
+        "disposition_contains": "移交"
+      }
+    },
+    {
+      "id": "G3",
+      "description": "分解住院 L3 · 线索 · needs_more · 无金额",
+      "record": {
+        "case_meta": { "case_id": "G3", "case_title": "G3-分解住院" },
+        "front_page": {
+          "patient_name": "测试丙", "admit_time": "2026-03-20",
+          "principal_diagnosis": { "name": "维持性血液透析" },
+          "previous_admissions": [{
+            "discharge_time": "2026-03-05",
+            "principal_diagnosis": "维持性血液透析",
+            "adrg": "LL1"
+          }]
+        },
+        "drg_grouping": { "adrg": "LL1" },
+        "fee_list": { "items": [] },
+        "admission_note": { "chief_complaint": "透析入院" }
+      },
+      "raw_findings": [],
+      "expect": {
+        "status": "线索",
+        "violation_type_contains": "分解住院",
+        "needs_more_min": 1,
+        "amount_null": true,
+        "tier": 2
+      }
+    },
+    {
+      "id": "G4",
+      "description": "特例单议已批准 · 不输出 · outlier 抑制",
+      "record": {
+        "case_meta": { "case_id": "G4", "case_title": "G4-高倍率特例", "special_case_review": "已批准" },
+        "front_page": { "patient_name": "测试丁", "admit_dept": "肿瘤内科", "principal_diagnosis": { "name": "肿瘤" } },
+        "fee_list": { "items": [] }
+      },
+      "raw_findings": [{
+        "finding_id": "F-G4-001", "rule_id": "T-207", "status": "疑点", "risk_level": "高",
+        "violation_type": "费用异常/高倍率资源消耗",
+        "amount_involved": 50000,
+        "evidence": [{ "type": "费用", "loc": "汇总", "text": "倍率偏高" }, { "type": "病历", "loc": "病程", "text": "危重" }],
+        "policy": [{ "ref": "KB1", "text": "演示" }],
+        "reasoning": "费用倍率异常。",
+        "needs_more": []
+      }],
+      "expect": {
+        "finding_emitted": false,
+        "outlier_suppressed": true,
+        "enters_api_score": false
+      }
+    },
+    {
+      "id": "G5",
+      "description": "超适应症无证据 · 不输出 · 三要素门禁",
+      "record": {
+        "case_meta": { "case_id": "G5", "case_title": "G5-超适应症无证据" },
+        "front_page": { "patient_name": "测试庚", "admit_dept": "肿瘤内科", "principal_diagnosis": { "name": "肺癌" } },
+        "fee_list": { "items": [] }
+      },
+      "raw_findings": [{
+        "finding_id": "F-G5-001", "rule_id": "B-201", "status": "疑点", "risk_level": "高",
+        "violation_type": "超适应症用药",
+        "amount_involved": 3000,
+        "evidence": [],
+        "policy": [],
+        "reasoning": "规则提示疑似超适应症，但包内无适应症病历可定位。",
+        "needs_more": ["适应症相关病历与用药指征记录"]
+      }],
+      "expect": {
+        "finding_emitted": false,
+        "enters_api_score": false
+      }
+    },
+    {
+      "id": "G6",
+      "description": "shadow 不计分",
+      "record": {
+        "case_meta": { "case_id": "G6" },
+        "front_page": { "patient_name": "测试戊", "admit_dept": "内科" },
+        "fee_list": { "items": [] }
+      },
+      "raw_findings": [{
+        "finding_id": "F-G6-001", "rule_id": "A-105", "status": "疑点", "risk_level": "中",
+        "violation_type": "重复收费", "amount_involved": 104, "shadow": true,
+        "evidence": [{ "type": "费用行", "loc": "1", "text": "x" }, { "type": "费用行", "loc": "2", "text": "y" }],
+        "policy": [{ "ref": "KB", "text": "t" }],
+        "reasoning": "shadow 观察期演示。",
+        "needs_more": []
+      }],
+      "expect": {
+        "shadow": true,
+        "suspected_count": 0,
+        "enters_api_score": false
+      }
+    }
+  ]
+}

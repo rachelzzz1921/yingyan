@@ -19,10 +19,10 @@ function saveQueue(q) {
 }
 
 function dedupeKey(item) {
-  return `${item.case_id}::${item.rule_id}::${(item.reject_reason || '').slice(0, 80)}`;
+  return `${item.source || 'audit_review'}::${item.case_id}::${item.rule_id}::${(item.reject_reason || '').slice(0, 80)}`;
 }
 
-function appendEvalDraft({ case_id, rule_id, finding_id, reject_reason, gold_draft }) {
+function appendEvalDraft({ case_id, rule_id, finding_id, reject_reason, gold_draft, source }) {
   const q = loadQueue();
   const item = {
     id: `ED-${Date.now().toString(36)}-${crypto.randomBytes(2).toString('hex')}`,
@@ -31,6 +31,7 @@ function appendEvalDraft({ case_id, rule_id, finding_id, reject_reason, gold_dra
     finding_id,
     reject_reason: reject_reason || '',
     gold_draft: gold_draft || { expected_status: '不输出', note: reject_reason },
+    source: source || 'audit_review',
     status: 'pending',
     created_at: new Date().toISOString(),
   };

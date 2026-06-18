@@ -29,6 +29,7 @@ const REPO_FILES_FOR_BUNDLE = [
   ['assets/brand/DESIGN-v2-gpt.md', 'assets/brand/DESIGN-v2-gpt.md'],
   ['assets/brand/APPLICATION.md', 'assets/brand/APPLICATION.md'],
   ['prompts/品牌元素生成.md', 'prompts/品牌元素生成.md'],
+  ['prompts/三审Agent模板.md', 'prompts/三审Agent模板.md'],
 ];
 
 function copyFile(src, dest) {

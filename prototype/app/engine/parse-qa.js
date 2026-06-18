@@ -22,6 +22,14 @@ function runParseQA(record) {
   }
 
   const ocrConfs = feeItems.map(i => i.anchor?.ocr_conf).filter(v => typeof v === 'number');
+  const bboxCount = feeItems.filter(i => Array.isArray(i.anchor?.bbox) && i.anchor.bbox.length >= 4).length;
+  if (feeItems.length && bboxCount === 0) {
+    flags.push({ code: 'NO_BBOX', severity: 'low', message: '费用行无 anchor.bbox（演示期可接受，生产期接 PP-StructureV3）' });
+    score -= 5;
+  } else if (bboxCount > 0 && bboxCount < feeItems.length) {
+    flags.push({ code: 'BBOX_PARTIAL', severity: 'low', message: `仅 ${bboxCount}/${feeItems.length} 行含 bbox` });
+    score -= 8;
+  }
   if (ocrConfs.length) {
     const avg = ocrConfs.reduce((a, b) => a + b, 0) / ocrConfs.length;
     if (avg < 0.75) {

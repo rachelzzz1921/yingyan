@@ -1,0 +1,36 @@
+# Eval 真调（可选，需 repository secret MINIMAX_API_KEY）
+name: Eval P5 smoke
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  p5-baseline-check:
+    name: P5 baseline + G2 gate (no API)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: "20"
+      - name: Verify G2 baseline
+        run: node scripts/verify-iter33.js
+
+  p5-live-rerun:
+    name: P5 v7 live re-run (optional)
+    runs-on: ubuntu-latest
+    if: ${{ secrets.MINIMAX_API_KEY != '' }}
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: "20"
+      - name: P5 swap runner v7 (C4 probe only)
+        env:
+          MINIMAX_API_KEY: ${{ secrets.MINIMAX_API_KEY }}
+        run: |
+          cd eval/evals
+          node p5_swap_runner.js --v7 --cases P5-C4-tie-to-clue --n 3 --temp 0.1 --judges judge,debater --tag ci_p5_probe

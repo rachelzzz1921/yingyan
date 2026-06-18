@@ -14,6 +14,7 @@ const TEMP = parseFloat(arg('temp', '0.1'));        // 裁判低温求一致性
 const JUDGES = arg('judges', 'judge').split(',').map(s => s.trim()).map(k => MODELS[k] || k);
 const USE_V7 = flag('v7');
 const CONC = parseInt(arg('conc', '5'), 10);
+const CASE_FILTER = arg('cases', '').split(',').map(s => s.trim()).filter(Boolean);
 
 function promptFile() {
   if (USE_V7 && fs.existsSync(path.join(lib.PROMPT_DIR_V7, 'P5_judge_v7.txt'))) return { dir: lib.PROMPT_DIR_V7, file: 'P5_judge_v7.txt', v7: true };
@@ -49,8 +50,9 @@ async function judgeOrder(tpl, common, facts, argA, argB, model) {
   const common = cf.commonVars || {};
   const out = { startedAt: new Date().toISOString(), prompt: file, useV7: v7, N, temperature: TEMP, judges: JUDGES, cases: [] };
 
-  console.log(`\n===== P5 位置交换 (prompt=${file}${v7 ? ' [V7]' : ''}, judges=${JUDGES.join('/')}, N=${N}, temp=${TEMP}) =====`);
+  console.log(`\n===== P5 位置交换 (prompt=${file}${v7 ? ' [V7]' : ''}, judges=${JUDGES.join('/')}, N=${N}, temp=${TEMP}${CASE_FILTER.length ? `, cases=${CASE_FILTER.join('|')}` : ''}) =====`);
   for (const c of cf.cases) {
+    if (CASE_FILTER.length && !CASE_FILTER.includes(c.id)) continue;
     const facts = c.vars.facts;
     const perJudge = [];
     for (const model of JUDGES) {

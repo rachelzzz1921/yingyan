@@ -1,0 +1,69 @@
+{
+  "phase": "batch1",
+  "seeds": [
+    {
+      "id": "liangku-col109",
+      "name": "两库分批公告",
+      "url": "https://www.nhsa.gov.cn/col/col109/index.html",
+      "type": "list",
+      "parser": "xlsx-liangku",
+      "filter": "智能监管|两库|规则和知识点|知识点",
+      "maxPages": 3,
+      "maxArticles": 8
+    },
+    {
+      "id": "problem-2025-xlsx",
+      "name": "2025问题清单Excel（新疆转发）",
+      "type": "attachment",
+      "parser": "xlsx-problem",
+      "attachments": [
+        {
+          "url": "https://ylbzj.xinjiang.gov.cn/ylbzj/jjj/202501/60bfa1c7e2de423c880c00ff9f0cfdd1/files/定点医疗机构违法违规使用医疗保障基金典型问题清单（2025版）.xlsx",
+          "label": "医疗机构清单2025",
+          "ext": "xlsx"
+        },
+        {
+          "url": "https://ylbzj.xinjiang.gov.cn/ylbzj/jjj/202501/60bfa1c7e2de423c880c00ff9f0cfdd1/files/定点零售药店违法违规使用医疗保障基金典型问题清单（2025版）.xlsx",
+          "label": "药店清单2025",
+          "ext": "xlsx"
+        }
+      ]
+    },
+    {
+      "id": "problem-2025",
+      "name": "2025典型问题清单公告",
+      "url": "https://www.nhsa.gov.cn/art/2025/1/11/art_14_15436.html",
+      "type": "article",
+      "parser": "article-only"
+    },
+    {
+      "id": "regulation-impl",
+      "name": "条例实施细则",
+      "url": "https://www.nhsa.gov.cn/art/2026/2/13/art_173_19681.html",
+      "type": "article",
+      "parser": "article",
+      "doc_id": "KB1-实施细则7号令",
+      "doc_name": "医疗保障基金使用监督管理条例实施细则",
+      "doc_no": "国家医保局令第7号",
+      "effective_from": "2026-04-01"
+    },
+    {
+      "id": "drug-catalog-2025",
+      "name": "2025药品目录印发通知",
+      "url": "https://www.nhsa.gov.cn/art/2025/12/7/art_104_18970.html",
+      "type": "article",
+      "parser": "xlsx-drug",
+      "doc_id": "KB1-目录2025"
+    },
+    {
+      "id": "jiangsu-drug-db",
+      "name": "江苏药品目录数据库",
+      "url": "http://ybj.jiangsu.gov.cn/col/col73935/index.html",
+      "type": "list",
+      "parser": "xlsx-jiangsu",
+      "filter": "药品目录数据库",
+      "maxPages": 2,
+      "maxArticles": 2
+    }
+  ]
+}

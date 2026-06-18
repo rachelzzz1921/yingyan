@@ -1,0 +1,48 @@
+{
+  "case_meta": {
+    "case_id": "YY-BENCH-EDGE-ORTHO-001",
+    "case_title": "骨科边界干扰件·PKP术式内涵与耗材一致（干净件）",
+    "disclaimer": "虚构数据。AuditBench 专科边界干扰：表面像骨科违规（PKP/球囊/骨水泥关键词密集），但费用与手术记录逐项一致，应 0 疑点。",
+    "embedded_violation_count": 0,
+    "distractor_count": 2,
+    "bench_tier": "boundary",
+    "settlement_summary": {"total_amount": 6580.0, "insurance_paid_amount": 6580.0, "currency": "CNY", "settle_type": "住院·按项目付费"}
+  },
+  "front_page": {
+    "doc_type": "病案首页", "hospital": "示范市第一人民医院（虚构）", "hospital_level": "三级甲等",
+    "patient_name": "陈骨康", "sex": "女", "age": 72,
+    "insurance_type": "城乡居民基本医疗保险", "admission_no": "ZY20260428-0312",
+    "admit_time": "2026-04-28 09:00", "discharge_time": "2026-05-02 10:00", "actual_inpatient_days": 4,
+    "admit_dept": "骨科", "bed_no": "骨科-12床",
+    "principal_diagnosis": {"name": "L2椎体压缩性骨折", "icd10": "S32.002"},
+    "principal_operation": {"name": "经皮椎体后凸成形术(PKP) L2", "icd9": "81.66"},
+    "attending_physician": "孙医生", "chief_physician": "钱主任"
+  },
+  "operation_note": {
+    "doc_type": "手术记录", "operation_name": "经皮椎体后凸成形术(PKP) L2", "operation_date": "2026-04-29",
+    "procedure_steps": "经双侧椎弓根穿刺、球囊扩张复位、注入骨水泥，术式内涵含穿刺与球囊步骤。",
+    "consumables_used": [
+      {"name": "椎体球囊扩张导管", "qty": 1, "type": "国产"},
+      {"name": "骨水泥(PMMA)", "qty": 1, "type": "国产", "brand": "国产A牌"}
+    ]
+  },
+  "long_term_orders": {"doc_type": "长期医嘱单", "items": [
+    {"order_id": "L01", "content": "二级护理", "start": "2026-04-28 09:00", "stop": "2026-05-02 10:00"}
+  ]},
+  "nursing_records": {"doc_type": "护理记录单", "nursing_level_executed": "二级护理（每2小时巡视）", "entries": [
+    {"date": "2026-04-28", "text": "二级护理，术前准备。"},
+    {"date": "2026-04-29", "text": "PKP术后平卧，二级护理。"}
+  ]},
+  "pathology_report": {"doc_type": "—", "diagnosis": "非肿瘤骨科病例"},
+  "fee_list": {
+    "doc_type": "费用清单", "settle_date": "2026-05-02",
+    "items": [
+      {"line_no": 1, "fee_date": "2026-04-28~05-02", "category": "护理费", "item_name": "二级护理", "qty": 4, "unit": "日", "unit_price": 30.0, "amount": 120.0, "insurance_class": "医保", "linked_order": "L01", "flag": "正常（医嘱二级=收费二级=护理记录）"},
+      {"line_no": 2, "fee_date": "2026-04-29", "category": "手术费", "item_name": "经皮椎体后凸成形术", "qty": 1, "unit": "次", "unit_price": 4500.0, "amount": 4500.0, "insurance_class": "医保", "flag": "正常（含穿刺/球囊内涵，未另收分解项）"},
+      {"line_no": 3, "fee_date": "2026-04-29", "category": "耗材费", "item_name": "椎体球囊扩张导管", "qty": 1, "unit": "个", "unit_price": 1200.0, "amount": 1200.0, "insurance_class": "医保乙", "flag": "干扰项：球囊关键词但数量与手术记录一致→正确不报"},
+      {"line_no": 4, "fee_date": "2026-04-29", "category": "耗材费", "item_name": "骨水泥(PMMA·国产)", "qty": 1, "unit": "套", "unit_price": 760.0, "amount": 760.0, "insurance_class": "医保乙", "flag": "干扰项：骨水泥与手术记录国产一致→正确不报"}
+    ],
+    "total_amount": 6580.0
+  },
+  "discharge_summary": {"doc_type": "出院小结", "discharge_diagnosis": ["L2椎体压缩性骨折（术后）"], "hospital_course": "PKP术顺利，腰背痛缓解，好转出院。"}
+}

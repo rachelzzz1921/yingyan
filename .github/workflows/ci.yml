@@ -35,3 +35,19 @@ jobs:
 
       - name: Run YHF strict gate
         run: bash yhf/run.sh --strict
+
+      - name: Verify iter-36 (eval_draft + boundary bucket) through iter-29
+        run: |
+          node scripts/verify-iter36.js
+          node scripts/verify-iter35.js
+          node scripts/verify-iter34.js
+          node scripts/verify-iter33.js
+          cd prototype/app
+          node server.js &
+          SERVER_PID=$!
+          trap "kill $SERVER_PID 2>/dev/null || true" EXIT
+          sleep 3
+          node ../../scripts/verify-iter32.js
+          node ../../scripts/verify-iter31.js
+          node ../../scripts/verify-iter30.js
+          node ../../scripts/verify-iter29.js

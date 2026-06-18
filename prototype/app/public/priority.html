@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#0B2A4A">
+<title>鹰眼 · 稽核优先队列</title>
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,600;9..40,700&family=Noto+Sans+SC:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/style.css">
+<link rel="stylesheet" href="/priority.css">
+</head>
+<body>
+<header class="topbar">
+  <div class="brand">
+    <a href="/priority.html" class="logo"><img src="/brand/logo-mark.svg" width="52" height="52" alt=""></a>
+    <div class="brand-text">
+      <h1>稽核优先队列 <span class="brand-en">PRIORITY QUEUE</span></h1>
+      <p>事后飞检 · 按风险排序决定「先查谁」· 疑点始终优先于线索</p>
+    </div>
+  </div>
+  <div class="topbar-actions">
+    <nav class="topbar-nav" aria-label="页面导航">
+      <a href="/intake.html" class="btn ghost">📥 导入中心</a>
+      <a href="/" class="btn ghost">🛡 稽核工作台</a>
+      <a href="/dashboard.html#priority" class="btn ghost">📊 看板摘要</a>
+    </nav>
+    <div class="topbar-ops">
+      <button type="button" class="btn primary" id="btnRefresh">↻ 刷新排序</button>
+      <button type="button" class="btn ghost" id="btnConfig">⚙ 权重</button>
+    </div>
+  </div>
+</header>
+
+<main class="pri-main">
+  <section class="pri-glossary-wrap card" id="glossaryMount"></section>
+  <section class="pri-filters card">
+    <div class="pri-filter-row">
+      <label>科室<input type="text" id="fDept" placeholder="肿瘤内科"></label>
+      <label>医生<input type="text" id="fDoctor" placeholder="王医生"></label>
+      <label>状态<select id="fStatus"><option value="">全部</option><option value="uploaded">已导入</option><option value="auditing">稽核中</option><option value="audited">已稽核</option></select></label>
+      <label>金额≥<input type="number" id="fAmtMin" placeholder="0" min="0"></label>
+      <label>搜索<input type="text" id="fQ" placeholder="案卷/诊断"></label>
+      <button type="button" class="btn primary" id="btnApply">筛选</button>
+    </div>
+    <div class="pri-mode-row">
+      <label class="chk" title="PII=个人隐私信息；勾选后列表与 URL 不含姓名等"><input type="checkbox" id="maskPii" checked> 列表脱敏（隐藏姓名等 PII）</label>
+      <label class="chk" title="只改展示用词（风险点/暴露金额），分数与三态不变"><input type="checkbox" id="examMode"> 体检模式（院端自查口径）</label>
+      <div class="pri-mode-tools">
+        <button type="button" class="btn sm secondary" id="btnReport">📊 违规统计表</button>
+        <button type="button" class="btn sm secondary" id="btnChecklist">📋 自查清单</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="pri-profile card" id="profileSection">
+    <div class="pri-detail-head">
+      <h2>历史 / 画像看板 <span class="muted">科室·医生·DRG 组历史命中率 · 9大重点领域 tag</span></h2>
+      <button type="button" class="btn sm ghost" id="btnProfileRefresh">刷新画像</button>
+    </div>
+    <div id="profileBody" class="pri-profile-grid muted">加载中…</div>
+  </section>
+
+  <section class="pri-actions card">
+    <span id="selHint" class="muted">未选择案卷</span>
+    <label class="pri-topn-wrap" for="priTopN">队首 N</label>
+    <input type="number" class="pri-topn-input" id="priTopN" min="1" max="50" placeholder="10">
+    <button type="button" class="btn btn-batch-topn" id="btnBatchTopN">🎯 队首 N 入队</button>
+    <button type="button" class="btn primary" id="btnBatch" disabled>加入批量稽核</button>
+    <span id="rankMeta" class="muted"></span>
+  </section>
+
+  <section class="pri-queue card" id="queueSection">
+    <h2>稽核队列 <span class="muted" id="queueCount"></span></h2>
+    <p class="pri-score-legend muted" id="queueLegend"></p>
+    <div class="pri-table-wrap">
+      <table class="pri-table" id="queueTable">
+        <thead>
+          <tr>
+            <th title="勾选后可批量加入稽核"><input type="checkbox" id="chkAll"></th>
+            <th title="tier：疑点层(tier1)永远排在线索层(tier2)前"><span class="pri-th-main">层级</span><span class="pri-th-hint">tier · 疑点&gt;线索</span></th>
+            <th class="num pri-th-score" title="综合优先指数：越高越应先安排飞检，非质量分"><span class="pri-th-main">api_score</span><span class="pri-th-hint">↑越高越先查</span></th>
+            <th><span class="pri-th-main">案卷</span><span class="pri-th-hint">case_id</span></th>
+            <th><span class="pri-th-main">科室</span><span class="pri-th-hint">含重点领域 tag</span></th>
+            <th class="num" title="active 疑点条数 / 线索条数（shadow 不计）"><span class="pri-th-main">疑点/线索</span></th>
+            <th class="num" title="疑点涉及金额合计（shadow 不计）"><span class="pri-th-main">暴露金额</span></th>
+            <th title="对分数贡献最大的违规类型"><span class="pri-th-main">首要违规</span><span class="pri-th-hint">Top violation</span></th>
+            <th title="主观/非主观 → 移交或退回整改建议"><span class="pri-th-main">处置建议</span></th>
+            <th class="num" title="患者/科室历史稽核命中率%"><span class="pri-th-main">历史命中</span><span class="pri-th-hint">患者/科室</span></th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody id="queueBody"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="pri-shadow card" id="shadowSection">
+    <h2>🌓 观察期桶 <span class="muted">shadow · 展示但不计入 api_score / 暴露金额</span></h2>
+    <div id="shadowBody" class="pri-shadow-list"></div>
+  </section>
+
+  <section class="pri-boundary card" id="boundarySection">
+    <h2>🧪 边界基准桶 <span class="muted">boundary · G0 零误报观测案卷，不计入优先队列</span></h2>
+    <div id="boundaryBody" class="pri-boundary-list"></div>
+  </section>
+
+  <section class="pri-detail card hidden" id="detailPanel">
+    <div class="pri-detail-head">
+      <h2 id="detailTitle">案卷详情</h2>
+      <button type="button" class="btn sm ghost" id="btnCloseDetail">关闭</button>
+    </div>
+    <div id="detailContent"></div>
+  </section>
+</main>
+
+<div class="pri-modal hidden" id="configModal">
+  <div class="pri-modal-inner card">
+    <h3>优先指数权重（可审计）</h3>
+    <p class="muted pri-bd-hint">调整 api_score 各因子权重；字段名保留英文便于与后端配置对齐，悬停可看说明</p>
+    <form id="configForm" class="pri-config-form"></form>
+    <div class="pri-modal-actions">
+      <button type="button" class="btn ghost" id="btnConfigCancel">取消</button>
+      <button type="button" class="btn primary" id="btnConfigSave">保存并重新排序</button>
+    </div>
+  </div>
+</div>
+
+<div class="pri-modal hidden" id="breakdownModal">
+  <div class="pri-modal-inner card">
+    <h3 id="bdTitle">分数归因</h3>
+    <p class="muted pri-bd-hint">展开各因子如何叠成 api_score · 分越高越应先查</p>
+    <pre id="bdBody" class="pri-pre"></pre>
+    <button type="button" class="btn sm secondary" id="btnBdClose">关闭</button>
+  </div>
+</div>
+
+<div class="pri-modal hidden" id="reportModal">
+  <div class="pri-modal-inner card pri-modal-wide">
+    <h3>违规点认定 · 费用统计表</h3>
+    <div class="pri-report-toolbar">
+      <label>分组维度<select id="reportGroupBy" title="按哪种字段汇总违规统计表">
+        <option value="violation_type">违规类型 violation_type</option>
+        <option value="nature">违规性质 nature</option>
+        <option value="dept">科室 dept</option>
+      </select></label>
+      <button type="button" class="btn sm secondary" id="btnReportRefresh">预览</button>
+      <button type="button" class="btn sm ghost" id="btnReportExport">导出 Markdown</button>
+    </div>
+    <pre id="reportBody" class="pri-pre"></pre>
+    <button type="button" class="btn sm secondary" id="btnReportClose">关闭</button>
+  </div>
+</div>
+
+<div class="pri-modal hidden" id="checklistModal">
+  <div class="pri-modal-inner card pri-modal-wide">
+    <h3>自查自纠清单对照 <span class="muted" id="checklistMeta"></span></h3>
+    <div id="checklistBody" class="pri-checklist"></div>
+    <button type="button" class="btn sm secondary" id="btnChecklistClose">关闭</button>
+  </div>
+</div>
+
+<div class="pri-modal hidden" id="pkgModal">
+  <div class="pri-modal-inner card pri-modal-wide pri-pkg-modal">
+    <div class="pri-detail-head">
+      <h3>飞检举证包</h3>
+      <div>
+        <button type="button" class="btn sm secondary" id="btnPkgPrint">🖨 打印</button>
+        <button type="button" class="btn sm ghost" id="btnPkgClose">关闭</button>
+      </div>
+    </div>
+    <iframe id="pkgFrame" class="pri-pkg-frame" title="举证包预览"></iframe>
+  </div>
+</div>
+
+<footer class="foot">鹰眼 · 稽核优先通路 · 先分疑点/线索层级，再按 api_score 决定队首 · shadow 观察期不计分</footer>
+<script src="/priority-glossary.js"></script>
+<script src="/priority.js"></script>
+</body>
+</html>

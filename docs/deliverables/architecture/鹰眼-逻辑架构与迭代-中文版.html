@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>鹰眼 · 逻辑架构与迭代路线图（中文版）</title>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+  <script>mermaid.initialize({ startOnLoad: true, theme: 'neutral', securityLevel: 'loose' });</script>
+  <style>
+    * { box-sizing: border-box; }
+    body { margin: 0; font-family: "PingFang SC", "Noto Sans SC", "Microsoft YaHei UI", sans-serif; background: #fafaf8; color: #1c1917; line-height: 1.65; }
+    @media print { .no-print { display: none; } section { break-inside: avoid; } }
+    header { border-bottom: 1px solid #e7e5e4; background: #fff; padding: 32px 24px; }
+    .wrap { max-width: 980px; margin: 0 auto; }
+    .tag { display: inline-block; font-size: 12px; background: #002FA7; color: #fff; padding: 4px 10px; margin-bottom: 12px; }
+    h1.page-title { font-size: 28px; font-weight: 600; margin: 0 0 8px; }
+    .subtitle { color: #57534e; max-width: 52rem; }
+    main { max-width: 980px; margin: 0 auto; padding: 40px 24px 56px; }
+    section { margin-bottom: 52px; }
+    section h2 { font-size: 20px; font-weight: 600; border-left: 4px solid #002FA7; padding-left: 12px; margin-bottom: 8px; }
+    .section-desc { font-size: 15px; color: #57534e; margin-bottom: 20px; }
+    .mermaid { background: #fff; border: 1px solid #e7e5e4; padding: 16px; overflow-x: auto; margin-bottom: 16px; }
+    table { width: 100%; border-collapse: collapse; font-size: 14px; border: 1px solid #e7e5e4; background: #fff; }
+    th, td { padding: 10px 12px; text-align: left; border-top: 1px solid #e7e5e4; vertical-align: top; }
+    thead { background: #f5f5f4; }
+    .badge-ok { background: #dcfce7; color: #166534; padding: 2px 8px; font-size: 12px; }
+    .badge-partial { background: #fef9c3; color: #854d0e; padding: 2px 8px; font-size: 12px; }
+    .badge-gap { background: #fee2e2; color: #991b1b; padding: 2px 8px; font-size: 12px; }
+    ul { padding-left: 1.25rem; color: #44403c; font-size: 15px; }
+    li { margin-bottom: 6px; }
+    .grid-2 { display: grid; gap: 16px; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); }
+    .card { border: 1px solid #e7e5e4; background: #fff; padding: 18px; }
+    .card h3 { font-size: 16px; color: #002FA7; margin: 0 0 8px; }
+    .card p { margin: 0; font-size: 14px; color: #57534e; }
+    .legend { display: flex; flex-wrap: wrap; gap: 12px; font-size: 13px; margin-bottom: 24px; }
+    .note { background: #fff; border: 1px solid #e7e5e4; padding: 16px 18px; font-size: 14px; color: #44403c; }
+    footer { border-top: 1px solid #e7e5e4; background: #fff; padding: 24px; text-align: center; font-size: 12px; color: #78716c; }
+    code { font-family: ui-monospace, monospace; font-size: 12px; background: #f5f5f4; padding: 2px 6px; }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="wrap">
+      <span class="tag">中文版 · iter-36</span>
+      <h1 class="page-title">鹰眼 · 逻辑架构与迭代路线图</h1>
+      <p class="subtitle">
+        医保基金<strong>事后行政查处稽核</strong>智能体。双产品主线：<strong>单案卷稽核工作台</strong> + <strong>稽核优先通路 v2</strong>。
+        下图节点、流程、实体关系均为中文标注，便于评审与外包 AI 作图。
+      </p>
+      <div class="legend no-print">
+        <span><span class="badge-ok">✅ 完整</span> 可演示、可验收</span>
+        <span><span class="badge-partial">◑ 半成品</span> 骨架在、深度不足</span>
+        <span><span class="badge-gap">❌ 缺口</span> 架构预留或未实现</span>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section>
+      <h2>一、分层架构（六层流水线 + 四项横向能力）</h2>
+      <p class="section-desc">自上而下：操作界面 → 输入 → 事实层 → 知识 → 规则 → 验证 → 输出；横向贯穿评测、门禁、优先队列与规则治理。</p>
+      <div class="mermaid">
+flowchart TB
+  subgraph 操作界面
+    工作台["稽核工作台 index.html"]
+    优先队列["优先通路 priority.html"]
+    看板["工程看板 dashboard.html"]
+  end
+  subgraph 第一层_输入
+    摄取["材料摄取 ingest / intake"]
+    连接器["医院连接器 MockHIS"]
+  end
+  subgraph 第二层_事实层
+    案卷对象["稽核案卷对象 Case Object"]
+    证据锚点["证据锚点 anchor / bbox"]
+  end
+  subgraph 第三层_知识
+    政策库["KB1 政策法规与目录"]
+    临床库["KB2 临床指南"]
+  end
+  subgraph 第四层_规则
+    稽核引擎["规则引擎 audit-engine"]
+    触发路由["触发器路由 按需激活"]
+  end
+  subgraph 第五层_验证
+    三要素门禁["三要素合规门禁"]
+    控辩裁["控辩裁 review-debate"]
+  end
+  subgraph 第六层_输出
+    稽核报告["结构化疑点报告"]
+    核查清单["核查清单导出"]
+    举证包["飞检举证包"]
+  end
+  subgraph 横向能力
+    评测台["AuditBench 20案卷"]
+    变更门禁["YHF 门禁 G0红线"]
+    优先评分["api_score 优先队列"]
+    规则治理["三审三验治理"]
+  end
+  工作台 --> 摄取
+  优先队列 --> 优先评分
+  摄取 --> 案卷对象
+  案卷对象 --> 稽核引擎
+  政策库 --> 稽核引擎
+  临床库 --> 稽核引擎
+  稽核引擎 --> 三要素门禁
+  三要素门禁 --> 控辩裁
+  控辩裁 --> 稽核报告
+  稽核报告 --> 核查清单
+  稽核报告 --> 举证包
+  稽核引擎 --> 评测台
+  稽核引擎 --> 变更门禁
+  稽核报告 --> 优先评分
+  规则治理 --> 稽核引擎
+      </div>
+      <table>
+        <thead><tr><th>层级</th><th>状态</th><th>职责说明</th><th>关键模块 / 接口</th></tr></thead>
+        <tbody>
+          <tr><td>第一层 · 输入</td><td><span class="badge-partial">◑</span></td><td>接收 PDF/图片/JSON，分类到材料槽位</td><td><code>intake-classifier</code>、<code>POST /api/ingest</code>、PP-Structure 解析 sidecar</td></tr>
+          <tr><td>第二层 · 事实层</td><td><span class="badge-partial">◑</span></td><td>把材料编译为可复现的类型化事实，每条带出处</td><td><code>case-object.js</code>；bbox 坐标待真 OCR 填满</td></tr>
+          <tr><td>第三层 · 知识</td><td><span class="badge-partial">◑</span></td><td>政策条款、目录备注、临床原则 RAG 引证</td><td><code>kb1_policies.json</code>、<code>kb2_clinical.json</code></td></tr>
+          <tr><td>第四层 · 规则</td><td><span class="badge-partial">◑⚠</span></td><td>58 条规则在库；约 14 条有 checker 会真 fire</td><td><code>audit-engine.js</code>、触发器路由、<code>rules.yaml</code></td></tr>
+          <tr><td>第五层 · 验证</td><td><span class="badge-partial">◑</span></td><td>三要素门禁、控辩裁降级、可选 LLM 语义路径</td><td><code>compliance-gate.js</code>、<code>review-debate.js</code></td></tr>
+          <tr><td>第六层 · 输出</td><td><span class="badge-ok">✅</span></td><td>疑点卡、证据高亮、文书导出、举证包</td><td>工作台 UI、<code>/api/export/checklist</code></td></tr>
+          <tr><td>横向能力</td><td><span class="badge-ok">✅/◑</span></td><td>评测回归、零误报红线、飞检排序、规则生命周期</td><td>AuditBench、YHF、Priority v2、Governance</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section>
+      <h2>二、稽核数据流（从导入到优先队列）</h2>
+      <p class="section-desc">单案卷深度复核与批量优先排序共用同一引擎；Findings 缓存后进入 api_score 计算。</p>
+      <div class="mermaid">
+sequenceDiagram
+  participant 稽核员
+  participant 材料导入 as 材料导入层
+  participant 事实层 as 事实层编译
+  participant 规则引擎 as 规则引擎
+  participant 合规门禁 as 三要素门禁
+  participant 优先排序 as 优先队列
+  participant 输出层 as 报告与文书
+
+  稽核员->>材料导入: 批量上传 PDF/JSON
+  材料导入->>事实层: 生成案卷对象与锚点
+  稽核员->>规则引擎: 发起稽核 POST /api/audit
+  规则引擎->>规则引擎: 触发器筛选相关规则
+  规则引擎->>合规门禁: 输出 findings 三要素
+  合规门禁->>合规门禁: 降级为线索或不输出
+  合规门禁->>输出层: 生成稽核报告
+  输出层->>稽核员: 工作台证据点击高亮
+  规则引擎->>优先排序: 缓存 findings 并算分
+  优先排序->>稽核员: priority.html 排序队列
+  稽核员->>输出层: 导出举证包与违规统计表
+      </div>
+    </section>
+
+    <section>
+      <h2>三、双入口产品架构</h2>
+      <p class="section-desc">同一套 ingest + audit 引擎，服务两种稽核员工作模式与工程观测看板。</p>
+      <div class="mermaid">
+flowchart LR
+  subgraph 共用导入
+    批量导入["POST /api/intake/batch"]
+    单条导入["POST /api/ingest"]
+  end
+  subgraph 双主线
+    工作台线["工作台 单案卷深度复核"]
+    优先线["优先通路 飞检批量排序"]
+  end
+  subgraph 共用引擎
+    引擎["audit-engine 稽核引擎"]
+    存储["priority/store.json 落盘"]
+  end
+  subgraph 工程观测
+    看板页["dashboard.html"]
+    门禁API["GET /api/yhf"]
+    评测API["GET /api/bench"]
+  end
+  批量导入 --> 工作台线
+  批量导入 --> 优先线
+  单条导入 --> 工作台线
+  工作台线 --> 引擎
+  优先线 --> 引擎
+  引擎 --> 存储
+  工作台线 --> 看板页
+  优先线 --> 看板页
+  引擎 --> 评测API
+  门禁API --> 看板页
+      </div>
+      <ul>
+        <li><strong>工作台</strong>：三要素解读、控辩裁、CoVe 自检、原件高亮、Demo 主战场</li>
+        <li><strong>优先通路</strong>：tier 硬分层 + api_score 排序、shadow/boundary 观测桶、Top-N 批量稽核</li>
+        <li><strong>看板</strong>：YHF 门禁、AuditBench 20 案、工程成熟度、优先通路摘要卡片</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>四、核心数据模型</h2>
+      <p class="section-desc">事后查处稽核的核心实体链：机构 → 患者 → 案卷 → 疑点 → 证据与政策引用。</p>
+      <div class="mermaid">
+erDiagram
+  被检机构 ||--o{ 稽核案卷 : 包含
+  患者 ||--o{ 稽核案卷 : 拥有
+  稽核案卷 ||--o{ 疑点或线索 : 产出
+  疑点或线索 ||--|{ 证据锚点 : 引用
+  疑点或线索 ||--|{ 政策条款 : 违反
+  稽核案卷 ||--o{ 历史核查记录 : 留痕
+      </div>
+      <div class="note">
+        <strong>三态输出口径：</strong>疑点（证据闭环，可对质）· 线索（证据不全）· 不输出（除外情形或干扰项正确不报）。
+        <strong>shadow finding</strong> 仅观测，不计入 api_score 与暴露金额。
+      </div>
+    </section>
+
+    <section>
+      <h2>五、迭代路线图（Phase 4–8）</h2>
+      <p class="section-desc">Phase 4 评测闭环已达成；Phase 5 治理深化进行中；Phase 6–8 为多模态、批量与生产化。</p>
+      <div class="mermaid">
+gantt
+  title 鹰眼迭代路线图 iter-36
+  dateFormat YYYY-MM
+  section 第四阶段_评测闭环
+  金标准案卷同步           :done, p4a, 2026-05, 2026-06
+  AuditBench扩至20案       :done, p4b, 2026-05, 2026-06
+  YHF严格门禁接入CI        :done, p4c, 2026-05, 2026-06
+  section 第五阶段_治理深化
+  LLM接shadow后处理        :active, p5a, 2026-06, 2026-07
+  三审Agent模板            :p5b, 2026-06, 2026-07
+  驳回内联与持久化         :p5c, 2026-06, 2026-08
+  section 第六阶段_输入扩展
+  真OCR坐标bbox            :p6a, 2026-07, 2026-09
+  江苏价格目录入库         :done, p6b, 2026-06, 2026-07
+  专科边界干扰案卷         :p6c, 2026-07, 2026-09
+  section 第七阶段_批量机构
+  百案卷批量队列           :p7a, 2026-08, 2026-10
+  机构画像多时间断面       :p7b, 2026-09, 2026-11
+  section 第八阶段_生产化
+  数据库与多用户鉴权       :p8a, 2026-10, 2027-01
+  GoRules替换F类L1         :p8b, 2026-11, 2027-02
+      </div>
+      <div class="grid-2">
+        <div class="card"><h3>Phase 4 · 评测闭环 ✅</h3><p>G0 干净件零误报、AuditBench 20 案、L2 核心规则用例、G1 shadow 准入。</p></div>
+        <div class="card"><h3>Phase 5 · 治理深化 🔜</h3><p>LLM+shadow、三审模板、控辩裁 eval_draft 写回（iter-36 已起步）。</p></div>
+        <div class="card"><h3>Phase 6 · 输入扩展</h3><p>PP-Structure 真 bbox、麻醉/重症/药店边界件、G/H 类 checker。</p></div>
+        <div class="card"><h3>Phase 7–8 · 批量与生产</h3><p>100 案卷 demo 队列、机构趋势、rule_states 上 DB、GoRules 引擎替换。</p></div>
+      </div>
+    </section>
+
+    <section>
+      <h2>六、ECC 工程改进环（评估 → 修正 → 继续）</h2>
+      <p class="section-desc">每轮迭代先跑门禁与 verify，再最小 diff 修复，KPT 复盘后进入下一轮 SMART 目标。</p>
+      <div class="mermaid">
+flowchart LR
+  评估["评估 Evaluate<br/>YHF / bench / verify"]
+  修正["修正 Correct<br/>最小可审计改动"]
+  继续["继续 Continue<br/>KPT + 下轮目标"]
+  评估 --> 修正 --> 继续 --> 评估
+      </div>
+      <div class="note">
+        <p><strong>iter-36 实例：</strong></p>
+        <ul>
+          <li><strong>评估</strong>：控辩裁结果未衔接 eval gold；boundary 案卷与 shadow 混排</li>
+          <li><strong>修正</strong>：eval_draft 写回、boundary_bucket 独立 UI、debate 历史展示</li>
+          <li><strong>继续</strong>：<code>verify-iter36.js</code> + <code>yhf/run.sh --strict</code> PASS → iter-37 eval_draft 确认 UX</li>
+        </ul>
+        <p>优先通路 v2 专项验收：<code>scripts/run-priority-gold-eval.js</code>（G1–G6 金标锚点）</p>
+      </div>
+    </section>
+
+    <section>
+      <h2>七、api_score 优先排序公式（优先通路）</h2>
+      <div class="note">
+        <p><code>tier = 1</code> 含 active 疑点；<code>2</code> 仅线索；<code>3</code> 无 active</p>
+        <p><code>core = 几何均值(EC, AMT, SEV)</code></p>
+        <p><code>api_score = round(100 × core × HistoryPrior × Breadth × Outlier × 领域权重, 1)</code></p>
+        <p>排序：<code>ORDER BY tier ASC, api_score DESC</code> · shadow 永不计分</p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="no-print">
+    鹰眼 · 逻辑架构中文版 · 浏览器访问：<code>http://localhost:3700/deliverables/architecture/鹰眼-逻辑架构与迭代-中文版.html</code><br/>
+    来源：docs/07-架构升级蓝图.md · docs/ROADMAP.md · prototype/docs/ARCHITECTURE_REVIEW.md · prototype/docs/PRIORITY_PATHWAY.md
+  </footer>
+</body>
+</html>

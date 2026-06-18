@@ -1,0 +1,15 @@
+{
+  "phase": "rerun",
+  "seeds": [
+    {
+      "id": "guide-col201",
+      "name": "立项指南全批次",
+      "url": "https://www.nhsa.gov.cn/col/col201/index.html",
+      "type": "list",
+      "parser": "html-guide",
+      "filter": "立项指南|价格项目|立项",
+      "maxPages": 15,
+      "maxArticles": 40
+    }
+  ]
+}

@@ -14,6 +14,7 @@
 'use strict';
 
 const { callLLM, providerName } = require('./llm-provider');
+const p5 = require('./p5-judge');
 const { piiRedact } = require('./pii-redact');
 const { applyContextBudget } = require('./context-budget');
 const MODEL = providerName();
@@ -63,26 +64,23 @@ async function coveVerify(finding, record) {
   return extractJSON(txt);
 }
 
-// ---------- Stage 3：控辩裁（申诉Agent反驳 → 裁判裁定，位置交换防偏见） ----------
-async function defenderJudge(finding, record, kb) {
-  const policyKB = {}; for (const e of (kb?.entries || [])) policyKB[e.ref_id] = e.text;
-  // 申诉Agent
+// ---------- Stage 3：控辩裁（申诉Agent反驳 → P5 v7 裁判，位置交换） ----------
+async function defenderJudge(finding, record, kb, opts = {}) {
+  const policyKB = {};
+  for (const e of (kb?.entries || [])) policyKB[e.ref_id] = e.text;
   const defSys = '你是申诉Agent(辩方),为被稽核机构辩护:检查规则除外情形、找反向证据、质疑证据链完整性、指出是否属合理诊疗。你是误报过滤器。';
   const defUser = ['## 控方疑点', '```json', JSON.stringify(finding), '```', '## 材料包', '```json', JSON.stringify(record), '```', '输出JSON: {"rebuttal":"申诉理由","reverse_evidence":["..."],"requests_downgrade":true/false}'].join('\n');
   const rebuttal = extractJSON(await callClaude(defSys, defUser, 1500));
-  // 裁判Agent(用不同temperature/视角,位置交换:先看辩方再看控方)
-  const judgeSys = '你是裁判Agent,中立。裁决标准=三要素门禁:申诉方若指出任一要素缺失或有效反向证据→降级线索或撤销。防偏见:不看谁话多,只看证据条目数与定位质量;控辩材料已位置交换二次核对。';
-  const judgeUser = ['## 辩方申诉', '```json', JSON.stringify(rebuttal), '```', '## 控方疑点', '```json', JSON.stringify({ rule_id: finding.rule_id, status: finding.status, evidence: finding.evidence, policy: finding.policy, reasoning: finding.reasoning }), '```', '## policy_kb', '```json', JSON.stringify(policyKB), '```', '输出JSON: {"verdict":"维持疑点|降级线索|撤销","verdict_reason":"...","corroboration_kept":true/false}'].join('\n');
-  const verdict = extractJSON(await callClaude(judgeSys, judgeUser, 1500));
-  return {
-    enabled: true, rounds: 2,
-    exchanges: [
-      { role: '控方', stance: '主张违规', text: finding.reasoning },
-      { role: '辩方', stance: '为机构申诉', text: rebuttal.rebuttal + (rebuttal.reverse_evidence?.length ? '；反向证据：' + rebuttal.reverse_evidence.join('；') : '') },
-      { role: '裁判', stance: '中立裁定', text: verdict.verdict_reason },
-    ],
-    verdict: verdict.verdict, verdict_reason: verdict.verdict_reason,
-  };
+  const rule = opts.rules?.[finding.rule_id];
+  const facts = p5.buildFacts(record, finding);
+  const rulePolicy = p5.buildRulePolicy(finding, rule, { ...policyKB, ...(opts.policyTexts || {}) });
+  const prosecution = p5.buildProsecution(finding);
+  const defense = p5.buildDefense(rebuttal);
+  const debate = await p5.runP5Judge({ prosecution, defense, facts, rulePolicy });
+  debate.exchanges[1].text = typeof rebuttal === 'object' ? (rebuttal.rebuttal || defense) : defense;
+  debate.real_agent = true;
+  debate.llm_provider = MODEL;
+  return debate;
 }
 
 // Stage2 批量 CoVe（一次调用核验全部疑点，控成本/时延）
@@ -150,9 +148,9 @@ async function llmAgentAudit(record, rules, opts = {}) {
   };
 }
 
-// 按需：对单条疑点跑真·控辩裁
-async function runDebate(finding, record, kb, policyVerified) {
-  return defenderJudge(finding, record, kb);
+// 按需：对单条疑点跑真·控辩裁（P5 v7 裁判）
+async function runDebate(finding, record, kb, opts = {}) {
+  return defenderJudge(finding, record, kb, opts);
 }
 
 module.exports = { llmAgentAudit, runDebate };

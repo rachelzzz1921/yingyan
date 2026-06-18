@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>鹰眼 · 交付文档包</title>
+  <style>
+    :root { --ink:#0a0a0a; --paper:#fafaf8; --accent:#002FA7; --muted:#737373; }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: "PingFang SC", "Noto Sans SC", system-ui, sans-serif;
+      background: var(--paper);
+      color: var(--ink);
+      min-height: 100vh;
+      padding: 48px 24px 64px;
+    }
+    .wrap { max-width: 920px; margin: 0 auto; }
+    .eyebrow { font-size: 12px; letter-spacing: .18em; text-transform: uppercase; color: var(--muted); }
+    h1 { font-size: clamp(28px, 5vw, 42px); font-weight: 300; margin: 12px 0 8px; letter-spacing: -.02em; }
+    .lead { font-size: 17px; line-height: 1.65; color: #525252; max-width: 52ch; margin-bottom: 32px; }
+    .notice {
+      border-left: 3px solid var(--accent);
+      background: #fff;
+      padding: 14px 18px;
+      margin-bottom: 36px;
+      font-size: 15px;
+      line-height: 1.6;
+      color: #404040;
+    }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; }
+    a.card {
+      display: block;
+      text-decoration: none;
+      color: inherit;
+      background: #fff;
+      border: 1px solid #e5e5e5;
+      padding: 24px;
+      transition: border-color .15s, box-shadow .15s;
+    }
+    a.card:hover { border-color: var(--accent); box-shadow: 0 8px 28px rgba(0,47,167,.08); }
+    a.card.primary { background: var(--accent); color: #fff; border-color: var(--accent); }
+    a.card.primary .tag { color: rgba(255,255,255,.75); }
+    a.card.primary p { color: rgba(255,255,255,.88); }
+    .tag { font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); margin-bottom: 10px; }
+    .card h2 { font-size: 20px; font-weight: 500; margin-bottom: 8px; }
+    .card p { font-size: 15px; line-height: 1.55; color: var(--muted); }
+    .foot { margin-top: 40px; font-size: 13px; color: var(--muted); line-height: 1.7; }
+    code { font-family: ui-monospace, monospace; font-size: 12px; background: #f0f0ee; padding: 2px 6px; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <p class="eyebrow">Yingyan Deliverables · iter-36</p>
+    <h1>鹰眼 · 交付文档包</h1>
+    <p class="lead">路演 PPT、逻辑架构图、使用指南。请在本页点击卡片，用<strong>浏览器</strong>打开渲染后的页面。</p>
+
+    <div class="notice">
+      若在 Cursor / VS Code 里点击 <code>.html</code> 文件，看到的是<strong>源代码</strong>，不是幻灯片画面。
+      正确方式：先启动 <code>node prototype/app/server.js</code>，再打开本页，或直接在浏览器地址栏输入下方链接。
+    </div>
+
+    <div class="grid">
+      <a class="card primary" href="/deliverables/ppt/index.html">
+        <div class="tag">30 slides · Swiss IKB</div>
+        <h2>路演 PPT</h2>
+        <p>横向翻页网页演示稿。键盘 ← → 翻页，按 B 切换静态模式。</p>
+      </a>
+      <a class="card" href="/deliverables/architecture/鹰眼-逻辑架构与迭代.html">
+        <div class="tag">Mermaid · Phase 4–8</div>
+        <h2>逻辑架构与迭代</h2>
+        <p>六层架构、数据流、双入口产品图、ECC 改进环。可打印。</p>
+      </a>
+      <a class="card" href="/deliverables/architecture/鹰眼-逻辑架构与迭代-中文版.html">
+        <div class="tag">全中文节点 · Mermaid</div>
+        <h2>逻辑架构图（中文版）</h2>
+        <p>六层流水线、数据流、双入口、ECC 环、api_score 公式 — 节点全中文，适合评审与外包重绘。</p>
+      </a>
+      <a class="card" href="/deliverables/ppt/PPT-逐页详细大纲.md">
+        <div class="tag">30 pages · Markdown</div>
+        <h2>PPT 逐页详细大纲</h2>
+        <p>每页上屏文案、讲者稿、Demo 分镜、NSCLC 逐条 finding、Q&A 与数字库；附录 Prompt 交给其他 AI 做 Keynote/PPT。</p>
+      </a>
+      <a class="card" href="/deliverables/鹰眼-使用指南.md">
+        <div class="tag">Markdown</div>
+        <h2>使用指南</h2>
+        <p>快速上手、稽核员手册、开发者附录。Markdown 可在 IDE 预览或下载阅读。</p>
+      </a>
+    </div>
+
+    <div class="foot">
+      <p><strong>推荐 URL（需 server 已启动）：</strong></p>
+      <p><code>http://localhost:3700/deliverables/</code> — 本页</p>
+      <p><code>http://localhost:3700/deliverables/ppt/index.html</code> — PPT</p>
+      <p><code>http://localhost:3700/deliverables/architecture/鹰眼-逻辑架构与迭代-中文版.html</code> — 架构图中文版</p>
+      <p style="margin-top:16px">macOS 亦可终端执行：<code>open http://localhost:3700/deliverables/ppt/index.html</code></p>
+    </div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,112 @@
+{
+  "phase": "batch2",
+  "seeds": [
+    {
+      "id": "guide-col201",
+      "name": "立项指南全批次",
+      "url": "https://www.nhsa.gov.cn/col/col201/index.html",
+      "type": "list",
+      "parser": "html-guide",
+      "filter": "立项指南|价格项目|立项",
+      "maxPages": 15,
+      "maxArticles": 40
+    },
+    {
+      "id": "exposure-col73",
+      "name": "曝光台典型案例",
+      "url": "https://www.nhsa.gov.cn/col/col73/index.html",
+      "type": "list",
+      "parser": "case-exposure",
+      "filter": "",
+      "maxPages": 5,
+      "maxArticles": 10
+    },
+    {
+      "id": "exposure-col14",
+      "name": "医保动态典型案例补充",
+      "url": "https://www.nhsa.gov.cn/col/col14/index.html",
+      "type": "list",
+      "parser": "case-exposure",
+      "filter": "典型案例|骗保|违法违规|曝光",
+      "maxPages": 3,
+      "maxArticles": 10
+    },
+    {
+      "id": "jiangsu-col73935",
+      "name": "江苏通知公告（价格/产科/护理）",
+      "url": "http://ybj.jiangsu.gov.cn/col/col73935/index.html",
+      "type": "list",
+      "parser": "html-jiangsu",
+      "filter": "价格|产科|护理|DRG",
+      "maxPages": 2,
+      "maxArticles": 5
+    },
+    {
+      "id": "jiangsu-col74037",
+      "name": "江苏医药服务管理",
+      "url": "http://ybj.jiangsu.gov.cn/col/col74037/index.html",
+      "type": "list",
+      "parser": "html-jiangsu",
+      "filter": "价格|DRG|DIP|药品",
+      "maxPages": 2,
+      "maxArticles": 5
+    },
+    {
+      "id": "drg-jiangsu-full",
+      "name": "江苏DRG/DIP绩效评价办法",
+      "url": "http://ybj.jiangsu.gov.cn/art/2022/9/9/art_74037_10602078.html",
+      "type": "article",
+      "parser": "article",
+      "doc_id": "KB1-江苏-DRGDIP",
+      "doc_name": "江苏省定点医疗机构DRG/DIP支付方式改革绩效评价办法",
+      "doc_no": "苏医保发〔2022〕1号"
+    },
+    {
+      "id": "col109-watch",
+      "name": "两库增量监控",
+      "url": "https://www.nhsa.gov.cn/col/col109/index.html",
+      "type": "list",
+      "parser": "xlsx-liangku",
+      "filter": "智能监管|两库|规则和知识点|知识点",
+      "maxPages": 2,
+      "maxArticles": 3
+    },
+    {
+      "id": "drug-catalog-2025-pdf",
+      "name": "2025药品目录PDF",
+      "url": "https://www.nhsa.gov.cn/art/2025/12/7/art_104_18970.html",
+      "type": "article",
+      "parser": "pdf-drug",
+      "doc_id": "KB1-目录2025",
+      "archivePdf": true
+    },
+    {
+      "id": "jiangsu-drug-pdf",
+      "name": "江苏药品目录PDF公示",
+      "url": "http://ybj.jiangsu.gov.cn/col/col73935/index.html",
+      "type": "list",
+      "parser": "pdf-jiangsu",
+      "filter": "药品目录数据库",
+      "maxPages": 1,
+      "maxArticles": 1,
+      "archivePdf": true
+    },
+    {
+      "id": "suzhou-nursing-pdf",
+      "name": "苏州转发护理价格整合",
+      "url": "http://www.suzhou.gov.cn/szsrmzf/bmwj/202506/6fa9235a87c34e88a110c983b31dbb1a.shtml",
+      "type": "article",
+      "parser": "pdf-jiangsu-nursing",
+      "doc_id": "KB1-江苏-护理价格2025",
+      "archivePdf": true
+    },
+    {
+      "id": "code-nhsa-latest",
+      "name": "贯标平台最新编码PDF",
+      "type": "code-nhsa",
+      "parser": "pdf-code",
+      "sysflags": ["1359", "1358", "1357"],
+      "archivePdf": true
+    }
+  ]
+}

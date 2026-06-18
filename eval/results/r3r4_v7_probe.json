@@ -1,0 +1,111 @@
+{
+  "startedAt": "2026-06-18T02:04:18.775Z",
+  "prompt": "P5_judge_v7.txt",
+  "useV7": true,
+  "N": 5,
+  "temperature": 0.1,
+  "judges": [
+    "abab6.5s-chat",
+    "MiniMax-Text-01"
+  ],
+  "cases": [
+    {
+      "id": "P5-R3-factual-conflict",
+      "desc": "红队v6(重要):事实级冲突(白蛋白汇总1280 vs 明细1230),控辩各引一相反anchor → 期望线索+factual_conflict=true;A/B须一致",
+      "severity": "redteam",
+      "perJudge": [
+        {
+          "model": "abab6.5s-chat",
+          "order1": {
+            "线索": 5
+          },
+          "order2": {
+            "线索": 5
+          },
+          "swap_consistent_majority": true,
+          "per_rep_consistency_rate": 1,
+          "self_claim_consistent_rate": 1,
+          "verdict_majority": "线索",
+          "expect_verdict": "线索",
+          "correct": true,
+          "factual_conflict_detect_rate": 1,
+          "json_valid": "10/10"
+        },
+        {
+          "model": "MiniMax-Text-01",
+          "order1": {
+            "线索": 5
+          },
+          "order2": {
+            "线索": 5
+          },
+          "swap_consistent_majority": true,
+          "per_rep_consistency_rate": 1,
+          "self_claim_consistent_rate": 1,
+          "verdict_majority": "线索",
+          "expect_verdict": "线索",
+          "correct": true,
+          "factual_conflict_detect_rate": 1,
+          "json_valid": "10/10"
+        }
+      ]
+    },
+    {
+      "id": "P5-R4-same-anchor-opposite",
+      "desc": "红队round2:控辩各自引用【同一条】事实(l1 血清白蛋白38g/L)做相反解读 → 去标签证据账须按fact_id去重、不因'双方都引'放大;白蛋白38正常→超量成立期望疑点;A/B须一致",
+      "severity": "redteam-new",
+      "perJudge": [
+        {
+          "model": "abab6.5s-chat",
+          "order1": {
+            "疑点": 5
+          },
+          "order2": {
+            "疑点": 5
+          },
+          "swap_consistent_majority": true,
+          "per_rep_consistency_rate": 1,
+          "self_claim_consistent_rate": 1,
+          "verdict_majority": "疑点",
+          "expect_verdict": "疑点",
+          "correct": true,
+          "factual_conflict_detect_rate": null,
+          "json_valid": "10/10"
+        },
+        {
+          "model": "MiniMax-Text-01",
+          "order1": {
+            "疑点": 5
+          },
+          "order2": {
+            "疑点": 5
+          },
+          "swap_consistent_majority": true,
+          "per_rep_consistency_rate": 1,
+          "self_claim_consistent_rate": 1,
+          "verdict_majority": "疑点",
+          "expect_verdict": "疑点",
+          "correct": true,
+          "factual_conflict_detect_rate": null,
+          "json_valid": "10/10"
+        }
+      ]
+    }
+  ],
+  "summary_abab6.5s-chat": {
+    "position_consistency_majority": 1,
+    "position_consistency_perrep": 1,
+    "verdict_correct": "2/2"
+  },
+  "summary_MiniMax-Text-01": {
+    "position_consistency_majority": 1,
+    "position_consistency_perrep": 1,
+    "verdict_correct": "2/2"
+  },
+  "finishedAt": "2026-06-18T02:05:58.115Z",
+  "callStats": {
+    "CALL_COUNT": 40,
+    "CACHE_HITS": 0,
+    "MAX_CALLS": 2000
+  }
+}

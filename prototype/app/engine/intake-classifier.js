@@ -17,6 +17,10 @@ const INTAKE_SLOTS = [
   { id: 'pathology_report', label: '病理报告', tab: 'path', keys: ['pathology_report'], keywords: ['病理', 'pathology'] },
   { id: 'gene_test_report', label: '基因检测', tab: 'path', keys: ['gene_test_report'], keywords: ['基因', 'egfr', 'alk', 'gene'] },
   { id: 'fee_list', label: '费用清单', tab: 'fee', keys: ['fee_list'], keywords: ['费用清单', '费用明细', '结算清单', 'fee', 'invoice', '明细'] },
+  { id: 'settlement_list', label: '医保结算清单', tab: 'fee', keys: ['settlement_list'], keywords: ['结算清单', '医保结算', 'settlement'] },
+  { id: 'drg_grouping', label: 'DRG/DIP分组', tab: 'front', keys: ['drg_grouping'], keywords: ['drg', 'dip', '分组', 'adrg'] },
+  { id: 'trace_code', label: '药品追溯码', tab: 'pharm', keys: ['trace_code'], keywords: ['追溯码', 'trace'] },
+  { id: 'inpatient_metrics', label: '住院运行指标', tab: 'front', keys: ['inpatient_metrics'], keywords: ['平均住院日', '次均费用', '消耗指数', 'inpatient_metrics'] },
   { id: 'discharge_summary', label: '出院小结', tab: 'discharge', keys: ['discharge_summary'], keywords: ['出院小结', '出院记录', 'discharge'] },
   { id: 'unknown', label: '待识别', tab: null, keys: [], keywords: [] },
 ];

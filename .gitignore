@@ -51,3 +51,9 @@ prototype/data/rule_states.json
 export/
 *.zip
 *.tar.gz
+.vercel
+
+# KB crawler artifacts (raw downloads + incremental state)
+public-data-corpus/raw/
+scripts/crawl/state.json
+scripts/crawl/node_modules/

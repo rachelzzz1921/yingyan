@@ -287,6 +287,38 @@ DOMAIN: NSCLC | ORTHO | DRG | CLEAN | …（见 case_registry.json）
 SEQ: 001–999 按 DOMAIN 递增，禁止手填重复
 ```
 
+## DONE（iter-30 · 优先级批量 + 治理鉴权）
+| # | 内容 | 来源 | 状态 |
+|---|---|---|---|
+| I30-1 | `resolveBatchCaseIds` + batch `priority:true` + job.rank_meta | S(T7-1) | ✅DONE |
+| I30-2 | 看板/ priority.js 优先级入队按钮 | S | ✅DONE |
+| I30-3 | admin-auth 支持 Supabase Service Role Bearer | S(T8-1) | ✅DONE |
+| I30-4 | G2 warn_below 0.5 + verify-iter30 + CI | S | ✅DONE |
+
+## DONE（iter-29 · G2 gate 报告 + 批量并发）
+| # | 内容 | 来源 | 状态 |
+|---|---|---|---|
+| I29-1 | YHF strict 纳入 L1/G2 report-only（gate_latest.md） | S(T4-4) | ✅DONE |
+| I29-2 | 批量队列 3 路并发 + job.concurrency + 看板展示 | S(T7-1) | ✅DONE |
+| I29-3 | `verify-iter29.js`（G2+batch+bench）+ CI | S(T4-4) | ✅DONE |
+
+## DONE（iter-28 · 机构画像 PDF + 看板 UX + CI 扩展）
+| # | 内容 | 来源 | 状态 |
+|---|---|---|---|
+| I28-1 | 机构画像 HTML 打印/PDF（`?format=html` + 工作台/看板双按钮） | U(B08b) | ✅DONE |
+| I28-2 | 看板任务搁置 `askDeferReason` 内联模态（替 prompt） | U(B09) | ✅DONE |
+| I28-3 | `verify-iter28.js` + CI 步骤（bench 22 + institution HTML） | S(T4-6) | ✅DONE |
+| I28-4 | ROADMAP T4-6 标记完成 | S | ✅DONE |
+
+## DONE（iter-27 · ECC 调试闭环）
+| # | 内容 | 来源 | 状态 |
+|---|---|---|---|
+| I27-1 | benchCaseIds 改 discoverCaseFolders 磁盘扫描（22案卷=YHF-1）+ registry sync 补全 | R(ECC) | ✅DONE |
+| I27-2 | discoverCaseFolders 仅目录（防 case_registry.json 误入） | R | ✅DONE |
+| I27-3 | G2 summarizeEvalJson 识别 perJudge.correct + message | R(ECC) | ✅DONE |
+| I27-4 | Q21 RAG：条例 keyword 优先 + pgvector 合并回退（G4 22/22） | R(ECC) | ✅DONE |
+| I27-5 | 移除 dashboard/tasks-board agent log 调试埋点 | R(ECC) | ✅DONE |
+
 ## BACKLOG / DEFERRED（写明理由）
 | # | 内容 | 理由 |
 |---|---|---|
@@ -302,5 +334,5 @@ SEQ: 001–999 按 DOMAIN 递增，禁止手填重复
 | B07c | ~~LLM路径(/api/audit?mode=llm)也接shadow(post-process llmAgentAudit findings)~~ | ✅iter-23已完成(applyPostAuditGovernance 共用) |
 | B08 | ~~机构汇总画像一页(多案卷聚合院端体检:高频违规TOP/涉及金额/科室分布)~~ | ✅iter-14已完成(/api/institution+🏥机构画像模态,受检8案/疑点18/¥21913/5领域) |
 | B08b | 机构画像接导出PDF/真实趋势同比(需多时间断面数据底座) | P2：本轮静态聚合屏显，趋势需历史数据 |
-| B09 | 驳回原因内联输入框(替原生prompt) | P2：demo用prompt够用，UX优化 |
+| B09 | 驳回原因内联输入框(替原生prompt) | P2：demo用prompt够用，UX优化 | ✅工作台+看板搁置 iter-28 |
 | B10 | 更多专科边界干扰件(麻醉/重症/药店除外情形红蓝对抗) | P2：增量补，丰富AuditBench |

@@ -124,6 +124,8 @@ function discoverCaseFolders(dataDir = DATA_DIR) {
   if (!fs.existsSync(dataDir)) return out;
   for (const name of fs.readdirSync(dataDir)) {
     if (!name.startsWith('case_')) continue;
+    const full = path.join(dataDir, name);
+    if (!fs.statSync(full).isDirectory()) continue;
     const folderId = name.replace(/^case_/, '');
     const apiId = CASE_ID_ALIAS[folderId] || folderId;
     out.push({ folder: name, folderId, apiId });

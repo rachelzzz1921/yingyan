@@ -1,0 +1,17 @@
+{
+  "pages": {
+    "dashboard.html": {
+      "scripts": ["tasks-board.js", "priority-glossary.js", "dashboard.js"],
+      "bridges": {
+        "tasks-board.js": {
+          "global": "DashTasks",
+          "exports": ["roadmapTasksPreviewHTML", "tasksBoardHTML", "bindTasksBoard"]
+        },
+        "priority-glossary.js": {
+          "global": "PriorityUX",
+          "exports": ["glossaryPanelHtml", "formatBreakdownText", "scoreLegend"]
+        }
+      }
+    }
+  }
+}

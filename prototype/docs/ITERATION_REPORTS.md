@@ -4,6 +4,246 @@
 
 ---
 
+## iter-36 — 控辩裁 eval_draft + boundary 优先桶 + 辩论历史
+
+**SMART目标**：P5 降级/撤销自动建议 eval_draft；priority 队列独立 boundary 观测桶；工作台展示控辩裁历史。
+
+**1. Evaluate**：
+- iter-35 控辩裁只写 review_feedback，未衔接 eval gold 草案
+- boundary 11 案仅在 bench API，优先队列与 shadow/zero 混排
+- 工作台无按 finding 的控辩裁留痕列表
+
+**2. Correct**：
+- `maybeEvalDraftFromDebate` + `/api/debate` 返回 `eval_draft`（撤销→不输出，降级→线索）
+- `eval-draft-service` 支持 `source: p5_debate`
+- `buildRankQueue` 增加 `boundary_bucket` / `boundary_count`
+- `priority.html` 边界基准桶 UI
+- `app.js` `renderDebateHistory` + `refreshReviewCache`
+- `verify-iter36.js` + CI
+
+**3. Continue**：
+- `node scripts/verify-iter36.js` ✅
+- `bash yhf/run.sh --strict` ✅
+
+**iter-37 计划**：eval_draft 确认 UX · 控辩裁后状态自动采纳流 · CI 挂真·P5 eval secret
+
+---
+
+## iter-35 — 辩论写回 review + boundary bench 扩面
+
+**SMART目标**：P5 控辩裁结果落盘 `review_feedback`；AuditBench 展示 boundary 层级与零误报；boundary oracle 验收；eval workflow 就绪。
+
+**1. Evaluate**：
+- iter-34 `/api/debate` 只更新 finding.debate，无审计留痕
+- 11 个 `bench_tier: boundary` 案卷已在 registry，bench API 未分层展示
+- eval-smoke.yml 已加，缺 boundary 专项 verify
+
+**2. Correct**：
+- `review-debate.js` + `/api/debate` 默认写入 `action:控辩裁` / `source:p5_debate`
+- `reviewStats` 统计 `debate` 计数
+- `/api/bench` 增加 `bench_tier`、`boundary_cases`、`boundary_zero_fp`
+- 看板 AuditBench 层级列 + 边界 KPI
+- `verify-iter35.js` + CI
+
+**3. Continue**：
+- `node scripts/verify-iter35.js` ✅
+- `bash yhf/run.sh --strict` ✅
+
+---
+
+## iter-34 — 工作台 P5 v7 三审 + shadow 案卷验收
+
+**SMART目标**：真·控辩裁挂接 eval P5_judge_v7；`POST /api/debate` + 工作台按钮；shadow 案卷 oracle 验收；三审 demo 展示 P5 prompt。
+
+**1. Evaluate**：
+- iter-33 双裁判 baseline 6/6，但 `runDebate` 仍用内联裁判 prompt，未复用 P5 v7
+- 工作台「对抗辩论」仅有文案、无 API
+- `violation_light_a105` + A-105 shadow 状态已有，缺自动化验收
+
+**2. Correct**：
+- `engine/p5-judge.js`：加载 v7、facts 抽取、位置交换双跑、verdict 映射
+- `llm-agent.defenderJudge` → P5 v7；`POST /api/debate`
+- `app.js` ⚔ 对抗辩论按钮；`dashboard` 三审页展示 `p5_excerpt`
+- `case_registry` `violation_light_a105` 标 `shadow_demo`
+- `verify-iter34.js` + CI
+
+**3. Continue**：
+- `node scripts/verify-iter34.js` ✅
+- `bash yhf/run.sh --strict` ✅
+
+**iter-35 计划**：eval workflow_dispatch（MINIMAX secret）· 辩论结果写回 review_feedback · boundary 案卷 bench 扩面
+
+---
+
+## iter-33 — abab R3/R4 加固 + 全量 P5 重基线 + eval CI
+
+**SMART目标**：双裁判 R3/R4 探针转绿；全量 `baseline_p5` v7 重跑；CI 接 `verify-iter33`（G2 主裁判 baseline 校验）。
+
+**1. Evaluate**：
+- iter-32 双裁判 **4/6**：abab R3(金额冲突→疑点)、R4(空 verdict/JSON 5/10)
+- S2 已有但 abab 未优先执行；R4 缺输出示例
+
+**2. Correct**：
+- P5 v7：S2 强化(conflicts 数组首检)、S4 数值阈值短路、输出纪律+JSON 示例
+- R3/R4 探针 **4/4** 双裁判全绿
+- 全量 `p5_swap_runner --v7 --tag baseline_p5` 重跑（进行中）
+- `verify-iter33.js` + CI（gate 前校验 G2 baseline）
+
+**3. Continue**：
+- R3/R4 探针 **4/4** ✅
+- 全量 baseline 重跑：**双裁判 6/6 · 主裁判 6/6** ✅（80 calls + 40 cache）
+- `node scripts/verify-iter33.js` + `bash yhf/run.sh --strict` ✅
+
+**iter-34 计划**：`run_v7.sh` 完整周期入 CI（需 API key secret）· 工作台三审挂 P5 v7 · shadow 案卷扩面
+
+---
+
+## iter-32 — P5 v7 真调 + G2 主裁判硬门禁 + 队列 Top N
+
+**SMART目标**：P5 v7 真调并更新 baseline；G2 以 MiniMax 主裁判 6/6 启用硬门禁；priority.html 队首 N 入队。
+
+**1. Evaluate**：
+- v7 首轮真调（120 calls）：主裁判 **5/6**，仅 C4(MiniMax→疑点) 未过；abab **4/6**（R3/R4）
+- R2 v7 修复生效（abab 独立扫除外→撤销）
+
+**2. Correct**：
+- P5 v7 加【第零步 S1/S2 硬性短路】；C4 探针 **6/6** 后合并进 `baseline_p5.json`
+- `score_mode: primary` + `secondary_report: true`（abab 仅报告）
+- **G2 `enabled: true`** — 主裁判 6/6 硬门禁
+- `priority.html` 队首 N + `runBatchTopN`；`p5_swap_runner --cases` 单案探针
+- `verify-iter32.js` + CI
+
+**3. Continue**：
+- `node scripts/verify-iter32.js` ✅
+- `bash yhf/run.sh --strict` ✅（待跑）
+- 双裁判全绿仍 **4/6**（abab R3/R4）— 不阻塞 CI，gate 报告保留 secondary 明细
+
+**iter-33 计划**：abab R3/R4 prompt 加固或裁判层 JSON 修复 · 全量 `run_v7.sh` 重基线 · eval CI 接 G2
+
+---
+
+## iter-31 — P5 裁判 v7 + 批量 Top N + G2 主裁判计分
+
+**SMART目标**：定向修复 P5 失败用例（C4/R2/R4）的 prompt v7；看板批量支持 Top N；G2 报告区分全裁判/主裁判通过率。
+
+**1. Evaluate**：
+- `baseline_p5.json` 全裁判 **3/6 (50%)**：C4(MiniMax→疑点)、R2(abab 未独立扫除外)、R4(abab 同 anchor→线索)
+- 主裁判 MiniMax **4/6** — 仍非全绿，G2 硬门禁保持 `enabled: false`
+- 批量 `priority+all` 无法单独跑队首 N 案
+
+**2. Correct**：
+- `eval/prompts_v7/P5_judge_v7.txt`：真平局强化、独立除外先扫 pathology、同 anchor 数值阈值优先
+- `P5.json` 指向 v7；`run_v7.sh` P5 步骤加 `--v7`
+- `resolveBatchCaseIds`：`top_n` 可与 `all`/`priority` 组合截断
+- 看板批量页 Top N 输入框；`job.top_n` 元数据
+- `l1-prompt.js`：`score_mode`/`primary_judge` + `pass_rate_primary` 报告
+- `verify-iter31.js` + CI
+
+**3. Continue**：
+- `node scripts/verify-iter31.js` ✅
+- `bash yhf/run.sh --strict` ✅（待跑）
+- **待人工**：`cd eval/evals && node p5_swap_runner.js --v7 --tag baseline_p5` 重跑后更新 baseline
+
+**iter-32 计划**：P5 v7 真调全绿后启用 G2 硬门禁 · abab 裁判层降级为 report-only · priority.html Top N 入队
+
+---
+
+## iter-30 — 批量优先级队列 + 治理 Service Role 鉴权
+
+**SMART目标**：批量 API 支持 `priority:true` 按 api_score 排序；看板一键优先级入队；治理写可用 Supabase Service Role Bearer。
+
+**1. Evaluate**：
+- `buildRankQueue` 已有，批量与优先级队列未打通
+- 治理鉴权仅 YINGYAN_ADMIN_TOKEN；Supabase 同步工具链需 Service Role 路径
+
+**2. Correct**：
+- `resolveBatchCaseIds` + `job.priority_ranked` / `rank_meta`
+- 看板「🎯 优先级 · live/oracle」；`priority.html` 入队带 `priority:true`
+- `admin-auth` 接受 `SUPABASE_SERVICE_ROLE_KEY` Bearer
+- G2 `warn_below: 0.5` 预警线；`verify-iter30.js` + CI
+
+**3. Continue**：
+- `node scripts/verify-iter30.js` ✅
+- `bash yhf/run.sh --strict` ✅
+
+**iter-31 计划**：eval P5 失败用例定向修复 · G2 硬门禁（全绿后）· 批量 top_n 筛选 UI
+
+---
+
+## iter-29 — G2 门禁报告 + 批量 3 路并发
+
+**SMART目标**：YHF strict 输出 G2 report-only；批量队列 3 路并发；CI verify-iter29；基线全绿。
+
+**1. Evaluate**：
+- iter-28 基线 PASS；T4-4 G2 仅 dashboard 有、gate CLI 未纳入 strict
+- 批量队列顺序执行，22 案卷全量跑时延可优化
+
+**2. Correct**：
+- `yhf/gate.js` strict 层加 `prompt`，G2 report-only 写入 gate_latest.md
+- `audit-batch.js` 默认 3 路并发（可配置 1–8），落盘 `job.concurrency`
+- 看板批量页展示并发数；`verify-iter29.js` + CI
+
+**3. Continue**：
+- `bash yhf/run.sh --strict` ✅（含 L1 G2 段）
+- `node scripts/verify-iter29.js` ✅
+
+**iter-30 计划**：治理 Supabase Auth JWT · G2 启用门禁（eval 全绿后）· 批量优先级队列
+
+---
+
+## iter-28 — 机构画像 PDF + 看板 UX 收尾 + CI 验收扩展
+
+**SMART目标**：院端体检报告浏览器打印/PDF；看板任务搁置去 prompt()；CI 接 verify-iter28；YHF 保持全绿。
+
+**1. Evaluate**：
+- iter-27 基线 YHF strict 全 PASS（G4 22/22）
+- T4-6 CI 已有 yhf gate，缺 HTTP 导出验收
+- B09 工作台驳回已内联，看板 tasks-board 仍用 `prompt()`
+- B08b 机构画像仅 Markdown，无 HTML 打印路径
+
+**2. Correct**：
+- `renderInstitutionReportHtml` + `/api/export/institution?format=html`
+- 工作台/看板机构画像双导出按钮（Markdown + 打印/PDF）
+- `tasks-board.js` `askDeferReason()` 内联模态
+- `scripts/verify-iter28.js` + CI job 步骤
+- ROADMAP/TASKS 标记 T4-6 ✅、B09 看板侧 ✅
+
+**3. Continue**：
+- `bash yhf/run.sh --strict` ✅
+- `node scripts/verify-iter28.js` ✅
+
+**iter-29 计划**：治理 Supabase Auth JWT · 批量队列并发 · eval CI 读 G2 baseline
+
+---
+
+## iter-27 — ECC 调试闭环（AuditBench 对齐 + G2/G4 修复）
+
+**SMART目标**：Harness ECC 一轮 Evaluate→Correct→Continue；看板 AuditBench 与 YHF 案卷数对齐；G4 recall 22/22；移除调试埋点。
+
+**1. Evaluate（基线扫描）**：
+- `bash yhf/run.sh --strict` overall PASS，但 `/api/bench` 仅 18 案卷（registry `viol_*` api_id 与文件夹名错位）
+- G2 误读 `baseline_p5.json` 的 `perJudge.correct` 格式 → 显示 0% pass
+- L5 Q21：pgvector 路径误召回「实施细则7号令」
+- dashboard/tasks-board 残留 `#region agent log` 调试 fetch
+
+**2. Correct（修复）**：
+- `benchCaseIds()` 改为 `discoverCaseFolders` 磁盘扫描（与 YHF L3 对齐，22 案卷）；`syncRegistryFromCases` 补全 registry 至 23 条
+- `discoverCaseFolders` 跳过非目录文件（防 sync 再污染）
+- `l1-prompt.js` 识别 eval `perJudge.correct` + 输出 `message`
+- `keywordSearch` 条例优先 + pgvector 条例查询 keyword 合并回退
+- 移除 dashboard.js / tasks-board.js 调试埋点
+
+**3. Continue（验收）**：
+- `bash yhf/run.sh --strict` G0+G1+G4 **22/22** + L2 ✅
+- `/api/bench` **22** 案卷 G0 PASS
+- `node scripts/verify-iter26.js` ✅
+
+**KPT**：Keep=ECC 固定跑门禁再改；Problem=registry api_id 与 discover 不一致会静默丢案卷；Try=benchCaseIds 双路径解析 + sync 只扫目录。
+
+**iter-28 计划**：T4-6 CI 接 gate · 机构画像 PDF · 驳回内联表单(B09)
+
+---
+
 ## iter-26 — 批量 PDF/HTML + 治理 RLS + L1 生产部署
 
 **SMART目标**：批量报告浏览器打印 PDF · governance RLS 写收紧 · Docker L1 sidecar · gate PASS。

@@ -1,0 +1,71 @@
+{
+  "startedAt": "2026-06-18T01:57:31.842Z",
+  "prompt": "P5_judge_v7.txt",
+  "useV7": true,
+  "N": 5,
+  "temperature": 0.1,
+  "judges": [
+    "abab6.5s-chat",
+    "MiniMax-Text-01"
+  ],
+  "cases": [
+    {
+      "id": "P5-C4-tie-to-clue",
+      "desc": "真平局协议:控辩均中等、无强证 → 期望线索(给清晰三态,不和稀泥折中);A/B须一致",
+      "severity": "seed",
+      "perJudge": [
+        {
+          "model": "abab6.5s-chat",
+          "order1": {
+            "线索": 5
+          },
+          "order2": {
+            "线索": 5
+          },
+          "swap_consistent_majority": true,
+          "per_rep_consistency_rate": 1,
+          "self_claim_consistent_rate": 1,
+          "verdict_majority": "线索",
+          "expect_verdict": "线索",
+          "correct": true,
+          "factual_conflict_detect_rate": null,
+          "json_valid": "10/10"
+        },
+        {
+          "model": "MiniMax-Text-01",
+          "order1": {
+            "疑点": 2,
+            "线索": 3
+          },
+          "order2": {
+            "线索": 5
+          },
+          "swap_consistent_majority": true,
+          "per_rep_consistency_rate": 0.6,
+          "self_claim_consistent_rate": 1,
+          "verdict_majority": "线索",
+          "expect_verdict": "线索",
+          "correct": true,
+          "factual_conflict_detect_rate": null,
+          "json_valid": "10/10"
+        }
+      ]
+    }
+  ],
+  "summary_abab6.5s-chat": {
+    "position_consistency_majority": 1,
+    "position_consistency_perrep": 1,
+    "verdict_correct": "1/1"
+  },
+  "summary_MiniMax-Text-01": {
+    "position_consistency_majority": 1,
+    "position_consistency_perrep": 0.6,
+    "verdict_correct": "1/1"
+  },
+  "finishedAt": "2026-06-18T01:59:10.340Z",
+  "callStats": {
+    "CALL_COUNT": 20,
+    "CACHE_HITS": 0,
+    "MAX_CALLS": 2000
+  }
+}

@@ -1,0 +1,35 @@
+{
+  "case_meta": {
+    "case_id": "YY-BENCH-EDGE-PHARM-001",
+    "case_title": "药店边界干扰件·真实售药与处方一致（干净件）",
+    "disclaimer": "虚构数据。门诊药店边界干扰：含串换/追溯码等敏感关键词字段，但实际售药、处方、进销存一致，应 0 疑点。",
+    "scene": "门诊药店",
+    "embedded_violation_count": 0,
+    "distractor_count": 1,
+    "bench_tier": "boundary",
+    "settlement_summary": {"total_amount": 90.0, "insurance_paid_amount": 90.0, "currency": "CNY", "settle_type": "门诊统筹·定点零售药店"}
+  },
+  "front_page": {
+    "doc_type": "门诊购药结算凭证", "hospital": "示范市惠民大药房（医保定点·虚构）",
+    "patient_name": "赵合规", "sex": "女", "age": 61,
+    "insurance_type": "职工基本医疗保险（门诊统筹）", "admission_no": "MZ20260618-4401",
+    "admit_time": "2026-06-18 09:00", "discharge_time": "2026-06-18 09:15",
+    "principal_diagnosis": {"name": "2型糖尿病", "icd10": "E11.900"}
+  },
+  "prescriptions": [
+    {"rx_id": "RX-4401-01", "drug": "二甲双胍片", "doctor": "王医生", "date": "2026-06-17", "valid": true}
+  ],
+  "sales_records": {
+    "doc_type": "销售小票", "items": [
+      {"actual_name": "二甲双胍片", "category": "医保目录内药品", "qty": 2, "settled_as_line": 1}
+    ]
+  },
+  "fee_list": {
+    "doc_type": "医保结算明细", "settle_date": "2026-06-18",
+    "items": [
+      {"line_no": 1, "fee_date": "2026-06-18", "category": "西药费", "item_name": "二甲双胍片", "spec": "0.5g×30", "qty": 2, "unit": "盒", "unit_price": 45.0, "amount": 90.0, "insurance_class": "医保甲", "linked_order": "RX-4401-01", "actual_sold": {"name": "二甲双胍片"}, "inventory_supported": true, "trace_code": "完整", "flag": "干扰项：药店场景+追溯码字段，但真实售药→正确不报"}
+    ],
+    "total_amount": 90.0
+  },
+  "discharge_summary": {"doc_type": "门诊购药小结", "hospital_course": "门诊统筹购药，处方与进销存一致。"}
+}

@@ -14,6 +14,11 @@ const DEFAULTS = {
   resultsDir: path.join(YHF_ROOT, 'results'),
 };
 
+function gateBlock(raw, name) {
+  const m = raw.match(new RegExp(`${name}:[\\s\\S]*?(?=\\n  G\\d|\\nengine:|\\nshadow:|\\ncore_rules:|\\npaths:)`));
+  return m ? m[0] : '';
+}
+
 function loadGateConfig() {
   const fp = DEFAULTS.gateConfig;
   if (!fs.existsSync(fp)) return {};
@@ -35,6 +40,12 @@ function loadGateConfig() {
   const ragMinRecall = raw.match(/G4_rag_recall:[\s\S]*?min_recall:\s*([\d.]+)/);
   const ragK = raw.match(/G4_rag_recall:[\s\S]*?\n\s+k:\s*(\d+)/);
   const ragEnabled = /G4_rag_recall:[\s\S]*?enabled:\s*true/.test(raw);
+  const g2 = gateBlock(raw, 'G2_prompt_pass');
+  const g2Enabled = /enabled:\s*true/.test(g2);
+  const g2Warn = g2.match(/warn_below:\s*([\d.]+)/);
+  const g2ScoreMode = g2.match(/score_mode:\s*(\S+)/)?.[1] || 'all';
+  const g2Primary = g2.match(/primary_judge:\s*["']?([^"'\n#]+)["']?/)?.[1]?.trim() || 'MiniMax-Text-01';
+  const g2Secondary = /secondary_report:\s*true/.test(g2);
   return {
     skip_case_ids: skip,
     shadow_max_fpr: maxFprMatch ? parseFloat(maxFprMatch[1]) : 0.10,
@@ -42,6 +53,15 @@ function loadGateConfig() {
     rag_enabled: ragEnabled,
     rag_min_recall: ragMinRecall ? parseFloat(ragMinRecall[1]) : 0.75,
     rag_k: ragK ? parseInt(ragK[1], 10) : 8,
+    gates: {
+      G2_prompt_pass: {
+        enabled: g2Enabled,
+        warn_below: g2Warn ? parseFloat(g2Warn[1]) : 0.5,
+        score_mode: g2ScoreMode,
+        primary_judge: g2Primary,
+        secondary_report: g2Secondary,
+      },
+    },
   };
 }
 

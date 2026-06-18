@@ -1,0 +1,10 @@
+{
+  "report_meta": {
+    "case_id": "YY-BENCH-EDGE-ORTHO-001",
+    "gold_standard": true,
+    "gold_standard_note": "骨科边界干净件 · 0 疑点",
+    "summary": {"suspected_count": 0, "clue_count": 0, "total_findings": 0}
+  },
+  "findings": [],
+  "correctly_not_flagged": ["A-101", "A-106", "A-107", "A-109"]
+}

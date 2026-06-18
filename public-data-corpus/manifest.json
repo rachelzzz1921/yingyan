@@ -1,15 +1,15 @@
 {
-  "generated_at": "2026-06-15",
+  "generated_at": "2026-06-19",
   "summary": {
     "total_kb_entries": 31,
     "total_problem_list_items": 74,
-    "total_grand": 105,
+    "total_grand": 1703,
     "unique_official_documents": 18,
     "unique_source_urls": 17,
-    "kb1_policy_entries": 22,
+    "kb1_policy_entries": 1467,
     "kb2_clinical_entries": 9,
     "problem_list_domains": 15,
-    "problem_list_items": 74,
+    "problem_list_items": 236,
     "text_chars_kb1": 2955,
     "text_chars_kb2": 1749,
     "verification": {
@@ -20,6 +20,34 @@
       "problem_list_verified_items": 50,
       "problem_list_partial_items": 15,
       "problem_list_pending_items": 9
+    },
+    "last_crawl": {
+      "phase": "rerun",
+      "crawled_policies": 40,
+      "crawled_domains": 0,
+      "merge": {
+        "policies": {
+          "added": 40,
+          "updated": 0,
+          "skipped": 0,
+          "total": 1467
+        },
+        "problemDomains": {
+          "added": 0,
+          "updated": 0,
+          "skipped": 0
+        },
+        "paths": {
+          "policiesPath": "/Users/chenzhiwei/Desktop/鹰眼/prototype/data/kb/kb1_policies.json",
+          "problemPath": "/Users/chenzhiwei/Desktop/鹰眼/prototype/data/kb/kb1_problem_lists.json"
+        }
+      },
+      "kb": {
+        "kb1_entries": 1467,
+        "problem_domains": 25,
+        "problem_items": 236,
+        "total_grand": 1703
+      }
     }
   },
   "kb1_documents": [
@@ -272,7 +300,7 @@
     {
       "path": "prototype/data/kb/kb1_policies.json",
       "role": "KB1 政策/法规/目录/规则",
-      "entries": 22
+      "entries": 1467
     },
     {
       "path": "prototype/data/kb/kb2_clinical.json",
@@ -282,8 +310,8 @@
     {
       "path": "prototype/data/kb/kb1_problem_lists.json",
       "role": "典型问题清单（全领域）",
-      "domains": 15,
-      "items": 74
+      "domains": 25,
+      "items": 236
     },
     {
       "path": "prototype/data/kb/rag_eval_queries.json",
@@ -298,6 +326,240 @@
     "2026版口腔/内分泌/精神医学仅框架+行业认知占位，官方Excel尚未上网",
     "两库1.0版79条规则框架未逐条入库",
     "临床路径224病种未建库，仅NSCLC/结直肠癌病种包",
-    "曝光台案例(P1)尚未抓取"
+    "曝光台案例(P1)已抓取58条",
+  ],
+  "crawl_runs": [
+    {
+      "at": "2026-06-17T17:13:43.071Z",
+      "phase": "batch1",
+      "crawled_policies": 45,
+      "crawled_domains": 0,
+      "merge": {
+        "policies": {
+          "added": 43,
+          "updated": 2,
+          "skipped": 0,
+          "total": 66
+        },
+        "problemDomains": {
+          "added": 0,
+          "updated": 0,
+          "skipped": 0
+        },
+        "paths": {
+          "policiesPath": "/Users/chenzhiwei/Desktop/鹰眼/prototype/data/kb/kb1_policies.json",
+          "problemPath": "/Users/chenzhiwei/Desktop/鹰眼/prototype/data/kb/kb1_problem_lists.json"
+        }
+      },
+      "kb": {
+        "kb1_entries": 66,
+        "problem_domains": 15,
+        "problem_items": 74,
+        "total_grand": 140
+      }
+    },
+    {
+      "at": "2026-06-17T17:17:38.861Z",
+      "phase": "batch1",
+      "crawled_policies": 46,
+      "crawled_domains": 0,
+      "merge": {
+        "policies": {
+          "added": 1,
+          "updated": 45,
+          "skipped": 0,
+          "total": 67
+        },
+        "problemDomains": {
+          "added": 0,
+          "updated": 0,
+          "skipped": 0
+        },
+        "paths": {
+          "policiesPath": "/Users/chenzhiwei/Desktop/鹰眼/prototype/data/kb/kb1_policies.json",
+          "problemPath": "/Users/chenzhiwei/Desktop/鹰眼/prototype/data/kb/kb1_problem_lists.json"
+        }
+      },
+      "kb": {
+        "kb1_entries": 67,
+        "problem_domains": 15,
+        "problem_items": 74,
+        "total_grand": 141
+      }
+    },
+    {
+      "at": "2026-06-17T17:20:45.531Z",
+      "phase": "batch1",
+      "crawled_policies": 207,
+      "crawled_domains": 0,
+      "merge": {
+        "policies": {
+          "added": 161,
+          "updated": 46,
+          "skipped": 0,
+          "total": 228
+        },
+        "problemDomains": {
+          "added": 0,
+          "updated": 0,
+          "skipped": 0
+        },
+        "paths": {
+          "policiesPath": "/Users/chenzhiwei/Desktop/鹰眼/prototype/data/kb/kb1_policies.json",
+          "problemPath": "/Users/chenzhiwei/Desktop/鹰眼/prototype/data/kb/kb1_problem_lists.json"
+        }
+      },
+      "kb": {
+        "kb1_entries": 228,
+        "problem_domains": 15,
+        "problem_items": 74,
+        "total_grand": 302
+      }
+    },
+    {
+      "at": "2026-06-17T17:24:38.823Z",
+      "phase": "batch1",
+      "crawled_policies": 1005,
+      "crawled_domains": 14,
+      "merge": {
+        "policies": {
+          "added": 822,
+          "updated": 183,
+          "skipped": 0,
+          "total": 1050
+        },
+        "problemDomains": {
+          "added": 10,
+          "updated": 4,
+          "skipped": 0
+        },
+        "paths": {
+          "policiesPath": "/Users/chenzhiwei/Desktop/鹰眼/prototype/data/kb/kb1_policies.json",
+          "problemPath": "/Users/chenzhiwei/Desktop/鹰眼/prototype/data/kb/kb1_problem_lists.json"
+        }
+      },
+      "kb": {
+        "kb1_entries": 1050,
+        "problem_domains": 25,
+        "problem_items": 236,
+        "total_grand": 1286
+      }
+    },
+    {
+      "at": "2026-06-17T18:12:40.827Z",
+      "phase": "batch2",
+      "crawled_policies": 354,
+      "crawled_domains": 0,
+      "merge": {
+        "policies": {
+          "added": 197,
+          "updated": 157,
+          "skipped": 0,
+          "total": 1247
+        },
+        "problemDomains": {
+          "added": 0,
+          "updated": 0,
+          "skipped": 0
+        },
+        "paths": {
+          "policiesPath": "/Users/chenzhiwei/Desktop/鹰眼/prototype/data/kb/kb1_policies.json",
+          "problemPath": "/Users/chenzhiwei/Desktop/鹰眼/prototype/data/kb/kb1_problem_lists.json"
+        }
+      },
+      "kb": {
+        "kb1_entries": 1247,
+        "problem_domains": 25,
+        "problem_items": 236,
+        "total_grand": 1483
+      }
+    },
+    {
+      "at": "2026-06-17T18:23:50.933Z",
+      "phase": "rerun",
+      "crawled_policies": 240,
+      "crawled_domains": 0,
+      "merge": {
+        "policies": {
+          "added": 180,
+          "updated": 60,
+          "skipped": 0,
+          "total": 1427
+        },
+        "problemDomains": {
+          "added": 0,
+          "updated": 0,
+          "skipped": 0
+        },
+        "paths": {
+          "policiesPath": "/Users/chenzhiwei/Desktop/鹰眼/prototype/data/kb/kb1_policies.json",
+          "problemPath": "/Users/chenzhiwei/Desktop/鹰眼/prototype/data/kb/kb1_problem_lists.json"
+        }
+      },
+      "kb": {
+        "kb1_entries": 1427,
+        "problem_domains": 25,
+        "problem_items": 236,
+        "total_grand": 1663
+      }
+    },
+    {
+      "at": "2026-06-17T18:44:30.657Z",
+      "phase": "rerun",
+      "crawled_policies": 240,
+      "crawled_domains": 0,
+      "merge": {
+        "policies": {
+          "added": 0,
+          "updated": 240,
+          "skipped": 0,
+          "total": 1427
+        },
+        "problemDomains": {
+          "added": 0,
+          "updated": 0,
+          "skipped": 0
+        },
+        "paths": {
+          "policiesPath": "/Users/chenzhiwei/Desktop/鹰眼/prototype/data/kb/kb1_policies.json",
+          "problemPath": "/Users/chenzhiwei/Desktop/鹰眼/prototype/data/kb/kb1_problem_lists.json"
+        }
+      },
+      "kb": {
+        "kb1_entries": 1427,
+        "problem_domains": 25,
+        "problem_items": 236,
+        "total_grand": 1663
+      }
+    },
+    {
+      "at": "2026-06-17T18:47:21.181Z",
+      "phase": "rerun",
+      "crawled_policies": 40,
+      "crawled_domains": 0,
+      "merge": {
+        "policies": {
+          "added": 40,
+          "updated": 0,
+          "skipped": 0,
+          "total": 1467
+        },
+        "problemDomains": {
+          "added": 0,
+          "updated": 0,
+          "skipped": 0
+        },
+        "paths": {
+          "policiesPath": "/Users/chenzhiwei/Desktop/鹰眼/prototype/data/kb/kb1_policies.json",
+          "problemPath": "/Users/chenzhiwei/Desktop/鹰眼/prototype/data/kb/kb1_problem_lists.json"
+        }
+      },
+      "kb": {
+        "kb1_entries": 1467,
+        "problem_domains": 25,
+        "problem_items": 236,
+        "total_grand": 1703
+      }
+    }
   ]
 }

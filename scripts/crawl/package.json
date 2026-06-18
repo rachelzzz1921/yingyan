@@ -1,0 +1,17 @@
+{
+  "name": "yingyan-kb-crawler",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "NHSA / 江苏医保局 KB1 公开数据爬虫",
+  "scripts": {
+    "crawl": "node run.mjs",
+    "crawl:batch1": "node run.mjs --phase batch1",
+    "crawl:batch2": "node run.mjs --phase batch2"
+  },
+  "dependencies": {
+    "cheerio": "^1.0.0",
+    "pdf-parse": "^1.1.1",
+    "xlsx": "^0.18.5"
+  }
+}

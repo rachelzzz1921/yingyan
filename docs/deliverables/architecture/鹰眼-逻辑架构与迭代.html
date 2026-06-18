@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>鹰眼 · 逻辑架构与迭代路线图</title>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+  <script>mermaid.initialize({ startOnLoad: true, theme: 'neutral', securityLevel: 'loose' });</script>
+  <style>
+    * { box-sizing: border-box; }
+    body { margin: 0; font-family: "PingFang SC", "Noto Sans SC", system-ui, sans-serif; background: #fafaf8; color: #1c1917; line-height: 1.5; }
+    @media print {
+      .no-print { display: none; }
+      section { break-inside: avoid; page-break-inside: avoid; }
+    }
+    .badge-ok { background: #dcfce7; color: #166534; }
+    .badge-partial { background: #fef9c3; color: #854d0e; }
+    .badge-gap { background: #fee2e2; color: #991b1b; }
+    .mermaid { background: #fafaf8; border: 1px solid #e5e5e5; border-radius: 2px; padding: 1rem; overflow-x: auto; }
+    header { border-bottom: 1px solid #e7e5e4; background: #fff; padding: 32px 24px; }
+    .wrap { max-width: 960px; margin: 0 auto; }
+    .eyebrow { font-family: ui-monospace, monospace; font-size: 12px; letter-spacing: .12em; text-transform: uppercase; color: #78716c; }
+    h1.page-title { font-size: 28px; font-weight: 600; margin: 8px 0 0; }
+    .subtitle { margin-top: 12px; max-width: 48rem; color: #57534e; }
+    main { max-width: 960px; margin: 0 auto; padding: 40px 24px 48px; }
+    section { margin-bottom: 48px; }
+    section h2 { font-size: 20px; font-weight: 600; border-left: 4px solid #002FA7; padding-left: 12px; margin-bottom: 24px; }
+    table { width: 100%; border-collapse: collapse; font-size: 14px; border: 1px solid #e7e5e4; background: #fff; }
+    th, td { padding: 10px 12px; text-align: left; border-top: 1px solid #e7e5e4; }
+    thead { background: #f5f5f4; }
+    ul { font-size: 14px; color: #57534e; padding-left: 1.25rem; }
+    .grid-2 { display: grid; gap: 16px; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); }
+    .card { border: 1px solid #e7e5e4; background: #fff; padding: 16px; }
+    .card h3 { font-size: 16px; color: #002FA7; margin-bottom: 8px; }
+    .card p { font-size: 14px; color: #57534e; margin: 0; }
+    footer { border-top: 1px solid #e7e5e4; background: #fff; padding: 24px; text-align: center; font-size: 12px; color: #78716c; }
+    code { font-family: ui-monospace, monospace; font-size: 12px; background: #f5f5f4; padding: 2px 6px; }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="wrap">
+      <p class="eyebrow">Yingyan · Architecture · iter-36</p>
+      <h1 class="page-title">鹰眼 · 逻辑架构与迭代路线图</h1>
+      <p class="subtitle">
+        事后医保基金行政查处稽核 · 双主线：单案卷稽核工作台 + 稽核优先通路 v2。
+        状态徽章：✅ 完整 · ◑ 半成品 · ❌ 缺口（对照 <code>prototype/docs/ARCHITECTURE_REVIEW.md</code>）。
+      </p>
+    </div>
+  </header>
+
+  <main>
+    <!-- 1. Layered architecture -->
+    <section>
+      <h2>1. 分层架构（L1–L6 + 横向能力）</h2>
+      <div class="mermaid">
+flowchart TB
+  subgraph ui [Operator_Surface]
+    WB[index.html_Workbench]
+    PR[priority.html_Queue]
+    DB[dashboard.html_Board]
+  end
+  subgraph L1 [L1_Input]
+    ING[ingest_intake]
+    CON[connectors_MockHIS]
+  end
+  subgraph L2 [L2_CaseObject]
+    CO[case-object.js]
+    ANC[anchor_bbox]
+  end
+  subgraph L3 [L3_Knowledge]
+    KB1[kb1_policies]
+    KB2[kb2_clinical]
+  end
+  subgraph L4 [L4_Rules]
+    AE[audit-engine.js]
+    RT[trigger_routing]
+  end
+  subgraph L5 [L5_Validation]
+    CG[compliance-gate]
+    DBT[debate_review]
+  end
+  subgraph L6 [L6_Output]
+    RPT[findings_report]
+    EXP[export_checklist]
+    EVP[evidence-package]
+  end
+  subgraph horiz [Horizontal]
+    BENCH[AuditBench_20]
+    YHF[YHF_G0_gate]
+    PRI[priority_api_score]
+    GOV[rule_governance]
+  end
+  WB --> ING
+  PR --> PRI
+  ING --> CO
+  CO --> AE
+  KB1 --> AE
+  KB2 --> AE
+  AE --> CG
+  CG --> DBT
+  DBT --> RPT
+  RPT --> EXP
+  RPT --> EVP
+  AE --> BENCH
+  AE --> YHF
+  RPT --> PRI
+  GOV --> AE
+      </div>
+      <div style="overflow-x:auto">
+        <table>
+          <thead><tr><th>层</th><th>状态</th><th>关键模块</th></tr></thead>
+          <tbody>
+            <tr><td>L1 输入</td><td><span class="badge-partial px-2 py-0.5 rounded text-xs">◑</span></td><td>intake-classifier, /api/ingest, PP-Structure sidecar</td></tr>
+            <tr><td>L2 事实层</td><td><span class="badge-partial px-2 py-0.5 rounded text-xs">◑</span></td><td>Case Object + anchor（bbox 待真 OCR）</td></tr>
+            <tr><td>L3 知识层</td><td><span class="badge-partial px-2 py-0.5 rounded text-xs">◑</span></td><td>KB1 法规/目录、KB2 临床、问题清单</td></tr>
+            <tr><td>L4 规则</td><td><span class="badge-partial px-2 py-0.5 rounded text-xs">◑⚠</span></td><td>58 条在库，~14 条 checker 真 fire</td></tr>
+            <tr><td>L5 验证</td><td><span class="badge-partial px-2 py-0.5 rounded text-xs">◑</span></td><td>三要素门禁、控辩裁、LLM 路径（需 Key）</td></tr>
+            <tr><td>L6 输出</td><td><span class="badge-ok px-2 py-0.5 rounded text-xs">✅</span></td><td>疑点卡、清单导出、证据高亮、举证包</td></tr>
+            <tr><td>横向</td><td><span class="badge-ok px-2 py-0.5 rounded text-xs">✅/◑</span></td><td>AuditBench、YHF、Priority v2、Governance</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- 2. Data flow -->
+    <section>
+      <h2>2. 稽核数据流（单案卷 → 优先队列）</h2>
+      <div class="mermaid">
+sequenceDiagram
+  participant U as Auditor
+  participant I as Intake
+  participant F as CaseObject
+  participant E as AuditEngine
+  participant G as ComplianceGate
+  participant P as PriorityRank
+  participant O as Output
+
+  U->>I: PDF_JSON_batch_import
+  I->>F: compile_facts_anchors
+  U->>E: POST_api_audit
+  E->>E: trigger_routing_58_rules
+  E->>G: findings_three_elements
+  G->>G: downgrade_clue_or_drop
+  G->>O: report_findings
+  O->>U: workbench_evidence_highlight
+  E->>P: cache_findings_api_score
+  P->>U: priority.html_sorted_queue
+  U->>O: evidence-package_violation-summary
+      </div>
+    </section>
+
+    <!-- 3. Dual entry product -->
+    <section>
+      <h2>3. 双入口产品架构</h2>
+      <div class="mermaid">
+flowchart LR
+  subgraph ingest [Shared_Ingest]
+    IB["/api/intake/batch"]
+    IG["/api/ingest"]
+  end
+  subgraph paths [Two_Mainlines]
+    W["Workbench index.html"]
+    Q["Priority priority.html"]
+  end
+  subgraph shared [Shared_Engine]
+    AUD["audit-engine"]
+    STORE["priority/store.json"]
+  end
+  subgraph observe [Observability]
+    D["dashboard.html"]
+    Y["/api/yhf"]
+    B["/api/bench"]
+  end
+  IB --> W
+  IB --> Q
+  IG --> W
+  W --> AUD
+  Q --> AUD
+  AUD --> STORE
+  W --> D
+  Q --> D
+  AUD --> B
+  Y --> D
+      </div>
+      <ul>
+        <li><strong>Workbench</strong>：单案卷深度复核、控辩裁、CoVe、原件高亮</li>
+        <li><strong>Priority</strong>：api_score 排序、shadow/boundary 桶、批量 Top-N 稽核</li>
+        <li><strong>Dashboard</strong>：YHF 门禁、AuditBench 20 案、工程成熟度、优先通路摘要</li>
+      </ul>
+    </section>
+
+    <!-- 4. Roadmap Phase 4-8 -->
+    <section>
+      <h2>4. 迭代路线图 Phase 4–8</h2>
+      <div class="mermaid">
+gantt
+  title Yingyan_Roadmap_Aligned_iter36
+  dateFormat YYYY-MM
+  section Phase4_Eval
+  Gold_sync_L2_cases     :done, p4a, 2026-05, 2026-06
+  AuditBench_20_cases    :done, p4b, 2026-05, 2026-06
+  YHF_CI_strict          :done, p4c, 2026-05, 2026-06
+  section Phase5_Governance
+  LLM_shadow_postprocess :active, p5a, 2026-06, 2026-07
+  Three_review_template  :p5b, 2026-06, 2026-07
+  Review_persist_UI      :p5c, 2026-06, 2026-08
+  section Phase6_Input
+  Real_OCR_bbox          :p6a, 2026-07, 2026-09
+  Jiangsu_price_KB       :done, p6b, 2026-06, 2026-07
+  Boundary_cases         :p6c, 2026-07, 2026-09
+  section Phase7_Batch
+  Batch_queue_100        :p7a, 2026-08, 2026-10
+  Institution_trends       :p7b, 2026-09, 2026-11
+  section Phase8_Prod
+  DB_auth_multiuser      :p8a, 2026-10, 2027-01
+  GoRules_L1             :p8b, 2026-11, 2027-02
+      </div>
+      <div class="grid-2">
+        <div class="card">
+          <h3>Phase 4 · 评测闭环 ✅</h3>
+          <p>YHF strict CI、AuditBench 20 案、L2 用例、G1 shadow — 当前基线。</p>
+        </div>
+        <div class="card">
+          <h3>Phase 5 · 治理深化 🔜</h3>
+          <p>LLM+shadow、三审模板、驳回内联、控辩裁 eval_draft（iter-36 已起步）。</p>
+        </div>
+        <div class="card">
+          <h3>Phase 6 · 输入扩展</h3>
+          <p>真 OCR bbox、专科边界件、G/H 类 checker 占位。</p>
+        </div>
+        <div class="card">
+          <h3>Phase 7–8 · 批量与生产化</h3>
+          <p>100 案卷队列、机构趋势、DB+鉴权、GoRules 替换 F 类 L1。</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 5. ECC loop -->
+    <section>
+      <h2>5. ECC 改进环（Evaluate → Correct → Continue）</h2>
+      <div class="mermaid">
+flowchart LR
+  E[Evaluate_YHF_bench_verify]
+  C[Correct_minimal_diff]
+  Co[Continue_KPT_next_SMART]
+  E --> C --> Co --> E
+      </div>
+      <div class="card">
+        <p><strong>iter-36 示例（控辩裁 + boundary 桶）</strong></p>
+        <ul>
+          <li><strong>Evaluate</strong>：控辩裁未衔接 eval gold；boundary 案卷与 shadow 混排</li>
+          <li><strong>Correct</strong>：maybeEvalDraftFromDebate、boundary_bucket UI、renderDebateHistory</li>
+          <li><strong>Continue</strong>：verify-iter36.js + yhf strict PASS → iter-37 eval_draft UX</li>
+        </ul>
+        <p><code>优先通路 v2 eval：.claude/evals/priority-pathway-v2.md · G1–G6 gold</code></p>
+      </div>
+    </section>
+
+    <!-- Core entity model -->
+    <section>
+      <h2>附：核心数据模型</h2>
+      <div class="mt-4 mermaid">
+erDiagram
+  Institution ||--o{ AuditCase : has
+  AuditCase ||--o{ Finding : produces
+  Finding ||--|{ EvidenceAnchor : cites
+  Finding ||--|{ PolicyRef : violates
+  AuditCase ||--o{ AuditRecord : history
+  Patient ||--o{ AuditCase : owns
+      </div>
+    </section>
+  </main>
+
+  <footer class="no-print">
+    鹰眼 · docs/deliverables · 来源：docs/07-架构升级蓝图.md · docs/ROADMAP.md · prototype/docs/ARCHITECTURE_REVIEW.md
+  </footer>
+</body>
+</html>

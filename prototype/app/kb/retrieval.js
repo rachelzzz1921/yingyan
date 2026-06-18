@@ -98,8 +98,11 @@ async function getByRefId(refId, jsonFallback) {
 
 /** 关键词语义兜底（无 pgvector embedding 时） */
 function keywordSearch(query, policyTexts, { limit = 8, kbLayerPrefix = null } = {}) {
-  const terms = String(query).split(/[\s,，、；;]+/).filter(Boolean);
+  const q = String(query);
+  const terms = q.split(/[\s,，、；;]+/).filter(Boolean);
   if (!terms.length) return [];
+  const wantsOrdinance = /条例/.test(q) && !/实施细则/.test(q);
+  const articleMatch = q.match(/第(\d+)条/);
   const scored = [];
   for (const [refId, text] of Object.entries(policyTexts || {})) {
     if (kbLayerPrefix && !refId.startsWith(kbLayerPrefix)) continue;
@@ -107,6 +110,15 @@ function keywordSearch(query, policyTexts, { limit = 8, kbLayerPrefix = null } =
     const lower = text.toLowerCase();
     for (const t of terms) {
       if (text.includes(t) || lower.includes(t.toLowerCase())) score += 1;
+    }
+    if (wantsOrdinance) {
+      if (refId.includes('条例') && !refId.includes('实施细则')) score += 3;
+      if (refId.includes('实施细则')) score -= 2;
+    }
+    if (articleMatch) {
+      const art = articleMatch[1];
+      if (refId === `KB1-条例-第${art}条`) score += 10;
+      else if (refId.startsWith(`KB1-条例-第${art}条`)) score += 6;
     }
     if (score > 0) scored.push({ ref_id: refId, content: text.slice(0, 300), score });
   }
@@ -136,13 +148,32 @@ async function semanticSearch(query, { limit = 8, kbLayer = null, policyTexts = 
             matchCount: limit,
             minSimilarity,
           });
-          return (rows || []).map(r => ({
+          const vecRows = (rows || []).map(r => ({
             ref_id: r.ref_id,
             kb_layer: r.kb_layer,
             content: r.content,
             score: r.similarity,
             source: 'pgvector',
           }));
+          const prefix = kbLayer === 'KB2' ? 'KB2' : kbLayer === 'KB1' ? 'KB1' : kbLayer === 'PL' ? 'KB1-问题清单' : null;
+          const kwRows = keywordSearch(q, texts, { limit, kbLayerPrefix: prefix }).map(h => ({
+            ...h,
+            source: 'keyword',
+          }));
+          const wantsOrdinance = /条例/.test(q) && !/实施细则/.test(q);
+          if (wantsOrdinance && vecRows.length && kwRows.length) {
+            const vecTop = vecRows[0]?.ref_id || '';
+            const kwTop = kwRows[0]?.ref_id || '';
+            if (!vecTop.includes('条例') && kwTop.includes('条例')) {
+              const merged = [...kwRows];
+              const seen = new Set(kwRows.map(r => r.ref_id));
+              for (const r of vecRows) {
+                if (!seen.has(r.ref_id)) merged.push(r);
+              }
+              return merged.slice(0, limit);
+            }
+          }
+          return vecRows;
         }
       }
     } catch (e) {

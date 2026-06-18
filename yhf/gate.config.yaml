@@ -16,10 +16,14 @@ gates:
     min_precision: 0.90
 
   G2_prompt_pass:
-    enabled: false         # MVP report-only
+    enabled: true          # primary 裁判 6/6 全绿 (baseline_p5 v7)
     description: "关联 prompt 断言通过率"
     layer: prompt          # L1
     min_pass_rate: 1.0
+    warn_below: 0.5        # report-only 时低于此值在 gate 标 ⚠
+    score_mode: primary     # all=双裁判均绿 | primary=仅主裁判(MiniMax)计 G2
+    primary_judge: MiniMax-Text-01
+    secondary_report: true # abab 裁判仅报告,不阻塞 G2
 
   G3_latency:
     enabled: false         # MVP report-only

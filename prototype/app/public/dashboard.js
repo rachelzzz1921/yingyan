@@ -7,8 +7,10 @@ const NAV = [
   { id: 'bench', icon: '🧪', label: 'AuditBench', group: '监控' },
   { id: 'batch', icon: '📦', label: '批量初筛', group: '监控' },
   { id: 'yhf', icon: '🔒', label: 'YHF 门禁', group: '监控' },
+  { id: 'shadow', icon: '🔬', label: '规则准入', group: '监控' },
   { id: 'roadmap', icon: '🗺', label: '迭代路线', group: '规划', doc: 'roadmap' },
   { id: 'tasks', icon: '📋', label: '任务台账', group: '规划' },
+  { id: 'priority', icon: '🎯', label: '稽核队列', group: '业务' },
   { id: 'institution', icon: '🏥', label: '机构画像', group: '业务' },
   { id: 'governance', icon: '🗂', label: '规则治理', group: '业务' },
   { id: 'brand', icon: '🎨', label: '品牌规范', group: '设计' },
@@ -16,10 +18,12 @@ const NAV = [
   { id: 'yhf_readme', icon: '📐', label: 'Harness 说明', group: '工程', doc: 'yhf_readme' },
   { id: 'gate_report', icon: '📄', label: 'Gate 报告', group: '工程', doc: 'gate_report' },
   { id: 'eval', icon: '📝', label: 'Prompt 评测', group: '工程' },
+  { id: 'three_review', icon: '⚖', label: '三审演示', group: '工程' },
   { id: 'open_issues', icon: '⚠', label: 'Open Issues', group: '工程', doc: 'open_issues' },
   { id: 'docs', icon: '📚', label: '文档中心', group: '文档' },
   { id: 'master', icon: '📖', label: '项目主文档', group: '文档', doc: 'master' },
   { id: 'pitch', icon: '🎤', label: 'Pitch 文案', group: '文档', doc: 'pitch' },
+  { id: 'rules_v01', icon: '📜', label: '规则库雏形', group: '文档', doc: 'rules_v01' },
 ];
 
 const ROADMAP_TASKS = {
@@ -67,6 +71,18 @@ const DASH_CACHE_KEY = 'yingyan_dashboard_cache_v1';
 
 function esc(s) {
   return String(s ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+}
+
+/** 调用 dash-bridges.json 注册的跨脚本 API（tasks-board 等） */
+function dashCall(name, ...args) {
+  const registries = [window.DashTasks, window.PriorityUX];
+  for (const reg of registries) {
+    const fn = reg?.[name];
+    if (typeof fn === 'function') return fn(...args);
+  }
+  throw new Error(
+    `看板模块「${name}」未加载 — 请硬刷新；若仍失败请运行 node scripts/verify-dashboard-frontend.js`,
+  );
 }
 
 async function fetchJSON(url, timeoutMs = 4000) {
@@ -145,7 +161,18 @@ function mdToHtml(src) {
   const flushTable = () => {
     if (!rows.length) return;
     let t = '<table><thead><tr>' + rows[0].map(c => `<th>${c.trim()}</th>`).join('') + '</tr></thead><tbody>';
-    for (let i = 2; i < rows.length; i++) t += '<tr>' + rows[i].map(c => `<td>${c.trim()}</td>`).join('') + '</tr>';
+    for (let i = 2; i < rows.length; i++) {
+      const cells = rows[i].map((c, j) => {
+        let v = c.trim();
+        let k = i - 1;
+        while (v === '同上' && k >= 2) {
+          v = (rows[k][j] || '').trim();
+          k -= 1;
+        }
+        return v;
+      });
+      t += '<tr>' + cells.map(c => `<td>${c}</td>`).join('') + '</tr>';
+    }
     t += '</tbody></table>';
     out.push(t); rows = []; inTable = false;
   };
@@ -201,9 +228,6 @@ function renderSideNav() {
 let pendingBrandTab = null;
 
 function navigate(id) {
-  // #region agent log
-  fetch('http://127.0.0.1:7664/ingest/82cc9e84-dfb6-4801-8348-532350165d81',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'2726bf'},body:JSON.stringify({sessionId:'2726bf',location:'dashboard.js:navigate',message:'navigate called',data:{id,hash:location.hash,prev:currentView},timestamp:Date.now(),hypothesisId:'H1'})}).catch(()=>{});
-  // #endregion
   if (id === 'brand_v2' || id === 'brand_apply' || id === 'brand_prompt') {
     pendingBrandTab = id;
     id = 'brand';
@@ -318,18 +342,105 @@ function gateReportLiveHTML(yhf) {
     </div>`;
 }
 
-function evalViewHTML(evalReadme, evalStatus) {
+function evalViewHTML(evalReadme, evalStatus, g2) {
+  const g2pass = g2?.gates?.G2_prompt_pass;
+  const rate = g2?.pass_rate != null ? `${Math.round(g2.pass_rate * 100)}%` : '—';
+  const rows = (g2?.cases || []).slice(0, 12).map(c =>
+    `<tr><td>${esc(c.id || c.case_id || '—')}</td><td>${c.pass ? '✅' : '❌'}</td><td class="muted">${esc((c.failures || []).join('; ') || '—')}</td></tr>`
+  ).join('');
   return `
     <div class="doc-toolbar"><h2 style="margin:0">Prompt 评测台</h2><span class="badge-live">47 用例 · eval/</span></div>
     <div class="kpi-grid" style="margin-bottom:16px">
+      ${kpiCard('G2 Prompt', g2pass == null ? '—' : (g2pass ? 'PASS' : 'FAIL'), g2pass ? 'pass' : (g2pass === false ? 'fail' : ''), rate)}
       ${kpiCard('最新结果', evalStatus?.latest?.file?.replace('.json', '') || '未跑', evalStatus?.latest ? 'accent' : 'warn', evalStatus?.latest?.mtime?.slice(0, 16) || '请运行 run_v7.sh')}
       ${kpiCard('Open Issues', evalStatus?.open_issues ? '有文档' : '—', '', '看板内可读')}
+      ${kpiCard('G2 数据源', g2?.source || '—', '', g2?.message || '')}
     </div>
+    ${g2 ? `<article class="card" style="padding:0;overflow:auto;max-height:280px;margin-bottom:16px">
+      <div style="padding:12px 16px"><h3 class="section-title" style="margin:0">G2 报告 · L1 Prompt Harness</h3>
+      <p class="muted" style="margin:4px 0 0;font-size:11px">${esc(g2.message || '')}</p></div>
+      <table class="bench-table"><thead><tr><th>用例</th><th>结果</th><th>说明</th></tr></thead><tbody>${rows || '<tr><td colspan="3" class="muted">无明细</td></tr>'}</tbody></table>
+    </article>` : ''}
     <article class="card md-body">${mdToHtml(evalReadme?.content || '')}</article>
     <div class="action-row">
       <button class="action-btn secondary" type="button" onclick="navigate('open_issues')">⚠ Open Issues</button>
+      <button class="action-btn secondary" type="button" onclick="navigate('three_review')">⚖ 三审 Agent 演示</button>
       <button class="action-btn secondary" type="button" onclick="navigate('yhf_readme')">📐 Harness 说明</button>
     </div>`;
+}
+
+function shadowViewHTML(data) {
+  const maxFpr = Math.round((data.max_fpr ?? 0.10) * 100);
+  const sum = data.summary || {};
+  const rules = data.rules || [];
+  const rows = rules.map((r) => {
+    const m = r.shadow_metrics || {};
+    const fprPct = m.false_positive_rate != null ? `${Math.round(m.false_positive_rate * 100)}%` : '—';
+    const precPct = m.precision != null ? `${Math.round(m.precision * 100)}%` : '—';
+    const fprOk = m.false_positive_rate != null ? m.false_positive_rate <= (data.max_fpr ?? 0.10) : null;
+    const passCell = r.skipped ? '<span class="muted">无 gold</span>' : (r.pass ? '✅ 达标' : '❌ 超标');
+    const govLabel = { active: '在役', shadow: '观察期', deprecated: '已下线' }[r.governance_status] || r.governance_status;
+    const govCls = r.governance_status === 'shadow' ? 'warn' : (r.governance_status === 'deprecated' ? 'fail' : 'pass');
+    return `<tr>
+      <td><b>${esc(r.rule_id)}</b><div class="muted" style="font-size:11px">${esc(r.rule_name || '')}</div></td>
+      <td><span class="badge-${govCls}">${esc(govLabel)}</span>${r.governance_reason ? `<div class="muted" style="font-size:10px">${esc(r.governance_reason)}</div>` : ''}</td>
+      <td class="num">${m.true_positive ?? '—'}</td>
+      <td class="num">${m.false_positive ?? '—'}</td>
+      <td class="num">${precPct}</td>
+      <td class="num ${fprOk === false ? 'fail-text' : ''}">${fprPct}</td>
+      <td>${passCell}</td>
+    </tr>`;
+  }).join('');
+  const shadowGov = (data.governance?.shadow || []);
+  const govCards = shadowGov.length ? shadowGov.map(e =>
+    `<div class="gov-card"><div class="rid">${esc(e.rule_id)} · ${esc(e.rule_name || '')}</div>
+    <div class="meta">观察期 · ${esc(e.reason || '待复审')}</div></div>`
+  ).join('') : '<p class="muted">当前无规则处于观察期（全部在役或已下线）</p>';
+  return `
+    <div class="doc-toolbar">
+      <h2 style="margin:0">规则准入 · 观察期三验</h2>
+      <span class="badge-live">L4 Harness · FPR≤${maxFpr}%</span>
+      <span class="redline ${data.pass ? 'pass' : 'fail'}">${data.pass ? '✓ G1 PASS' : '✗ G1 FAIL'}</span>
+    </div>
+    <p class="muted" style="margin:0 0 14px;font-size:12px">${esc(data.description || '')}</p>
+    <div class="kpi-grid kpi-compact" style="margin-bottom:16px">
+      ${kpiCard('核心规则', rules.length, 'accent', 'gate.config core_rules')}
+      ${kpiCard('准入通过', sum.passed ?? '—', 'pass', `失败 ${sum.failed ?? 0}`)}
+      ${kpiCard('跳过', sum.skipped ?? '—', '', '无 gold 覆盖')}
+      ${kpiCard('观察期', shadowGov.length, 'warn', '治理状态 shadow')}
+    </div>
+    <article class="card" style="padding:0;overflow:auto;margin-bottom:16px">
+      <div style="padding:12px 16px"><h3 class="section-title" style="margin:0">核心规则 · 误报率三验（TP/FP/Precision/FPR）</h3></div>
+      <table class="bench-table shadow-metrics-table">
+        <thead><tr><th>规则</th><th>治理状态</th><th class="num">TP</th><th class="num">FP</th><th class="num">Precision</th><th class="num">FPR</th><th>准入</th></tr></thead>
+        <tbody>${rows}</tbody>
+      </table>
+    </article>
+    <section class="card"><h3 class="section-title" style="margin:0 0 10px">观察期规则清单</h3><div class="gov-list">${govCards}</div></section>
+    <div class="action-row">
+      <button class="action-btn secondary" type="button" data-goto="governance">🗂 规则治理</button>
+      <button class="action-btn secondary" type="button" data-goto="yhf">🔒 YHF 门禁</button>
+      <a class="action-btn" href="/">🛡 工作台复核</a>
+    </div>`;
+}
+
+function threeReviewViewHTML(demo) {
+  const rounds = (demo.rounds || []).map(r => `
+    <article class="card three-review-round">
+      <h3 style="margin:0 0 8px">${esc(r.label)} <span class="badge">${esc(r.role)}</span></h3>
+      <p style="margin:0;line-height:1.6">${esc(r.output)}</p>
+      ${r.verdict ? `<p class="muted" style="margin:8px 0 0"><b>裁决</b>：${esc(r.verdict)} → ${esc(r.final_status || '')}</p>` : ''}
+    </article>`).join('');
+  return `
+    <div class="doc-toolbar"><h2 style="margin:0">三审 Agent 模板演示</h2>
+      <span class="badge-live">${esc(demo.template || '')}</span>
+      ${demo.p5_judge ? `<span class="badge teal">${esc(demo.p5_judge)}</span>` : ''}</div>
+    <p class="muted" style="margin:0 0 14px">样例疑点：<b>${esc(demo.sample_finding?.rule_id)}</b> ${esc(demo.sample_finding?.rule_name || '')}</p>
+    ${demo.p5_excerpt ? `<article class="card md-body" style="margin-bottom:14px;font-size:11px"><h4 style="margin:0 0 8px">P5 裁判 prompt（节选）</h4>${mdToHtml(demo.p5_excerpt)}</article>` : ''}
+    ${demo.template_excerpt ? `<article class="card md-body" style="margin-bottom:14px;font-size:12px">${mdToHtml(demo.template_excerpt)}</article>` : ''}
+    ${rounds}
+    <p class="muted" style="font-size:12px">${esc(demo.note || '')}</p>
+    <div class="action-row"><a class="action-btn" href="/">🛡 工作台 · 对抗辩论</a></div>`;
 }
 
 async function docsHubHTML() {
@@ -349,6 +460,7 @@ async function docsHubHTML() {
   html += `<div class="docs-hub" style="margin-top:12px">
     <button type="button" class="doc-card accent" data-goto="bench"><span class="doc-card-title">🧪 AuditBench</span><span class="doc-card-desc">实时案卷指标</span></button>
     <button type="button" class="doc-card accent" data-goto="yhf"><span class="doc-card-title">🔒 YHF 门禁</span><span class="doc-card-desc">Oracle 门禁环</span></button>
+    <button type="button" class="doc-card accent" data-goto="shadow"><span class="doc-card-title">🔬 规则准入</span><span class="doc-card-desc">观察期三验 · FPR</span></button>
     <button type="button" class="doc-card accent" data-goto="institution"><span class="doc-card-title">🏥 机构画像</span><span class="doc-card-desc">批量聚合</span></button>
   </div>`;
   return html;
@@ -528,8 +640,10 @@ function taskBoardHTML() {
 }
 
 function benchViewHTML(bench) {
+  const tierLabel = (t) => ({ clean: '干净', boundary: '边界', violation: '违规' }[t] || t || '—');
   const rows = bench.cases.map(c => `<tr>
     <td>${c.is_clean ? '🟢 干净' : '🔴 违规'}</td>
+    <td><span class="muted" style="font-size:11px">${esc(tierLabel(c.bench_tier))}</span></td>
     <td>${esc(c.title || c.id)}</td>
     <td class="num">${c.found_suspected}</td><td class="num">${c.found_clue}</td>
     <td class="num">${c.false_positives ?? '—'}</td><td class="num">${c.latency_ms}ms</td>
@@ -541,10 +655,12 @@ function benchViewHTML(bench) {
     <div class="bench-kpis" style="margin-bottom:16px">
       <div class="bkpi"><div class="n">${bench.meta.total_cases}</div><div class="l">案卷</div></div>
       <div class="bkpi green"><div class="n">${bench.meta.clean_false_positive_total}</div><div class="l">干净误报</div></div>
+      <div class="bkpi"><div class="n">${bench.meta.boundary_cases ?? '—'}</div><div class="l">边界案卷</div></div>
+      <div class="bkpi ${bench.meta.boundary_zero_fp ? 'green' : 'warn'}"><div class="n">${bench.meta.boundary_false_positives ?? 0}</div><div class="l">边界误报</div></div>
       <div class="bkpi"><div class="n">${bench.meta.avg_latency_ms}</div><div class="l">均时延 ms</div></div>
     </div>
     <div class="card" style="padding:0;overflow:auto;max-height:520px">
-      <table class="bench-table"><thead><tr><th>类型</th><th>案卷</th><th class="num">疑点</th><th class="num">线索</th><th class="num">误报</th><th class="num">时延</th><th>操作</th></tr></thead><tbody>${rows}</tbody></table>
+      <table class="bench-table"><thead><tr><th>类型</th><th>层级</th><th>案卷</th><th class="num">疑点</th><th class="num">线索</th><th class="num">误报</th><th class="num">时延</th><th>操作</th></tr></thead><tbody>${rows}</tbody></table>
     </div>
     <div class="action-row">
       <a class="action-btn" href="/" target="_blank">🛡 打开稽核工作台</a>
@@ -574,7 +690,7 @@ function batchProgressHTML(job) {
     </div>`
     : '';
   return `
-    <div class="batch-head"><span class="badge teal">${esc(job.mode)} · ${esc(statusLabel)}</span>
+    <div class="batch-head"><span class="badge teal">${esc(job.mode)} · 并发 ${job.concurrency ?? 3}${job.priority_ranked ? ' · 🎯优先' : ''}${job.top_n ? ` · Top ${job.top_n}` : ''} · ${esc(statusLabel)}</span>
       <code style="font-size:11px">${esc(job.id)}</code></div>
     <div class="batch-progress" aria-label="进度 ${pct}%"><div class="batch-progress-fill" style="width:${pct}%"></div></div>
     <p class="muted" style="margin:8px 0 12px">${job.done}/${job.total} 案卷 · ${pct}%</p>
@@ -594,10 +710,16 @@ function batchViewHTML() {
   return `
     <div class="doc-toolbar"><h2 style="margin:0">批量初筛队列</h2>
       <span class="badge teal">live=治理叠加 · oracle=纯引擎</span></div>
-    <p class="muted" style="margin:0 0 12px">飞检/院端批量跑案卷初筛，后台顺序执行并实时刷新进度条（非 LLM，省额度）。</p>
+    <p class="muted" style="margin:0 0 12px">飞检/院端批量跑案卷初筛，默认 <b>3 路并发</b>。勾选「按优先队列」时：先分 <b>疑点 &gt; 线索</b> 层级，再按 <b>api_score</b>（越高越先查）入队；可设 <b>Top N</b> 只跑队首 N 案。</p>
+    <div class="action-row" style="margin-bottom:8px;align-items:center;gap:8px;flex-wrap:wrap">
+      <label class="muted" for="batchTopN" style="font-size:13px">Top N</label>
+      <input id="batchTopN" type="number" min="1" max="50" placeholder="全部" style="width:72px;padding:6px 8px;border:1px solid var(--border);border-radius:6px" />
+    </div>
     <div class="action-row" style="margin-bottom:16px">
       <button type="button" class="action-btn" id="btnBatchLive">▶ 全部案卷 · live</button>
-      <button type="button" class="action-btn secondary" id="btnBatchOracle">▶ 全部案卷 · oracle</button>
+      <button type="button" class="action-btn secondary" id="btnBatchOracle">▶ 全部 · oracle</button>
+      <button type="button" class="action-btn" id="btnBatchPriLive">🎯 优先级 · live</button>
+      <button type="button" class="action-btn secondary" id="btnBatchPriOracle">🎯 优先级 · oracle</button>
       <button type="button" class="action-btn secondary" id="btnBatchRefresh">↻ 刷新任务列表</button>
     </div>
     <div id="batchLivePanel">${batchProgressHTML(null)}</div>
@@ -608,11 +730,18 @@ function batchViewHTML() {
     </div>`;
 }
 
-async function startBatchJob(mode) {
+async function startBatchJob(mode, { priority = false, top_n } = {}) {
+  const body = { skip: ['uploaded'], mode, concurrency: 3, priority };
+  const n = Number(top_n);
+  if (Number.isFinite(n) && n > 0) {
+    body.top_n = Math.min(50, Math.floor(n));
+  } else {
+    body.all = true;
+  }
   const res = await fetch('/api/audit/batch', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ all: true, skip: ['uploaded'], mode }),
+    body: JSON.stringify(body),
   });
   const data = await res.json();
   if (!data.ok) throw new Error(data.error || '启动失败');
@@ -658,15 +787,31 @@ async function refreshBatchJobList() {
 
 function bindBatchView(root) {
   const panel = root.querySelector('#batchLivePanel');
+  const readTopN = () => {
+    const v = Number(root.querySelector('#batchTopN')?.value);
+    return Number.isFinite(v) && v > 0 ? Math.min(50, Math.floor(v)) : undefined;
+  };
   root.querySelector('#btnBatchLive')?.addEventListener('click', async () => {
     try {
-      const job = await startBatchJob('live');
+      const job = await startBatchJob('live', { top_n: readTopN() });
       await pollBatchJob(job.id, panel);
     } catch (e) { alert(e.message); }
   });
   root.querySelector('#btnBatchOracle')?.addEventListener('click', async () => {
     try {
-      const job = await startBatchJob('oracle');
+      const job = await startBatchJob('oracle', { top_n: readTopN() });
+      await pollBatchJob(job.id, panel);
+    } catch (e) { alert(e.message); }
+  });
+  root.querySelector('#btnBatchPriLive')?.addEventListener('click', async () => {
+    try {
+      const job = await startBatchJob('live', { priority: true, top_n: readTopN() });
+      await pollBatchJob(job.id, panel);
+    } catch (e) { alert(e.message); }
+  });
+  root.querySelector('#btnBatchPriOracle')?.addEventListener('click', async () => {
+    try {
+      const job = await startBatchJob('oracle', { priority: true, top_n: readTopN() });
       await pollBatchJob(job.id, panel);
     } catch (e) { alert(e.message); }
   });
@@ -712,7 +857,11 @@ function institutionViewHTML(inst) {
       ${kpiCard('干净件', s.clean_pass, 'pass', '零误报')}
     </div>
     <article class="card inst-chart"><h3>高频规则 TOP（金额）</h3>${bars}</article>
-    <div class="action-row"><a class="action-btn" href="/">🏥 打开工作台 · 机构画像</a></div>`;
+    <div class="action-row">
+      <a class="action-btn" href="/api/export/institution?format=html" target="_blank" rel="noopener">🖨 打印/PDF 报告</a>
+      <a class="action-btn secondary" href="/api/export/institution" target="_blank" rel="noopener">📄 Markdown</a>
+      <a class="action-btn secondary" href="/">🏥 打开工作台</a>
+    </div>`;
 }
 
 function evalDraftsHTML(drafts) {
@@ -949,7 +1098,7 @@ async function docViewHTML(docId) {
     return `<div class="card"><p class="muted">「${esc(doc.title || docId)}」暂无静态文档，请使用看板内动态视图或本地仓库文件。</p></div>`;
   }
   let extra = '';
-  if (docId === 'roadmap') extra = `<section class="card" style="margin-top:16px"><div class="task-board">${await roadmapTasksPreviewHTML()}</div></section>`;
+  if (docId === 'roadmap') extra = `<section class="card" style="margin-top:16px"><div class="task-board">${await dashCall('roadmapTasksPreviewHTML')}</div></section>`;
   if (docId === 'pitch') extra = `<section class="card brand-pitch-cover" style="margin-top:16px"><h3 style="margin:0 0 8px">Deck 封面预览</h3><div class="pitch-cover-mock"><img src="/brand/gpt-v2/04-applications.png" alt="Pitch 参考"><div class="pitch-cover-overlay"><img src="/brand/logo-mark.svg" width="64" height="64" alt=""><h4>鹰眼 EagleEye Audit</h4><p>让每一分救命钱，都查得有据</p></div></div><p class="muted" style="margin-top:10px;font-size:11px">完整物料请用 04-applications.png 在 Canva / Keynote 排版 · 见品牌规范页 Phase E</p></section>`;
   return docPageShell(doc.title, doc.excerpt, mdToHtml(doc.content), docId, doc) + extra;
 }
@@ -965,6 +1114,80 @@ function docPageShell(title, excerpt, bodyHtml, docId, doc) {
       <span class="badge-live">${excerpt ? '摘要' : '全文'} · 看板内阅读</span></div>
     <article class="card md-body doc-article" data-doc-id="${esc(docId)}">${bodyHtml}</article>
     <div class="action-row">${expand}${navBtns.join('')}<a class="action-btn" href="/">🛡 稽核工作台</a></div>`;
+}
+
+function truncText(s, max = 40) {
+  const t = String(s ?? '');
+  return t.length > max ? `${t.slice(0, max)}…` : t;
+}
+
+function priScoreHeaderHtml() {
+  const tip = window.PriorityUX?.GLOSSARY?.find(g => g.term.startsWith('api_score'))?.tip
+    || '综合优先指数：越高越应先安排飞检，非质量分';
+  return `<th class="num pri-th-score" title="${esc(tip)}">
+    <span class="pri-th-main">api_score</span>
+    <span class="pri-th-hint">↑越高越先查</span>
+  </th>`;
+}
+
+function priorityViewHTML(rank) {
+  const queue = rank.queue || [];
+  const top = queue.slice(0, 8);
+  const tier1 = queue.filter(r => r.tier === 1).length;
+  const shadowList = rank.shadow_bucket || [];
+  const legend = window.PriorityUX?.scoreLegend
+    || '排序：疑点层 > 线索层 → api_score 降序 · 分数高 = 飞检优先级高';
+  const rows = top.map((r) => {
+    const title = r.case_title || r.case_id;
+    return `<tr>
+      <td><span class="pri-tier t${r.tier}" title="tier${r.tier} · ${r.tier === 1 ? '含疑点，优先查' : '仅线索'}">${r.tier === 1 ? '疑点' : r.tier === 2 ? '线索' : '—'}</span></td>
+      <td class="num"><strong class="pri-score" title="优先指数，非质量分">${r.api_score}</strong></td>
+      <td class="pri-case-cell" title="${esc(title)}">
+        <span class="pri-case-id">${esc(r.case_id)}</span>
+        <span class="pri-case-title">${esc(truncText(title, 44))}</span>
+      </td>
+      <td class="num" title="疑点条数 / 线索条数"><span class="pri-ratio">${r.suspected_count}<span class="pri-slash">/</span>${r.clue_count}</span></td>
+      <td class="num pri-amt">¥${Number(r.suspected_amount || 0).toLocaleString()}</td>
+      <td><a class="btn-sm" href="/priority.html">队列</a></td>
+    </tr>`;
+  }).join('');
+  const shadowChips = shadowList.slice(0, 3).map(r =>
+    `<span class="pri-shadow-chip" title="shadow 观察期：展示证据但不计分">${esc(truncText(r.case_title || r.case_id, 24))} · 观察 ${r.shadow_count ?? 0}条</span>`,
+  ).join('');
+  const glossary = window.PriorityUX ? PriorityUX.glossaryPanelHtml(true, 'dashboard') : '';
+  return `
+    <div class="doc-toolbar">
+      <h2 style="margin:0">🎯 稽核优先队列</h2>
+      <span class="badge-live">先分疑点/线索 · 再按 api_score 排队首 · 观察期不计分</span>
+    </div>
+    ${glossary}
+    <div class="bench-kpis">
+      <div class="bkpi accent"><div class="n">${rank.total ?? queue.length}</div><div class="l">可排序案卷</div></div>
+      <div class="bkpi warn"><div class="n">${tier1}</div><div class="l">含疑点（tier1）</div></div>
+      <div class="bkpi"><div class="n">${shadowList.length}</div><div class="l">观察期桶</div></div>
+      <div class="bkpi green"><div class="n">${queue[0]?.api_score ?? '—'}</div><div class="l">队首优先指数</div></div>
+    </div>
+    <p class="pri-score-legend muted">${esc(legend)}</p>
+    <div class="card pri-card-table">
+      <div class="card-head">
+        <h2>队首 TOP ${top.length || 0}</h2>
+        <a class="link-sm" href="/priority.html">打开完整队列 →</a>
+      </div>
+      <div class="pri-table-wrap">
+        <table class="bench-table pri-queue-table">
+          <thead><tr>
+            <th title="tier：疑点层永远在线索层前">层级</th>${priScoreHeaderHtml()}<th>案卷</th>
+            <th class="num" title="疑点 / 线索">疑/线</th><th class="num">暴露金额</th><th></th>
+          </tr></thead>
+          <tbody>${rows || '<tr><td colspan="6" class="muted" style="padding:16px">暂无排序数据</td></tr>'}</tbody>
+        </table>
+      </div>
+      ${shadowList.length ? `<div class="pri-shadow-bar"><span class="pri-shadow-label" title="shadow=规则观察期，不计入 api_score">🌓 观察期</span>${shadowChips}</div>` : ''}
+    </div>
+    <div class="action-row">
+      <a class="action-btn primary" href="/priority.html">🎯 完整队列与批量入队</a>
+      <a class="action-btn secondary" href="/intake.html">📥 导入中心</a>
+    </div>`;
 }
 
 async function renderView(id) {
@@ -992,7 +1215,19 @@ async function renderView(id) {
       return;
     }
     else if (id === 'yhf') html = yhfViewHTML(cache.yhf, cache.bench);
+    else if (id === 'shadow') {
+      const metrics = await fetchJSON('/api/shadow-metrics', 45000);
+      html = shadowViewHTML(metrics);
+    }
+    else if (id === 'three_review') {
+      const demo = await fetchJSON('/api/three-review/demo');
+      html = threeReviewViewHTML(demo);
+    }
     else if (id === 'institution') html = institutionViewHTML(cache.inst);
+    else if (id === 'priority') {
+      const rank = await fetchJSON('/api/priority/rank', 120000);
+      html = priorityViewHTML(rank);
+    }
     else if (id === 'governance') {
       const drafts = await fetchJSON('/api/eval-drafts').catch(() => ({ items: [] }));
       html = governanceViewHTML(cache.gov, drafts);
@@ -1004,8 +1239,12 @@ async function renderView(id) {
     }
     else if (id === 'docs') html = await docsHubHTML();
     else if (id === 'eval') {
-      const [readme, status] = await Promise.all([loadDoc('eval'), fetchJSON('/api/eval/status')]);
-      html = evalViewHTML(readme, status);
+      const [readme, status, g2] = await Promise.all([
+        loadDoc('eval'),
+        fetchJSON('/api/eval/status'),
+        fetchJSON('/api/eval/g2').catch(() => null),
+      ]);
+      html = evalViewHTML(readme, status, g2);
     } else if (id === 'gate_report') html = await docViewHTML('gate_report');
     else if (id === 'brand') {
       html = brandViewHTML();
@@ -1036,9 +1275,9 @@ async function renderView(id) {
       bindExpandDoc(root);
       return;
     } else if (id === 'tasks') {
-      html = await tasksBoardHTML();
+      html = await dashCall('tasksBoardHTML');
       root.innerHTML = `<div class="view-panel active">${html}</div>`;
-      bindTasksBoard(root);
+      dashCall('bindTasksBoard', root);
       return;
     } else if (item?.doc) html = await docViewHTML(item.doc);
     else if (id === 'open_issues') html = await docViewHTML('open_issues');
@@ -1047,7 +1286,11 @@ async function renderView(id) {
     bindDocCards(root);
     bindExpandDoc(root);
   } catch (e) {
-    root.innerHTML = `<div class="card"><p style="color:var(--red)">加载失败：${esc(e.message)}</p><p class="muted">请确认 node server.js 已从 prototype/app 启动</p></div>`;
+    const isModule = /未加载|is not defined|DashTasks/.test(String(e.message));
+    const hint = isModule
+      ? '前端脚本可能未完整加载（常见于 tasks-board.js 语法错误）。请硬刷新页面；开发者请运行 node scripts/verify-dashboard-frontend.js'
+      : '请确认 node server.js 已从 prototype/app 启动';
+    root.innerHTML = `<div class="card"><p style="color:var(--red)">加载失败：${esc(e.message)}</p><p class="muted">${hint}</p></div>`;
   }
 }
 
@@ -1069,9 +1312,6 @@ function bindExpandDoc(root) {
 
 async function refreshAll() {
   const editing = document.activeElement?.closest?.('[contenteditable="true"], textarea, input');
-  // #region agent log
-  fetch('http://127.0.0.1:7664/ingest/82cc9e84-dfb6-4801-8348-532350165d81',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'2726bf'},body:JSON.stringify({sessionId:'2726bf',location:'dashboard.js:refreshAll',message:'refreshAll',data:{currentView,editing:!!editing,tag:document.activeElement?.tagName},timestamp:Date.now(),hypothesisId:'H2'})}).catch(()=>{});
-  // #endregion
   cache = {};
   await loadData();
   if (editing && (currentView === 'tasks')) {
@@ -1088,9 +1328,6 @@ let booted = false;
 function navigateFromHash() {
   const hash = location.hash.replace(/^#/, '');
   const id = NAV.some(n => n.id === hash) ? hash : 'overview';
-  // #region agent log
-  fetch('http://127.0.0.1:7664/ingest/82cc9e84-dfb6-4801-8348-532350165d81',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'2726bf'},body:JSON.stringify({sessionId:'2726bf',location:'dashboard.js:navigateFromHash',message:'hash route',data:{hash,id,currentView,booted},timestamp:Date.now(),hypothesisId:'H1'})}).catch(()=>{});
-  // #endregion
   if (!booted || id !== currentView) {
     booted = true;
     navigate(id);

@@ -14,6 +14,7 @@ body{font-family:var(--font);background:var(--yy-bg);color:var(--yy-ink);min-hei
   background-image:radial-gradient(circle at 1px 1px,rgba(11,42,74,.05) 1px,transparent 0);background-size:28px 28px}
 a{color:var(--yy-ink-2);text-decoration:none}
 a:hover{color:var(--yy-iris);text-decoration:underline}
+.muted{color:var(--yy-muted);font-size:12px;font-weight:400}
 
 .dash-header{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px;
   padding:16px 28px;background:linear-gradient(125deg,#061829,var(--yy-ink),var(--yy-ink-2));color:#fff;
@@ -110,8 +111,58 @@ a:hover{color:var(--yy-iris);text-decoration:underline}
 .bench-table td{padding:9px 8px;border-bottom:1px solid var(--yy-line);vertical-align:middle}
 .bench-table tr:hover td{background:#fafcfe}
 .bench-table .num{text-align:right;font-family:var(--font-num)}
+.bench-table .fail-text{color:var(--yy-red,#c53030);font-weight:700}
 .bench-table a.btn-sm{display:inline-block;padding:4px 10px;border-radius:6px;background:var(--yy-ink);color:#fff;font-size:10px;font-weight:700;text-decoration:none}
 .bench-table a.btn-sm:hover{background:var(--yy-iris-d)}
+
+/* KPI 条（AuditBench / 稽核队列等复用） */
+.bench-kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:12px;margin-bottom:18px}
+.bkpi{background:var(--yy-surface);border:1px solid var(--yy-line);border-radius:12px;padding:14px 12px;text-align:center;box-shadow:var(--shadow-sm)}
+.bkpi .n{font-family:var(--font-num);font-size:24px;font-weight:800;line-height:1.1;color:var(--yy-ink)}
+.bkpi .l{font-size:11px;color:var(--yy-muted);margin-top:6px;font-weight:600}
+.bkpi.green .n{color:var(--green)}
+.bkpi.warn .n{color:var(--yy-warn)}
+.bkpi.accent .n{color:var(--yy-iris-d)}
+
+/* 稽核优先队列 · 看板摘要 */
+.pri-card-table{padding:0;overflow:hidden}
+.pri-card-table .card-head{padding:16px 18px 12px;margin:0;border-bottom:1px solid var(--yy-line);background:linear-gradient(180deg,#fafcfe,#fff)}
+.pri-table-wrap{overflow-x:auto;max-height:360px;overflow-y:auto}
+.pri-queue-table{margin:0}
+.pri-queue-table th{font-size:10px;text-transform:none;letter-spacing:.02em;color:var(--yy-muted)}
+.pri-th-score{min-width:88px;line-height:1.25;cursor:help}
+.pri-th-main{display:block;font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.04em;color:var(--yy-ink-2)}
+.pri-th-hint{display:block;font-size:9px;font-weight:600;color:var(--yy-warn);margin-top:2px;white-space:nowrap}
+.pri-score-legend{font-size:11px;margin:-6px 0 12px;line-height:1.45}
+.pri-queue-table td{font-size:12px}
+.pri-tier{display:inline-block;padding:2px 8px;border-radius:999px;font-size:10px;font-weight:800;white-space:nowrap}
+.pri-tier.t1{background:#fef0ee;color:var(--red);border:1px solid #fecaca}
+.pri-tier.t2{background:#fff6e6;color:var(--yy-warn);border:1px solid #fde68a}
+.pri-score{font-family:var(--font-num);color:var(--yy-ink-2)}
+.pri-case-cell{max-width:320px;line-height:1.35}
+.pri-case-id{display:block;font-family:var(--font-num);font-size:10px;font-weight:700;color:var(--yy-muted);margin-bottom:2px}
+.pri-case-title{display:block;color:var(--yy-ink);font-weight:600}
+.pri-ratio{font-family:var(--font-num);font-weight:700}
+.pri-slash{opacity:.35;margin:0 1px}
+.pri-amt{font-weight:700;color:var(--yy-ink-2)}
+.pri-shadow-bar{display:flex;flex-wrap:wrap;align-items:center;gap:8px;padding:12px 18px;border-top:1px dashed var(--yy-line);background:#f8fafc}
+.pri-shadow-label{font-size:11px;font-weight:700;color:var(--yy-muted);margin-right:4px}
+.pri-shadow-chip{font-size:11px;padding:4px 10px;border-radius:999px;background:#fff;border:1px dashed #cbd5e1;color:var(--yy-muted)}
+
+/* 优先队列 · 名词解释（与 priority.css 对齐） */
+.pri-glossary-wrap,.pri-glossary.card{margin:0 0 12px;padding:0;overflow:hidden;border:1px solid var(--yy-line);border-radius:12px;background:var(--yy-surface)}
+.pri-glossary{border:none;margin:0}
+.pri-glossary>summary{cursor:pointer;font-size:13px;font-weight:800;color:var(--yy-ink-2);padding:12px 16px;list-style:none;background:#f8fafc;border-bottom:1px solid transparent}
+.pri-glossary>summary::-webkit-details-marker{display:none}
+.pri-glossary[open]>summary{border-bottom-color:var(--yy-line)}
+.pri-glossary-lead{margin:0;padding:10px 16px 0;font-size:12px;color:var(--yy-muted);line-height:1.5}
+.pri-glossary-list{margin:0;padding:6px 16px 12px;display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:6px 16px;font-size:11px}
+.pri-glossary-list dt{margin:0;font-weight:700}
+.pri-glossary-list dt code{font-size:9px;background:#f1f5f9;padding:1px 4px;border-radius:4px}
+.pri-glossary-list dd{margin:2px 0 0;color:var(--yy-muted);line-height:1.4}
+
+.action-btn.primary{background:linear-gradient(180deg,var(--yy-iris) 0%,var(--yy-iris-d) 100%);color:var(--yy-ink)}
+.action-btn.primary:hover{background:var(--yy-iris-d);color:#fff}
 
 .batch-progress{height:10px;background:#e8edf2;border-radius:999px;overflow:hidden;margin:8px 0}
 .batch-progress-fill{height:100%;background:linear-gradient(90deg,var(--yy-iris),#3d8bfd);transition:width .35s ease;border-radius:999px}
@@ -331,3 +382,6 @@ a:hover{color:var(--yy-iris);text-decoration:underline}
 .tk-card-main{flex:1;min-width:0}
 
 .dash-foot{text-align:center;padding:20px;font-size:11px;color:var(--yy-muted)}
+
+.tk-modal-overlay{position:fixed;inset:0;background:rgba(11,42,74,.45);display:grid;place-items:center;z-index:200;padding:24px}
+.tk-modal{background:var(--yy-surface);border-radius:12px;max-width:480px;width:100%;padding:20px;box-shadow:var(--shadow-lg)}

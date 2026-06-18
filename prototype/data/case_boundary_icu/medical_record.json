@@ -1,0 +1,49 @@
+{
+  "case_meta": {
+    "case_id": "YY-BENCH-EDGE-ICU-001",
+    "case_title": "ICU边界干扰件·设备时长与护理内涵一致（干净件）",
+    "disclaimer": "虚构数据。重症边界干扰：含呼吸机/CRRT/特级护理/重症监护费等关键词，但计费时长与 ICU 记录一致、无重复收专项护理，应 0 疑点。",
+    "specialty": "重症医学",
+    "embedded_violation_count": 0,
+    "distractor_count": 2,
+    "bench_tier": "boundary",
+    "settlement_summary": {"total_amount": 11200.0, "insurance_paid_amount": 11200.0, "currency": "CNY", "settle_type": "住院·按项目付费"}
+  },
+  "front_page": {
+    "doc_type": "病案首页", "hospital": "示范市第一人民医院（虚构）",
+    "patient_name": "孙监护", "sex": "男", "age": 58,
+    "insurance_type": "职工基本医疗保险", "admission_no": "ZY20260520-0912",
+    "admit_time": "2026-05-20 08:00", "discharge_time": "2026-05-23 10:00", "actual_inpatient_days": 3,
+    "admit_dept": "重症医学科（ICU）", "bed_no": "ICU-05床",
+    "principal_diagnosis": {"name": "急性呼吸窘迫综合征", "icd10": "J80.x01"}
+  },
+  "icu_record": {
+    "doc_type": "重症监护记录单", "admission_to_icu": true,
+    "icu_admit": "2026-05-20 08:00", "icu_discharge": "2026-05-23 10:00",
+    "nursing_level": "特级护理",
+    "ventilator": {"start": "2026-05-20 10:00", "end": "2026-05-23 08:00", "actual_hours": 70},
+    "crrt": {"actual_hours": 24},
+    "note": "特级护理内涵含吸痰/管路维护，未另收一般专项护理。"
+  },
+  "long_term_orders": {"doc_type": "长期医嘱单", "items": [
+    {"order_id": "L01", "content": "特级护理", "start": "2026-05-20 08:00", "stop": "2026-05-23 10:00"},
+    {"order_id": "L02", "content": "有创呼吸机辅助呼吸", "start": "2026-05-20 10:00", "stop": "2026-05-23 08:00"}
+  ]},
+  "nursing_records": {"doc_type": "护理记录单", "nursing_level_executed": "特级护理", "entries": [
+    {"date": "2026-05-20", "text": "ICU特级护理，10:00 接呼吸机。"},
+    {"date": "2026-05-23", "text": "08:00 脱机，转出 ICU。"}
+  ]},
+  "fee_list": {
+    "doc_type": "费用清单", "settle_date": "2026-05-23",
+    "items": [
+      {"line_no": 1, "fee_date": "2026-05-20~05-23", "category": "护理费", "item_name": "特级护理", "qty": 3, "unit": "日", "unit_price": 160.0, "amount": 480.0, "insurance_class": "医保", "linked_order": "L01", "flag": "正常"},
+      {"line_no": 2, "fee_date": "2026-05-20~05-23", "category": "治疗费", "item_name": "有创呼吸机辅助呼吸", "qty": 70, "unit": "小时", "unit_price": 50.0, "amount": 3500.0, "hours_charged": 70, "insurance_class": "医保", "linked_order": "L02", "flag": "干扰项：呼吸机计费=实际70h→正确不报"},
+      {"line_no": 3, "fee_date": "2026-05-20~05-22", "category": "治疗费", "item_name": "连续性血液净化（CRRT）", "qty": 24, "unit": "小时", "unit_price": 80.0, "amount": 1920.0, "hours_charged": 24, "insurance_class": "医保", "flag": "干扰项：CRRT 计费=实际24h→正确不报"},
+      {"line_no": 4, "fee_date": "2026-05-20~05-23", "category": "诊疗费", "item_name": "重症监护费", "qty": 3, "unit": "日", "unit_price": 150.0, "amount": 450.0, "insurance_class": "医保", "flag": "干扰项：患者确在 ICU 有收治记录→ICU-303 正确不报"},
+      {"line_no": 5, "fee_date": "2026-05-20~05-23", "category": "床位费", "item_name": "重症监护病房床位费", "qty": 3, "unit": "日", "unit_price": 300.0, "amount": 900.0, "insurance_class": "医保", "flag": "正常"}
+    ],
+    "total_amount": 7250.0,
+    "absent_items_note": "未收取一般专项护理（避免 ICU-301）；设备时长与 ICU 记录一致（避免 ICU-302）。"
+  },
+  "discharge_summary": {"doc_type": "转出小结", "hospital_course": "ARDS 好转，脱机转出 ICU。"}
+}

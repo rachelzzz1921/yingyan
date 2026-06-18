@@ -10,6 +10,8 @@ const crypto = require('crypto');
 
 const JOBS_PATH = path.join(__dirname, '../../data/audit_batch_jobs.json');
 const MAX_JOBS = 24;
+const DEFAULT_CONCURRENCY = 3;
+const MAX_CONCURRENCY = 8;
 const running = new Set();
 
 function loadStore() {
@@ -52,6 +54,10 @@ function createJob(caseIds, options = {}) {
     id: `BATCH-${Date.now().toString(36)}-${crypto.randomBytes(2).toString('hex')}`,
     status: 'pending',
     mode: options.mode === 'oracle' ? 'oracle' : 'live',
+    concurrency: Math.max(1, Math.min(Number(options.concurrency) || DEFAULT_CONCURRENCY, MAX_CONCURRENCY)),
+    priority_ranked: !!options.priority_ranked,
+    rank_meta: options.rank_meta || null,
+    top_n: options.top_n || null,
     case_ids: ids,
     total: ids.length,
     done: 0,
@@ -85,31 +91,42 @@ function rollupSummary(results) {
 /**
  * @param {string} jobId
  * @param {(caseId: string) => Promise<object>} runOne
+ * @param {{ concurrency?: number }} [options]
  */
-async function runJob(jobId, runOne) {
+async function runJob(jobId, runOne, options = {}) {
   if (running.has(jobId)) return getJob(jobId);
   const job = getJob(jobId);
   if (!job) throw new Error('job 不存在');
   if (job.status === 'done' || job.status === 'failed') return job;
 
+  const concurrency = Math.max(1, Math.min(
+    Number(options.concurrency ?? job.concurrency) || DEFAULT_CONCURRENCY,
+    MAX_CONCURRENCY,
+  ));
+
   running.add(jobId);
   job.status = 'running';
+  job.concurrency = concurrency;
   job.updated_at = new Date().toISOString();
   upsertJob(job);
 
   try {
-    for (const caseId of job.case_ids) {
-      if (job.results.some(r => r.id === caseId)) {
-        job.done = job.results.length;
-        continue;
-      }
-      try {
-        const row = await runOne(caseId, job.mode);
+    const todo = job.case_ids.filter((caseId) => !job.results.some(r => r.id === caseId));
+    for (let i = 0; i < todo.length; i += concurrency) {
+      const chunk = todo.slice(i, i + concurrency);
+      const rows = await Promise.all(chunk.map(async (caseId) => {
+        try {
+          return await runOne(caseId, job.mode);
+        } catch (e) {
+          return { id: caseId, error: e.message, latency_ms: 0 };
+        }
+      }));
+      for (const row of rows) {
+        if (row.error) {
+          job.failed += 1;
+          job.errors.push({ case_id: row.id, error: row.error });
+        }
         job.results.push(row);
-      } catch (e) {
-        job.failed += 1;
-        job.errors.push({ case_id: caseId, error: e.message });
-        job.results.push({ id: caseId, error: e.message, latency_ms: 0 });
       }
       job.done = job.results.length;
       job.progress_pct = Math.round((job.done / job.total) * 100);
@@ -132,7 +149,8 @@ async function runJob(jobId, runOne) {
 
 function startJobAsync(jobId, runOne) {
   setImmediate(() => {
-    runJob(jobId, runOne).catch(() => {});
+    const job = getJob(jobId);
+    runJob(jobId, runOne, { concurrency: job?.concurrency }).catch(() => {});
   });
   return getJob(jobId);
 }
@@ -145,6 +163,8 @@ function renderBatchReportMarkdown(job) {
     '',
     `- 任务 ID：\`${job.id}\``,
     `- 模式：**${job.mode}**（live=治理叠加 · oracle=纯引擎）`,
+    `- 并发：**${job.concurrency ?? DEFAULT_CONCURRENCY}** 路并行`,
+    job.priority_ranked ? `- 排序：**优先级队列**（tier→api_score）` : null,
     `- 状态：${job.status} · ${job.done}/${job.total} 案卷`,
     `- 生成时间：${job.updated_at || job.created_at}`,
     '',
@@ -163,7 +183,7 @@ function renderBatchReportMarkdown(job) {
     '',
     '| 案卷 | 疑点 | 线索 | shadow | 时延 | 备注 |',
     '|---|---:|---:|---:|---:|---|',
-  ];
+  ].filter(Boolean);
   for (const r of job.results || []) {
     if (r.error) {
       lines.push(`| ${r.id} | — | — | — | — | ❌ ${r.error} |`);
@@ -172,7 +192,7 @@ function renderBatchReportMarkdown(job) {
     }
   }
   lines.push('', '---', '*由鹰眼批量初筛队列自动生成 · 可打印为 PDF 或导入飞检台账*');
-  return lines.join('\n');
+  return lines.filter(Boolean).join('\n');
 }
 
 function escHtml(s) {
@@ -209,7 +229,7 @@ function renderBatchReportHtml(job) {
 <div class="sheet">
   <div class="noprint"><button onclick="window.print()" style="padding:8px 16px;border-radius:8px;border:1px solid var(--ink);background:var(--ink);color:#fff;font-weight:700;cursor:pointer">🖨 打印 / 另存为 PDF</button></div>
   <h1>鹰眼 · 批量初筛报告</h1>
-  <p class="sub">任务 ${escHtml(job.id)} · 模式 ${escHtml(job.mode)} · ${job.done}/${job.total} 案卷 · ${escHtml(job.updated_at || job.created_at)}</p>
+  <p class="sub">任务 ${escHtml(job.id)} · 模式 ${escHtml(job.mode)} · 并发 ${job.concurrency ?? DEFAULT_CONCURRENCY}${job.priority_ranked ? ' · 优先级排序' : ''} · ${job.done}/${job.total} 案卷 · ${escHtml(job.updated_at || job.created_at)}</p>
   <div class="kpis">
     <div class="kpi"><div class="n">${sum.suspected_total ?? 0}</div><div class="l">疑点合计</div></div>
     <div class="kpi"><div class="n">${sum.clue_total ?? 0}</div><div class="l">线索合计</div></div>
@@ -224,6 +244,8 @@ function renderBatchReportHtml(job) {
 
 module.exports = {
   JOBS_PATH,
+  DEFAULT_CONCURRENCY,
+  MAX_CONCURRENCY,
   createJob,
   getJob,
   listJobs,

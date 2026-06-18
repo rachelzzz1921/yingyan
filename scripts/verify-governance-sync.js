@@ -29,16 +29,23 @@ function testBatchExport() {
 
 function testAdminAuth() {
   const { checkAdmin, adminTokenConfigured } = require('../prototype/app/engine/admin-auth');
-  const prev = process.env.YINGYAN_ADMIN_TOKEN;
+  const prevY = process.env.YINGYAN_ADMIN_TOKEN;
+  const prevS = process.env.SUPABASE_SERVICE_ROLE_KEY;
   process.env.YINGYAN_ADMIN_TOKEN = 'test-secret';
+  delete process.env.SUPABASE_SERVICE_ROLE_KEY;
   const bad = checkAdmin({ headers: {} });
   const good = checkAdmin({ headers: { 'x-yingyan-token': 'test-secret' } });
-  if (bad.ok || !good.ok) {
-    console.error('❌ admin auth 逻辑错误', bad, good);
+  process.env.YINGYAN_ADMIN_TOKEN = '';
+  process.env.SUPABASE_SERVICE_ROLE_KEY = 'svc-key';
+  const goodSvc = checkAdmin({ headers: { authorization: 'Bearer svc-key' } });
+  if (bad.ok || !good.ok || !goodSvc.ok || goodSvc.mode !== 'supabase_service') {
+    console.error('❌ admin auth 逻辑错误', bad, good, goodSvc);
     process.exit(1);
   }
-  if (prev) process.env.YINGYAN_ADMIN_TOKEN = prev;
+  if (prevY) process.env.YINGYAN_ADMIN_TOKEN = prevY;
   else delete process.env.YINGYAN_ADMIN_TOKEN;
+  if (prevS) process.env.SUPABASE_SERVICE_ROLE_KEY = prevS;
+  else delete process.env.SUPABASE_SERVICE_ROLE_KEY;
   console.log('✅ admin auth PASS (configured=' + adminTokenConfigured() + ')');
 }
 

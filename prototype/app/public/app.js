@@ -168,6 +168,7 @@ function bindRuleLinkDelegation() {
 let RECORD = null, RULES = null, REPORT = null, FLAGGED_LINES = new Set();
 let RULE_MAP = {};
 let MODE = 'audit', INJECT = false, CURRENT_CASE = 'main';
+let REVIEW_CACHE = [];
 let RECT_MAP = {}, REPORT_VIEW = 'report', PRECIP_DATA = { items: [], drafts: [] };
 let REPORT_PAGE = 0, FINDING_PAGE = 0;
 let LAST_RUN_PROFILE = 'standard';
@@ -356,8 +357,18 @@ async function init() {
     $('#docBody').innerHTML = `<div class="empty">加载失败：${esc(e.message)}<br><span class="muted">请确认已运行 node server.js</span></div>`;
   }
 }
+async function refreshReviewCache() {
+  try {
+    const r = await fetch('/api/review').then(x => x.json());
+    REVIEW_CACHE = (r.entries || []).filter(e => !e.case_id || e.case_id === CURRENT_CASE);
+  } catch {
+    REVIEW_CACHE = [];
+  }
+}
+
 async function loadCase(id) {
   CURRENT_CASE = id;
+  REVIEW_CACHE = [];
   RECORD = await fetch('/api/case?id=' + encodeURIComponent(id)).then(r => r.json());
   INJECT = false; REPORT = null; FLAGGED_LINES = new Set();
   activeTab = 'fee';
@@ -685,6 +696,7 @@ async function runAudit(opts = {}) {
     FLAGGED_LINES = collectFlaggedLines(report);
     if (MODE === 'exam') await loadRectification(CURRENT_CASE);
     if (MODE === 'exam') await loadPrecipitationData();
+    await refreshReviewCache();
     await sleep(150);
     REPORT_PAGE = 0;
     FINDING_PAGE = 0;
@@ -1222,12 +1234,50 @@ function renderCoVe(cove) {
 }
 function renderActions(f) {
   if (VIEW_EXAM) return '';
+  const debateBtn = APP_HEALTH.llm_ready
+    ? `<button type="button" class="act debate" data-action="对抗辩论">⚔ 对抗辩论</button>`
+    : '';
   return `<div class="actions" data-fid="${esc(f.finding_id || '')}" data-rule="${esc(f.rule_id || '')}">
+    ${debateBtn}
     <button type="button" class="act adopt" data-action="采纳">✓ 采纳</button>
     <button type="button" class="act reject" data-action="驳回">✗ 驳回(误报回流)</button>
     <button type="button" class="act more" data-action="补材料">⊕ 存疑补材料</button>
     <span class="act-tip muted"></span>
   </div>`;
+}
+
+async function runDebateForFinding(btn) {
+  const box = btn.closest('.actions');
+  if (!box || !REPORT) return;
+  const fid = box.dataset.fid;
+  const f = (REPORT.findings || []).find(x => x.finding_id === fid);
+  if (!f) return;
+  box.querySelectorAll('.act').forEach(b => { b.disabled = true; });
+  const tip = box.querySelector('.act-tip');
+  if (tip) tip.textContent = 'P5 裁判运行中（约 30–60s）…';
+  try {
+    const r = await fetch('/api/debate', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ caseId: CURRENT_CASE, finding: f }),
+    }).then(x => x.json());
+    if (r.error) {
+      if (tip) tip.textContent = r.error;
+      box.querySelectorAll('.act').forEach(b => { b.disabled = false; });
+      return;
+    }
+    const idx = REPORT.findings.findIndex(x => x.finding_id === fid);
+    if (idx >= 0) {
+      REPORT.findings[idx].debate = r.debate;
+      if (r.status && r.status !== REPORT.findings[idx].status) REPORT.findings[idx].status = r.status;
+      await refreshReviewCache();
+      renderReport(REPORT);
+    }
+    if (tip) tip.textContent = `控辩裁完成 · ${r.debate?.verdict || ''} (${r.debate?.prompt || 'P5'})${r.review_entry ? ' · 已写入 review_feedback' : ''}${r.eval_draft ? ' · eval_draft 已建议' : ''}`;
+  } catch (e) {
+    if (tip) tip.textContent = '失败: ' + e.message;
+    box.querySelectorAll('.act').forEach(b => { b.disabled = false; });
+  }
 }
 
 function renderExamRectification(f) {
@@ -1264,7 +1314,30 @@ function askRejectReason() {
   });
 }
 
+function askGovernanceReason(title, placeholder) {
+  return new Promise((resolve) => {
+    openModal(title, `
+      <textarea id="govReasonInput" class="ingest-ta" rows="4" placeholder="${esc(placeholder || '')}"></textarea>
+      <div class="rect-actions" style="margin-top:12px">
+        <button type="button" class="rect-btn accent" id="govReasonConfirmBtn">确认</button>
+        <button type="button" class="rect-btn ghost" id="govReasonCancelBtn">取消</button>
+      </div>`);
+    const ta = $('#govReasonInput');
+    ta?.focus();
+    const confirm = () => {
+      const r = (ta?.value || '').trim();
+      if (!r) { if (ta) { ta.style.borderColor = 'var(--red)'; ta.focus(); } return; }
+      closeModal();
+      resolve(r);
+    };
+    $('#govReasonConfirmBtn').onclick = confirm;
+    $('#govReasonCancelBtn').onclick = () => { closeModal(); resolve(null); };
+    ta?.addEventListener('keydown', (ev) => { if (ev.key === 'Enter' && (ev.metaKey || ev.ctrlKey)) confirm(); });
+  });
+}
+
 window.reviewAction = async (btn, kind) => {
+  if (kind === '对抗辩论') return runDebateForFinding(btn);
   const box = btn.closest('.actions');
   if (!box) return;
   let reason = '';
@@ -1371,6 +1444,7 @@ function findingCard(f) {
         ${renderReconciliation(f)}
         ${renderCoVe(f.cove)}
         ${renderDebate(f.debate)}
+        ${renderDebateHistory(f)}
         ${renderExamRectification(f)}
         ${renderActions(f)}
         ${renderComplianceFlags(f)}
@@ -1391,8 +1465,9 @@ function renderDebate(d) {
     const meta = ROLE_META[e.role] || { icon: '·', cls: '', tag: e.role };
     return `<div class="exch ${meta.cls}"><div class="exch-role">${meta.icon} ${esc(meta.tag)}<span class="stance">${esc(e.stance)}</span></div><div class="exch-text">${esc(e.text)}</div></div>`;
   }).join('');
-  const realAgent = REPORT?.report_meta?.real_agent;
-  const inner = `<div class="debate-head">🗣 控辩裁三方对质 <span class="kind-tag ${realAgent ? 'real' : 'script'}">${realAgent ? '真·LLM多Agent' : '脚本演示·真版切LLM'}</span> <span class="muted">（${d.rounds}轮封顶 · 申诉Agent=误报过滤器）</span>
+  const realAgent = d.real_agent || d.p5_v7 || REPORT?.report_meta?.real_agent;
+  const agentLabel = d.p5_v7 ? `真·P5 v7${d.prompt ? ' · ' + d.prompt : ''}` : (realAgent ? '真·LLM多Agent' : '脚本演示·真版切LLM');
+  const inner = `<div class="debate-head">🗣 控辩裁三方对质 <span class="kind-tag ${realAgent || d.p5_v7 ? 'real' : 'script'}">${agentLabel}</span> <span class="muted">（${d.rounds}轮封顶 · 申诉Agent=误报过滤器）</span>
       <span class="verdict ${downgrade ? 'down' : 'keep'}">裁定：${esc(d.verdict)}</span></div>
     <div class="exch-list">${exch}</div>
     <div class="verdict-reason ${downgrade ? 'down' : ''}">▸ ${esc(d.verdict_reason)}</div>
@@ -1401,6 +1476,20 @@ function renderDebate(d) {
     return `<details class="debate-exam-optional"><summary class="muted">🗣 监管对质参考（院端可忽略 · 点击展开）</summary><div class="debate">${inner}</div></details>`;
   }
   return `<div class="debate">${inner}</div>`;
+}
+
+function renderDebateHistory(f) {
+  const hist = (REVIEW_CACHE || []).filter(e =>
+    e.action === '控辩裁' && e.source === 'p5_debate' && e.finding_id === f.finding_id,
+  );
+  if (!hist.length) return '';
+  const items = hist.slice(-5).map(e => {
+    const ts = e.ts ? new Date(e.ts).toLocaleString() : '—';
+    const verdict = e.debate_verdict || e.reason?.slice(0, 48) || '—';
+    const swap = e.position_swap_consistent === false ? ' · 位置交换不一致' : '';
+    return `<div class="debate-hist-item"><span class="muted">${esc(ts)}</span> · <b>${esc(verdict)}</b>${swap}${e.reason && e.debate_verdict ? `<div class="muted" style="font-size:11px;margin-top:2px">${esc(e.reason.slice(0, 120))}${e.reason.length > 120 ? '…' : ''}</div>` : ''}</div>`;
+  }).join('');
+  return `<div class="debate-history"><div class="debate-hist-head">📜 控辩裁历史 <span class="muted">(${hist.length} 条 · 来自 review_feedback)</span></div>${items}</div>`;
 }
 
 function distractorCard(d) {
@@ -1742,7 +1831,9 @@ async function showInstitution() {
   const typeRows = d.violation_types.slice(0, 8).map(t => `<tr><td>${esc(t.type)}</td><td class="num">${t.count}</td><td class="num">¥${fmt(t.amount)}</td></tr>`).join('');
   const caseRows = d.case_rows.map(c => `<tr class="${c.is_clean ? 'ins-clean' : ''}"><td>${c.is_clean ? '🟢' : '🔴'} ${esc((c.label || c.id).slice(0, 26))}</td><td>${esc(c.dept)}</td><td>${esc(c.domain)}</td><td class="num">${c.suspected}</td><td class="num">${c.clue}</td><td class="num">¥${fmt(c.amount)}</td></tr>`).join('');
   const html = `
-    <p class="muted">${esc(d.generated)}。把单件 AI 初筛<b>升维到机构画像</b>——飞检前先给被检机构做一次"院端体检"，定位高风险规则/科室、指导抽样。<button class="v2btn" style="margin-left:8px;padding:3px 10px;font-size:12px" onclick="window.open('/api/export/institution','_blank')">📄 导出院端体检报告</button></p>
+    <p class="muted">${esc(d.generated)}。把单件 AI 初筛<b>升维到机构画像</b>——飞检前先给被检机构做一次"院端体检"，定位高风险规则/科室、指导抽样。
+      <button class="v2btn" style="margin-left:8px;padding:3px 10px;font-size:12px" onclick="window.open('/api/export/institution','_blank')">📄 Markdown</button>
+      <button class="v2btn" style="margin-left:4px;padding:3px 10px;font-size:12px" onclick="window.open('/api/export/institution?format=html','_blank')">🖨 打印/PDF</button></p>
     <div class="bench-kpis">
       <div class="bkpi"><div class="n">${s.audited_cases}</div><div class="l">受检案卷</div></div>
       <div class="bkpi red"><div class="n">${s.suspected_total}</div><div class="l">疑点合计</div></div>
@@ -1802,8 +1893,12 @@ async function showGovernance() {
 }
 window.governanceAction = async (ruleId, action) => {
   let reason = '';
-  if (action === 'retire') { reason = (prompt('确认下线该规则的复审理由（必填，将记入流转 history）：') || '').trim(); if (!reason) return; }
-  else reason = '复审通过，规则有效，恢复在役';
+  if (action === 'retire') {
+    reason = await askGovernanceReason('⊗ 确认下线 · 复审理由（必填）', '例：该规则在骨科边界件上连续误报，建议退役…');
+    if (!reason) return;
+  } else {
+    reason = '复审通过，规则有效，恢复在役';
+  }
   try {
     await fetch('/api/rule-governance', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ rule_id: ruleId, action, reason }) }).then(r => r.json());
     await showGovernance(); // 刷新

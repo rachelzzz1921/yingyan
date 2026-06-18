@@ -10,8 +10,8 @@ while pgrep -f "run.js\|p5_swap_runner.js" >/dev/null 2>&1; do sleep 5; done
 echo "[cycle] (1/5) v6 重基线(纳入 round2 新案 + 重试瞬时 fetch 失败) $(date)"
 node run.js --prompts P1,P2,P3,P4,P6,P7 --n 5 --models debater,alt --temp 0.2 --conc 5 --tag baseline_lowtemp
 
-echo "[cycle] (2/5) P5 v6 位置交换重判(修正 verdict 归一 + 新案 P5-R4) $(date)"
-node p5_swap_runner.js --judges judge,debater --n 5 --temp 0.1 --conc 5 --tag baseline_p5
+echo "[cycle] (2/5) P5 v7 位置交换重判(修正 C4/R2/R4 + 新案 P5-R4) $(date)"
+node p5_swap_runner.js --judges judge,debater --n 5 --temp 0.1 --conc 5 --v7 --tag baseline_p5
 
 echo "[cycle] (3/5) v7 全量重跑:P1/P2/P4/P6 用 v7,P3/P5/P7 回退 v6(缓存命中) $(date)"
 node run.js --prompts P1,P2,P3,P4,P6,P7 --n 5 --models debater,alt --temp 0.2 --conc 5 --v7 --tag v7_lowtemp

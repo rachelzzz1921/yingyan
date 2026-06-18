@@ -51,6 +51,9 @@ npm start
 bash yhf/run.sh
 bash yhf/run.sh --strict
 
+# 看板前端跨脚本依赖（语法 + dash-bridges 契约）
+node scripts/verify-dashboard-frontend.js
+
 # Run prompt evaluations after configuring eval/.env
 cd eval
 bash run_baseline.sh

@@ -26,10 +26,55 @@ function findLatestResult() {
   return best?.fp || null;
 }
 
-function summarizeEvalJson(data) {
+function summarizeEvalJson(data, opts = {}) {
   if (!data) return null;
+  const scoreMode = opts.score_mode || 'all';
+  const primaryJudge = opts.primary_judge || 'MiniMax-Text-01';
   let total = 0;
   let green = 0;
+  let greenPrimary = 0;
+  const caseRows = [];
+
+  const scoreCase = (c, mode) => {
+    const judges = c.perJudge || [];
+    if (judges.length) {
+      if (mode === 'primary') {
+        const pj = judges.find(j => j.model === primaryJudge);
+        return pj ? pj.correct === true : judges.every(j => j.correct === true);
+      }
+      return judges.every(j => j.correct === true);
+    }
+    if (c.correct === true) return true;
+    const rate = c.all_green_rate ?? c.pass_rate;
+    if (typeof rate === 'number' && rate >= 1) return true;
+    if (c.perAssert || c.per_assert) {
+      const rates = Object.values(c.perAssert || c.per_assert).map(a => a.rate);
+      return rates.length > 0 && rates.every(r => r >= 1);
+    }
+    if (c.byModel) {
+      return c.byModel.every(m => (m.all_green?.pass ?? 0) === (m.all_green?.total ?? 0));
+    }
+    return false;
+  };
+
+  const pushCase = (c) => {
+    total++;
+    const passAll = scoreCase(c, 'all');
+    const passPrimary = scoreCase(c, 'primary');
+    if (passAll) green++;
+    if (passPrimary) greenPrimary++;
+    caseRows.push({
+      id: c.id,
+      pass: passAll,
+      pass_primary: passPrimary,
+      failures: passAll ? [] : ['eval 未全绿'],
+    });
+  };
+
+  if (Array.isArray(data.cases)) {
+    for (const c of data.cases) pushCase(c);
+  }
+
   const blocks = [];
   if (data.results) blocks.push(...(Array.isArray(data.results) ? data.results : [data.results]));
   if (data.prompts && typeof data.prompts === 'object') {
@@ -37,22 +82,40 @@ function summarizeEvalJson(data) {
       if (p?.cases) blocks.push({ cases: p.cases });
     }
   }
-  if (Array.isArray(data.cases)) blocks.push({ cases: data.cases });
   for (const block of blocks) {
-    for (const c of block.cases || []) {
-      total++;
-      const rate = c.all_green_rate ?? c.pass_rate;
-      if (typeof rate === 'number' && rate >= 1) green++;
-      else if (c.perAssert || c.per_assert) {
-        const rates = Object.values(c.perAssert || c.per_assert).map(a => a.rate);
-        if (rates.length && rates.every(r => r >= 1)) green++;
-      } else if (c.byModel) {
-        const allOk = c.byModel.every(m => (m.all_green?.pass ?? 0) === (m.all_green?.total ?? 0));
-        if (allOk) green++;
-      }
-    }
+    for (const c of block.cases || []) pushCase(c);
   }
-  return { total, green, pass_rate: total ? green / total : null };
+
+  const passRateAll = total ? green / total : null;
+  const passRatePrimary = total ? greenPrimary / total : null;
+  const passRate = scoreMode === 'primary' ? passRatePrimary : passRateAll;
+  const greenCount = scoreMode === 'primary' ? greenPrimary : green;
+
+  return {
+    total,
+    green: greenCount,
+    green_all: green,
+    green_primary: greenPrimary,
+    pass_rate: passRate,
+    pass_rate_all: passRateAll,
+    pass_rate_primary: passRatePrimary,
+    score_mode: scoreMode,
+    primary_judge: primaryJudge,
+    cases: caseRows,
+  };
+}
+
+function loadG2Opts() {
+  try {
+    const { loadGateConfig } = require('../lib/paths');
+    const g2 = loadGateConfig().gates?.G2_prompt_pass || {};
+    return {
+      score_mode: g2.score_mode || 'all',
+      primary_judge: g2.primary_judge || 'MiniMax-Text-01',
+    };
+  } catch {
+    return { score_mode: 'all', primary_judge: 'MiniMax-Text-01' };
+  }
 }
 
 function runPromptHarness() {
@@ -60,17 +123,32 @@ function runPromptHarness() {
   if (latest) {
     try {
       const data = JSON.parse(fs.readFileSync(latest, 'utf8'));
-      const sum = summarizeEvalJson(data);
+      const g2Opts = loadG2Opts();
+      const sum = summarizeEvalJson(data, g2Opts);
       if (sum && sum.total > 0) {
         const pass = sum.pass_rate === 1;
+        const primaryNote = sum.pass_rate_primary != null
+          ? ` · 主裁判 ${sum.green_primary}/${sum.total} (${Math.round(sum.pass_rate_primary * 100)}%)`
+          : '';
         return {
           layer: 'prompt',
           status: 'cached',
           source: path.relative(REPO_ROOT, latest),
           cases: sum.total,
+          green: sum.green,
+          green_all: sum.green_all,
+          green_primary: sum.green_primary,
           pass_rate: sum.pass_rate,
+          pass_rate_all: sum.pass_rate_all,
+          pass_rate_primary: sum.pass_rate_primary,
+          score_mode: sum.score_mode,
+          primary_judge: sum.primary_judge,
           gates: { G2_prompt_pass: pass },
           pass,
+          message: pass
+            ? `L1 缓存报告 ${sum.green}/${sum.total} 全绿（${sum.score_mode}）${sum.score_mode === 'primary' && sum.green_all !== sum.green ? ` · 双裁判 ${sum.green_all}/${sum.total}` : ''}${primaryNote}`
+            : `L1 缓存报告 ${sum.green}/${sum.total} 通过（${path.basename(latest)}，${sum.score_mode} 计分未全绿${primaryNote}）`,
+          cases_detail: sum.cases,
         };
       }
     } catch (_) {}
@@ -85,4 +163,4 @@ function runPromptHarness() {
   };
 }
 
-module.exports = { runPromptHarness };
+module.exports = { runPromptHarness, summarizeEvalJson, loadG2Opts };

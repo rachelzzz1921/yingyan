@@ -1,0 +1,9 @@
+{
+  "report_meta": {
+    "case_id": "YY-BENCH-EDGE-ICU-001",
+    "gold_standard": true,
+    "summary": {"suspected_count": 0, "clue_count": 0, "total_findings": 0}
+  },
+  "findings": [],
+  "correctly_not_flagged": ["ICU-301", "ICU-302", "ICU-303", "A-105"]
+}
