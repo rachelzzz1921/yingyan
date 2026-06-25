@@ -1,17 +1,3 @@
 {
-  "states": {
-    "A-105": {
-      "status": "shadow",
-      "history": [
-        {
-          "from": "active",
-          "to": "shadow",
-          "by": "auto(re_review)",
-          "reason": "复审后新增有效驳回3次≥3自动转观察期（累计3/已确认0）",
-          "ts": "2026-06-15T05:11:37.246Z"
-        }
-      ],
-      "reason": "复审后新增有效驳回3次≥3自动转观察期（累计3/已确认0）"
-    }
-  }
+  "states": {}
 }

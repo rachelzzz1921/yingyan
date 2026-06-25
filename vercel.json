@@ -13,6 +13,7 @@
     { "source": "/api/:path*", "destination": "/api" },
     { "source": "/brand/gpt-v2/:path*", "destination": "/api" },
     { "source": "/deliverables", "destination": "/api" },
+    { "source": "/deliverables/", "destination": "/api" },
     { "source": "/deliverables/:path*", "destination": "/api" }
   ]
 }
