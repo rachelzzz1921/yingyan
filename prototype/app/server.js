@@ -54,7 +54,7 @@ const { buildGovernanceSnapshot } = require('./engine/governance-snapshot');
 const govSync = require('./engine/governance-sync');
 const { adminTokenConfigured, enforceAdmin } = require('./engine/admin-auth');
 const { runParseQA } = require('./engine/parse-qa');
-const { isReadonlyRuntime } = require('./engine/runtime-env');
+const { isReadonlyRuntime, sidecarDeployment } = require('./engine/runtime-env');
 
 const PORT = process.env.PORT || 3700;
 const DATA = path.resolve(__dirname, '../data');
@@ -1943,14 +1943,27 @@ const server = http.createServer(async (req, res) => {
     if (p === '/api/health') {
       let pp = { reachable: false };
       try { pp = await require('./engine/ppstructure-client').health(); } catch (_) {}
+      const hosted = isReadonlyRuntime();
+      const ppUrl = process.env.PPSTRUCTURE_URL || 'http://127.0.0.1:8787';
+      const llmOn = llmReady();
+      const deployment = pp.reachable ? sidecarDeployment(pp.url || ppUrl) : 'offline';
       return sendJSON(res, {
         ok: true,
         rules: DB.rulesDoc.rules.length,
         cases: Object.keys(DB.cases).length,
-        llm_ready: llmReady(),
-        vision_ready: llmReady(),
+        llm_ready: llmOn,
+        vision_ready: llmOn,
         provider: providerName(),
-        ppstructure: pp,
+        vision_provider: require('./engine/llm-provider').visionModelName(),
+        hosted,
+        intake_mode: pp.reachable ? 'l1_sidecar' : (llmOn ? 'llm_vision' : 'structured_only'),
+        ppstructure: { ...pp, deployment },
+        intake_capabilities: {
+          json_csv: true,
+          pdf: pp.reachable || false,
+          image_ocr: pp.reachable || llmOn,
+          llm_vision: llmOn,
+        },
       });
     }
 

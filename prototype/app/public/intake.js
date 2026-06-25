@@ -30,8 +30,15 @@ async function init() {
 function renderStatus(h) {
   const pills = [];
   pills.push(`<span class="pill ok">规则 ${h.rules ?? '—'}</span>`);
-  if (h.ppstructure?.reachable) {
-    pills.push(`<span class="pill ok">L1 ${esc(h.ppstructure.recommended_engine || '就绪')}</span>`);
+  const pp = h.ppstructure || {};
+  if (pp.reachable) {
+    const tag = pp.deployment === 'cloud' ? 'L1 云端' : 'L1 本地';
+    pills.push(`<span class="pill ok">${tag} ${esc(pp.recommended_engine || '就绪')}</span>`);
+  } else if (h.hosted && h.llm_ready) {
+    pills.push(`<span class="pill ok">LLM 视觉 ${esc(h.vision_provider || h.provider || '')}</span>`);
+    pills.push(`<span class="pill warn">L1 PDF 待接入</span>`);
+  } else if (h.hosted) {
+    pills.push(`<span class="pill warn">L1 待配置</span>`);
   } else {
     pills.push(`<span class="pill warn">L1 未启动</span>`);
   }
@@ -42,18 +49,46 @@ function renderStatus(h) {
 
 function renderServiceCard(h) {
   const pp = h.ppstructure || {};
-  const lines = [
-    ['L1 Sidecar', pp.reachable ? '✓ 已连接' : '✗ 未连接'],
-    ['解析引擎', pp.recommended_engine || (pp.reachable ? '—' : '需启动 sidecar')],
-    ['Paddle OCR', pp.paddle_available ? '已安装' : '未安装（lite 模式）'],
-    ['Tesseract', pp.tesseract_available ? '可用' : '可选'],
-    ['LLM 语义', h.llm_ready ? h.provider : '未配置（OCR 回退受限）'],
-    ['演示案卷', `${h.cases ?? 0} 个 + uploaded`],
-  ];
+  const cap = h.intake_capabilities || {};
+  const casesLabel = `${h.cases ?? 0} 个 + uploaded`;
+  let lines = [];
   let hint = '';
-  if (!pp.reachable) {
+
+  if (pp.reachable) {
+    const loc = pp.deployment === 'cloud' ? '云端' : '本地';
+    lines = [
+      ['L1 Sidecar', `✓ ${loc}已连接`],
+      ['解析引擎', pp.recommended_engine || '就绪'],
+      ['Paddle OCR', pp.paddle_available ? '已安装' : 'lite + Tesseract'],
+      ['Tesseract', pp.tesseract_available ? '可用' : '—'],
+      ['LLM 语义', h.llm_ready ? h.provider : '未配置（OCR 回退受限）'],
+      ['演示案卷', casesLabel],
+    ];
+  } else if (h.hosted) {
+    lines = [
+      ['运行环境', '☁ 云端生产'],
+      ['结构化导入', cap.json_csv !== false ? '✓ JSON / CSV / TXT' : '—'],
+      ['PDF / 扫描件', cap.pdf ? '✓ L1 解析' : '需配置 PPSTRUCTURE_URL'],
+      ['图片识图', cap.llm_vision ? `✓ ${h.vision_provider || h.provider}` : '未配置 LLM'],
+      ['LLM 语义', h.llm_ready ? h.provider : '未配置'],
+      ['演示案卷', casesLabel],
+    ];
+    if (!cap.pdf) {
+      hint = `<div class="svc-hint">完整 PDF 解析：Render 部署 L1 sidecar 后，Vercel 设置 <code>PPSTRUCTURE_URL</code><br>
+        <code>node scripts/setup-l1-cloud.mjs https://yingyan-l1.onrender.com</code></div>`;
+    }
+  } else {
+    lines = [
+      ['L1 Sidecar', '✗ 未连接'],
+      ['解析引擎', pp.recommended_engine || '需启动 sidecar'],
+      ['Paddle OCR', pp.paddle_available ? '已安装' : '未安装（lite 模式）'],
+      ['Tesseract', pp.tesseract_available ? '可用' : '可选'],
+      ['LLM 语义', h.llm_ready ? h.provider : '未配置（OCR 回退受限）'],
+      ['演示案卷', casesLabel],
+    ];
     hint = `<div class="svc-hint">启动 L1 解析（支持 PDF 直传）：<br><code>cd prototype/ppstructure && bash run.sh</code></div>`;
   }
+
   $('#serviceCard').innerHTML = lines.map(([k, v]) =>
     `<div class="svc-row"><span>${esc(k)}</span><span class="svc-val">${esc(v)}</span></div>`).join('') + hint;
 }

@@ -45,6 +45,20 @@ docker compose up -d --build
 docker compose exec l1-parser bash install-paddle.sh
 ```
 
+### 云端（与 Vercel 主站联调）
+
+1. [Render Dashboard](https://dashboard.render.com/) → **New** → **Blueprint** → 连接 `rachelzzz1921/yingyan`（仓库根目录已有 `render.yaml`）
+2. 等待 `yingyan-l1` 服务 Ready，复制 URL（如 `https://yingyan-l1.onrender.com`）
+3. 写入 Vercel 并重新部署主站：
+
+```bash
+node scripts/setup-l1-cloud.mjs https://yingyan-l1.onrender.com
+```
+
+4. 刷新 https://yingyan.vercel.app/intake.html — 应显示 **L1 云端已连接**
+
+> Render 免费档冷启动约 30–60s；首次 `/health` 可能超时，属正常。
+
 验收：`node scripts/check-ppstructure-prod.js` · `GET /api/l1/production`
 
 ## 完整能力（推荐生产）

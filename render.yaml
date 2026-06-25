@@ -1,0 +1,17 @@
+# Render Blueprint — 鹰眼 L1 文档解析 Sidecar
+# 用法：Render Dashboard → New → Blueprint → 连接 rachelzzz1921/yingyan
+# 部署完成后，在 Vercel 设置 PPSTRUCTURE_URL=https://<service>.onrender.com 并重新部署主站
+services:
+  - type: web
+    name: yingyan-l1
+    runtime: docker
+    dockerfilePath: ./prototype/ppstructure/Dockerfile
+    dockerContext: ./prototype/ppstructure
+    plan: free
+    region: singapore
+    healthCheckPath: /health
+    envVars:
+      - key: PPSTRUCTURE_MODE
+        value: auto
+      - key: PPSTRUCTURE_PORT
+        value: "8787"
