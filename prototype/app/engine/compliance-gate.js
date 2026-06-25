@@ -18,13 +18,19 @@ function applyComplianceGate(findings, ctx = {}) {
       }
 
       const policies = f.policy || [];
-      const badPolicy = policies.length === 0 || policies.some(p => {
+      // C-002 门禁语义：一条疑点常引用「主条款 + 辅助指导原则」多条政策；
+      // 只要其中至少有「一条」已核验/在知识库的硬条款支撑，政策要素即成立。
+      // 仅当「所有」条款都无效(无 ref / 不在知识库)时才降级线索。
+      // 修复历史 bug：曾用 some —— 任一附带的⚠待核验条款就拖垮整条本有硬条款支撑的疑点
+      // （导致 T-201/B-201 及麻醉/重症/影像/药店专科疑点被系统性误降为线索）。
+      const isBadPolicy = (p) => {
         const ref = p.ref || p.ref_id;
         if (!ref) return true;
         if (!policyTexts[ref]) return true;
         const unverified = !policyVerified[ref] && !String(p.verify_status || '').includes('✅');
         return unverified && !policyTexts[ref];
-      });
+      };
+      const badPolicy = policies.length === 0 || policies.every(isBadPolicy);
       if (badPolicy && f.status === '疑点') {
         f.status = '线索';
         add('C-002', 'downgrade', '政策引用未核验或不在知识库');

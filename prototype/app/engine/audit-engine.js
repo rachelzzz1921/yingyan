@@ -134,7 +134,11 @@ const ruleCheckers = {
       if (NURSING_RANK[chargedLevel] > NURSING_RANK[orderedLevel]) {
         // 单价差额估算：从同一份清单找两等级单价；缺省用参数
         const chargedPrice = line.unit_price;
-        const orderedPrice = ctx.params.nursing_price?.[orderedLevel] ?? 12.0;
+        // 应收单价基准优先取省级护理价目录；但若省价的低等级单价 ≥ 本案实收的高等级单价
+        // （价格体系倒挂——多见于该案非本省、或案卷自带价格体系），省价不适用，退回案卷自洽基准，
+        // 避免算出"负差额疑点"（iter-22 引入江苏省价后对非江苏案卷的回归修复）。
+        let orderedPrice = ctx.params.nursing_price?.[orderedLevel] ?? 12.0;
+        if (orderedPrice >= chargedPrice) orderedPrice = 12.0;
         const overcharge = money((chargedPrice - orderedPrice) * line.qty);
         findings.push(mkFinding(ctx, 'A-105', {
           status: '疑点', risk_level: '中—高', amount_involved: overcharge,
@@ -266,14 +270,14 @@ const ruleCheckers = {
     const inBill = record.fee_list.items.some(l => l.item_name.includes(drugName.slice(0, 3)));
     if (inBill) return []; // 清单里有则不构成转嫁
     findings.push(mkFinding(ctx, 'T-207', {
-      status: '疑点', risk_level: '中—高', amount_involved: 2600.0,
+      status: '线索', risk_level: '中—高', amount_involved: 2600.0,
       evidence: [
         ev('病程', `病程记录 ${outsideNote.date}`, outsideNote.text),
         ev('医嘱', `医嘱 ${outsideOrder.order_id}`, outsideOrder.content),
         ev('费用清单核对', '费用清单逐行核对', record.fee_list.absent_items_note),
         ev('目录属性', 'KB1-目录2025-培美曲塞', '培美曲塞二钠属医保目录内药品（乙类），为本次化疗方案必需药'),
       ],
-      reasoning: `临时医嘱开立培美曲塞为本次化疗方案（培美曲塞+卡铂+贝伐珠单抗）必需药；病程 ${outsideNote.date} 明确记载"我院药房缺药，嘱家属院外自购"；逐行核对费用清单无任何培美曲塞收费行。培美曲塞为医保目录内、住院必需药，本应由住院医保支付却转患者院外自费购买，涉嫌费用转嫁、规避DRG打包付费 → 证据闭环（医嘱+病程+清单缺失+目录属性四方齐备）。`,
+      reasoning: `临时医嘱开立培美曲塞为本次化疗方案（培美曲塞+卡铂+贝伐珠单抗）必需药；病程 ${outsideNote.date} 明确记载"我院药房缺药，嘱家属院外自购"；逐行核对费用清单无任何培美曲塞收费行。培美曲塞为医保目录内、住院必需药，本应由住院医保支付却转患者院外自费购买，涉嫌费用转嫁、规避DRG打包付费。定性证据四方齐备（医嘱+病程+清单缺失+目录属性），但精确转嫁金额须以患者院外自费购药凭证佐证、该凭证不在本材料包内 → 依"宁漏报不误报"先出线索并附调阅清单，金额闭环后可升级疑点。`,
       needs_more: ['调阅患者院外药房自费购药凭证以精确认定转嫁金额'],
       disposal: `建议认定费用转嫁，责令将应保费用纳入住院结算或退还患者自费部分；核查是否系DRG超支规避行为。`,
     }));

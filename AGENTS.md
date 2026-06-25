@@ -93,3 +93,7 @@ Each PR should include:
 - How it was verified.
 - Whether audit findings, rule behavior, prompt behavior, or KB content changed.
 - Any remaining manual policy/clinical verification needed.
+
+## Imported Claude Cowork project instructions
+
+你要反复审核反复核对，你还要集思广益，你还要一轮一轮自测，你还要持续当爬虫不断爬取新的信息和知识。
