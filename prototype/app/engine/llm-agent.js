@@ -23,10 +23,37 @@ const MODEL = providerName();
 async function callClaude(system, userText, maxTokens = 4000) {
   return callLLM({ system, user: userText, maxTokens });
 }
+// 从 LLM 文本里稳健抽取 JSON：① 去 ```json 围栏 ② 整体直 parse ③ 括号配对扫描首个完整 JSON 值
+// （兼容尾随解释文字、思维链前缀、多段输出；旧版贪婪正则会把 "{obj} 文字 {obj2}" 误并）
 function extractJSON(text) {
-  const m = text.match(/\{[\s\S]*\}|\[[\s\S]*\]/);
-  if (!m) throw new Error('LLM未返回JSON: ' + text.slice(0, 120));
-  return JSON.parse(m[0]);
+  if (!text || !String(text).trim()) throw new Error('LLM未返回内容（空响应）');
+  let s = String(text).trim();
+  // 去除 Markdown 代码围栏
+  const fence = s.match(/```(?:json)?\s*([\s\S]*?)```/i);
+  if (fence) s = fence[1].trim();
+  // 先尝试整体解析
+  try { return JSON.parse(s); } catch (_) { /* 继续括号扫描 */ }
+  // 括号配对扫描：从首个 [ 或 { 起找到匹配的闭合，注意字符串内的括号/转义
+  const start = s.search(/[[{]/);
+  if (start < 0) throw new Error('LLM未返回JSON: ' + s.slice(0, 120));
+  const open = s[start], close = open === '[' ? ']' : '}';
+  let depth = 0, inStr = false, esc = false;
+  for (let i = start; i < s.length; i++) {
+    const c = s[i];
+    if (inStr) {
+      if (esc) esc = false;
+      else if (c === '\\') esc = true;
+      else if (c === '"') inStr = false;
+      continue;
+    }
+    if (c === '"') inStr = true;
+    else if (c === open) depth++;
+    else if (c === close) { depth--; if (depth === 0) return JSON.parse(s.slice(start, i + 1)); }
+  }
+  // 兜底：从 start 到最后一个闭合符
+  const last = s.lastIndexOf(close);
+  if (last > start) return JSON.parse(s.slice(start, last + 1));
+  throw new Error('LLM返回的JSON不完整: ' + s.slice(0, 120));
 }
 
 // ---------- Stage 1：稽核 Agent（控方）——真读自由文本提疑点 ----------
@@ -44,24 +71,39 @@ async function prosecutor(record, rules, kb) {
     '## 规则库(节选)', '```json', JSON.stringify(slimRules), '```',
     '## policy_kb(条款原文,report只能引这里)', '```json', JSON.stringify(budgeted.policyKB), '```',
     '## 待稽核材料包（已脱敏）', '```json', JSON.stringify(budgeted.record), '```',
-    '逐条跑规则做三方交叉验证。只输出JSON数组，每元素:',
-    '{"rule_id","rule_name","violation_type","layer","risk_level":"高|中—高|中|低","status":"疑点|线索","amount_involved":number,"evidence":[{"type","loc","text"}],"policy":[{"ref","text"}],"reasoning","needs_more":[],"disposal_suggestion"}',
+    '逐条跑规则做三方交叉验证。只输出JSON数组（不要任何解释文字/Markdown标题），每元素:',
+    '{"rule_id","rule_name","violation_type","layer","risk_level":"高|中—高|中|低","status":"疑点|线索","amount_involved":number,"evidence":[{"type","loc","text"}],"policy":[{"ref","text"}],"reasoning","disposal_suggestion"}',
+    '输出务必精炼：reasoning≤80字；每条 evidence.text≤40字、loc 给费用行号或单据名；evidence 至多3条；至多输出8条疑点。',
   ].join('\n');
-  const txt = await callClaude(system, user, 8000);
+  const txt = await callClaude(system, user, 5000);
   const arr = extractJSON(txt);
-  return { findings: Array.isArray(arr) ? arr : (arr.findings || []), context_manifest: budgeted.context_manifest };
+  return { findings: Array.isArray(arr) ? arr : (arr.findings || []), context_manifest: budgeted.context_manifest, slimRecord: budgeted.record };
 }
 
 // ---------- Stage 2：CoVe 取证自检（真生成验证问题+独立回查） ----------
+// 逐条独立小调用 → 可并行（见 mapPool），总时延≈最慢一条而非求和
 async function coveVerify(finding, record) {
-  const system = '你是取证自检器(CoVe)。对给定疑点，生成3-5个可验证的事实性问题，再**独立**回查材料包逐题作答，判断疑点是否成立。不受原结论影响、客观回查。';
+  const system = '你是取证自检器(CoVe)。对该疑点生成2个可验证事实问题，独立回查材料作答，判断成立性。客观、不受原结论影响。';
   const user = [
-    '## 疑点草稿', '```json', JSON.stringify({ rule_id: finding.rule_id, status: finding.status, reasoning: finding.reasoning, evidence: finding.evidence }), '```',
+    '## 疑点草稿', '```json', JSON.stringify({ rule_id: finding.rule_id, status: finding.status, reasoning: (finding.reasoning || '').slice(0, 200), evidence: finding.evidence }), '```',
     '## 材料包', '```json', JSON.stringify(record), '```',
-    '只输出JSON: {"items":[{"q":"验证问题","a":"独立回查材料后的答案","pass":true/false}],"verdict":"维持|降级线索|撤销","verdict_reason":"..."}',
+    '只输出JSON(不要解释): {"items":[{"q","a","pass":true/false}],"verdict":"维持|降级线索|撤销","verdict_reason"}。每项 q/a/verdict_reason ≤40字。',
   ].join('\n');
-  const txt = await callClaude(system, user, 2000);
-  return extractJSON(txt);
+  return extractJSON(await callClaude(system, user, 1200));
+}
+
+// 有界并发：避免一次性打爆 provider 并发/限速（默认 4 路并行）
+async function mapPool(items, fn, limit = 4) {
+  const out = new Array(items.length);
+  let next = 0;
+  async function worker() {
+    while (next < items.length) {
+      const i = next++;
+      try { out[i] = await fn(items[i], i); } catch (e) { out[i] = null; }
+    }
+  }
+  await Promise.all(Array.from({ length: Math.min(limit, items.length) }, worker));
+  return out;
 }
 
 // ---------- Stage 3：控辩裁（申诉Agent反驳 → P5 v7 裁判，位置交换） ----------
@@ -86,15 +128,18 @@ async function defenderJudge(finding, record, kb, opts = {}) {
 // Stage2 批量 CoVe（一次调用核验全部疑点，控成本/时延）
 async function coveVerifyAll(findings, record) {
   if (!findings.length) return {};
-  const system = '你是取证自检器(CoVe)。对每条疑点生成2-3个可验证事实问题，独立回查材料作答，判断成立性。客观、不受原结论影响。';
+  const system = '你是取证自检器(CoVe)。对每条疑点生成2个可验证事实问题，独立回查材料作答，判断成立性。客观、不受原结论影响。';
   const user = [
-    '## 疑点列表', '```json', JSON.stringify(findings.map((f, i) => ({ idx: i, rule_id: f.rule_id, status: f.status, reasoning: (f.reasoning || '').slice(0, 300) }))), '```',
+    '## 疑点列表', '```json', JSON.stringify(findings.map((f, i) => ({ idx: i, rule_id: f.rule_id, status: f.status, reasoning: (f.reasoning || '').slice(0, 200) }))), '```',
     '## 材料包', '```json', JSON.stringify(record), '```',
-    '只输出JSON: {"results":[{"idx":0,"items":[{"q","a","pass":true/false}],"verdict":"维持|降级线索|撤销","verdict_reason"}]}',
+    '只输出JSON（不要解释文字）: {"results":[{"idx":0,"items":[{"q","a","pass":true/false}],"verdict":"维持|降级线索|撤销","verdict_reason"}]}',
+    '每条 q/a/verdict_reason ≤40字。',
   ].join('\n');
-  const out = extractJSON(await callLLM({ system, user, maxTokens: 4000 }));
+  const out = extractJSON(await callLLM({ system, user, maxTokens: 3000 }));
+  // 兼容模型把数组放在 results / findings / 顶层数组等不同形态
+  const list = Array.isArray(out) ? out : (out.results || out.findings || []);
   const map = {};
-  for (const r of (out.results || [])) map[r.idx] = r;
+  for (const r of list) { if (r && r.idx != null) map[r.idx] = r; }
   return map;
 }
 
@@ -103,18 +148,32 @@ async function llmAgentAudit(record, rules, opts = {}) {
   const kb = opts.kb;
   const t0 = Date.now();
   const prose = await prosecutor(record, rules, kb);
+  const t_prosecutor = Date.now() - t0;
   let raw = prose.findings;
   const context_manifest = prose.context_manifest;
   raw.forEach((f, i) => { f.finding_id = `F-LLM-${String(i + 1).padStart(3, '0')}`; });
   let coveMap = {};
-  try { coveMap = await coveVerifyAll(raw, record); } catch (e) { /* CoVe失败不阻断 */ }
+  let coveError = null;
+  // CoVe：单次批量核验全部疑点（最省 provider 并发/限速；用 prosecutor 已预算的精简材料）。失败不阻断主路径，但记录原因
+  const tCove = Date.now();
+  try { coveMap = await coveVerifyAll(raw, prose.slimRecord || record); } catch (e) { coveError = e.message; }
+  const t_cove = Date.now() - tCove;
+  if (process.env.YINGYAN_LLM_TIMING !== '0') console.log(`  [llm-agent] prosecutor ${t_prosecutor}ms · cove(${raw.length}条/批量) ${t_cove}ms${coveError ? ' [CoVe失败:' + coveError + ']' : ''}`);
+  // 规则元数据查表：补 layer_label 等 UI 字段（确定性路径 mkFinding 用 rule.layer，LLM 路径需对齐）
+  const ruleMap = {};
+  for (const r of (rules || [])) ruleMap[r.rule_id] = r;
   let findings = [];
   raw.forEach((f, i) => {
     const cv = coveMap[i];
     if (cv) { f.cove = { items: cv.items || [], verdict: cv.verdict, verdict_reason: cv.verdict_reason }; if (cv.verdict === '降级线索') f.status = '线索'; if (cv.verdict === '撤销') return; }
+    else if (coveError) { f.cove = { skipped: true, error: coveError, note: 'CoVe 自检未完成（' + coveError + '），本条未经取证自检' }; }
     f.debate = { enabled: false, skip_reason: '控辩裁=按需触发（点疑点"对抗辩论"启动真·控辩裁，省成本）' };
     f.policy = (f.policy || []).map(p => ({ ...p, verify_status: (opts.policyVerified || {})[p.ref] ? '✅已核验' : '⚠待核验' }));
     f.confidence = f.status === '疑点' ? 90 : 60;
+    // 补齐 UI 疑点卡读取的字段，避免真·LLM 模式下层级标签空白/排序缺失
+    f.layer_label = f.layer_label || ruleMap[f.rule_id]?.layer || f.layer || '';
+    f.priority_score = Number(((f.amount_involved || 0) * (f.confidence / 100)).toFixed(1));
+    if (!Array.isArray(f.needs_more)) f.needs_more = [];
     findings.push(f);
   });
   // doc08 合议层：LLM 独立判断常对同一笔钱多角度命中（如白蛋白 A-108+A-110）→ 合并去重
@@ -141,6 +200,8 @@ async function llmAgentAudit(record, rules, opts = {}) {
       reconciliation_log,
       engine_mode: `真·LLM语义分析（Agent读病历自由文本推理 · ${MODEL}）`, real_agent: true, llm_provider: MODEL,
       context_manifest,
+      stage_ms: { prosecutor: t_prosecutor, cove: t_cove },
+      cove_error: coveError || undefined,
       human_baseline_minutes: 40, agent_seconds: 90, elapsed_ms: Date.now() - t0,
       summary: { ...gov.summary, suspected_amount: gov.summary.suspected_amount, clue_amount_flagged: gov.summary.clue_amount_flagged },
     },

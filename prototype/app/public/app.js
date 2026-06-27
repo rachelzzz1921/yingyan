@@ -747,7 +747,7 @@ async function launchLlmShadow(runId, { inject, caseId, fused }) {
     if (runId !== AUDIT_RUN_ID) return;
     if (!llm?.report_meta) throw new Error('LLM 返回格式异常');
     if (!llm.report_meta.real_agent) {
-      const why = llm.report_meta.llm_needs_key ? '（需配置 ANTHROPIC_API_KEY，已保留确定性结果）' : '（LLM 路径回退，已保留确定性结果）';
+      const why = llm.report_meta.llm_needs_key ? '（需配置 LLM API Key：SiliconFlow / MiniMax，已保留确定性结果）' : '（LLM 路径回退，已保留确定性结果）';
       setLlmShadowBanner('failed', `⚠ 真·LLM 语义分析未启用${why}`);
       return;
     }
@@ -1373,7 +1373,9 @@ function bindReviewActionDelegation() {
   if (!panel || panel.dataset.reviewBound) return;
   panel.dataset.reviewBound = '1';
   panel.addEventListener('click', (e) => {
-    const btn = e.target.closest('#findingsList button.act[data-action]');
+    // 疑点卡现渲染于报告分页器(#page-findings)内，旧选择器 #findingsList 已不存在 →
+    // 直接匹配 .actions 内的操作按钮，否则采纳/驳回/补材料 全部点击无效（假按钮）。
+    const btn = e.target.closest('.actions button.act[data-action]');
     if (!btn) return;
     e.preventDefault();
     e.stopPropagation();

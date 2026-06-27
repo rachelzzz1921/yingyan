@@ -85,9 +85,9 @@ h1,h2,h3{font-weight:700;letter-spacing:-.02em}
 /* 文档内容 */
 .doc-body{padding:16px 18px;overflow-y:auto;flex:1}
 .doc-section{margin-bottom:16px}
-.kv{display:grid;grid-template-columns:96px 1fr;gap:4px 12px;font-size:13px;margin-bottom:3px}
+.kv{display:grid;grid-template-columns:minmax(72px,auto) 1fr;gap:4px 12px;font-size:13px;margin-bottom:3px}
 .kv .k{color:var(--muted)}
-.kv .v{color:var(--ink)}
+.kv .v{color:var(--ink);min-width:0;overflow-wrap:break-word;word-break:break-word}
 .doc-h{font-size:13.5px;font-weight:700;color:var(--primary-d);margin:14px 0 7px;padding-bottom:5px;border-bottom:1.5px solid var(--line);display:flex;align-items:center;gap:6px}
 .prose{font-size:13px;color:var(--ink2);white-space:pre-wrap}
 .note-line{background:#fbfcfe;border-left:3px solid var(--line);padding:8px 12px;margin:8px 0;font-size:12.5px;color:var(--ink2);border-radius:0 6px 6px 0}
@@ -96,9 +96,10 @@ h1,h2,h3{font-weight:700;letter-spacing:-.02em}
 .progress-entry .ptype{font-size:11px;color:var(--muted);margin-left:6px}
 
 /* 费用清单表格 */
-.fee-table{width:100%;border-collapse:collapse;font-size:12px}
+.fee-table{width:100%;border-collapse:collapse;font-size:12px;table-layout:auto}
 .fee-table th{background:#f0f4f9;color:var(--ink2);font-weight:600;padding:7px 6px;text-align:left;position:sticky;top:0;border-bottom:2px solid var(--line)}
-.fee-table td{padding:6px;border-bottom:1px solid #eef2f6;vertical-align:top}
+.fee-table td{padding:6px;border-bottom:1px solid #eef2f6;vertical-align:top;overflow-wrap:break-word;word-break:break-word}
+.fee-table .num{white-space:nowrap}
 .fee-table tr.flagged{background:var(--red-bg)}
 .fee-table tr.flagged td:first-child{box-shadow:inset 3px 0 var(--red)}
 .fee-table .num{text-align:right;font-variant-numeric:tabular-nums}
@@ -205,7 +206,7 @@ h1,h2,h3{font-weight:700;letter-spacing:-.02em}
 .status-badge{font-size:11px;font-weight:700;padding:2px 9px;border-radius:20px;white-space:nowrap}
 .status-badge.疑点{background:var(--red-bg);color:var(--red)}
 .status-badge.线索{background:var(--amber-bg);color:var(--amber)}
-.f-title{flex:1;font-weight:700;font-size:13.5px}
+.f-title{flex:1;min-width:0;font-weight:700;font-size:13.5px;overflow-wrap:break-word;word-break:break-word}
 .f-title .rid{color:var(--muted);font-weight:600;font-size:11.5px;margin-right:6px}
 .rule-link{display:inline-flex;align-items:center;gap:6px;border:none;background:transparent;padding:0;margin:0;cursor:pointer;text-align:left;font:inherit;color:inherit;max-width:100%}
 .rule-link:hover .rule-id-chip,.rule-link:focus-visible .rule-id-chip{background:var(--primary);color:#fff;border-color:var(--primary)}
@@ -241,7 +242,7 @@ h1,h2,h3{font-weight:700;letter-spacing:-.02em}
 .rchip{font-size:10.5px;padding:1px 7px;border-radius:5px;background:#e7f0f7;color:var(--primary);font-weight:600;border:none;cursor:pointer;font-family:inherit}
 .rchip.hit{background:var(--red-bg);color:var(--red)}
 .rchip:hover,.rchip:focus-visible{filter:brightness(.95);outline:2px solid var(--primary);outline-offset:1px}
-.f-meta{display:flex;align-items:center;gap:8px}
+.f-meta{display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:flex-end}
 .risk{font-size:11px;padding:1px 7px;border-radius:5px;background:#eef2f6;color:var(--ink2)}
 .risk.高{background:var(--red-bg);color:var(--red)} .risk.中—高{background:var(--amber-bg);color:var(--amber)}
 .amount{font-weight:800;color:var(--ink);font-size:13.5px;font-variant-numeric:tabular-nums}
@@ -255,18 +256,21 @@ h1,h2,h3{font-weight:700;letter-spacing:-.02em}
 .evidence-chain{margin-top:12px;border:1px solid var(--line);border-radius:11px;overflow:hidden;background:linear-gradient(180deg,#fbfcfe 0%,#fff 100%);box-shadow:var(--shadow-sm)}
 .ec-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:0}
 @media(max-width:960px){.ec-grid{grid-template-columns:1fr}}
-.ec-col{padding:12px 14px;border-right:1px solid var(--line);min-height:120px}
+.ec-col{padding:12px 14px;border-right:1px solid var(--line);min-height:120px;min-width:0;overflow-wrap:break-word}
 .ec-col:last-child{border-right:none}
 @media(max-width:960px){.ec-col{border-right:none;border-bottom:1px solid var(--line)}.ec-col:last-child{border-bottom:none}}
 .ec-footer{display:flex;flex-wrap:wrap;align-items:center;gap:6px;padding:8px 14px;background:#fff;border-top:1px solid var(--line);font-size:10.5px;color:var(--muted)}
 .ec-footer img{opacity:.7}
 .ec-col .three-label{margin-bottom:8px}
-.three-label{font-size:11.5px;font-weight:700;color:var(--primary-d);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px;display:flex;align-items:center;gap:6px}
+.three-label{font-size:11.5px;font-weight:700;color:var(--primary-d);text-transform:uppercase;letter-spacing:.3px;margin-bottom:6px;display:flex;align-items:center;gap:6px;min-width:0;overflow-wrap:anywhere}
+.three-label .idx{flex-shrink:0}
 .three-label .idx{background:var(--primary);color:#fff;width:17px;height:17px;border-radius:50%;display:grid;place-items:center;font-size:10px}
-.ev{display:flex;gap:8px;padding:7px 9px;background:#fbfcfe;border-radius:7px;margin-bottom:5px;font-size:12.5px;border:1px solid #eef2f6}
+.ev{display:flex;flex-wrap:wrap;align-items:flex-start;gap:5px 8px;padding:7px 9px;background:#fbfcfe;border-radius:7px;margin-bottom:5px;font-size:12.5px;border:1px solid #eef2f6}
+.ev .ev-loc{min-width:0}
 .ev .ev-type{font-size:10.5px;font-weight:700;color:var(--teal);background:#e2f5f1;padding:1px 6px;border-radius:4px;white-space:nowrap;height:fit-content}
-.ev .ev-loc{color:var(--primary);font-weight:600;cursor:pointer;text-decoration:underline dotted;white-space:nowrap}
-.ev .ev-text{color:var(--ink2)}
+.ev .ev-loc{color:var(--primary);font-weight:600;cursor:pointer;text-decoration:underline dotted;overflow-wrap:anywhere}
+/* 证据正文占整行、自然换行，避免在窄列里被挤成竖排单字 */
+.ev .ev-text{color:var(--ink2);flex:1 1 100%;min-width:0;line-height:1.5;overflow-wrap:break-word;word-break:break-word}
 .policy{background:#f3f8fc;border:1px solid #d7e7f2;border-radius:8px;padding:9px 11px;font-size:12.5px;margin-bottom:6px}
 .policy .pref{font-weight:700;color:var(--primary);font-size:11.5px}
 .policy .vchip{font-size:10px;padding:0 6px;border-radius:4px;margin-left:6px}
@@ -391,11 +395,13 @@ h1,h2,h3{font-weight:700;letter-spacing:-.02em}
 .modal-head{display:flex;justify-content:space-between;align-items:center;padding:16px 22px;border-bottom:1px solid var(--line);position:sticky;top:0;background:#fff;z-index:2}
 .modal-head h3{font-size:16px}
 .modal-close{background:#f0f4f9;border:none;width:30px;height:30px;border-radius:8px;cursor:pointer;font-size:16px;color:var(--ink2)}
-.modal-body{padding:18px 22px}
+.modal-body{padding:18px 22px;overflow-wrap:break-word;word-break:break-word}
+.modal-body table{max-width:100%}
 /* AuditBench 仪表盘 */
 .bench-kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(108px,1fr));gap:10px;margin-bottom:16px}
 .bkpi{background:#fbfcfe;border:1px solid var(--line);border-radius:10px;padding:12px;text-align:center}
-.bkpi .n{font-size:22px;font-weight:800}.bkpi .l{font-size:11px;color:var(--muted);margin-top:3px}
+.bkpi{min-width:0}
+.bkpi .n{font-size:22px;font-weight:800;overflow-wrap:break-word}.bkpi .l{font-size:11px;color:var(--muted);margin-top:3px;overflow-wrap:break-word}
 .bkpi.green .n{color:var(--green)} .bkpi.red .n{color:var(--red)}
 /* iter14 机构画像：横向条形 + 双列 */
 .ins-bars{margin:4px 0 8px}
@@ -652,6 +658,7 @@ body.mode-exam .rtab.active{color:var(--green)}
 .precip-track h4{font-size:13px;margin-bottom:6px}
 @media(max-width:900px){.precip-dual{grid-template-columns:1fr}}
 
+@media(max-width:1200px){.summary-cards{grid-template-columns:repeat(3,1fr)}}
 @media(max-width:980px){.layout{grid-template-columns:1fr}.panel{max-height:none}.summary-cards{grid-template-columns:repeat(2,1fr)}}
 body.mode-exam .layout{grid-template-columns:1fr}
 /* 移动端头部整理（P2 规培手机）：防按钮文字竖排、压缩占位 */
@@ -664,4 +671,13 @@ body.mode-exam .layout{grid-template-columns:1fr}
   .v2bar{padding:8px 14px}.v2btn{font-size:12px;padding:5px 9px}
   .bench-kpis,.summary-cards{grid-template-columns:repeat(2,1fr)}
   .modal-overlay{padding:10px}
+}
+/* 窄视口（手机/分屏）：模态满宽 + 表格可横向滚动；导入/整改栅格堆叠，避免文字被挤压截断 */
+@media(max-width:600px){
+  .modal{max-width:100%;width:calc(100% - 16px)}
+  .modal-body{padding:12px 14px;overflow-x:auto}
+  .bench-kpis,.summary-cards{grid-template-columns:1fr 1fr}
+  .rect-fields-grid{grid-template-columns:1fr}
+  .intake-row{grid-template-columns:1fr auto;row-gap:6px}
+  .intake-row .intake-slot{grid-column:1 / -1}
 }

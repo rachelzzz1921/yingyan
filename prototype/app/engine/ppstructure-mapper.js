@@ -258,9 +258,13 @@ async function structureTextWithLLM(text, slot, filename) {
       user: `文件：${filename}\n${hint}\n\n---\n${text.slice(0, 12000)}`,
       maxTokens: 6000,
     });
-    const jsonStr = (raw.match(/\{[\s\S]*\}/) || [raw])[0];
+    let s = String(raw || '').trim();
+    const fence = s.match(/```(?:json)?\s*([\s\S]*?)```/i);
+    if (fence) s = fence[1].trim();
+    const jsonStr = (s.match(/\{[\s\S]*\}/) || [s])[0];
     return JSON.parse(jsonStr);
-  } catch (_) {
+  } catch (e) {
+    console.warn('[ppstructure-mapper] LLM 结构化解析失败，回退纯文本切片:', e.message);
     return null;
   }
 }
@@ -290,7 +294,14 @@ async function mapLayoutToFragment(layout, slot, filename) {
     parsed_at: new Date().toISOString(),
   };
 
-  if (slot === 'fee_list' || slot === 'unknown') {
+  // 结构优先于文件名猜测：任意命名的 PDF，只要有「金额列 + (名称/日期列)」的表格 → 强费用清单信号，
+  // 覆盖按文件名/文本误判的槽位（真实文件名常任意，如"清单.pdf""账单.pdf"）
+  const looksLikeFeeTable = (layout.pages || []).some(pg => (pg.tables || []).some(t => {
+    const h = t.rows?.[0]?.cells?.map(c => c.text) || [];
+    return colIndex(h, FEE_HEADER_ALIASES.amount) >= 0 &&
+      (colIndex(h, FEE_HEADER_ALIASES.name) >= 0 || colIndex(h, FEE_HEADER_ALIASES.date) >= 0);
+  }));
+  if (slot === 'fee_list' || slot === 'unknown' || looksLikeFeeTable) {
     const fee = extractFeeListFromLayout(layout, filename);
     if (fee?.fee_list?.items?.length) {
       return { fragment: fee, layout_meta: meta, slotUsed: 'fee_list' };

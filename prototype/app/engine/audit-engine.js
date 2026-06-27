@@ -230,13 +230,13 @@ const ruleCheckers = {
     // 本次用药时ANC
     let anc = null, ancLoc = null;
     for (const lab of record.lab_reports) {
-      const r = lab.results.find(x => /中性粒细胞绝对值|ANC/.test(x.item));
+      const r = (lab.results || []).find(x => /中性粒细胞绝对值|ANC/.test(x.item));
       if (r) { anc = r.value; ancLoc = lab.report_id; }
     }
     const preventive = record.progress_notes.some(p => /预防/.test(p.text) && /粒细胞|升白/.test(p.text));
     // 本包内是否有"前次化疗曾发生重度中性粒细胞减少"的证据？前次住院逐日血常规不在本包 → 无法闭环
     const priorSevereNeutropenia = /前次.*重度.*中性粒细胞减少|前次.*骨髓抑制(?!相关不适)/.test(JSON.stringify(record.front_page.previous_admissions || ''));
-    const priorSummary = record.admission_note.present_illness.match(/化疗后[^。]*?(无[^。]*?(骨髓抑制|不适))/);
+    const priorSummary = (record.admission_note.present_illness || '').match(/化疗后[^。]*?(无[^。]*?(骨髓抑制|不适))/);
     if (preventive && !priorSevereNeutropenia) {
       findings.push(mkFinding(ctx, 'T-205', {
         status: '线索', risk_level: '中', amount_involved: gcsf.amount,
@@ -290,7 +290,7 @@ const ruleCheckers = {
     const alb = record.fee_list.items.find(l => /人血白蛋白/.test(l.item_name));
     if (!alb) return [];
     let albVal = null, albLoc = null;
-    for (const lab of record.lab_reports) { const r = lab.results.find(x => /白蛋白\s*ALB|^白蛋白/.test(x.item) || x.item.includes('白蛋白 ALB')); if (r) { albVal = r.value; albLoc = lab.report_id; } }
+    for (const lab of record.lab_reports) { const r = (lab.results || []).find(x => /白蛋白\s*ALB|^白蛋白/.test(x.item) || x.item.includes('白蛋白 ALB')); if (r) { albVal = r.value; albLoc = lab.report_id; } }
     const severe = /抢救|重症|休克|脓毒|危重/.test(JSON.stringify(record.progress_notes || ''));
     if (albVal != null && albVal >= 30 && !severe) {
       return [mkFinding(ctx, 'B-201', {
@@ -312,7 +312,7 @@ const ruleCheckers = {
     const { record } = ctx;
     const alb = record.fee_list.items.find(l => /人血白蛋白/.test(l.item_name));
     if (!alb) return [];
-    let albVal = null; for (const lab of record.lab_reports) { const r = lab.results.find(x => x.item.includes('白蛋白')); if (r) albVal = r.value; }
+    let albVal = null; for (const lab of record.lab_reports) { const r = (lab.results || []).find(x => x.item.includes('白蛋白')); if (r) albVal = r.value; }
     const severe = /抢救|重症|休克|脓毒|危重/.test(JSON.stringify(record.progress_notes || ''));
     if (albVal != null && albVal >= 30 && !severe) {
       return [mkFinding(ctx, 'A-110', {
@@ -807,7 +807,7 @@ function checkDistractors(ctx) {
   const prev = record.front_page.previous_admissions?.[0];
   if (prev && rules['C-301'].params.oncology_cycle_whitelist) {
     const interval = daysBetween(parseDate(prev.discharge_time), parseDate(record.front_page.admit_time));
-    const sameDx = record.front_page.principal_diagnosis.name.includes('肺') &&
+    const sameDx = (record.front_page?.principal_diagnosis?.name || '').includes('肺') &&
       (prev.principal_diagnosis || '').includes('肺');
     const isChemoCycle = /化疗|周期/.test(prev.summary || '') && /化疗/.test(record.admission_note.chief_complaint || '');
     if (interval <= rules['C-301'].params.interval_days && sameDx && isChemoCycle) {
@@ -1138,7 +1138,7 @@ function reconcile(rawFindings) {
     primary.corroborations = corro.map(c => ({ rule_id: c.rule_id, rule_name: c.rule_name, status: c.status, violation_type: c.violation_type, reasoning: c.reasoning, policy: c.policy }));
     primary._merged_count = arr.length;
     primary._raw_amount_sum = money(arr.reduce((s, x) => s + (x.amount_involved || 0), 0));
-    log.push({ fee_lines: k, merged: arr.length, primary: primary.rule_id, corroborations: corro.map(c => c.rule_id), amount_once: primary.amount_involved, amount_if_double_counted: money(arr.reduce((s, x) => s + (x.amount_involved || 0), 0)) });
+    log.push({ fee_lines: k, merged: arr.length, primary: primary.rule_id, corroborations: corro.map(c => c.rule_id), amount_once: primary.amount_involved || 0, amount_if_double_counted: money(arr.reduce((s, x) => s + (x.amount_involved || 0), 0)) });
     out.push(primary);
   }
   return { findings: out, reconciliation_log: log };
@@ -1180,6 +1180,7 @@ function runAudit(record, rulesArray, options = {}) {
   const rules = {};
   for (const r of rulesArray) rules[r.rule_id] = r;
   // 材料包形状归一：缺失的单据类别默认空，规则checker无需各自防御
+  // （导入的真实材料常只含部分单据，如仅费用清单 → 必须补默认值，否则规则解引用 undefined 崩溃）
   record.progress_notes = record.progress_notes || [];
   record.lab_reports = record.lab_reports || [];
   record.long_term_orders = record.long_term_orders || { items: [] };
@@ -1189,6 +1190,14 @@ function runAudit(record, rulesArray, options = {}) {
   record.nursing_records = record.nursing_records || { entries: [] };
   record.fee_list = record.fee_list || { items: [] };
   record.fee_list.items = record.fee_list.items || [];
+  // 对象型单据：规则以 .prop 访问，缺失时默认空对象防止"读取 undefined 属性"
+  record.front_page = record.front_page || {};
+  record.admission_note = record.admission_note || {};
+  record.pathology_report = record.pathology_report || {};
+  record.gene_test_report = record.gene_test_report || {};
+  record.discharge_summary = record.discharge_summary || {};
+  record.imaging_record = record.imaging_record || {};
+  record.icu_record = record.icu_record || {};
   // 升1 事实层：先把材料包编译为稽核案卷对象（每条事实自带源锚点）
   const caseObj = compileCaseObject(record);
   const ctx = {
@@ -1212,11 +1221,19 @@ function runAudit(record, rulesArray, options = {}) {
     if (!rules[ruleId]) { trace.push({ rule_id: ruleId, rule_name: '(未加载)', hits: 0, ms: 0, skipped: true }); continue; }
     if (retiredSet.has(ruleId)) { trace.push({ rule_id: ruleId, rule_name: rules[ruleId]?.rule_name, hits: 0, ms: 0, retired: true }); continue; }
     const t0 = Date.now();
-    const got = ruleCheckers[ruleId](ctx) || [];
+    let got = [];
+    try {
+      got = ruleCheckers[ruleId](ctx) || [];
+    } catch (e) {
+      // 单条规则在异常材料形状下抛错 → 跳过该规则并记录，绝不让整次稽核 500（导入的稀疏案卷尤需）
+      trace.push({ rule_id: ruleId, rule_name: rules[ruleId]?.rule_name, hits: 0, ms: Date.now() - t0, error: e.message });
+      continue;
+    }
     trace.push({ rule_id: ruleId, rule_name: rules[ruleId]?.rule_name, hits: got.length, ms: Date.now() - t0 });
     findings.push(...got);
   }
-  const distractors = checkDistractors(ctx);
+  let distractors = [];
+  try { distractors = checkDistractors(ctx); } catch (e) { /* 干扰项分析在异常材料形状下失败不阻断稽核 */ }
 
   // doc08宏观① 合议层：一笔钱被多规则命中→合并1主疑点+佐证视角、金额去重（必须在计金额前）
   const rec = reconcile(findings);

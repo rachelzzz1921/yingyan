@@ -1,88 +1,176 @@
 /**
- * 鹰眼 · LLM 提供方适配层（统一接口，解耦 MiniMax / Anthropic）
+ * 鹰眼 · LLM 提供方适配层（统一接口，解耦 SiliconFlow / MiniMax / Anthropic）
  * ------------------------------------------------------------
- * 真·语义分析与多模态解析都经此层。优先 MiniMax（原生多模态，已实测可用）。
- * callLLM(text) / callVision(text+images) → 纯文本结果。
+ * 真·语义分析(文本) 与 多模态解析(视觉) 分别独立选择提供方：
+ *   · 文本/推理 textProvider：SiliconFlow(快) > MiniMax > Anthropic
+ *   · 视觉/解析 visionProvider：MiniMax-VL(已实测可用) > SiliconFlow-VL(若配) > Anthropic
+ *   两者解耦 —— 稽核走 SiliconFlow 提速，扫描件/PDF 视觉解析仍可走 MiniMax-VL。
+ *
+ * callLLM(text) / callVision(text+images) → 纯文本结果。所有请求带超时（防长挂起）。
  * 密钥从 process.env 读（server 启动时由 .env 注入；.env 不进 git）。
+ * 提供方可用 YINGYAN_LLM_PROVIDER / YINGYAN_VISION_PROVIDER 显式锁定。
  */
 'use strict';
 
+// ---- 端点与模型配置 ----
 const MINIMAX_BASE = process.env.MINIMAX_BASE || 'https://api.minimaxi.com/v1/text/chatcompletion_v2';
 const MINIMAX_MODEL = process.env.YINGYAN_LLM_MODEL || 'MiniMax-Text-01';
 const MINIMAX_VL_MODEL = process.env.YINGYAN_VL_MODEL || 'MiniMax-VL-01';
 const ANTHROPIC_URL = 'https://api.anthropic.com/v1/messages';
 const ANTHROPIC_MODEL = process.env.YINGYAN_MODEL || 'claude-opus-4-8';
+const SF_BASE = process.env.SILICONFLOW_BASE || 'https://api.siliconflow.cn/v1/chat/completions';
+const SF_MODEL = process.env.SILICONFLOW_CHAT_MODEL || 'Qwen/Qwen2.5-72B-Instruct';
+const SF_VL_MODEL = process.env.SILICONFLOW_VL_MODEL || ''; // 多数 VL 模型对普通 key 被禁用 → 默认不走 SF 视觉
 
+const DEFAULT_TIMEOUT = Number(process.env.YINGYAN_LLM_TIMEOUT_MS || 90000);
+
+function sfKey() { return process.env.SILICONFLOW_CHAT_KEY || process.env.SILICONFLOW_API_KEY || ''; }
+function hasMinimax() { return !!process.env.MINIMAX_API_KEY; }
+function hasAnthropic() { return !!process.env.ANTHROPIC_API_KEY; }
+
+// 文本/推理提供方
 function provider() {
-  if (process.env.MINIMAX_API_KEY) return 'minimax';
-  if (process.env.ANTHROPIC_API_KEY) return 'anthropic';
+  const forced = (process.env.YINGYAN_LLM_PROVIDER || '').toLowerCase();
+  if (forced) {
+    // 显式锁定：只用指定提供方；缺 key 则返回 null（callLLM 抛 needsKey），绝不静默回退到别的模型/服务
+    if (forced === 'siliconflow') return sfKey() ? 'siliconflow' : null;
+    if (forced === 'minimax') return hasMinimax() ? 'minimax' : null;
+    if (forced === 'anthropic') return hasAnthropic() ? 'anthropic' : null;
+    if (forced === 'none' || forced === 'disabled') return null; // 显式禁用 LLM
+    // 未知值：忽略，落到下方自动选择
+  }
+  if (sfKey()) return 'siliconflow';
+  if (hasMinimax()) return 'minimax';
+  if (hasAnthropic()) return 'anthropic';
   return null;
 }
-function isReady() { return !!provider(); }
-function providerName() {
-  const p = provider();
-  return p === 'minimax' ? `MiniMax(${MINIMAX_MODEL})` : p === 'anthropic' ? `Anthropic(${ANTHROPIC_MODEL})` : '未配置';
-}
-function visionModelName() {
-  const p = provider();
-  return p === 'minimax' ? `MiniMax-VL(${MINIMAX_VL_MODEL})` : p === 'anthropic' ? `Anthropic(${ANTHROPIC_MODEL})` : '未配置';
+// 视觉提供方（与文本解耦）
+function visionProvider() {
+  const forced = (process.env.YINGYAN_VISION_PROVIDER || '').toLowerCase();
+  if (forced === 'minimax' && hasMinimax()) return 'minimax';
+  if (forced === 'siliconflow' && sfKey() && SF_VL_MODEL) return 'siliconflow';
+  if (forced === 'anthropic' && hasAnthropic()) return 'anthropic';
+  if (hasMinimax()) return 'minimax';
+  if (sfKey() && SF_VL_MODEL) return 'siliconflow';
+  if (hasAnthropic()) return 'anthropic';
+  return null;
 }
 
-async function callLLM({ system, user, maxTokens = 4000 }) {
+function isReady() { return !!provider(); }
+function visionReady() { return !!visionProvider(); }
+function providerName() {
   const p = provider();
-  if (!p) { const e = new Error('真·语义分析需配置 MINIMAX_API_KEY 或 ANTHROPIC_API_KEY'); e.needsKey = true; throw e; }
+  if (p === 'siliconflow') return `SiliconFlow(${SF_MODEL})`;
+  if (p === 'minimax') return `MiniMax(${MINIMAX_MODEL})`;
+  if (p === 'anthropic') return `Anthropic(${ANTHROPIC_MODEL})`;
+  return '未配置';
+}
+function visionModelName() {
+  const p = visionProvider();
+  if (p === 'minimax') return `MiniMax-VL(${MINIMAX_VL_MODEL})`;
+  if (p === 'siliconflow') return `SiliconFlow-VL(${SF_VL_MODEL})`;
+  if (p === 'anthropic') return `Anthropic(${ANTHROPIC_MODEL})`;
+  return '未配置';
+}
+
+// 统一带超时的 fetch（防止某一路 LLM 无限挂起拖死整次稽核）
+async function fetchWithTimeout(url, opts, ms = DEFAULT_TIMEOUT) {
   if (typeof fetch !== 'function') throw new Error('需 Node18+ (全局 fetch)');
+  const ctl = new AbortController();
+  const timer = setTimeout(() => ctl.abort(), ms);
+  try {
+    return await fetch(url, { ...opts, signal: ctl.signal });
+  } catch (e) {
+    if (e.name === 'AbortError') throw new Error(`LLM 请求超时（>${Math.round(ms / 1000)}s）`);
+    throw e;
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
+// 空内容 = 失败（限流/配额/过载/畸形响应）。显式抛错，避免空串被当成"成功"静默吞掉
+function nonEmpty(content, label) {
+  if (!content || !String(content).trim()) throw new Error(`${label} 返回空内容（可能限流/配额耗尽/模型过载/响应结构异常）`);
+  return content;
+}
+
+async function callLLM({ system, user, maxTokens = 4000, temperature = 0.2, timeoutMs = DEFAULT_TIMEOUT }) {
+  const p = provider();
+  if (!p) { const e = new Error('真·语义分析需配置 SILICONFLOW_API_KEY / MINIMAX_API_KEY / ANTHROPIC_API_KEY'); e.needsKey = true; throw e; }
+
+  if (p === 'siliconflow') {
+    const messages = [];
+    if (system) messages.push({ role: 'system', content: system });
+    messages.push({ role: 'user', content: user });
+    const r = await fetchWithTimeout(SF_BASE, {
+      method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + sfKey() },
+      body: JSON.stringify({ model: SF_MODEL, messages, max_tokens: maxTokens, temperature }),
+    }, timeoutMs);
+    if (!r.ok) throw new Error(`SiliconFlow ${r.status}: ${(await r.text()).slice(0, 200)}`);
+    const data = await r.json();
+    return nonEmpty(data.choices?.[0]?.message?.content, 'SiliconFlow');
+  }
+
   if (p === 'minimax') {
     const messages = [];
     if (system) messages.push({ role: 'system', content: system });
     messages.push({ role: 'user', content: user });
-    const r = await fetch(MINIMAX_BASE, {
+    const r = await fetchWithTimeout(MINIMAX_BASE, {
       method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + process.env.MINIMAX_API_KEY },
-      body: JSON.stringify({ model: MINIMAX_MODEL, messages, max_tokens: maxTokens, temperature: 0.2 }),
-    });
+      body: JSON.stringify({ model: MINIMAX_MODEL, messages, max_tokens: maxTokens, temperature }),
+    }, timeoutMs);
+    if (!r.ok) throw new Error(`MiniMax HTTP ${r.status}: ${(await r.text()).slice(0, 160)}`);
     const data = await r.json();
     if (data.base_resp && data.base_resp.status_code) throw new Error('MiniMax: ' + data.base_resp.status_msg);
-    return (data.choices?.[0]?.message?.content) || '';
+    return nonEmpty(data.choices?.[0]?.message?.content, 'MiniMax');
   }
+
   // anthropic
-  const r = await fetch(ANTHROPIC_URL, {
+  const r = await fetchWithTimeout(ANTHROPIC_URL, {
     method: 'POST', headers: { 'content-type': 'application/json', 'x-api-key': process.env.ANTHROPIC_API_KEY, 'anthropic-version': '2023-06-01' },
     body: JSON.stringify({ model: ANTHROPIC_MODEL, max_tokens: maxTokens, system, messages: [{ role: 'user', content: user }] }),
-  });
+  }, timeoutMs);
   if (!r.ok) throw new Error(`Anthropic ${r.status}: ${(await r.text()).slice(0, 160)}`);
   const data = await r.json();
-  return (data.content || []).map(c => c.text || '').join('');
+  return nonEmpty((data.content || []).map(c => c.text || '').join(''), 'Anthropic');
 }
 
-// 多模态：text + images(base64)。MiniMax-VL 走 OpenAI 兼容 content 数组
-async function callVision({ system, user, images = [], mime = 'image/png', maxTokens = 6000 }) {
-  const p = provider();
-  if (!p) { const e = new Error('多模态解析需配置 MINIMAX_API_KEY'); e.needsKey = true; throw e; }
-  if (p === 'minimax') {
+// 多模态：text + images(base64)。视觉提供方独立选择（默认 MiniMax-VL）
+async function callVision({ system, user, images = [], mime = 'image/png', maxTokens = 6000, timeoutMs = DEFAULT_TIMEOUT }) {
+  const p = visionProvider();
+  if (!p) { const e = new Error('多模态解析需配置 MINIMAX_API_KEY（视觉）'); e.needsKey = true; throw e; }
+
+  if (p === 'minimax' || p === 'siliconflow') {
+    // 两者均走 OpenAI 兼容 content 数组
     const content = [{ type: 'text', text: user }];
     for (const b64 of images) content.push({ type: 'image_url', image_url: { url: b64.startsWith('data:') ? b64 : `data:${mime};base64,${b64}` } });
     const messages = [];
     if (system) messages.push({ role: 'system', content: system });
     messages.push({ role: 'user', content });
-    const r = await fetch(MINIMAX_BASE, {
-      method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + process.env.MINIMAX_API_KEY },
-      body: JSON.stringify({ model: MINIMAX_VL_MODEL, messages, max_tokens: maxTokens, temperature: 0.1 }),
-    });
+    const base = p === 'minimax' ? MINIMAX_BASE : SF_BASE;
+    const key = p === 'minimax' ? process.env.MINIMAX_API_KEY : sfKey();
+    const model = p === 'minimax' ? MINIMAX_VL_MODEL : SF_VL_MODEL;
+    const r = await fetchWithTimeout(base, {
+      method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + key },
+      body: JSON.stringify({ model, messages, max_tokens: maxTokens, temperature: 0.1 }),
+    }, timeoutMs);
+    if (!r.ok) throw new Error(`视觉模型 HTTP ${r.status}: ${(await r.text()).slice(0, 160)}`);
     const data = await r.json();
-    if (data.base_resp && data.base_resp.status_code) throw new Error('MiniMax-VL: ' + data.base_resp.status_msg);
-    return (data.choices?.[0]?.message?.content) || '';
+    if (data.base_resp && data.base_resp.status_code) throw new Error('视觉模型: ' + data.base_resp.status_msg);
+    return nonEmpty(data.choices?.[0]?.message?.content, '视觉模型');
   }
+
   // anthropic vision
   const content = [];
   for (const b64 of images) content.push({ type: 'image', source: { type: 'base64', media_type: mime, data: b64 } });
   content.push({ type: 'text', text: user });
-  const r = await fetch(ANTHROPIC_URL, {
+  const r = await fetchWithTimeout(ANTHROPIC_URL, {
     method: 'POST', headers: { 'content-type': 'application/json', 'x-api-key': process.env.ANTHROPIC_API_KEY, 'anthropic-version': '2023-06-01' },
     body: JSON.stringify({ model: ANTHROPIC_MODEL, max_tokens: maxTokens, system, messages: [{ role: 'user', content }] }),
-  });
+  }, timeoutMs);
   if (!r.ok) throw new Error(`Anthropic ${r.status}: ${(await r.text()).slice(0, 160)}`);
   const data = await r.json();
-  return (data.content || []).map(c => c.text || '').join('');
+  return nonEmpty((data.content || []).map(c => c.text || '').join(''), 'Anthropic 视觉');
 }
 
-module.exports = { callLLM, callVision, isReady, providerName, visionModelName, provider };
+module.exports = { callLLM, callVision, isReady, visionReady, providerName, visionModelName, provider, visionProvider };

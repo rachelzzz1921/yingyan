@@ -1,0 +1,13 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "yingyan",
+      "runtimeExecutable": "node",
+      "runtimeArgs": ["server.js"],
+      "cwd": "prototype/app",
+      "port": 3700,
+      "autoPort": true
+    }
+  ]
+}

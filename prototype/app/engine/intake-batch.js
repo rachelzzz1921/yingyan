@@ -40,7 +40,7 @@ const SLOT_VISION_PROMPTS = {
 };
 
 function decodeBase64Text(b64) {
-  try { return Buffer.from(b64, 'base64').toString('utf8'); } catch (_) { return ''; }
+  try { return Buffer.from(b64, 'base64').toString('utf8'); } catch (e) { console.warn('[intake] base64 解码失败:', e.message); return ''; }
 }
 
 function tryParseJson(text) {
@@ -179,7 +179,8 @@ async function parseIntakeFile({ name, mime, fileBase64, slotOverride }) {
           log.push(`视觉回退(${visionModelName()})`);
         } catch (e) {
           ok = false;
-          return { ok: false, name, classification, error: layoutResult.error || e.message, log, layout: layoutResult.layout };
+          // 视觉回退的真实失败原因优先（之前会被 L1 旧错误覆盖，用户无法自诊）
+          return { ok: false, name, classification, error: '视觉回退失败：' + e.message + (layoutResult.error ? ' | L1: ' + layoutResult.error : ''), log, layout: layoutResult.layout };
         }
       } else if (/pdf/i.test(mime || '') || /\.pdf$/i.test(name)) {
         ok = false;

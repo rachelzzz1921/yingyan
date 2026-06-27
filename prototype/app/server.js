@@ -273,6 +273,8 @@ function loadAll() {
   };
 }
 let DB = loadAll();
+// 导入批次串行化：并发/双击导入会读改写 DB.cases.uploaded 互相覆盖、审计留痕丢失 → 用 promise 链串行处理
+let intakeChain = Promise.resolve();
 
 async function refreshLiveKB() {
   try {
@@ -1557,7 +1559,7 @@ const server = http.createServer(async (req, res) => {
         }
         return sendJSON(res, { ok: true, debate, status, finding_id: finding.finding_id, review_entry, eval_draft });
       } catch (e) {
-        return sendJSON(res, { error: e.needsKey ? '真·对抗辩论需配置 MINIMAX_API_KEY 或 ANTHROPIC_API_KEY' : e.message, needsKey: !!e.needsKey }, e.needsKey ? 503 : 500);
+        return sendJSON(res, { error: e.needsKey ? '真·对抗辩论需配置 SILICONFLOW_API_KEY / MINIMAX_API_KEY / ANTHROPIC_API_KEY' : e.message, needsKey: !!e.needsKey }, e.needsKey ? 503 : 500);
       }
     }
 
@@ -1792,13 +1794,26 @@ const server = http.createServer(async (req, res) => {
           });
           report.report_meta.as_of = ctx.as_of;
           report.report_meta.shadow_governance = true;
+          // LLM 路径不算这些案卷级元数据 → 从确定性引擎补「正确不报 / 触发器路由 / 覆盖度」，
+          // 否则报告页「不报」「详情」标签在真·LLM 模式下空白
+          try {
+            const det = runAuditForRecord(record);
+            if (!(report.correctly_not_flagged || []).length) report.correctly_not_flagged = det.correctly_not_flagged || [];
+            report.report_meta.routing = report.report_meta.routing || det.report_meta.routing;
+            report.report_meta.coverage = report.report_meta.coverage || det.report_meta.coverage;
+            report.report_meta.audit_scope = report.report_meta.audit_scope || det.report_meta.audit_scope;
+            report.report_meta.caseobject_summary = report.report_meta.caseobject_summary || det.report_meta.caseobject_summary;
+          } catch (_) { /* 补充元数据失败不影响主报告 */ }
+          report.report_meta.panel = '稽核';
+          const llmOverlayIds = Object.keys(precipService.loadRuleOverlay(DATA).patches || {});
+          if (llmOverlayIds.length) report.report_meta.overlay_rules = llmOverlayIds;
           report.report_meta.elapsed_ms = Date.now() - t0;
           return sendJSON(res, report);
         } catch (e) {
           // 诚实区分：无 key → 明确告知"真·语义分析需配 key"，并回退确定性引擎(标注其推理为模板)
           const report = runAuditForRecord(record);
           report.report_meta.engine_mode = e.needsKey
-            ? '⚠ 真·LLM语义分析未启用（需配 ANTHROPIC_API_KEY）→ 当前为确定性规则引擎（检测为真·计算，自然语言推理为模板脚本）'
+            ? '⚠ 真·LLM语义分析未启用（需配 SILICONFLOW_API_KEY / MINIMAX_API_KEY / ANTHROPIC_API_KEY）→ 当前为确定性规则引擎（检测为真·计算，自然语言推理为模板脚本）'
             : '确定性引擎（LLM路径失败，已回退）：' + e.message;
           report.report_meta.llm_needs_key = !!e.needsKey;
           report.report_meta.elapsed_ms = Date.now() - t0;
@@ -1892,21 +1907,27 @@ const server = http.createServer(async (req, res) => {
     }
     if (p === '/api/intake/batch' && req.method === 'POST') {
       const body = await readBody(req);
-      const base = body.merge && DB.cases.uploaded ? DB.cases.uploaded : null;
-      const result = await processIntakeBatch(body.files || [], { baseRecord: base });
-      if (result.record) {
-        DB.cases.uploaded = result.record;
-        result.caseId = 'uploaded';
-        const store = priorityStore.loadStore();
-        priorityStore.upsertCaseFromRecord(store, 'uploaded', result.record);
-        priorityStore.setCaseStatus(store, 'uploaded', 'uploaded', 'intake_batch');
-        priorityStore.recordImportBatch(store, {
-          files: (body.files || []).map(f => ({ name: f.name, mime: f.mime })),
-          classified: Object.fromEntries((result.items || []).map(i => [i.name, i.classification])),
-          result_case_ids: ['uploaded'],
-          errors: result.errors,
-        });
-      }
+      // 串行化：把本次导入挂到链尾，确保读改写 uploaded 案卷不与并发请求交错
+      const task = intakeChain.then(async () => {
+        const base = body.merge && DB.cases.uploaded ? DB.cases.uploaded : null;
+        const result = await processIntakeBatch(body.files || [], { baseRecord: base });
+        if (result.record) {
+          DB.cases.uploaded = result.record;
+          result.caseId = 'uploaded';
+          const store = priorityStore.loadStore();
+          priorityStore.upsertCaseFromRecord(store, 'uploaded', result.record);
+          priorityStore.setCaseStatus(store, 'uploaded', 'uploaded', 'intake_batch');
+          priorityStore.recordImportBatch(store, {
+            files: (body.files || []).map(f => ({ name: f.name, mime: f.mime })),
+            classified: Object.fromEntries((result.items || []).map(i => [i.name, i.classification])),
+            result_case_ids: ['uploaded'],
+            errors: result.errors,
+          });
+        }
+        return result;
+      });
+      intakeChain = task.catch(() => {}); // 失败不阻断后续导入
+      const result = await task;
       return sendJSON(res, result);
     }
 
