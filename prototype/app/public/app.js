@@ -1563,6 +1563,14 @@ $('#btnBench').onclick = showBench;
 $('#btnInstitution').onclick = showInstitution;
 const _btnFoundation = $('#btnFoundation'); if (_btnFoundation) _btnFoundation.onclick = showFoundation;
 const _btnTriad = $('#btnTriad'); if (_btnTriad) _btnTriad.onclick = showProvenanceTriad;
+// 「洞察」下拉：开合 + 点项后收起 + 点外部收起（收纳事实层/机构画像/合规地基/取证三件套，顶栏不再换行）
+(function setupInsightDropdown() {
+  const dd = $('#ddInsight'), menuBtn = $('#btnInsightMenu'), menu = $('#insightMenu');
+  if (!dd || !menuBtn || !menu) return;
+  menuBtn.onclick = (e) => { e.stopPropagation(); dd.classList.toggle('open'); };
+  menu.addEventListener('click', () => dd.classList.remove('open'));
+  document.addEventListener('click', (e) => { if (!dd.contains(e.target)) dd.classList.remove('open'); });
+})();
 $('#btnGovernance').onclick = showGovernance;
 const btnRuleCatalog = $('#btnRuleCatalog');
 if (btnRuleCatalog) btnRuleCatalog.onclick = () => showRuleCatalog();

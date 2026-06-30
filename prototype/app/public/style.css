@@ -333,13 +333,22 @@ h1,h2,h3{font-weight:700;letter-spacing:-.02em}
 .mode-btn.active{background:#fff;color:var(--yy-ink)}
 /* v2 工具条 */
 .v2bar{display:flex;align-items:center;gap:10px;padding:10px 28px;background:rgba(255,255,255,.72);
-  backdrop-filter:blur(12px);border-bottom:1px solid var(--line);flex-wrap:wrap}
+  backdrop-filter:blur(12px);border-bottom:1px solid var(--line);flex-wrap:nowrap;overflow-x:auto;overflow-y:visible;scrollbar-width:thin}
+.v2bar::-webkit-scrollbar{height:5px}
+.v2bar::-webkit-scrollbar-thumb{background:var(--line);border-radius:3px}
+.v2bar-group{flex:0 0 auto}
+.v2btn{white-space:nowrap;flex:0 0 auto}
+/* 洞察下拉：收纳事实层/机构画像/合规地基/取证三件套，避免顶栏过挤换行 */
+.v2dropdown{position:relative;display:inline-block;flex:0 0 auto}
+.v2dropdown-menu{position:absolute;top:calc(100% + 6px);left:0;z-index:60;display:none;flex-direction:column;gap:5px;padding:8px;background:#fff;border:1px solid var(--line);border-radius:10px;box-shadow:0 14px 34px rgba(15,27,45,.18);min-width:150px}
+.v2dropdown.open .v2dropdown-menu{display:flex}
+.v2dropdown-menu .v2btn{justify-content:flex-start;text-align:left;width:100%}
 .v2bar-label{font-size:10.5px;font-weight:800;color:var(--yy-ink);letter-spacing:.12em;
   text-transform:uppercase;padding:4px 10px;background:var(--yy-amber-l);border-radius:6px;
   border:1px solid rgba(232,168,56,.25)}
 .v2bar-label.subtle{background:#f0f4f8;border-color:var(--line);color:var(--muted);font-size:10px}
 .v2bar-primary .v2btn.accent{font-weight:800}
-.v2bar-group{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.v2bar-group{display:flex;align-items:center;gap:6px;flex-wrap:nowrap}
 .v2bar-divider{width:1px;height:24px;background:var(--line);margin:0 4px}
 .v2btn{background:#fff;border:1px solid var(--line);color:var(--yy-ink);padding:6px 13px;
   border-radius:9px;font-size:12px;cursor:pointer;font-weight:600;transition:.15s;font-family:var(--font)}

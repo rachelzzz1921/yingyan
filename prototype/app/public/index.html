@@ -46,10 +46,15 @@
     <a href="/priority.html" class="v2btn accent" title="稽核优先队列">稽核队列</a>
     <a href="/intake.html" class="v2btn accent" title="材料导入中心（完整页）">材料导入</a>
     <button class="v2btn" id="btnIngest" type="button" title="弹窗快速导入">快速导入</button>
-    <button class="v2btn" id="btnFacts" type="button">事实层</button>
-    <button class="v2btn" id="btnInstitution" type="button">机构画像</button>
-    <button class="v2btn real" id="btnFoundation" type="button" title="站在国家两库肩上 · 规则↔官方政策可溯源">合规地基</button>
-    <button class="v2btn real" id="btnTriad" type="button" title="取证可信度三件套：合议去重·覆盖度声明·置信度传播">取证三件套</button>
+    <div class="v2dropdown" id="ddInsight">
+      <button class="v2btn real" id="btnInsightMenu" type="button" title="洞察面板：事实层 / 机构画像 / 合规地基 / 取证三件套">🔍 洞察 ▾</button>
+      <div class="v2dropdown-menu" id="insightMenu">
+        <button class="v2btn" id="btnFacts" type="button">事实层</button>
+        <button class="v2btn" id="btnInstitution" type="button">机构画像</button>
+        <button class="v2btn real" id="btnFoundation" type="button" title="站在国家两库肩上 · 规则↔官方政策可溯源">🏛 合规地基</button>
+        <button class="v2btn real" id="btnTriad" type="button" title="取证可信度三件套：合议去重·覆盖度声明·置信度传播">🔬 取证三件套</button>
+      </div>
+    </div>
     <button class="v2btn" id="btnRuleCatalog" type="button">规则目录</button>
     <button class="v2btn" id="btnGovernance" type="button">规则治理</button>
   </div>
