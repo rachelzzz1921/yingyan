@@ -1562,6 +1562,7 @@ $('#btnFacts').onclick = showFacts;
 $('#btnBench').onclick = showBench;
 $('#btnInstitution').onclick = showInstitution;
 const _btnFoundation = $('#btnFoundation'); if (_btnFoundation) _btnFoundation.onclick = showFoundation;
+const _btnTriad = $('#btnTriad'); if (_btnTriad) _btnTriad.onclick = showProvenanceTriad;
 $('#btnGovernance').onclick = showGovernance;
 const btnRuleCatalog = $('#btnRuleCatalog');
 if (btnRuleCatalog) btnRuleCatalog.onclick = () => showRuleCatalog();
@@ -1909,6 +1910,43 @@ async function showFoundation() {
     ${d.roadmap ? `<div class="cov-statement" style="margin-top:8px;background:#fbfcfe">🛣 <b>持续扩展路线图</b>：从 ${(d.kb_geometry.layers['规则'] || 0)} 条官方"规则"层条目继续操作化——当前 <b>${d.roadmap.rules_pending_checker}</b> 条已声明规则待补 checker（${d.roadmap.by_specialty.slice(0, 5).map(s => esc(s.specialty) + s.count).join('、')}…）+ ${d.roadmap.tables_pending_ingest} 项对照表待入库。地基不是静态的，是<b>可持续从官方两库长出来</b>的。</div>` : ''}
   `;
   openModal('🏛 合规地基 · 站在国家两库肩上（可溯源）', html);
+}
+
+async function showProvenanceTriad() {
+  let d;
+  try { d = await fetch('/api/provenance-triad').then(r => r.json()); }
+  catch (e) { openModal('🔬 取证可信度三件套', `<p class="muted">加载失败：${esc(String(e))}</p>`); return; }
+  const rc = d.reconciliation || {}, cov = d.coverage || {}, cf = d.confidence || {};
+  // ① 合议去重
+  const reconRows = (rc.entries || []).map(e => `<tr><td>费用行 ${esc(String(e.fee_lines))}</td><td><b>${esc(e.primary)}</b> 主 + ${(e.corroborations || []).map(esc).join('、')} 佐证</td><td class="num">¥${fmt(e.amount_once)}</td><td class="num muted">¥${fmt(e.amount_if_double_counted)}</td></tr>`).join('');
+  // ② 覆盖度
+  const dims = (cov.dimensions || []);
+  const covRows = dims.map(x => `<tr><td>${esc(x.dimension)}</td><td class="num">${(x.executed || []).length}/${x.total_rules}</td><td>${esc(x.status)}</td></tr>`).join('');
+  const mats = Object.entries(cov.materials || {}).map(([k, v]) => `<span class="kind-tag ${v ? 'real' : 'script'}">${v ? '✓' : '—'} ${esc(k)}</span>`).join(' ');
+  // ③ 置信度
+  const cfRows = (cf.findings || []).slice(0, 8).map(f => `<tr><td>${typeof ruleLink === 'function' ? ruleLink(f.rule_id, { compact: true }) : esc(f.rule_id)}</td><td>${esc(f.status || '')}</td><td class="num">${f.confidence ?? '—'}</td><td class="num">${f.min_ocr_conf ?? '—'}</td><td class="num">${fmt(f.priority_score)}</td></tr>`).join('');
+  const html = `
+    <p class="muted">区别于"调大模型"和"国家字段规则"的<b>工程纵深</b>——四方评审一致认定的<b>第一护城河</b>。规则引擎判"像不像"；三件套保证"<b>算得对、说得清、不乱报</b>"。（数据来自主案卷 <code>${esc(d.case || 'main')}</code> 实测）</p>
+
+    <div class="facts-h">① 合议去重 · 防过罚 <span class="muted">同一笔钱多规则命中 → 选主疑点+佐证、金额只算一次</span></div>
+    <div class="bench-kpis" style="grid-template-columns:repeat(3,1fr)">
+      <div class="bkpi green"><div class="n">¥${fmt(rc.suspected_amount)}</div><div class="l">去重后疑点金额</div></div>
+      <div class="bkpi red"><div class="n">¥${fmt(rc.amount_if_double_counted)}</div><div class="l">若各算各的(虚高)</div></div>
+      <div class="bkpi"><div class="n">¥${fmt(rc.saved_from_double_count)}</div><div class="l">避免的重复计罚</div></div>
+    </div>
+    ${reconRows ? `<table class="fee-table"><thead><tr><th>费用行</th><th>合并(主+佐证)</th><th>算一次</th><th>若重复</th></tr></thead><tbody>${reconRows}</tbody></table>` : '<p class="muted">本案无多规则命中同一笔费用</p>'}
+    <p class="muted" style="font-size:11.5px">${esc(rc.note || '')}</p>
+
+    <div class="facts-h">② 覆盖度声明 · 答"我查全了吗" <span class="muted">把漏检率变成可审计声明</span></div>
+    <div style="margin:4px 0 8px">${mats}</div>
+    <table class="fee-table"><thead><tr><th>核验维度</th><th>已执行</th><th>状态</th></tr></thead><tbody>${covRows}</tbody></table>
+    <p class="muted" style="font-size:11.5px">${esc(cov.statement || '')}</p>
+
+    <div class="facts-h">③ 置信度传播 · 反幻觉是可追溯的计算 <span class="muted">OCR低置信降权 · 门禁封顶 · 排序=金额×置信</span></div>
+    <table class="fee-table"><thead><tr><th>规则</th><th>定性</th><th>置信</th><th>最低OCR</th><th>优先分</th></tr></thead><tbody>${cfRows}</tbody></table>
+    <p class="muted" style="font-size:11.5px">${esc(cf.note || '')}</p>
+  `;
+  openModal('🔬 取证可信度三件套 · 第一护城河（可演证）', html);
 }
 
 const STATUS_META = { active: { label: '在役 active', cls: 'gv-active' }, shadow: { label: '观察期 shadow', cls: 'gv-shadow' }, deprecated: { label: '已下线 deprecated', cls: 'gv-dep' } };

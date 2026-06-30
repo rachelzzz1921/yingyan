@@ -209,7 +209,7 @@ const ruleCheckers = {
           evidence: [
             ev('费用行', `费用清单 第${line.line_no}行`, `${line.item_name} ${line.spec}×${line.qty}${line.unit} 金额${money(line.amount)}元`),
             ev('病理报告', `病理报告 ${record.pathology_report.report_id}`, record.pathology_report.diagnosis + '（报告未含EGFR/ALK等驱动基因检测结果）'),
-            ev('阴性证据', '基因检测报告=缺失', record.gene_test_report.note),
+            ev('阴性证据', '分子病理/基因检测证据=未见', record.gene_test_report.note),
             ev('病程', '病程记录 2026-03-17', record.progress_notes.find(p => p.text.includes('奥希替尼'))?.text || ''),
           ],
           reasoning: `费用清单第${line.line_no}行结算「${matched}」——属"明确作用靶点(EGFR)"类药物。依《新型抗肿瘤药物临床应用指导原则（2025年版）》须靶点检测阳性后方可使用，医保目录"备注"列亦限EGFR敏感突变。三方取证：病理确诊腺癌但不含基因检测，全材料包无任何EGFR检测报告，病程仅记"家属要求/建议靶向"无检测依据${hasOutsideHint ? '，但病程提示外院已检测→降级线索' : '，亦无"外院已检测"线索 → 构成"未做检测盲目用药"，证据闭环'}。`,
@@ -1160,7 +1160,7 @@ function coverageManifest(routing, record, findings) {
   const materials = {
     费用清单: !!record.fee_list, 医嘱单: !!(record.long_term_orders || record.temporary_orders),
     护理记录: !!record.nursing_records, 检验报告: (record.lab_reports || []).length > 0,
-    病理报告: !!record.pathology_report, 基因检测报告: record.gene_test_report?.status !== '缺失',
+    病理报告: !!record.pathology_report, '分子病理/基因检测证据': record.gene_test_report?.status !== '缺失',
   };
   const dimensions = COVERAGE_DIMENSIONS.map(d => {
     const exec = d.rules.filter(r => activated.has(r));
@@ -1170,7 +1170,7 @@ function coverageManifest(routing, record, findings) {
   const missing = Object.entries(materials).filter(([, v]) => !v).map(([k]) => k);
   return {
     materials, dimensions,
-    statement: `本次核验覆盖 ${dimensions.filter(d => d.executed.length).length}/${dimensions.length} 个维度共 ${routing.activated_count} 条规则被激活。材料完整性：${missing.length ? missing.join('、') + ' 缺失' : '齐全'}。${missing.includes('基因检测报告') ? '基因检测报告缺失正是T-201判定的关键阴性证据。' : ''}未触发维度为本案无相关项（如无植入耗材），非漏查。`,
+    statement: `本次核验覆盖 ${dimensions.filter(d => d.executed.length).length}/${dimensions.length} 个维度共 ${routing.activated_count} 条规则被激活。材料完整性：${missing.length ? missing.join('、') + ' 缺失' : '齐全'}。${missing.includes('分子病理/基因检测证据') ? '全案卷未见分子病理/基因检测证据，正是T-201判定的关键阴性证据。' : ''}未触发维度为本案无相关项（如无植入耗材），非漏查。`,
   };
 }
 

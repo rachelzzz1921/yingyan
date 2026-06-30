@@ -1745,6 +1745,30 @@ const server = http.createServer(async (req, res) => {
       return sendJSON(res, computeFoundation(DB.rulesDoc.rules, (DB.kb1 && DB.kb1.entries) || [], ruleCheckerIds, firedIds));
     }
 
+    if (p === '/api/provenance-triad') {
+      // 取证可信度三件套（第一护城河）：合议去重 / 覆盖度声明 / 置信度传播 —— 从主案卷实测结果结构化
+      const rep = runAuditForRecord(DB.record);
+      const m = rep.report_meta || {};
+      const s = m.summary || {};
+      const recon = m.reconciliation_log || [];
+      return sendJSON(res, {
+        case: m.case_id || 'main',
+        reconciliation: {
+          entries: recon,
+          merged_groups: recon.length,
+          suspected_amount: s.suspected_amount,
+          amount_if_double_counted: s.amount_if_double_counted,
+          saved_from_double_count: (s.amount_if_double_counted || 0) - (s.suspected_amount || 0),
+          note: '同一笔费用被多条规则从不同角度命中时，自动选主疑点、其余转佐证、金额只算一次——防过罚。',
+        },
+        coverage: m.coverage || null,
+        confidence: {
+          findings: (rep.findings || []).map(f => ({ rule_id: f.rule_id, rule_name: f.rule_name, status: f.status, confidence: f.confidence, min_ocr_conf: f.min_ocr_conf, priority_score: f.priority_score, capped: !!f.confidence_capped })),
+          note: 'OCR 低置信证据（minOcr<0.85）按比例降权；合规门禁可封顶置信度；排序=金额×置信。反幻觉是可追溯的计算，不是口号。',
+        },
+      });
+    }
+
     if (p === '/api/institution') return sendJSON(res, institutionPortrait(DB));
 
     // 文书化输出：稽核《疑点核查清单》(飞检对质) / 体检《自查整改清单》(院端自查)
