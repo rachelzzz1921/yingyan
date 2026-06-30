@@ -1893,7 +1893,8 @@ async function showFoundation() {
   const pending = d.pending_ingest.slice(0, 12).map(p => esc(p.ref.replace('KB1-', ''))).join('、');
   const html = `
     <p class="muted">把"<b>站在国家两库肩上</b>"从口号变成可点的硬证据：每条规则都能溯到<b>官方政策原文</b>（文号·条款·生效日·核验状态）。
-      <button class="v2btn" style="margin-left:8px;padding:3px 10px;font-size:12px" onclick="window.open('/api/export/foundation','_blank')">📄 导出溯源报告</button></p>
+      <button class="v2btn" style="margin-left:8px;padding:3px 10px;font-size:12px" onclick="window.open('/api/export/foundation','_blank')">📄 导出 MD</button>
+      <button class="v2btn" style="margin-left:4px;padding:3px 10px;font-size:12px" onclick="window.open('/api/export/foundation?format=html','_blank')">🖨 打印/PDF</button></p>
     <div class="bench-kpis">
       <div class="bkpi"><div class="n">${fmt(g.total)}</div><div class="l">官方两库已入库条目</div></div>
       <div class="bkpi"><div class="n">${fmt(g.with_effective_date)}</div><div class="l">带生效日(as_of可回溯)</div></div>

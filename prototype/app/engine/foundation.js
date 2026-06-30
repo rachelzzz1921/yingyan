@@ -214,4 +214,53 @@ function renderFoundationMarkdown(f) {
   return L.join('\n');
 }
 
-module.exports = { computeFoundation, renderFoundationMarkdown };
+// 可打印 HTML 版溯源报告（瑞士 IKB 风格，可直接打印/另存 PDF 交付）
+function renderFoundationHtml(f) {
+  const esc = (s) => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+  const g = f.kb_geometry, t = f.traceability_summary;
+  const funnelRows = f.funnel.map(s => `<tr><td>${esc(s.stage)}</td><td class="num">${s.count}</td><td class="muted">${esc(s.note || '')}</td></tr>`).join('');
+  const traceRows = f.traceability.filter(r => r.official_basis.length).map(r => {
+    const b = r.official_basis[0];
+    return `<tr><td><b>${esc(r.rule_id)}</b>${r.fired_on_demo ? ' 🔴' : ''}</td><td>${esc((r.rule_name || '').slice(0, 18))}</td><td class="num">${r.has_checker ? '✓' : '—'}</td><td><b>${esc(b.doc_no || b.doc_name || b.ref)}</b> ${esc(b.locator || '')}<br><span class="muted">${esc((b.text || '').slice(0, 70))}…</span></td><td>${esc(b.effective_from || '')}</td></tr>`;
+  }).join('');
+  const sp = f.specialty_coverage.map(s => `${esc(s.specialty)}(${s.rules})`).join(' · ');
+  const pend = f.pending_ingest.map(p => esc(p.ref.replace('KB1-', ''))).join('、');
+  const rm = f.roadmap ? `<p><b>持续扩展路线图</b>：${f.roadmap.rules_pending_checker} 条已声明规则待补 checker · ${f.roadmap.tables_pending_ingest} 项对照表待入库。按专科：${f.roadmap.by_specialty.map(s => esc(s.specialty) + '(' + s.count + ')').join('、')}。</p>` : '';
+  return `<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8"><title>鹰眼 · 合规地基溯源报告</title>
+<style>
+  body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;color:#0f1b2d;max-width:920px;margin:32px auto;padding:0 24px;line-height:1.6}
+  h1{color:#002FA7;font-size:24px;border-bottom:3px solid #002FA7;padding-bottom:8px}
+  h2{color:#002FA7;font-size:16px;margin-top:26px}
+  table{width:100%;border-collapse:collapse;font-size:12.5px;margin:8px 0}
+  th{background:#002FA7;color:#fff;padding:6px 8px;text-align:left}
+  td{padding:5px 8px;border-bottom:1px solid #e6ebf2;vertical-align:top}
+  .num{text-align:right;font-variant-numeric:tabular-nums}
+  .muted{color:#6b7a90;font-size:11.5px}
+  .kpis{display:flex;gap:14px;flex-wrap:wrap;margin:10px 0}
+  .kpi{flex:1;min-width:120px;background:#f5f8ff;border:1px solid #d8e2f5;border-radius:10px;padding:12px;text-align:center}
+  .kpi .n{font-size:22px;font-weight:800;color:#002FA7}.kpi .l{font-size:11px;color:#6b7a90}
+  .note{background:#f5f8ff;border-left:4px solid #002FA7;padding:8px 12px;font-size:12.5px;border-radius:4px}
+  @media print{body{margin:0}h2{page-break-after:avoid}}
+</style></head><body>
+<h1>鹰眼 EAGLEEYE · 合规地基溯源报告</h1>
+<p class="muted">把"站在国家两库肩上"从口号变成<b>可核验的溯源凭证</b>——每条规则均可追溯到官方政策原文（文号·条款·生效日·核验状态）。数据来自仓库真实文件，未入库内容诚实标注，绝不编造。</p>
+<div class="kpis">
+  <div class="kpi"><div class="n">${g.total}</div><div class="l">官方条目已入库</div></div>
+  <div class="kpi"><div class="n">${g.with_effective_date}</div><div class="l">带生效日(as_of)</div></div>
+  <div class="kpi"><div class="n">${t.rules_total}</div><div class="l">操作化规则</div></div>
+  <div class="kpi"><div class="n">${f.specialty_coverage.length}</div><div class="l">覆盖专科</div></div>
+  <div class="kpi"><div class="n">${t.refs_resolved_pct}%</div><div class="l">引用可溯源</div></div>
+</div>
+<h2>一、操作化漏斗（官方两库 → 可执行稽核）</h2>
+<table><tr><th>阶段</th><th>数量</th><th>说明</th></tr>${funnelRows}</table>
+<p class="muted">来源：${g.top_sources.map(s => esc(s.source) + ' ' + s.count).join(' · ')}　|　layer：${Object.entries(g.layers).map(([k, v]) => esc(k) + v).join(' ')}</p>
+<h2>二、专科覆盖</h2><p>${sp}</p>
+<h2>三、规则 ↔ 官方政策 溯源明细</h2>
+<table><tr><th>规则</th><th>名称</th><th>checker</th><th>官方依据（可核验）</th><th>生效日</th></tr>${traceRows}</table>
+<h2>四、诚实口径与路线图</h2>
+<div class="note">${esc(f.honesty_note)}${pend ? '<br>待入库：' + pend : ''}</div>${rm}
+<hr><p class="muted">鹰眼 EAGLEEYE · 合规地基溯源报告 · 数据源：rules.json + kb1_policies.json + 引擎 checker 注册表</p>
+</body></html>`;
+}
+
+module.exports = { computeFoundation, renderFoundationMarkdown, renderFoundationHtml };
