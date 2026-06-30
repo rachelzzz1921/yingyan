@@ -1937,7 +1937,17 @@ const server = http.createServer(async (req, res) => {
       report.report_meta.real_agent = false;
       report.report_meta.panel = mode === 'exam' ? '体检' : '稽核';
       report.report_meta.case_id = caseId;
-      if (mode === 'exam') report.report_meta.exam_rule_filter = examFilterMeta;
+      if (mode === 'exam') {
+        report.report_meta.exam_rule_filter = examFilterMeta;
+        // 院端口径：医院自查不会"责令"自己 → 处置措辞改为"建议主动退回/整改"(宽严相济从轻),只换措辞不动检测
+        const toHospitalVoice = (s) => typeof s === 'string'
+          ? s.replace(/责令退回/g, '主动退回').replace(/责令改正/g, '主动整改').replace(/责令/g, '建议').replace(/拒付/g, '自查核减')
+          : s;
+        for (const fnd of (report.findings || [])) {
+          if (fnd.disposal_suggestion) fnd.disposal_suggestion = toHospitalVoice(fnd.disposal_suggestion);
+          if (fnd.disposal) fnd.disposal = toHospitalVoice(fnd.disposal);
+        }
+      }
       if (overlayIds.length) report.report_meta.overlay_rules = overlayIds;
       report.report_meta.elapsed_ms = Date.now() - t0;
       report.report_meta.injected = !!body.inject;
