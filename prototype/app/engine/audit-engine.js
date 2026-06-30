@@ -114,6 +114,38 @@ const ruleCheckers = {
     })];
   },
 
+  /** F-004 单日计量超物理上限：计时项目(吸氧/持续监护)按 fee_date 聚合单日累计 >24h → 物理不可能 */
+  'F-004': (ctx) => {
+    const { record } = ctx;
+    const items = (record.fee_list && record.fee_list.items) || [];
+    const isHourly = (l) => /小时|时长/.test(l.unit || '') || /持续吸氧|持续.*监护|氧疗/.test(l.item_name || '');
+    // 仅对"单日"计费判物理上限；日期区间(如 05-20~05-23,跨多日累计)无法确定单日量 → 跳过，宁漏不误报
+    const isSingleDay = (fd) => !!fd && !/[~～至到]/.test(String(fd)) && /^\d{4}-\d{1,2}-\d{1,2}$/.test(String(fd).trim());
+    const byDayItem = {};
+    for (const line of items) {
+      if (!isSingleDay(line.fee_date) || !isHourly(line)) continue;
+      const key = line.fee_date + '|' + (line.item_name || '');
+      (byDayItem[key] = byDayItem[key] || { date: line.fee_date, item: line.item_name, qty: 0, lines: [] });
+      byDayItem[key].qty += Number(line.qty) || 0;
+      byDayItem[key].lines.push(line);
+    }
+    const findings = [];
+    for (const v of Object.values(byDayItem)) {
+      if (v.qty <= 24) continue;
+      const total = money(v.lines.reduce((s, l) => s + (l.amount || 0), 0));
+      findings.push(mkFinding(ctx, 'F-004', {
+        status: '疑点', risk_level: '高', amount_involved: total,
+        evidence: [
+          ...v.lines.map(l => ev('费用行', `费用清单 第${l.line_no}行`, `${l.item_name} ${l.fee_date} ×${l.qty}${l.unit || ''} ${money(l.amount)}元`)),
+          ev('物理上限', '单日≤24小时', `${v.item} ${v.date} 单日累计 ${v.qty} 小时 > 24 小时`),
+        ],
+        reasoning: `${v.date} ${v.item} 单日累计计费 ${v.qty} 小时，超过一天 24 小时的物理上限——同一计时项目单日不可能超过 24 小时。L1 计量确定性规则命中，无需语义判断。`,
+        disposal: `建议核减超 24 小时部分，并核查计费系统按时累加逻辑是否重复计量。`,
+      }));
+    }
+    return findings;
+  },
+
   /** A-105 护理等级与实际不符：收费等级 > 医嘱等级 */
   'A-105': (ctx) => {
     const { record } = ctx;
