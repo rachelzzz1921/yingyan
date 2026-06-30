@@ -136,4 +136,58 @@ function computeFoundation(rules, kb, checkerIds = [], firedIds = null) {
   };
 }
 
-module.exports = { computeFoundation };
+// 导出"合规地基溯源报告"——可交给评委/投资人/客户的官方溯源凭证（Markdown）
+function renderFoundationMarkdown(f) {
+  const g = f.kb_geometry, t = f.traceability_summary;
+  const L = [];
+  L.push('# 鹰眼 · 合规地基溯源报告');
+  L.push('');
+  L.push('> 把"站在国家两库肩上"从口号变成**可核验的溯源凭证**：每条规则均可追溯到官方政策原文（文号 · 条款 · 生效日 · 核验状态）。数据全部来自仓库真实文件，未入库内容诚实标注，绝不编造。');
+  L.push('');
+  L.push('## 一、地基几何（已入库的官方两库内容）');
+  L.push('');
+  L.push(`- **官方条目总数**：${g.total} 条（其中 ${g.with_effective_date} 条带生效日，支持 as_of 政策版本回溯）`);
+  L.push(`- **层次分布**：${Object.entries(g.layers).map(([k, v]) => `${k} ${v}`).join(' · ')}`);
+  L.push(`- **权威来源**：${g.top_sources.map(s => `${s.source} ${s.count}`).join(' · ')}`);
+  L.push('');
+  L.push('## 二、操作化漏斗（官方两库 → 可执行稽核）');
+  L.push('');
+  L.push('| 阶段 | 数量 | 说明 |');
+  L.push('|---|---:|---|');
+  f.funnel.forEach(s => L.push(`| ${s.stage} | ${s.count} | ${s.note || ''} |`));
+  L.push('');
+  L.push('## 三、溯源完整性');
+  L.push('');
+  L.push(`- 引用官方政策的规则：**${t.rules_with_official_ref}/${t.rules_total}**`);
+  L.push(`- 有确定性 checker（真·计算判定）：**${t.rules_with_checker}** 条`);
+  L.push(`- 政策引用可溯源到原文：**${t.refs_resolved}/${t.refs_total}（${t.refs_resolved_pct}%）**`);
+  L.push(`- 被引用但尚未入库的官方对照表：${t.refs_pending_ingest} 项（标注"待入库"，见第六节）`);
+  L.push('');
+  L.push('## 四、专科覆盖（破"只会查肿瘤"单点）');
+  L.push('');
+  L.push(f.specialty_coverage.map(s => `${s.specialty}（${s.rules}）`).join(' · '));
+  L.push('');
+  L.push('## 五、规则 ↔ 官方政策 溯源明细');
+  L.push('');
+  L.push('| 规则 | 名称 | checker | 官方依据 | 条款 | 生效日 |');
+  L.push('|---|---|:---:|---|---|---|');
+  f.traceability.filter(r => r.official_basis.length).forEach(r => {
+    const b = r.official_basis[0];
+    L.push(`| ${r.rule_id}${r.fired_on_demo ? ' 🔴' : ''} | ${(r.rule_name || '').replace(/\|/g, '/')} | ${r.has_checker ? '✓' : '—'} | ${(b.doc_no || b.doc_name || b.ref).replace(/\|/g, '/')} | ${(b.locator || '').replace(/\|/g, '/')} | ${b.effective_from || ''} |`);
+  });
+  L.push('');
+  L.push('## 六、诚实口径（待入库清单）');
+  L.push('');
+  L.push(f.honesty_note);
+  L.push('');
+  if (f.pending_ingest.length) {
+    L.push('被规则引用、尚未入库的官方对照表（路线图，非地基缺失）：');
+    f.pending_ingest.forEach(p => L.push(`- \`${p.ref}\` — 引用方：${p.referenced_by.join('、')} — 状态：${p.status}`));
+  }
+  L.push('');
+  L.push('---');
+  L.push('*鹰眼 EAGLEEYE · 合规地基溯源报告 · 数据源：rules.json + kb1_policies.json + 引擎 checker 注册表*');
+  return L.join('\n');
+}
+
+module.exports = { computeFoundation, renderFoundationMarkdown };

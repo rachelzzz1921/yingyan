@@ -31,7 +31,7 @@ const path = require('path');
   } catch (e) { /* 无 .env 则跳过 */ }
 })();
 const { runAudit, ruleCheckerIds } = require('./engine/audit-engine');
-const { computeFoundation } = require('./engine/foundation');
+const { computeFoundation, renderFoundationMarkdown } = require('./engine/foundation');
 const precipService = require('./engine/rule-precipitation-service');
 const { ingestStructured, ingestDocument } = require('./engine/ingest');
 const { processIntakeBatch } = require('./engine/intake-batch');
@@ -1774,6 +1774,15 @@ const server = http.createServer(async (req, res) => {
       }
       const md = renderInstitutionReport(portrait);
       res.writeHead(200, { 'Content-Type': 'text/markdown; charset=utf-8', 'Content-Disposition': "attachment; filename=\"yingyan-institution.md\"; filename*=UTF-8''" + encodeURIComponent('院端体检报告.md') });
+      return res.end(md);
+    }
+
+    if (p === '/api/export/foundation') {
+      let firedIds = null;
+      try { firedIds = (runAuditForRecord(DB.record).findings || []).map(f => f.rule_id).filter(Boolean); } catch (e) { /* 非关键 */ }
+      const f = computeFoundation(DB.rulesDoc.rules, (DB.kb1 && DB.kb1.entries) || [], ruleCheckerIds, firedIds);
+      const md = renderFoundationMarkdown(f);
+      res.writeHead(200, { 'Content-Type': 'text/markdown; charset=utf-8', 'Content-Disposition': "attachment; filename=\"yingyan-foundation.md\"; filename*=UTF-8''" + encodeURIComponent('鹰眼-合规地基溯源报告.md') });
       return res.end(md);
     }
 
