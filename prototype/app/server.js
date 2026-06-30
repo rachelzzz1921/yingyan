@@ -30,7 +30,8 @@ const path = require('path');
     }
   } catch (e) { /* 无 .env 则跳过 */ }
 })();
-const { runAudit } = require('./engine/audit-engine');
+const { runAudit, ruleCheckerIds } = require('./engine/audit-engine');
+const { computeFoundation } = require('./engine/foundation');
 const precipService = require('./engine/rule-precipitation-service');
 const { ingestStructured, ingestDocument } = require('./engine/ingest');
 const { processIntakeBatch } = require('./engine/intake-batch');
@@ -1735,6 +1736,15 @@ const server = http.createServer(async (req, res) => {
     }
 
     // iter14 机构汇总画像：8案卷批量初筛后聚合成院端体检报告
+    if (p === '/api/foundation') {
+      let firedIds = null;
+      try {
+        const rep = runAuditForRecord(DB.record);
+        firedIds = (rep.findings || []).map(f => f.rule_id).filter(Boolean);
+      } catch (e) { /* fired 仅作锦上添花，失败不影响地基统计 */ }
+      return sendJSON(res, computeFoundation(DB.rulesDoc.rules, (DB.kb1 && DB.kb1.entries) || [], ruleCheckerIds, firedIds));
+    }
+
     if (p === '/api/institution') return sendJSON(res, institutionPortrait(DB));
 
     // 文书化输出：稽核《疑点核查清单》(飞检对质) / 体检《自查整改清单》(院端自查)

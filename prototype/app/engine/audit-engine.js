@@ -1339,4 +1339,4 @@ function applyPostAuditGovernance(findings, options = {}) {
   };
 }
 
-module.exports = { runAudit, parseDate, computeExpectedQty, compileCaseObject, reconcile, applyPostAuditGovernance };
+module.exports = { runAudit, parseDate, computeExpectedQty, compileCaseObject, reconcile, applyPostAuditGovernance, ruleCheckerIds: Object.keys(ruleCheckers) };

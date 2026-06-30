@@ -1561,6 +1561,7 @@ if (btnIngest) btnIngest.onclick = showIngest;
 $('#btnFacts').onclick = showFacts;
 $('#btnBench').onclick = showBench;
 $('#btnInstitution').onclick = showInstitution;
+const _btnFoundation = $('#btnFoundation'); if (_btnFoundation) _btnFoundation.onclick = showFoundation;
 $('#btnGovernance').onclick = showGovernance;
 const btnRuleCatalog = $('#btnRuleCatalog');
 if (btnRuleCatalog) btnRuleCatalog.onclick = () => showRuleCatalog();
@@ -1855,6 +1856,57 @@ async function showInstitution() {
     <table class="fee-table"><thead><tr><th>案卷</th><th>科室</th><th>领域</th><th class="num">疑点</th><th class="num">线索</th><th class="num">金额</th></tr></thead><tbody>${caseRows}</tbody></table>
     <p class="muted" style="margin-top:10px">${esc(d.disclaimer)}</p>`;
   openModal('🏥 机构汇总画像 · ' + esc(d.hospital), html);
+}
+
+async function showFoundation() {
+  let d;
+  try { d = await fetch('/api/foundation').then(r => r.json()); }
+  catch (e) { openModal('🏛 合规地基', `<p class="muted">加载失败：${esc(String(e))}</p>`); return; }
+  const g = d.kb_geometry, t = d.traceability_summary;
+  const maxF = Math.max(...d.funnel.map(s => s.count), 1);
+  const funnelRows = d.funnel.map((s, i) => `<div class="ins-bar-row">
+      <span class="ins-bar-label">${esc(s.stage)}</span>
+      <span class="ins-bar-track"><span class="ins-bar-fill ${i >= 3 ? '' : 'dom'}" style="width:${Math.max(5, Math.round(s.count / maxF * 100))}%"></span></span>
+      <span class="ins-bar-val">${fmt(s.count)}</span>
+    </div><div class="muted" style="font-size:11px;margin:-2px 0 7px 38%">${esc(s.note || '')}</div>`).join('');
+  const maxSp = Math.max(...d.specialty_coverage.map(s => s.rules), 1);
+  const spBars = d.specialty_coverage.map(s => `<div class="ins-bar-row"><span class="ins-bar-label">${esc(s.specialty)}</span><span class="ins-bar-track"><span class="ins-bar-fill" style="width:${Math.round(s.rules / maxSp * 100)}%"></span></span><span class="ins-bar-val">${s.rules}<span class="muted"> 条</span></span></div>`).join('');
+  // 溯源表：优先展示 demo 真 fire 的，其次有 checker 的
+  const traced = d.traceability.filter(r => r.official_basis.length).sort((a, b) => (b.fired_on_demo - a.fired_on_demo) || (b.has_checker - a.has_checker));
+  const traceRows = traced.slice(0, 16).map(r => {
+    const b = r.official_basis[0];
+    return `<tr>
+      <td>${typeof ruleLink === 'function' ? ruleLink(r.rule_id, { compact: true }) : esc(r.rule_id)} ${r.fired_on_demo ? '<span title="本案真fire">🔴</span>' : (r.has_checker ? '<span class="muted" title="有checker">⚙</span>' : '')}</td>
+      <td>${esc((r.rule_name || '').slice(0, 16))}</td>
+      <td><b>${esc(b.doc_no || b.doc_name || b.ref)}</b> ${esc(b.locator || '')}<div class="muted" style="font-size:11px">${esc((b.text || '').slice(0, 60))}…${b.effective_from ? ' · 生效 ' + esc(b.effective_from) : ''}</div></td>
+    </tr>`;
+  }).join('');
+  const pending = d.pending_ingest.slice(0, 12).map(p => esc(p.ref.replace('KB1-', ''))).join('、');
+  const html = `
+    <p class="muted">把"<b>站在国家两库肩上</b>"从口号变成可点的硬证据：每条规则都能溯到<b>官方政策原文</b>（文号·条款·生效日·核验状态）。${d.honesty_note ? '' : ''}</p>
+    <div class="bench-kpis">
+      <div class="bkpi"><div class="n">${fmt(g.total)}</div><div class="l">官方两库已入库条目</div></div>
+      <div class="bkpi"><div class="n">${fmt(g.with_effective_date)}</div><div class="l">带生效日(as_of可回溯)</div></div>
+      <div class="bkpi"><div class="n">${t.rules_total}</div><div class="l">已操作化在库规则</div></div>
+      <div class="bkpi"><div class="n">${d.specialty_coverage.length}</div><div class="l">覆盖临床专科</div></div>
+      <div class="bkpi green"><div class="n">${t.refs_resolved_pct}%</div><div class="l">规则引用可溯源</div></div>
+    </div>
+    <div class="facts-h">⛓ 操作化漏斗：官方两库 → 可执行稽核</div>
+    <div class="ins-bars">${funnelRows}</div>
+    <p class="muted" style="font-size:11.5px">来源：${g.top_sources.slice(0, 4).map(s => esc(s.source) + ' ' + s.count).join(' · ')}　|　layer：${Object.entries(g.layers).map(([k, v]) => esc(k) + v).join(' ')}</p>
+    <div class="ins-2col">
+      <div>
+        <div class="facts-h">🏥 专科覆盖（破"只会查肿瘤"）</div>
+        <div class="ins-bars">${spBars}</div>
+      </div>
+      <div>
+        <div class="facts-h">🔗 规则↔官方政策 溯源（🔴本案fire ⚙有checker）</div>
+        <table class="fee-table"><thead><tr><th>规则</th><th>名称</th><th>官方依据(可核验)</th></tr></thead><tbody>${traceRows}</tbody></table>
+      </div>
+    </div>
+    <div class="cov-statement" style="margin-top:12px">📌 <b>诚实口径</b>：已入库均为官方公开发布批次原文；${t.refs_pending_ingest} 项被规则引用但尚未入库的对照表标注「待入库」（${pending}…），<b>绝不编造</b>。这是路线图，不是地基缺失。</div>
+  `;
+  openModal('🏛 合规地基 · 站在国家两库肩上（可溯源）', html);
 }
 
 const STATUS_META = { active: { label: '在役 active', cls: 'gv-active' }, shadow: { label: '观察期 shadow', cls: 'gv-shadow' }, deprecated: { label: '已下线 deprecated', cls: 'gv-dep' } };
