@@ -1906,6 +1906,7 @@ async function showFoundation() {
       </div>
     </div>
     <div class="cov-statement" style="margin-top:12px">📌 <b>诚实口径</b>：已入库均为官方公开发布批次原文；${t.refs_pending_ingest} 项被规则引用但尚未入库的对照表标注「待入库」（${pending}…），<b>绝不编造</b>。这是路线图，不是地基缺失。</div>
+    ${d.roadmap ? `<div class="cov-statement" style="margin-top:8px;background:#fbfcfe">🛣 <b>持续扩展路线图</b>：从 ${(d.kb_geometry.layers['规则'] || 0)} 条官方"规则"层条目继续操作化——当前 <b>${d.roadmap.rules_pending_checker}</b> 条已声明规则待补 checker（${d.roadmap.by_specialty.slice(0, 5).map(s => esc(s.specialty) + s.count).join('、')}…）+ ${d.roadmap.tables_pending_ingest} 项对照表待入库。地基不是静态的，是<b>可持续从官方两库长出来</b>的。</div>` : ''}
   `;
   openModal('🏛 合规地基 · 站在国家两库肩上（可溯源）', html);
 }

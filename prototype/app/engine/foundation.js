@@ -101,6 +101,21 @@ function computeFoundation(rules, kb, checkerIds = [], firedIds = null) {
   const rulesWithChecker = rules.filter(r => checkerSet.has(r.rule_id)).length;
   const unresolvedList = [...unresolved.entries()].map(([ref, ruleIds]) => ({ ref, referenced_by: ruleIds, status: '待入库' }));
 
+  // 地基路线图：已声明但未操作化(无 checker)的规则——诚实的扩展 backlog，按专科聚合
+  const pendingChecker = rules.filter(r => !checkerSet.has(r.rule_id));
+  const backlogBySpecialty = {};
+  for (const r of pendingChecker) {
+    const sp = (r.specialty_tags && r.specialty_tags[0]) || r.category || '未分类';
+    if (!backlogBySpecialty[sp]) backlogBySpecialty[sp] = [];
+    backlogBySpecialty[sp].push(r.rule_id);
+  }
+  const roadmap = {
+    rules_pending_checker: pendingChecker.length,
+    by_specialty: Object.entries(backlogBySpecialty).sort((a, b) => b[1].length - a[1].length).map(([sp, ids]) => ({ specialty: sp, count: ids.length, rule_ids: ids })),
+    tables_pending_ingest: unresolvedList.length,
+    note: '已声明未操作化的规则 + 待入库对照表 = 从官方两库持续扩展的路线图(非地基缺失)。',
+  };
+
   // ② 操作化漏斗（官方KB → 在库规则 → 有checker → demo真fire）
   const funnel = [
     { stage: '官方两库已入库', count: kb.length, note: `KB1 政策/规则/目录条目（${withEffective} 条带生效日，支持 as_of 版本回溯）` },
@@ -131,6 +146,7 @@ function computeFoundation(rules, kb, checkerIds = [], firedIds = null) {
     },
     specialty_coverage: specialtyList,
     pending_ingest: unresolvedList,
+    roadmap,
     traceability,
     honesty_note: '已入库的均为官方公开发布批次原文（带文号/生效日/核验状态）；少量被规则引用但尚未入库的对照表标注"待入库"，绝不编造。',
   };
@@ -185,6 +201,14 @@ function renderFoundationMarkdown(f) {
     f.pending_ingest.forEach(p => L.push(`- \`${p.ref}\` — 引用方：${p.referenced_by.join('、')} — 状态：${p.status}`));
   }
   L.push('');
+  if (f.roadmap) {
+    L.push('## 七、持续扩展路线图（从官方两库长出更多 checker）');
+    L.push('');
+    L.push(`- 已声明、待补 checker 的规则：**${f.roadmap.rules_pending_checker}** 条；待入库官方对照表：${f.roadmap.tables_pending_ingest} 项`);
+    L.push(`- 按专科分布：${f.roadmap.by_specialty.map(s => `${s.specialty}（${s.count}）`).join(' · ')}`);
+    L.push(`- ${f.roadmap.note}`);
+    L.push('');
+  }
   L.push('---');
   L.push('*鹰眼 EAGLEEYE · 合规地基溯源报告 · 数据源：rules.json + kb1_policies.json + 引擎 checker 注册表*');
   return L.join('\n');
