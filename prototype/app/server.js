@@ -1742,12 +1742,16 @@ const server = http.createServer(async (req, res) => {
         const rep = runAuditForRecord(DB.record);
         firedIds = (rep.findings || []).map(f => f.rule_id).filter(Boolean);
       } catch (e) { /* fired 仅作锦上添花，失败不影响地基统计 */ }
-      return sendJSON(res, computeFoundation(DB.rulesDoc.rules, (DB.kb1 && DB.kb1.entries) || [], ruleCheckerIds, firedIds, (DB.kb2 && DB.kb2.entries) || []));
+      try {
+        return sendJSON(res, computeFoundation(DB.rulesDoc.rules, (DB.kb1 && DB.kb1.entries) || [], ruleCheckerIds, firedIds, (DB.kb2 && DB.kb2.entries) || []));
+      } catch (e) { return sendJSON(res, { error: '合规地基统计失败：' + e.message, kb_geometry: { total: 0, layers: {}, top_sources: [] }, funnel: [], traceability_summary: {}, specialty_coverage: [], traceability: [] }); }
     }
 
     if (p === '/api/provenance-triad') {
       // 取证可信度三件套（第一护城河）：合议去重 / 覆盖度声明 / 置信度传播 —— 从主案卷实测结果结构化
-      const rep = runAuditForRecord(DB.record);
+      let rep;
+      try { rep = runAuditForRecord(DB.record); }
+      catch (e) { return sendJSON(res, { error: '三件套生成失败：' + e.message, reconciliation: { entries: [] }, coverage: null, confidence: { findings: [] } }); }
       const m = rep.report_meta || {};
       const s = m.summary || {};
       const recon = m.reconciliation_log || [];
