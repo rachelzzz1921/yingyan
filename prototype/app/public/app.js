@@ -1905,6 +1905,7 @@ async function showFoundation() {
     <div class="facts-h">⛓ 操作化漏斗：官方两库 → 可执行稽核</div>
     <div class="ins-bars">${funnelRows}</div>
     <p class="muted" style="font-size:11.5px">来源：${g.top_sources.slice(0, 4).map(s => esc(s.source) + ' ' + s.count).join(' · ')}　|　layer：${Object.entries(g.layers).map(([k, v]) => esc(k) + v).join(' ')}</p>
+    ${d.clinical_kb ? `<p class="muted" style="font-size:11.5px">📖 <b>两库另一半 · 临床知识库</b>：${d.clinical_kb.total} 条临床指导原则/说明书/重点监控（${d.clinical_kb.sources.slice(0, 3).map(s => esc(s.source)).join('、')}…），<b>${d.clinical_kb.rules_referencing}</b> 条规则同时引临床依据——政策条款 + 临床指南双重溯源。</p>` : ''}
     <div class="ins-2col">
       <div>
         <div class="facts-h">🏥 专科覆盖（破"只会查肿瘤"）</div>

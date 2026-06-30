@@ -1742,7 +1742,7 @@ const server = http.createServer(async (req, res) => {
         const rep = runAuditForRecord(DB.record);
         firedIds = (rep.findings || []).map(f => f.rule_id).filter(Boolean);
       } catch (e) { /* fired 仅作锦上添花，失败不影响地基统计 */ }
-      return sendJSON(res, computeFoundation(DB.rulesDoc.rules, (DB.kb1 && DB.kb1.entries) || [], ruleCheckerIds, firedIds));
+      return sendJSON(res, computeFoundation(DB.rulesDoc.rules, (DB.kb1 && DB.kb1.entries) || [], ruleCheckerIds, firedIds, (DB.kb2 && DB.kb2.entries) || []));
     }
 
     if (p === '/api/provenance-triad') {
@@ -1804,7 +1804,7 @@ const server = http.createServer(async (req, res) => {
     if (p === '/api/export/foundation') {
       let firedIds = null;
       try { firedIds = (runAuditForRecord(DB.record).findings || []).map(f => f.rule_id).filter(Boolean); } catch (e) { /* 非关键 */ }
-      const f = computeFoundation(DB.rulesDoc.rules, (DB.kb1 && DB.kb1.entries) || [], ruleCheckerIds, firedIds);
+      const f = computeFoundation(DB.rulesDoc.rules, (DB.kb1 && DB.kb1.entries) || [], ruleCheckerIds, firedIds, (DB.kb2 && DB.kb2.entries) || []);
       if (url.searchParams.get('format') === 'html') {
         res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
         return res.end(renderFoundationHtml(f));

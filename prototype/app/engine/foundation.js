@@ -43,9 +43,20 @@ function resolveRef(ref, kb, kbIndex) {
  * @param {string[]} checkerIds audit-engine 真实现的 checker rule_id（operationalized）
  * @param {string[]} firedIds  （可选）demo 案卷上真 fire 的 rule_id
  */
-function computeFoundation(rules, kb, checkerIds = [], firedIds = null) {
+function computeFoundation(rules, kb, checkerIds = [], firedIds = null, kb2 = []) {
   kb = kb || [];
+  kb2 = kb2 || [];
   const kbIndex = buildKbIndex(kb);
+
+  // 临床知识库（kb2）= 国家两库中"知识库"那一半：临床指导原则/说明书/重点监控目录
+  const kb2Sources = {};
+  for (const e of kb2) { const src = (e.source || '').split('·')[0] || e.doc_no || '临床指导'; kb2Sources[src] = (kb2Sources[src] || 0) + 1; }
+  const rulesWithClinical = rules.filter(r => r.kb2_refs && (Array.isArray(r.kb2_refs) ? r.kb2_refs.length : r.kb2_refs)).length;
+  const clinical_kb = {
+    total: kb2.length,
+    rules_referencing: rulesWithClinical,
+    sources: Object.entries(kb2Sources).sort((a, b) => b[1] - a[1]).slice(0, 5).map(([k, v]) => ({ source: k, count: v })),
+  };
 
   // ① 地基几何
   const layers = {}, authority = {};
@@ -145,6 +156,7 @@ function computeFoundation(rules, kb, checkerIds = [], firedIds = null) {
       refs_pending_ingest: unresolvedList.length,
     },
     specialty_coverage: specialtyList,
+    clinical_kb,
     pending_ingest: unresolvedList,
     roadmap,
     traceability,
@@ -165,6 +177,7 @@ function renderFoundationMarkdown(f) {
   L.push(`- **官方条目总数**：${g.total} 条（其中 ${g.with_effective_date} 条带生效日，支持 as_of 政策版本回溯）`);
   L.push(`- **层次分布**：${Object.entries(g.layers).map(([k, v]) => `${k} ${v}`).join(' · ')}`);
   L.push(`- **权威来源**：${g.top_sources.map(s => `${s.source} ${s.count}`).join(' · ')}`);
+  if (f.clinical_kb) L.push(`- **两库另一半·临床知识库**：${f.clinical_kb.total} 条临床指导原则/说明书/重点监控；${f.clinical_kb.rules_referencing} 条规则同时引临床依据（政策条款 + 临床指南双重溯源）`);
   L.push('');
   L.push('## 二、操作化漏斗（官方两库 → 可执行稽核）');
   L.push('');
@@ -254,6 +267,7 @@ function renderFoundationHtml(f) {
 <h2>一、操作化漏斗（官方两库 → 可执行稽核）</h2>
 <table><tr><th>阶段</th><th>数量</th><th>说明</th></tr>${funnelRows}</table>
 <p class="muted">来源：${g.top_sources.map(s => esc(s.source) + ' ' + s.count).join(' · ')}　|　layer：${Object.entries(g.layers).map(([k, v]) => esc(k) + v).join(' ')}</p>
+${f.clinical_kb ? `<p class="muted">📖 两库另一半·临床知识库：${f.clinical_kb.total} 条临床指导原则/说明书/重点监控，${f.clinical_kb.rules_referencing} 条规则同时引临床依据（政策条款 + 临床指南双重溯源）。</p>` : ''}
 <h2>二、专科覆盖</h2><p>${sp}</p>
 <h2>三、规则 ↔ 官方政策 溯源明细</h2>
 <table><tr><th>规则</th><th>名称</th><th>checker</th><th>官方依据（可核验）</th><th>生效日</th></tr>${traceRows}</table>
