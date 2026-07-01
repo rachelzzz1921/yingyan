@@ -1,0 +1,182 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="80cm" height="180cm" viewBox="0 0 2400 5400" fill="none" role="img" aria-labelledby="pt pd">
+  <title id="pt">鹰眼 EAGLEEYE 医保基金稽核智能体 · 易拉宝海报 v4(黑底红冲击)</title>
+  <desc id="pd">80x180cm rollup, black + red + white. EagleEye medical-insurance audit AI: evidence-chain forensics, 2 audiences x 3 stages, moat.</desc>
+  <defs>
+    <linearGradient id="navy" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#0B2A4A"/><stop offset="1" stop-color="#134E72"/></linearGradient>
+    <linearGradient id="iris" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#2DD4BF"/><stop offset="1" stop-color="#14B8A6"/></linearGradient>
+    <linearGradient id="amber" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#E8A838"/><stop offset="1" stop-color="#F5C842"/></linearGradient>
+    <linearGradient id="redbar" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#E4002B"/><stop offset="1" stop-color="#FF3B4E"/></linearGradient>
+    <linearGradient id="herowash" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1A070D"/><stop offset="1" stop-color="#0D0F14"/></linearGradient>
+    <radialGradient id="redglow" cx="0.82" cy="0.25" r="0.72"><stop offset="0" stop-color="#E4002B" stop-opacity="0.55"/><stop offset="1" stop-color="#E4002B" stop-opacity="0"/></radialGradient>
+    <pattern id="dots" width="54" height="54" patternUnits="userSpaceOnUse"><circle cx="6" cy="6" r="2" fill="#FFFFFF" opacity="0.05"/></pattern>
+    <style>
+      .f{font-family:"PingFang SC","Hiragino Sans GB","Noto Sans SC","Microsoft YaHei","Helvetica Neue",Arial,sans-serif}
+      .l{font-family:Inter,"Helvetica Neue",Arial,sans-serif}
+      .m{font-family:"SF Mono","DM Mono","Roboto Mono",Menlo,monospace}
+      .w{fill:#FFFFFF}.o{fill:#E6EAF0}.mut{fill:#98A4B4}.red{fill:#FF3B4E}.teal{fill:#37E0CC}.amb{fill:#F5C842}
+      .eb{fill:#FF3B4E;letter-spacing:0.16em}
+    </style>
+  </defs>
+
+  <rect width="2400" height="5400" fill="#0D0F14"/>
+  <rect width="2400" height="5400" fill="url(#dots)"/>
+
+  <!-- ① Header -->
+  <g class="f" transform="translate(150 96)">
+    <g transform="scale(2.9)">
+      <rect x="0" y="4" width="56" height="56" rx="14" fill="url(#navy)"/>
+      <circle cx="28" cy="32" r="22" stroke="url(#amber)" stroke-width="1.5" stroke-opacity="0.55" fill="none"/>
+      <path d="M28 14 A18 18 0 0 1 46 32" stroke="url(#amber)" stroke-width="2.5" stroke-linecap="round" fill="none" opacity="0.9"/>
+      <path d="M10 32 C14 22 42 22 46 32 C42 42 14 42 10 32 Z" stroke="#fff" stroke-width="2" stroke-linejoin="round" fill="none" opacity="0.92"/>
+      <circle cx="28" cy="32" r="9" fill="url(#iris)"/><circle cx="28" cy="32" r="4.2" fill="#061829"/>
+      <circle cx="30.5" cy="29.5" r="1.6" fill="#fff" opacity="0.95"/>
+      <line x1="8" y1="32" x2="14" y2="32" stroke="url(#amber)" stroke-width="1.5" stroke-linecap="round" opacity="0.5"/>
+      <line x1="42" y1="32" x2="48" y2="32" stroke="url(#amber)" stroke-width="1.5" stroke-linecap="round" opacity="0.5"/>
+    </g>
+    <text x="212" y="82" class="w" font-size="78" font-weight="800">鹰眼 <tspan class="l" fill="#37E0CC" font-size="70">EAGLEEYE</tspan></text>
+    <text x="214" y="146" class="mut" font-size="36" font-weight="500">医保基金稽核智能体 · 飞检取证放大镜</text>
+    <text x="2100" y="60" class="mut l" font-size="27" font-weight="600" text-anchor="end" letter-spacing="0.06em">MEDICAL INSURANCE AUDIT · AI AGENT</text>
+    <text x="2100" y="114" class="red m" font-size="29" font-weight="700" text-anchor="end">模法黑客松 S4 · 2026</text>
+    <rect x="0" y="188" width="2100" height="5" fill="url(#redbar)"/>
+  </g>
+
+  <!-- ② Hero -->
+  <g class="f" transform="translate(150 350)">
+    <rect x="0" y="0" width="2100" height="962" rx="22" fill="url(#herowash)" stroke="#33131B" stroke-width="2"/>
+    <rect x="0" y="0" width="2100" height="962" rx="22" fill="url(#redglow)"/>
+    <text x="66" y="104" class="m eb" font-size="34" font-weight="700">EVIDENCE-CHAIN FORENSICS · 证据取证</text>
+    <text x="66" y="268" class="w" font-size="128" font-weight="800">看得懂病历的稽核 AI，</text>
+    <text x="66" y="416" class="w" font-size="128" font-weight="800">把线索变成<tspan class="red">能对质的证据</tspan>。</text>
+    <text x="66" y="506" class="o" font-size="42" font-weight="500">读懂病程·医嘱·费用清单，做费用-诊断-医嘱三方交叉验证；</text>
+    <text x="66" y="562" class="o" font-size="42" font-weight="500">每条疑点回链原文与政策条款——<tspan class="red" font-weight="700">引不出原文的，不输出。</tspan></text>
+
+    <rect x="66" y="636" width="1968" height="3" fill="#33262A"/>
+    <g transform="translate(66 686)">
+      <text x="0" y="112" class="m red" font-size="132" font-weight="800">40<tspan font-size="54">分钟</tspan></text>
+      <text x="440" y="112" class="mut" font-size="104" font-weight="800">→</text>
+      <text x="600" y="112" class="m teal" font-size="132" font-weight="800">90<tspan font-size="54">秒</tspan></text>
+      <text x="1040" y="112" class="mut" font-size="104" font-weight="800">≈</text>
+      <text x="1200" y="112" class="m amb" font-size="132" font-weight="800">27×</text>
+      <text x="0" y="176" class="mut" font-size="34" font-weight="600">人工单案初筛</text>
+      <text x="600" y="176" class="mut" font-size="34" font-weight="600">鹰眼三要素证据链</text>
+      <text x="1200" y="176" class="mut" font-size="34" font-weight="600">人力倍增(端到端)</text>
+    </g>
+  </g>
+
+  <!-- 人少事多数据条 -->
+  <g class="f" transform="translate(150 1372)">
+    <text x="0" y="44" class="mut" font-size="38" font-weight="600"><tspan class="red m" font-weight="800" font-size="50">8600</tspan> 名监管员　盯　<tspan class="w m" font-weight="800" font-size="50">13 亿</tspan> 参保人　·　<tspan class="w m" font-weight="800" font-size="50">28.99 万</tspan> 家机构　·　人均是美国 <tspan class="red" font-weight="800">4 倍</tspan>　·　飞检年查 <tspan class="w" font-weight="800">500</tspan> 家</text>
+  </g>
+
+  <!-- ③ 2 受众 × 3 阶段 -->
+  <g class="f" transform="translate(150 1480)">
+    <rect x="0" y="8" width="10" height="70" fill="url(#redbar)"/>
+    <text x="40" y="44" class="m eb" font-size="30" font-weight="700">01 · 价值闭环</text>
+    <text x="40" y="112" class="w" font-size="72" font-weight="800">2 受众 × 3 阶段，谁的活都能接</text>
+    <text x="40" y="168" class="mut" font-size="34" font-weight="500">飞检 = 事后监管的一部分；结算审核 = 事中（两拨人、两场景）。院端自查是商业首楔子，飞检取证是信誉锚。</text>
+
+    <g transform="translate(0 218)">
+      <g transform="translate(320 0)"><rect x="0" y="0" width="574" height="68" rx="10" fill="#1B2029"/><text x="287" y="46" class="o" font-size="34" font-weight="700" text-anchor="middle">事前 · 提醒</text></g>
+      <g transform="translate(924 0)"><rect x="0" y="0" width="574" height="68" rx="10" fill="#1B2029"/><text x="287" y="46" class="o" font-size="34" font-weight="700" text-anchor="middle">事中 · 结算审核</text></g>
+      <g transform="translate(1528 0)"><rect x="0" y="0" width="572" height="68" rx="10" fill="url(#redbar)"/><text x="286" y="46" class="w" font-size="34" font-weight="800" text-anchor="middle">事后 · 监管（飞检）</text></g>
+    </g>
+
+    <g transform="translate(0 308)">
+      <g transform="translate(0 66)"><rect x="0" y="0" width="300" height="316" rx="12" fill="#12294A"/><text x="150" y="158" class="w" font-size="42" font-weight="800" text-anchor="middle">监管侧</text><text x="150" y="212" class="teal" font-size="29" font-weight="600" text-anchor="middle">评委主视角</text></g>
+      <g transform="translate(320 0)"><rect x="0" y="0" width="574" height="380" rx="14" fill="#161A21" stroke="#242B36" stroke-width="2"/><text x="34" y="70" class="w" font-size="38" font-weight="800">高发规则前移</text><text x="34" y="130" class="o" font-size="32" font-weight="600">机构画像 → 抽样指导</text><text x="34" y="190" class="mut" font-size="29" font-weight="500">按金额/科室锁定高风险，</text><text x="34" y="230" class="mut" font-size="29" font-weight="500">把有限人力压到刀刃上。</text></g>
+      <g transform="translate(924 0)"><rect x="0" y="0" width="574" height="380" rx="14" fill="#161A21" stroke="#242B36" stroke-width="2"/><text x="34" y="70" class="w" font-size="38" font-weight="800">存疑单语义复核</text><text x="34" y="130" class="o" font-size="32" font-weight="600">误报前置过滤</text><text x="34" y="190" class="mut" font-size="29" font-weight="500">读原文复核结算存疑单，</text><text x="34" y="230" class="mut" font-size="29" font-weight="500">砍掉误报噪声。</text></g>
+      <g transform="translate(1528 0)"><rect x="0" y="0" width="572" height="380" rx="14" fill="#2A0E14" stroke="#E4002B" stroke-opacity="0.5" stroke-width="2"/><rect x="0" y="0" width="8" height="380" rx="4" fill="url(#redbar)"/><text x="34" y="70" class="red" font-size="38" font-weight="800">飞检取证放大镜</text><text x="34" y="130" class="w" font-size="32" font-weight="700">主战场 · 40分→90秒</text><text x="34" y="190" class="o" font-size="29" font-weight="500">深读非结构化案卷，出能写进</text><text x="34" y="230" class="o" font-size="29" font-weight="500">检查结论、经得起申诉复查的</text><text x="34" y="270" class="o" font-size="29" font-weight="500">三要素证据链。</text></g>
+    </g>
+
+    <g transform="translate(0 762)">
+      <g transform="translate(0 66)"><rect x="0" y="0" width="300" height="316" rx="12" fill="#0E3B34"/><text x="150" y="158" class="w" font-size="42" font-weight="800" text-anchor="middle">院端</text><text x="150" y="212" class="teal" font-size="29" font-weight="600" text-anchor="middle">商业首楔子</text></g>
+      <g transform="translate(320 0)"><rect x="0" y="0" width="574" height="380" rx="14" fill="#12201E" stroke="#1E3A35" stroke-width="2"/><text x="34" y="70" class="teal" font-size="38" font-weight="800">开单合规提示</text><text x="34" y="130" class="o" font-size="32" font-weight="600">关口前移 · 源头防</text><text x="34" y="190" class="mut" font-size="29" font-weight="500">开单/上传前用两库规则提醒，</text><text x="34" y="230" class="mut" font-size="29" font-weight="500">把新违规拦在发生之前。</text></g>
+      <g transform="translate(924 0)"><rect x="0" y="0" width="574" height="380" rx="14" fill="#12201E" stroke="#1E3A35" stroke-width="2"/><text x="34" y="70" class="teal" font-size="38" font-weight="800">结算前自查拦截</text><text x="34" y="130" class="o" font-size="32" font-weight="600">避免被退回 / 拒付</text><text x="34" y="190" class="mut" font-size="29" font-weight="500">上传前跑一遍费用-医嘱-诊断</text><text x="34" y="230" class="mut" font-size="29" font-weight="500">一致性，减少返工。</text></g>
+      <g transform="translate(1528 0)"><rect x="0" y="0" width="572" height="380" rx="14" fill="#12201E" stroke="#1E3A35" stroke-width="2"/><rect x="0" y="0" width="8" height="380" rx="4" fill="#14B8A6"/><text x="34" y="70" class="teal" font-size="38" font-weight="800">历史体检 + 申诉副驾</text><text x="34" y="130" class="w" font-size="32" font-weight="700">自查从宽，被查从严</text><text x="34" y="190" class="mut" font-size="29" font-weight="500">飞检前自查整改、主动退回；</text><text x="34" y="230" class="mut" font-size="29" font-weight="500">疑点一键出申诉书草稿 + 举证</text><text x="34" y="270" class="mut" font-size="29" font-weight="500">清单（法定 10 工作日死线）。</text></g>
+    </g>
+    <g transform="translate(0 1216)"><rect x="0" y="0" width="2100" height="72" rx="12" fill="#2A0E14" stroke="#E4002B" stroke-opacity="0.4" stroke-width="2"/><text x="1050" y="47" class="o" font-size="32" font-weight="600" text-anchor="middle">院端自查干净 = 从源头替监管侧减负 · 政策鼓励（2026 扩 12 领域 / 源头治本 / 关口前移）</text></g>
+  </g>
+
+  <!-- ④ 监管侧价值 -->
+  <g class="f" transform="translate(150 2910)">
+    <rect x="0" y="8" width="10" height="70" fill="url(#redbar)"/>
+    <text x="40" y="44" class="m eb" font-size="30" font-weight="700">02 · 监管侧价值（评委向）</text>
+    <text x="40" y="112" class="w" font-size="72" font-weight="800">8600 人扛不动的活，交给 AI</text>
+    <g transform="translate(0 168)">
+      <g transform="translate(0 0)"><rect x="0" y="0" width="680" height="148" rx="14" fill="#161A21" stroke="#242B36" stroke-width="2"/><text x="34" y="66" class="w" font-size="37" font-weight="800">飞检取证放大镜</text><text x="34" y="114" class="mut" font-size="30" font-weight="500">40分→90秒 · 举证包一键出</text></g>
+      <g transform="translate(710 0)"><rect x="0" y="0" width="680" height="148" rx="14" fill="#161A21" stroke="#242B36" stroke-width="2"/><text x="34" y="66" class="w" font-size="37" font-weight="800">疑点优先排序</text><text x="34" y="114" class="mut" font-size="30" font-weight="500">金额 × 置信，先查高价值</text></g>
+      <g transform="translate(1420 0)"><rect x="0" y="0" width="680" height="148" rx="14" fill="#161A21" stroke="#242B36" stroke-width="2"/><text x="34" y="66" class="w" font-size="37" font-weight="800">机构画像抽样</text><text x="34" y="114" class="mut" font-size="30" font-weight="500">高发规则/科室 → 指导抽样</text></g>
+      <g transform="translate(0 168)"><rect x="0" y="0" width="680" height="148" rx="14" fill="#161A21" stroke="#242B36" stroke-width="2"/><text x="34" y="66" class="w" font-size="37" font-weight="800">误报前置过滤</text><text x="34" y="114" class="mut" font-size="30" font-weight="500">第一痛点是误报，不是漏判</text></g>
+      <g transform="translate(710 168)"><rect x="0" y="0" width="680" height="148" rx="14" fill="#161A21" stroke="#242B36" stroke-width="2"/><text x="34" y="66" class="w" font-size="37" font-weight="800">覆盖度声明</text><text x="34" y="114" class="mut" font-size="30" font-weight="500">"查全了吗"变可审计声明</text></g>
+      <g transform="translate(1420 168)"><rect x="0" y="0" width="680" height="148" rx="14" fill="url(#redbar)"/><text x="34" y="66" class="w" font-size="37" font-weight="800">源头减负</text><text x="34" y="114" class="w" font-size="30" font-weight="500" opacity="0.92">院端自查干净 = 监管少查</text></g>
+    </g>
+  </g>
+
+  <!-- ⑤ 护城河 -->
+  <g class="f" transform="translate(150 3480)">
+    <rect x="0" y="8" width="10" height="70" fill="url(#redbar)"/>
+    <text x="40" y="44" class="m eb" font-size="30" font-weight="700">03 · 第一护城河</text>
+    <text x="40" y="112" class="w" font-size="72" font-weight="800">抄不走的工程纵深</text>
+    <g transform="translate(0 164)">
+      <rect x="0" y="0" width="1035" height="410" rx="16" fill="#161A21" stroke="#242B36" stroke-width="2"/>
+      <text x="40" y="78" class="w" font-size="42" font-weight="800">取证可信度三件套</text>
+      <g transform="translate(40 116)"><circle cx="12" cy="12" r="12" fill="#37E0CC"/><text x="46" y="22" class="o" font-size="33" font-weight="700">合议去重 · 防过罚</text><text x="46" y="64" class="mut" font-size="27">同一笔钱多规则命中 → 只算一次</text></g>
+      <g transform="translate(40 220)"><circle cx="12" cy="12" r="12" fill="#F5C842"/><text x="46" y="22" class="o" font-size="33" font-weight="700">覆盖度声明 · 答"查全了吗"</text><text x="46" y="64" class="mut" font-size="27">把漏检率变成可审计声明</text></g>
+      <g transform="translate(40 324)"><circle cx="12" cy="12" r="12" fill="#FF3B4E"/><text x="46" y="22" class="o" font-size="33" font-weight="700">置信度传播 · 反幻觉</text><text x="46" y="64" class="mut" font-size="27">OCR 低置信降权 · 排序=金额×置信</text></g>
+    </g>
+    <g transform="translate(1065 164)">
+      <rect x="0" y="0" width="1035" height="410" rx="16" fill="#12294A" stroke="#1E3A5C" stroke-width="2"/>
+      <text x="40" y="78" class="teal" font-size="42" font-weight="800">合规地基 · 站在国家两库肩上</text>
+      <text x="40" y="150" class="w" font-size="35" font-weight="700">规则 ↔ 官方政策 可溯源</text>
+      <text x="40" y="208" class="o" font-size="29" font-weight="500">官方《2025 年版》两库 = <tspan class="amb" font-weight="800">88 类规则 / 24.7 万</tspan>知识点，</text>
+      <text x="40" y="250" class="o" font-size="29" font-weight="500">已按主题公开约 16 批。鹰眼对齐母本，每条疑点回链</text>
+      <text x="40" y="292" class="o" font-size="29" font-weight="500">官方文号·条款·生效日·核验状态。</text>
+      <g transform="translate(40 330)">
+        <rect x="0" y="0" width="300" height="58" rx="10" fill="#FFFFFF" fill-opacity="0.08"/><text x="150" y="39" class="w" font-size="29" font-weight="800" text-anchor="middle">88% 可溯源</text>
+        <rect x="322" y="0" width="280" height="58" rx="10" fill="#FFFFFF" fill-opacity="0.08"/><text x="462" y="39" class="w" font-size="29" font-weight="800" text-anchor="middle">不造规则</text>
+        <rect x="624" y="0" width="333" height="58" rx="10" fill="#FFFFFF" fill-opacity="0.08"/><text x="790" y="39" class="w" font-size="29" font-weight="800" text-anchor="middle">未核实即标注</text>
+      </g>
+    </g>
+  </g>
+
+  <!-- ⑥ 硬指标 + 铁律 -->
+  <g class="f" transform="translate(150 4150)">
+    <rect x="0" y="0" width="2100" height="3" fill="#242B36"/>
+    <text x="0" y="72" class="w" font-size="54" font-weight="800">硬指标</text>
+    <text x="2100" y="72" class="mut" font-size="31" font-weight="500" text-anchor="end">守住低误报红线 · 引不出原文不输出</text>
+    <g transform="translate(0 116)">
+      <g transform="translate(0 0)"><text x="0" y="84" class="m red" font-size="92" font-weight="800">FP=0</text><text x="0" y="136" class="mut" font-size="30">干净件零误报门禁</text></g>
+      <g transform="translate(580 0)"><text x="0" y="84" class="w" font-size="92" font-weight="800">20 案</text><text x="0" y="136" class="mut" font-size="30">AuditBench 回归</text></g>
+      <g transform="translate(1120 0)"><text x="0" y="84" class="w" font-size="92" font-weight="800">58 规则</text><text x="0" y="136" class="mut" font-size="30">26 checker · 13 专科</text></g>
+      <g transform="translate(1680 0)"><text x="0" y="84" class="w" font-size="92" font-weight="800">3 层</text><text x="0" y="136" class="mut" font-size="30">规则+语义+对抗复核</text></g>
+    </g>
+    <g transform="translate(0 292)">
+      <g transform="translate(0 0)"><rect x="0" y="0" width="510" height="86" rx="12" fill="#161A21" stroke="#242B36" stroke-width="2"/><text x="30" y="55" class="o" font-size="31" font-weight="700">引不出原文，不输出</text></g>
+      <g transform="translate(530 0)"><rect x="0" y="0" width="510" height="86" rx="12" fill="#161A21" stroke="#242B36" stroke-width="2"/><text x="30" y="55" class="o" font-size="31" font-weight="700">存疑转线索 · 不误报</text></g>
+      <g transform="translate(1060 0)"><rect x="0" y="0" width="510" height="86" rx="12" fill="#161A21" stroke="#242B36" stroke-width="2"/><text x="30" y="55" class="o" font-size="31" font-weight="700">申诉机制预演（非灰区）</text></g>
+      <g transform="translate(1590 0)"><rect x="0" y="0" width="510" height="86" rx="12" fill="#161A21" stroke="#242B36" stroke-width="2"/><text x="30" y="55" class="o" font-size="31" font-weight="700">全链路可追溯</text></g>
+    </g>
+  </g>
+
+  <!-- ⑦ Positioning -->
+  <g class="f" transform="translate(150 4650)">
+    <rect x="1040" y="-14" width="20" height="20" fill="url(#redbar)"/>
+    <text x="1050" y="62" class="w" font-size="58" font-weight="800" text-anchor="middle">站在国家两库肩上的语义取证层</text>
+    <text x="1050" y="122" class="o" font-size="36" font-weight="600" text-anchor="middle">不替代，做放大镜 · 官方"AI 提供线索支持"与鹰眼初筛层同构</text>
+  </g>
+
+  <!-- ⑧ Footer + QR -->
+  <g class="f" transform="translate(150 4840)">
+    <rect x="0" y="0" width="2100" height="384" rx="20" fill="#161A21" stroke="#2A323E" stroke-width="2"/>
+    <rect x="0" y="0" width="10" height="384" rx="5" fill="url(#redbar)"/>
+    <rect x="44" y="44" width="296" height="296" rx="14" fill="#FFFFFF"/>
+    <image x="60" y="60" width="264" height="264" style="image-rendering:pixelated" xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAZAAAAGQCAYAAACAvzbMAAAQAElEQVR4Aezc0XbbSJIEUMX+/z/PLsbWdrdbEgNkgYUC7pyhZYvJysxb6hNP0P/8x/8IECBAgMATAv/z4X8ECBAgQOAJAQHyBJqPEBgi4BACiwsIkMUv0PgECBCYJSBAZsnrS4AAgcUFFg6QxeWNT4AAgcUFBMjiF2h8AgQIzBIQILPk9SWwsIDRCWwCAmRT8CJAgACB3QICZDeZDxAgQIDAJiBANoV3v/QjQIDABQQEyAUu0QoECBCYISBAZqjrSYDALAF9BwoIkIGYjiJAgMCdBATInW7brgQIEBgoIEAGYt7hKDsSIEDgU0CAfEr4SoAAAQK7BATILi7FBAgQmCVwvr4C5Hx3YiICBAgsISBAlrgmQxIgQOB8AgLkfHdiomMEnEqAwGABATIY1HEECBC4i4AAuctN25MAAQKDBeoAGdzXcQQIECCwuIAAWfwCjU+AAIFZAgJklry+BGoBhQTOKSBAznkvpiJAgMDpBQTI6a/IgAQIEDinwB0C5JzypiJAgMDiAgJk8Qs0PgECBGYJCJBZ8voSuIOAHS8tMDVAknwkXsnXBkf85CVf90qO/f6eXZKxs+zp3dYm3Yyzzmv77qlLxu58RO+kmzG5Vt0ey5G1UwNk5CLOIkCAAIH3CgiQ93rv7KacAAEC5xUQIOe9G5MRIEDg1AIC5NTXYzgCBGYJ6PtYQIA8NlJBgAABAl8ICJAvUHyLAAECBB4LCJDHRiqeEfAZAgQuLyBALn/FFiRAgMAxAgLkGFenEiBAYJbA2/oKkLdRa0SAAIFrCSwTIP/5z38+rvK61o/Q+bdJxv/aivNv3U+YdD7tf3995/GV7Ywr1I3XGX/iMgEyfnUnEvhawHcJEOgEBEjnpIoAAQIE/hAQIH+A+CcBAgQIdALjA6Trq4oAAQIEFhcQIItfoPEJECAwS0CAzJLXl8B4AScSeKuAAHkrt2YECBC4joAAuc5d2oQAAQJvFRAgf+P2VwIECBDoBS4XIEn3VG0yvq5nH1uZ9LuMfgJ37Cb7Tlthl6S7m3aXpDsvSY3Z9m4PTPKRdK/2zNF1STdfMr5u9C4zz7tcgMzE1JsAgWcFfG5FAQGy4q2ZmQABAicQECAnuAQjECBAYEUBAbLirf17Zt8hQIDA2wUEyNvJNSRAgMA1BATINe7RFgQIzBK4cV8BcuPLtzoBAgReERAgr+j5LAECBG4sIEBufPnnWN0UBAisKiBAVr25C8/dPhmdjH1KeA9pO2Nbt6d3W5uM9Um689qdt7p2F3XnFBAg57wXUxEgQOBwgVcbCJBXBX2eAAECNxUQIDe9eGsTIEDgVQEB8qqgz99XwOYEbi4gQG7+A2B9AgQIPCsgQJ6V8zkCBAjcXGBigNxc3voECBBYXECALH6BxidAgMAsAQEyS15fAhMFtCYwQkCAjFC84BnJ2KeOk+68JLXm9iRz82oPbM76rGnPTPKRPH615332b74ecWbTN3m8b/Krpp1R3TkFBMg578VUBAgQOL2AAHnminyGAAECBD4EiB8CAgQIEHhKQIA8xeZDBAhMEtD2RAIC5ESXYRQCBAisJCBAVrotsxIgQOBEAgLkRJfxjlH0IECAwCgBATJK0jkECBC4mYAAudmFW5cAgVkC1+srQK53pzYiQIDAWwQuFyDNr1o4quYtN/Zik+TXr5BIfv7atkl+Pif59f4e8+TXZ5IxX0fvkvRztb3bumRe73bGPXfdnjm6bs+Mo2tH7zLzvMsFyExMvQ8VcDgBAicTECAnuxDjECBAYBUBAbLKTZmTAAECswS+6StAvoHxbQIECBD4WUCA/OzjXQIECBD4RkCAfAPj2wTGCTiJwDUFBMg179VWBAgQOFxAgBxOrAEBAgSuKbBCgFxT3lYECBBYXGCZAEn6J3CTc9fO/Jlpn6ptZ2zPS/o7ac8cPWN73lY3esbtzNGvdsaku5t2vqQ7L0l7ZF2X5CO5xqteemLhMgEy0UhrAvcVsDmBHwQEyA843iJAgACB7wUEyPc23iFAgACBHwQEyA84r7/lBAIECFxXQIBc925tRoAAgUMFBMihvA4nQGCWgL7HCwiQ4411IECAwCUFBMglr9VSBAgQOF5AgBxvvGYHUxMgQOCBwNQAaZ+UvWvdg7s79O3WPOme+j102AeHJ92M7c5b3YOWh7299W5fSbf3YcMOPLjd+a51A6l3HTU1QHZNqpgAAQL3EFhmSwGyzFUZlAABAucSECDnug/TECBAYBkBAbLMVRm0FVBHgMB7BATIe5x1IUCAwOUEBMjlrtRCBAgQeI/AvwPkPX11IUCAAIHFBQTI4hdofAIECMwSECCz5PUl8G8B3yGwlMDUAEm6J2WT1KhJPpJrvNql9zx9m3Q2R/Ru50y6Gdvz2l2Srm+S9sjhdUnqn+/RPu0ybd+trj0z6fdOzl3b7rxC3dQAWQHIjAQIECDwtcClAuTrFX2XAAECBI4QECBHqDqTAAECNxAQIDe4ZCsSOF5AhzsKCJA73rqdCRAgMEBAgAxAdAQBAgTuKCBAznHrpiBAgMByAgJkuSszMAECBM4hIEDOcQ+mIEBgloC+TwsIkKfpfJAAAQL3FpgaINuvMmhf7TW1561Ql3S/kqG12eravbfa5pV0MyZ9XTtj0p3Z7LHVtH23uq2+eW21zSsZu8s2W9Kd2cy31STdeVvvs7+2fdrX2XeZOd/UAJm5uN6jBJxDgMBdBQTIXW/e3gQIEHhRQIC8COjjBAgQmCUwu68AmX0D+hMgQGBRAQGy6MUZmwABArMFBMjsG9B/noDOBAi8JCBAXuLzYQIECNxXQIDc9+5tToAAgZcEXgiQl/r6MAECBAgsLjA1QJLuydakrxt9H0nfOxlbu8KTsu2Me+raO9xzZlPb9t1Tl3Q/E818W82e3qNrt/7Na0/fpPNpz2zm22qSrm+Sj62+ebUzXqluaoBcCdIuBN4poBeBMwgIkDPcghkIECCwoIAAWfDSjEyAAIEzCNwzQM4gbwYCBAgsLiBAFr9A4xMgQGCWgACZJa8vgXsK2PpCAgLkQpdpFQIECLxTQIC8U1svAgQIXEhAgCx2mcYlQIDAWQSWCZDmSdCtJumeMJ15AduczWvmjMn5HZNuxqSrO8K7ueetpu291bav9syk80m6urbvVjd6l+3M0a9k7N5Jd17S143euT1vmQBpF1JHgACBYwSc+qeAAPlTxL8JECBAoBIQIBWTIgIECBD4U0CA/Cni30cJOJcAgYsJCJCLXah1CBAg8C4BAfIuaX0IECAwS+CgvgLkIFjHEiBA4OoCAuTqN2w/AgQIHCQgQA6CdeyVBOxCgMBXAssESNI9lfnVkmf7XtLtkoyvO5vFK/Pc8SnmV7y++2zr2NYl835uk653u8tW953bn9/fapvXn5/77t/NWZ81351x9PeXCZCjIZxPgAABAvsE3hEg+yZSTYAAAQJLCAiQJa7JkAQIEDifgAA5352YiMA4AScROFBAgByI62gCBAhcWUCAXPl27UaAAIEDBQTIj7jeJECAAIHvBATIdzK+T4AAAQI/CgiQH3m8SYDALAF9zy8gQM5/RyYkQIDAKQVuGyBJ9ysP9tza568VGPW17b2nX9Lt3Z7ZzrinLulmTLq6tnfSnZekPfJjtGOSj6R7tb2T7rx26bbvEXXtjHvq2jmTsY5Jd16SPesMrb1tgAxVPONhZiJAgMDBAgLkYGDHEyBA4KoCAuSqN2svAgRmCdymrwC5zVVblAABAmMFBMhYT6cRIEDgNgIC5DZXvc6iJiVAYA0BAbLGPZmSAAECpxMQIKe7EgMRIEBglsC+vgJkn5dqAgQIEPgtMDVA2ic899T93uvhlz1ntrUPm/4uSFI9Tfy7/OGXpDsvSf1kdNKfmTyufbjE3wpa75l1fxv3x78mj22SvmbPzj8O9sSbST9nMqf2ibWGfaS9m7Zhe95W1545um5qgIxexnkEJgtoT+BWAgLkVtdtWQIECIwTECDjLJ1EgACBWwmcKkBuJW9ZAgQILC4gQBa/QOMTIEBgloAAmSWvL4FTCRiGwH4BAbLfzCcIECBA4P8EBMj/Ifg/AQIECOwXECD7zb76hO8RIEDgdgJTAyTpn1a90s1sT442ryvtvGeXpP+5SB7Xtr2Tx2clv2raM5t73mra85Jf/ZNxX7f+zaudsTnrs6Y9c2Zd0lm3M37u/uhre97MuqkBMnNxvQkQuIiANaYJCJBp9BoTIEBgbQEBsvb9mZ4AAQLTBATINPqzNDYHAQIEnhMQIM+5+RQBAgRuLyBAbv8jAIAAgVkCq/cVIKvfoPkJECAwSUCATILXlgABAqsLCJDVb/DO89udAIGpApcLkEdPd36+36on3VOoyfi6z1lHfm33bnu25+2pm9W77bvVJd1979m7qd16j341fffUJJ1NkvrYduf2wCQfSfca3fuIGdszR9ddLkBGAzmPAAECBP4l8N9vCJD/MviDAAECBPYKCJC9YuoJECBA4L8CAuS/DP4g8F4B3QhcQUCAXOEW7UCAAIEJAgJkArqWBAgQuILAmgFyBXk7ECBAYHEBAbL4BRqfAAECswQEyCx5fQmsKWBqAv8vIED+n8JfCBAgQGCPwNQAaX9FwFa3Z6mz1277NK+k+1ULR+ybdL2bPbaapDsv6eu2c5tX0p+ZdLWtedKd1+yx1bR9Z9Ztc7avds6kc2zPa+fb6pKudzK2buvdvtq9R9dNDZDRy6xwnhkJECBwFQEBcpWbtAcBAgTeLCBA3gyuHQECswT0HS0gQEaLOo8AAQI3ERAgN7loaxIgQGC0gAAZLXrd82xGgACBfwgIkH9w+AcBAgQItAICpJVSR4AAgVkCJ+0rQE56McYiQIDA2QWmBkjSP7k5GjLpeu/p2z41mnS92/P2zJh0vdszk+68dpc9de2Mbd0Rvdszk86x3WVPXdL1Hr1Lko/2zLau3Tvpdk76Gdve7S5JP2Pbe3Td1AAZvYzzCHwt4LsECBwhIECOUHUmAQIEbiAgQG5wyVYkQIDAEQJNgBzR15kECBAgsLiAAFn8Ao1PgACBWQICZJa8vgQaATUETiwgQE58OUYjQIDAmQUEyJlvx2wECBA4scDFA+TE8kYjQIDA4gICZOAFJt2To+2TqO1oSdc36Z+qbWds65J+xnbvtq6dsT1vT13S7d3OmHTnJanHHN27PW+rS/KRPH7VyxxQmDyeL8kBnc9/pAA5/x2ZkMCSAoa+voAAuf4d25AAAQKHCAiQQ1gdSoAAgesLCJCz3rG5CBAgcHIBAXLyCzIeAQIEziogQM56M+YiQGCWgL6lgAApoZQRIECAwD8FBMg/PfyLAAECBEoBAVJCKesFVBIgcA+BZQIkSfXEatLVtde7PS07+pWMnbHdZatLxvZOuvP2GCbdmds+I19J1zcZ/0R/0vXes2/SnZl0dXt6t7Xtz8Ws89q+W127S9J5t+dtdVv/Ga9lAmQGjp4EAcvJJwAACqBJREFUCBBYS+C90wqQ93rrRoAAgcsICJDLXKVFCBAg8F4BAfJeb93OLWA6AgR2CAiQHVhKCRAgQOAvAQHyl4W/ESBAgMAOgaEBsqOvUgIECBBYXECALH6BxidAgMAsAQEyS15fAkMFHEbg/QIC5P3mOhIgQOASArcNkO3x/+a155aTsb+ioO3d7PFZ0545ui7pbJL+14S0MyZd70+j5mvSnZl0dU3PvTWtz95zH9Un3c5JX9fuMrMu6fZ55Pf5ftKdl2Ta2rcNkD/E/ZMAAQIEdgoIkJ1gygkQIEDgl4AA+eXgTwIEZgnou6yAAFn26gxOgACBuQICZK6/7gQIEFhWQIAse3Wfg/tKgACBOQICZI67rgQIEFheQIAsf4UWIEBglsDd+wqQu/8E2J8AAQJPCiwTIJ9PZz76+qTDtx9L8pF0r0ezfb6fdOd9O9QfbyTdecn4p7z/GOWt/0y6vduhku68JO2RH593/uhre2CS+uexPXN03aNdn3k/6fdOHtfu2fmZeX/6TPJ4vqT/b3XrtWefkbXLBMjIpZ11EgFjECCwtIAAWfr6DE+AAIF5AgJknr3OBAgQmCUwpK8AGcLoEAIECNxPQIDc785tTIAAgSECAmQIo0PuJmBfAgQ+PgSInwICBAgQeEpAgDzF5kMECBAgMCdAuBMgQIDA8gKXC5DtqczmlaR6onfPDSfdmc18W00y9rztzD37NLXbmc2rOWt2TbPH3pqku8N29z392zNH1yXdzklf1+7d7tKet9W1Z46uS3qf0b3b8y4XIO3i6gjcVMDaBIYJCJBhlA4iQIDAvQQEyL3u27YECBAYJiBAdlIqJ0CAAIFfAgLkl4M/CRAgQGCngADZCaacAIFZAvqeTUCAnO1GzEOAAIFFBATIIhdlTAIECJxNQICc7UaOm8fJBAgQGCpw2wDZnjBtXkO1fx+WdE+Y/i4f+iXpeidj64Yu8fuw5v62mt/lQ78knc/Wv3kNHe73YU3frSbpdvl97JQvydgZk+68ZHzdFMCDmt42QA7ydCwBAgT+LXDR7wiQi16stQgQIHC0gAA5Wtj5BAgQuKiAALnoxV5rLdsQIHBGAQFyxlsxEwECBBYQECALXJIRCRAgMEvgp74C5Ccd7xEgQIDAtwIC5FsabxAgQIDATwIC5Ccd7xF4VcDnCVxYQIBc+HKtRoAAgSMFpgbI9msU2teRCD+d3c43sy7pf91CO+dPJn9/b/R5fz/70d+Tbu8jZmzPTLoZk67ukcnf30/Gn/n380f8vXUcXbdn9rZ3e2Z73p66tvfouqkB8ngZFQQIECBwVgEBctabMRcBAgROLiBATn5BxiMwS0BfAo8EBMgjIe8TIECAwJcCAuRLFt8kQIAAgUcCAuSR0LPv+xwBAgQuLiBALn7B1iNAgMBRAgLkKFnnEiAwS0DfNwkIkDdBa0OAAIGrCUwNkKR7Uja5Z137w7bnidWks2zPPGLG9sy2Lul2bs87om60954Z297JPMdkXu89lk1t0u2S9HVN3yNqpgbIEQs583UBJxAgQKARECCNkhoCBAgQ+JeAAPkXiW8QIEBglsBafQXIWvdlWgIECJxGQICc5ioMQoAAgbUEBMha92XanwW8S4DAGwUEyBuxtSJAgMCVBATIlW7TLgQIEHijwD8C5I19tSJAgACBxQWWCZD2adkV6kb/zCT9E6utz8wZR/duz0t6x/bM1jvpeyddbTtjMva8tu+eutZxz5ltbTLWZ+Yu7c5t3TIB0i6kjsCaAqYmsJ6AAFnvzkxMgACBUwgIkFNcgyEIECCwnsBVAmQ9eRMTIEBgcQEBsvgFGp8AAQKzBATILHl9CVxFwB63FRAgt716ixMgQOA1AQHymp9PEyBA4LYCAmT61RuAAAECawpcLkCS7qnRZHzdmj8Cr02ddI7t07dbXTL+zO3cka9WLZm3SzvjSJftrLbvVpd0PsnYuq336Ne2e/NKul2asz5rRu/Snne5AGkXV0eAAAECrwkIkNf8fJoAAQK3FRAgt716ixMgQOA1AQHymt+9P217AgRuLSBAbn39lidAgMDzAgLkeTufJECAwCyBU/QVIKe4BkMQIEBgPQEBst6dmZgAAQKnEBAgp7gGQ7xbQD8CBF4XECCvGzqBAAECtxQQIDe79qT7NQpJV9fyJd15Sdoj67okH8mc1+evmnj0tV0m6fd41PPz/aQ/M3lc2+6yp+5z1lFf9/Rua5PHNkk+2h3avjPrnguQmRPrTYAAAQKnEBAgp7gGQxAgQGA9AQGy3p2Z+N4CtidwGgEBcpqrMAgBAgTWEhAga92XaQkQIHAagdsFyGnkDUKAAIHFBQTI4hdofAIECMwSECCz5PUlcDsBC19NQIBc7UbtQ4AAgTcJCJA3QV+1TftU7RF1renM3u2MydinmLed295t3XbmrFfS+SRd3aw9tr6t9wp1AmSFW/o1oz8JECBwKgEBcqrrMAwBAgTWERAg69yVSQkQmCWg75cCAuRLFt8kQIAAgUcCAuSRkPcJECBA4EsBAfIli2+OFXAaAQJXFBAgV7xVOxEgQOANAgLkDchaECBAYJbAkX0FyJG6ziZAgMCFBS4XINuTnrNes35O9uzbztiemXRP/rZ999QlY3sn3XlJPmb5JP2MSVe7x7ypTbq+SV/X9N1qRt9LMn7Gbc6rvC4XIFe5GHucRMAYBAh8KyBAvqXxBgECBAj8JCBAftLxHgECBAh8K3BwgHzb1xsECBAgsLiAAFn8Ao1PgACBWQICZJa8vgQOFnA8gaMFBMjRws4nQIDARQUEyEUv1loECBA4WkCAfCfs+wQIECDwo8AyAZL0T4Qm56798UaeeDPp9x39pG573hNrPfzI6N7teVvdw+EOKth6j361oybdz9no+bbzZs7Y9m7rks6xPW9m3TIBMhNJbwIE3iqg2SICAmSRizImAQIEziYgQM52I+YhQIDAIgICZJGL2jOmWgIECLxDQIC8Q1kPAgQIXFBAgFzwUq1EgMAsgXv1FSD3um/bEiBAYJiAABlG6SACBAjcS0CA3Ou+z76t+QgQWEhAgCx0WUYlQIDAmQSmBsj2Kwq8/vPxnUH7g/Ld57/6/ugz2/PuWvfVHbzyvSMcX5nnq89ebcavdvzqe+3eX332q++15w2re+KgqQHyxLw+QoAAAQInERAgJ7kIYxAgQGA1AQGy2o2Z96QCxiJwPwEBcr87tzEBAgSGCAiQIYwOIUCAwP0EzhIg95O3MQECBBYXECCLX6DxCRAgMEtAgMyS15fAWQTMQeBJAQHyJJyPESBA4O4CAuTuPwH2J0CAwJMCAuRJuL8+5m8ECBC4p4AAuee925oAAQIvCwiQlwkdQIDALAF95woIkLn+uhMgQGBZAQGy7NUZnAABAnMFBMhc/7nddSdAgMALAgLkBTwfJUCAwJ0FBMidb9/uBAjMErhEXwFyiWu0BAECBN4vIEDeb64jAQIELiEgQC5xjfdbwsYECMwXECDz78AEBAgQWFJAgCx5bYYmQIDALIG/+gqQvyz8jQABAgR2CAiQHVhKCRAgQOAvAQHyl4W/EXiHgB4ELiMgQC5zlRYhQIDAewUEyHu9dSNAgMBlBJYLkMvIW4QAAQKLC/wvAAAA//+2yC1AAAAABklEQVQDANG+K0jpPVJDAAAAAElFTkSuQmCC"/>
+    <text x="392" y="128" class="w" font-size="44" font-weight="700">扫码 · 一次真实飞检取证</text>
+    <text x="392" y="186" class="mut" font-size="30" font-weight="500">在线体验原型 · 国内直接打开无需 VPN</text>
+    <text x="392" y="266" class="w" font-size="50" font-weight="800">鹰眼 EAGLEEYE</text>
+    <text x="392" y="320" class="mut" font-size="30" font-weight="500">医保基金稽核智能体 · 模法黑客松 S4</text>
+    <text x="2056" y="200" class="w" font-size="52" font-weight="700" text-anchor="end" font-style="italic">让每一分救命钱，</text>
+    <text x="2056" y="270" class="red" font-size="52" font-weight="800" text-anchor="end" font-style="italic">都查得有据可对质</text>
+    <rect x="1540" y="308" width="516" height="7" fill="url(#redbar)"/>
+  </g>
+</svg>
