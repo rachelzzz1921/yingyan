@@ -177,7 +177,12 @@ async function llmAgentAudit(record, rules, opts = {}) {
   raw.forEach((f, i) => {
     const cv = coveMap[i];
     if (cv) { f.cove = { items: cv.items || [], verdict: cv.verdict, verdict_reason: cv.verdict_reason }; if (cv.verdict === '降级线索') f.status = '线索'; if (cv.verdict === '撤销') return; }
-    else if (coveError) { f.cove = { skipped: true, error: coveError, note: 'CoVe 自检未完成（' + coveError + '），本条未经取证自检' }; }
+    else if (coveError) {
+      // CoVe 取证自检失败：未核验的疑点不硬报 → 依"存疑转线索·不误报"降级为线索，待人工复核
+      const wasSuspected = f.status === '疑点';
+      if (wasSuspected) f.status = '线索';
+      f.cove = { skipped: true, fallback: wasSuspected, error: coveError, note: 'CoVe 取证自检未完成（' + coveError + '）→ 依"存疑转线索·不误报"' + (wasSuspected ? '降级为线索' : '保持线索') + '，待人工复核' };
+    }
     f.debate = { enabled: false, skip_reason: '控辩裁=按需触发（点疑点"对抗辩论"启动真·控辩裁，省成本）' };
     f.policy = (f.policy || []).map(p => ({ ...p, verify_status: (opts.policyVerified || {})[p.ref] ? '✅已核验' : '⚠待核验' }));
     f.confidence = f.status === '疑点' ? 90 : 60;
