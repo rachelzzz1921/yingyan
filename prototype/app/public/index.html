@@ -34,19 +34,32 @@
 
 <nav class="v2bar">
   <div class="v2bar-group v2bar-primary">
-    <span class="v2bar-label">主流程</span>
-    <button class="v2btn accent real" id="btnSuperAudit" type="button" title="LLM + RAG + 对抗注入防护融合稽核">⚡ 超级增强稽核</button>
+    <span class="v2bar-label" data-audit-label="主流程" data-exam-label="院端自查流程">主流程</span>
+    <div class="v2dropdown" id="ddEngine">
+      <button class="v2btn accent real" id="btnEngineMenu" type="button" title="选择稽核引擎档位（默认标准，越往下越强）">⚙ 稽核引擎 ▾</button>
+      <div class="v2dropdown-menu" id="engineMenu">
+        <div class="v2dd-section">引擎档位（默认标准）</div>
+        <button class="v2btn" id="btnEngStd" type="button" title="确定性规则引擎">标准稽核</button>
+        <button class="v2btn real" id="btnLLM" type="button" title="真·LLM 语义推理">🧠 LLM 语义</button>
+        <button class="v2btn real" id="btnRag" type="button" title="Supabase pgvector 语义检索增强政策上下文">🔍 RAG 增强</button>
+        <button class="v2btn real" id="btnSuperAudit" type="button" title="LLM + RAG + 对抗注入防护融合稽核">⚡ 超级增强</button>
+      </div>
+    </div>
     <a href="/dashboard.html" class="v2btn accent" title="项目看板">项目看板</a>
-    <button class="v2btn" id="btnBench" type="button">AuditBench</button>
   </div>
   <div class="v2bar-divider"></div>
   <div class="v2bar-group">
-    <span class="v2bar-label subtle">材料与架构</span>
+    <span class="v2bar-label subtle" data-audit-label="材料与规则" data-exam-label="自查物料与规则">材料与规则</span>
     <a href="/priority.html" class="v2btn accent" title="稽核优先队列">稽核队列</a>
     <a href="/intake.html" class="v2btn accent" title="材料导入中心（完整页）">材料导入</a>
     <button class="v2btn" id="btnIngest" type="button" title="弹窗快速导入">快速导入</button>
+    <button class="v2btn" id="btnRuleCatalog" type="button">规则目录</button>
+    <button class="v2btn" id="btnGovernance" type="button">规则治理</button>
+  </div>
+  <div class="v2bar-divider"></div>
+  <div class="v2bar-group">
     <div class="v2dropdown" id="ddInsight">
-      <button class="v2btn real" id="btnInsightMenu" type="button" title="洞察面板：事实层 / 机构画像 / 合规地基 / 取证三件套">🔍 洞察 ▾</button>
+      <button class="v2btn real" id="btnInsightMenu" type="button" title="洞察面板：本案事实/机构画像 · 护城河合规地基/取证三件套/三阶段自查">🔍 洞察 ▾</button>
       <div class="v2dropdown-menu" id="insightMenu">
         <div class="v2dd-section">本案洞察</div>
         <button class="v2btn" id="btnFacts" type="button">事实层</button>
@@ -57,18 +70,19 @@
         <button class="v2btn real" id="btnThreeStage" type="button" title="院端三阶段自查：事前开单可防 / 事中结算前可拦 / 事后需深查 · 关口前移">🗺 三阶段自查</button>
       </div>
     </div>
-    <button class="v2btn" id="btnRuleCatalog" type="button">规则目录</button>
-    <button class="v2btn" id="btnGovernance" type="button">规则治理</button>
   </div>
   <div class="v2bar-divider"></div>
-  <div class="v2bar-group">
-    <span class="v2bar-label subtle">演示</span>
-    <button class="v2btn real" id="btnLLM" type="button">LLM 语义</button>
-    <button class="v2btn real" id="btnRag" type="button" title="Supabase pgvector 语义检索增强政策上下文">RAG 增强稽核</button>
-    <button class="v2btn danger" id="btnInject" type="button">注入对抗</button>
-    <button class="v2btn" id="btnExport" type="button">导出清单</button>
-    <button class="v2btn" id="btnPitch" type="button">演示要点</button>
-    <button class="v2btn ghost" id="btnReset" type="button" title="重置">↺</button>
+  <div class="v2dropdown" id="ddTools">
+    <button class="v2btn ghost" id="btnToolsMenu" type="button" title="工具与演示">⋯ 工具与演示 ▾</button>
+    <div class="v2dropdown-menu v2dropdown-menu-right" id="toolsMenu">
+      <div class="v2dd-section">工具</div>
+      <button class="v2btn" id="btnExport" type="button">导出清单</button>
+      <button class="v2btn" id="btnBench" type="button">AuditBench</button>
+      <div class="v2dd-section">演示</div>
+      <button class="v2btn danger" id="btnInject" type="button">注入对抗</button>
+      <button class="v2btn" id="btnPitch" type="button">演示要点</button>
+      <button class="v2btn ghost" id="btnReset" type="button" title="重置">↺ 重置</button>
+    </div>
   </div>
 </nav>
 

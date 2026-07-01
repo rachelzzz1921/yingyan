@@ -138,7 +138,9 @@ h1,h2,h3{font-weight:700;letter-spacing:-.02em}
 .cmeta-tag{font-size:10px;font-weight:800;padding:3px 8px;border-radius:6px;text-transform:uppercase;letter-spacing:.04em}
 .cmeta-tag.violation{background:var(--red-bg);color:var(--red)}
 .cmeta-tag.clean{background:var(--green-bg);color:var(--green)}
-.cmeta-right{max-width:480px;font-size:11.5px;line-height:1.45}
+.cmeta-right{font-size:11.5px;line-height:1.45}
+.cmeta-demo{cursor:help;color:var(--muted);border:1px dashed var(--line);border-radius:6px;padding:2px 8px;font-size:11px;white-space:nowrap}
+.cmeta-demo:hover{color:var(--yy-ink);border-color:var(--yy-iris)}
 
 /* 报告结论 Hero */
 .report-hero{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;flex-wrap:wrap;
@@ -351,6 +353,11 @@ h1,h2,h3{font-weight:700;letter-spacing:-.02em}
 .v2dropdown{position:relative;display:inline-block;flex:0 0 auto}
 .v2dropdown-menu{position:absolute;top:calc(100% + 6px);left:0;z-index:60;display:none;flex-direction:column;gap:5px;padding:8px;background:#fff;border:1px solid var(--line);border-radius:10px;box-shadow:0 14px 34px rgba(15,27,45,.18);min-width:150px}
 .v2dropdown.open .v2dropdown-menu{display:flex}
+.v2dropdown-menu-right{left:auto;right:0}
+.haven-tabs{display:flex;gap:6px;margin-bottom:14px;border-bottom:1px solid var(--line)}
+.haven-tab{font-size:13px;font-weight:600;padding:8px 14px;border:none;background:none;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px}
+.haven-tab:hover{color:var(--yy-ink)}
+.haven-tab.active{color:var(--primary-d,#002FA7);border-bottom-color:var(--primary-d,#002FA7)}
 .v2dropdown-menu .v2btn{justify-content:flex-start;text-align:left;width:100%}
 .v2dd-section{font-size:10.5px;font-weight:700;letter-spacing:.04em;color:var(--muted);padding:4px 8px 2px;text-transform:none}
 .v2dd-section:not(:first-child){margin-top:4px;border-top:1px solid var(--line);padding-top:8px}

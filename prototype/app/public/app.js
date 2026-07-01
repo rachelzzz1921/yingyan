@@ -205,6 +205,11 @@ function applyModeUI() {
   const themeMeta = document.querySelector('meta[name="theme-color"]');
   if (themeMeta) themeMeta.setAttribute('content', exam ? '#0D4A32' : '#0B2A4A');
   $$('.mode-btn').forEach(x => x.classList.toggle('active', x.dataset.mode === MODE));
+  // v2bar 分组标签随模式切换（稽核↔院端自查）
+  $$('.v2bar-label').forEach(el => {
+    const t = exam ? el.dataset.examLabel : el.dataset.auditLabel;
+    if (t) el.textContent = t;
+  });
 
   const brandP = document.querySelector('.brand-text p');
   if (brandP) {
@@ -291,7 +296,7 @@ function renderCaseMeta() {
       <strong>${esc(m.case_title || CASE_LABELS[CURRENT_CASE] || CURRENT_CASE)}</strong>
       <span class="muted">${esc(RECORD.front_page?.patient_name || '')} · ${esc(RECORD.front_page?.admit_dept || '')}</span>
     </div>
-    <div class="cmeta-right muted">${esc(m.demo_note || m.embedded_note || '').slice(0, 120)}${(m.embedded_note || '').length > 120 ? '…' : ''}</div>`;
+    <div class="cmeta-right">${(m.demo_note || m.embedded_note) ? `<span class="cmeta-demo" title="${esc(m.demo_note || m.embedded_note)}">ⓘ 演示说明</span>` : ''}</div>`;
   bar.classList.remove('hidden');
 }
 
@@ -788,6 +793,12 @@ function renderReport(report) {
   $('#reportBody')?.classList.remove('hidden');
   const m = report.report_meta, s = m.summary;
   const exam = m.panel === '体检'; VIEW_EXAM = exam;
+  // 引擎档位回显（4入口收进下拉后，运行后在引擎钮上亮当前档位，保标杆可见性）
+  const engBtn = $('#btnEngineMenu');
+  if (engBtn) {
+    const tag = m.super_fused ? '⚡超级增强' : (m.real_agent ? '🧠LLM语义' : (/RAG/.test(m.engine_mode || '') ? '🔍RAG增强' : '⚙标准'));
+    engBtn.innerHTML = `引擎·${tag} ▾`;
+  }
 
   const ruleCount = exam
     ? (m.exam_rule_filter?.used ?? RULES.rules.length)
@@ -1587,17 +1598,28 @@ if (btnIngest) btnIngest.onclick = showIngest;
 $('#btnFacts').onclick = showFacts;
 $('#btnBench').onclick = showBench;
 $('#btnInstitution').onclick = showInstitution;
-const _btnFoundation = $('#btnFoundation'); if (_btnFoundation) _btnFoundation.onclick = showFoundation;
-const _btnTriad = $('#btnTriad'); if (_btnTriad) _btnTriad.onclick = showProvenanceTriad;
+const _btnFoundation = $('#btnFoundation'); if (_btnFoundation) _btnFoundation.onclick = () => showHaven(0);
+const _btnTriad = $('#btnTriad'); if (_btnTriad) _btnTriad.onclick = () => showHaven(1);
 const _btnThreeStage = $('#btnThreeStage'); if (_btnThreeStage) _btnThreeStage.onclick = showThreeStage;
-// 「洞察」下拉：开合 + 点项后收起 + 点外部收起（收纳事实层/机构画像/合规地基/取证三件套，顶栏不再换行）
-(function setupInsightDropdown() {
-  const dd = $('#ddInsight'), menuBtn = $('#btnInsightMenu'), menu = $('#insightMenu');
-  if (!dd || !menuBtn || !menu) return;
-  menuBtn.onclick = (e) => { e.stopPropagation(); dd.classList.toggle('open'); };
-  menu.addEventListener('click', () => dd.classList.remove('open'));
-  document.addEventListener('click', (e) => { if (!dd.contains(e.target)) dd.classList.remove('open'); });
+// v2bar 下拉（洞察/稽核引擎/工具与演示）：开合 + 点项后收起 + 点外部收起，顶栏不换行
+(function setupV2Dropdowns() {
+  const dds = $$('.v2dropdown');
+  dds.forEach(dd => {
+    const menuBtn = dd.querySelector('.v2btn'); // 第一个 v2btn 是开合触发钮
+    const menu = dd.querySelector('.v2dropdown-menu');
+    if (!menuBtn || !menu) return;
+    menuBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const wasOpen = dd.classList.contains('open');
+      dds.forEach(d => d.classList.remove('open')); // 互斥：开一个收其它
+      dd.classList.toggle('open', !wasOpen);
+    });
+    menu.addEventListener('click', () => dd.classList.remove('open'));
+  });
+  document.addEventListener('click', (e) => { dds.forEach(dd => { if (!dd.contains(e.target)) dd.classList.remove('open'); }); });
 })();
+// 稽核引擎档位：标准（默认主CTA走标准）
+const _btnEngStd = $('#btnEngStd'); if (_btnEngStd) _btnEngStd.onclick = () => runAudit();
 $('#btnGovernance').onclick = showGovernance;
 const btnRuleCatalog = $('#btnRuleCatalog');
 if (btnRuleCatalog) btnRuleCatalog.onclick = () => showRuleCatalog();
@@ -1894,10 +1916,10 @@ async function showInstitution() {
   openModal('🏥 机构汇总画像 · ' + esc(d.hospital), html);
 }
 
-async function showFoundation() {
+async function foundationHtml() {
   let d;
   try { d = await fetch('/api/foundation').then(r => r.json()); }
-  catch (e) { openModal('🏛 合规地基', `<p class="muted">加载失败：${esc(String(e))}</p>`); return; }
+  catch (e) { return `<p class="muted">加载失败：${esc(String(e))}</p>`; }
   const g = d.kb_geometry, t = d.traceability_summary;
   const maxF = Math.max(...d.funnel.map(s => s.count), 1);
   const funnelRows = d.funnel.map((s, i) => `<div class="ins-bar-row">
@@ -1946,13 +1968,16 @@ async function showFoundation() {
     <div class="cov-statement" style="margin-top:12px">📌 <b>诚实口径</b>：已入库均为官方公开发布批次原文；${t.refs_pending_ingest} 项被规则引用但尚未入库的对照表标注「待入库」（${pending}…），<b>绝不编造</b>。这是路线图，不是地基缺失。</div>
     ${d.roadmap ? `<div class="cov-statement" style="margin-top:8px;background:#fbfcfe">🛣 <b>持续扩展路线图</b>：从 ${(d.kb_geometry.layers['规则'] || 0)} 条官方"规则"层条目继续操作化——当前 <b>${d.roadmap.rules_pending_checker}</b> 条已声明规则待补 checker（${d.roadmap.by_specialty.slice(0, 5).map(s => esc(s.specialty) + s.count).join('、')}…）+ ${d.roadmap.tables_pending_ingest} 项对照表待入库。地基不是静态的，是<b>可持续从官方两库长出来</b>的。</div>` : ''}
   `;
-  openModal('🏛 合规地基 · 站在国家两库肩上（可溯源）', html);
+  return html;
 }
 
 async function showProvenanceTriad() {
+  return triadHtml().then(h => openModal('🔬 取证可信度三件套 · 第一护城河（可演证）', h));
+}
+async function triadHtml() {
   let d;
   try { d = await fetch('/api/provenance-triad').then(r => r.json()); }
-  catch (e) { openModal('🔬 取证可信度三件套', `<p class="muted">加载失败：${esc(String(e))}</p>`); return; }
+  catch (e) { return `<p class="muted">加载失败：${esc(String(e))}</p>`; }
   const rc = d.reconciliation || {}, cov = d.coverage || {}, cf = d.confidence || {};
   // ① 合议去重
   const reconRows = (rc.entries || []).map(e => `<tr><td>费用行 ${esc(String(e.fee_lines))}</td><td><b>${esc(e.primary)}</b> 主 + ${(e.corroborations || []).map(esc).join('、')} 佐证</td><td class="num">¥${fmt(e.amount_once)}</td><td class="num muted">¥${fmt(e.amount_if_double_counted)}</td></tr>`).join('');
@@ -1983,7 +2008,30 @@ async function showProvenanceTriad() {
     <table class="fee-table"><thead><tr><th>规则</th><th>定性</th><th>置信</th><th>最低OCR</th><th>优先分</th></tr></thead><tbody>${cfRows}</tbody></table>
     <p class="muted" style="font-size:11.5px">${esc(cf.note || '')}</p>
   `;
-  openModal('🔬 取证可信度三件套 · 第一护城河（可演证）', html);
+  return html;
+}
+
+// 🛡 护城河：合规地基（政策溯源）+ 取证三件套（证据可信度）合并为单弹窗双页签
+async function showHaven(tab = 0) {
+  openModal('🛡 护城河 · 合规地基 + 取证可信度三件套', `
+    <div class="haven-tabs">
+      <button type="button" class="haven-tab ${tab === 0 ? 'active' : ''}" data-htab="0">🏛 合规地基 · 政策溯源</button>
+      <button type="button" class="haven-tab ${tab === 1 ? 'active' : ''}" data-htab="1">🔬 取证三件套 · 证据可信度</button>
+    </div>
+    <div id="havenPanel"><p class="muted">加载中…</p></div>`);
+  const load = async (t) => {
+    const panel = document.getElementById('havenPanel');
+    if (!panel) return;
+    panel.innerHTML = '<p class="muted">加载中…</p>';
+    const h = t === 0 ? await foundationHtml() : await triadHtml();
+    const p2 = document.getElementById('havenPanel');
+    if (p2) p2.innerHTML = h;
+  };
+  document.querySelectorAll('.haven-tab').forEach(b => b.onclick = () => {
+    document.querySelectorAll('.haven-tab').forEach(x => x.classList.toggle('active', x === b));
+    load(Number(b.dataset.htab));
+  });
+  load(tab);
 }
 
 // 院端三阶段自查地图：事前开单可防 / 事中结算前可拦 / 事后需深查 · 关口前移
