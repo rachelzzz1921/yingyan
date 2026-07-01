@@ -1601,22 +1601,40 @@ $('#btnInstitution').onclick = showInstitution;
 const _btnFoundation = $('#btnFoundation'); if (_btnFoundation) _btnFoundation.onclick = () => showHaven(0);
 const _btnTriad = $('#btnTriad'); if (_btnTriad) _btnTriad.onclick = () => showHaven(1);
 const _btnThreeStage = $('#btnThreeStage'); if (_btnThreeStage) _btnThreeStage.onclick = showThreeStage;
-// v2bar 下拉（洞察/稽核引擎/工具与演示）：开合 + 点项后收起 + 点外部收起，顶栏不换行
+// v2bar 下拉（洞察/稽核引擎/工具与演示）：开合 + 点项后收起 + 点外部收起。
+// 关键：v2bar 有 backdrop-filter（给 fixed 建了包含块）+ overflow-x:auto（裁剪）——会把展开的菜单裁掉看不全。
+// 解法：把菜单 portal 到 <body>，脱离 v2bar 的包含块与 overflow，position:fixed 按触发钮定位，永不被裁。
 (function setupV2Dropdowns() {
   const dds = $$('.v2dropdown');
+  let openMenu = null;
+  const closeAll = () => { if (openMenu) { openMenu.style.display = 'none'; openMenu = null; } dds.forEach(d => d.classList.remove('open')); };
+  function positionMenu(menu, btn) {
+    const r = btn.getBoundingClientRect();
+    menu.style.top = Math.round(r.bottom + 6) + 'px';
+    if (menu.classList.contains('v2dropdown-menu-right')) {
+      menu.style.right = Math.round(window.innerWidth - r.right) + 'px'; menu.style.left = 'auto';
+    } else {
+      const mw = menu.offsetWidth || 180; // 已 display:flex 后再量，靠右边缘时左收避免溢出
+      menu.style.left = Math.round(Math.max(8, Math.min(r.left, window.innerWidth - mw - 12))) + 'px'; menu.style.right = 'auto';
+    }
+  }
   dds.forEach(dd => {
-    const menuBtn = dd.querySelector('.v2btn'); // 第一个 v2btn 是开合触发钮
+    const btn = dd.querySelector('.v2btn');
     const menu = dd.querySelector('.v2dropdown-menu');
-    if (!menuBtn || !menu) return;
-    menuBtn.addEventListener('click', (e) => {
+    if (!btn || !menu) return;
+    document.body.appendChild(menu); // portal：一次性搬到 body
+    menu._btn = btn; menu._dd = dd;
+    btn.addEventListener('click', (e) => {
       e.stopPropagation();
-      const wasOpen = dd.classList.contains('open');
-      dds.forEach(d => d.classList.remove('open')); // 互斥：开一个收其它
-      dd.classList.toggle('open', !wasOpen);
+      const isOpen = openMenu === menu;
+      closeAll();
+      if (!isOpen) { openMenu = menu; dd.classList.add('open'); menu.style.display = 'flex'; positionMenu(menu, btn); }
     });
-    menu.addEventListener('click', () => dd.classList.remove('open'));
+    menu.addEventListener('click', () => closeAll());
   });
-  document.addEventListener('click', (e) => { dds.forEach(dd => { if (!dd.contains(e.target)) dd.classList.remove('open'); }); });
+  document.addEventListener('click', (e) => { if (openMenu && !openMenu.contains(e.target) && !openMenu._btn.contains(e.target)) closeAll(); });
+  window.addEventListener('scroll', closeAll, true); // fixed 菜单不随滚动移动 → 滚动即收起
+  window.addEventListener('resize', () => { if (openMenu) positionMenu(openMenu, openMenu._btn); });
 })();
 // 稽核引擎档位：标准（默认主CTA走标准）
 const _btnEngStd = $('#btnEngStd'); if (_btnEngStd) _btnEngStd.onclick = () => runAudit();

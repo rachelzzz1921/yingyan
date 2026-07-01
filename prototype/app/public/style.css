@@ -351,9 +351,9 @@ h1,h2,h3{font-weight:700;letter-spacing:-.02em}
 .v2btn{white-space:nowrap;flex:0 0 auto}
 /* 洞察下拉：收纳事实层/机构画像/合规地基/取证三件套，避免顶栏过挤换行 */
 .v2dropdown{position:relative;display:inline-block;flex:0 0 auto}
-.v2dropdown-menu{position:absolute;top:calc(100% + 6px);left:0;z-index:60;display:none;flex-direction:column;gap:5px;padding:8px;background:#fff;border:1px solid var(--line);border-radius:10px;box-shadow:0 14px 34px rgba(15,27,45,.18);min-width:150px}
+/* position:fixed 让下拉脱离 v2bar 的 overflow-x:auto 裁剪（否则展开项被裁看不全）；位置由 JS 按钮定位 */
+.v2dropdown-menu{position:fixed;z-index:200;display:none;flex-direction:column;gap:5px;padding:8px;background:#fff;border:1px solid var(--line);border-radius:10px;box-shadow:0 14px 34px rgba(15,27,45,.18);min-width:160px;max-height:min(70vh,520px);overflow-y:auto}
 .v2dropdown.open .v2dropdown-menu{display:flex}
-.v2dropdown-menu-right{left:auto;right:0}
 .haven-tabs{display:flex;gap:6px;margin-bottom:14px;border-bottom:1px solid var(--line)}
 .haven-tab{font-size:13px;font-weight:600;padding:8px 14px;border:none;background:none;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px}
 .haven-tab:hover{color:var(--yy-ink)}
