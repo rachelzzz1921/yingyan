@@ -478,7 +478,7 @@ function patchTask(store, id, patch, by) {
 const DOMAIN_BY_ID = { main: '肿瘤', clean: '肿瘤', edge_egfr: '肿瘤', edge_gcsf: '肿瘤', ortho: '骨科', drg: 'DRG/支付方式', imaging: '医学影像', anes: '麻醉', pharmacy: '定点零售药店', icu: '重症医学', uploaded: '导入件' };
 function round2(x) { return Math.round((x + Number.EPSILON) * 100) / 100; }
 function institutionPortrait(DB) {
-  const byRule = {}, byType = {}, byDept = {}, byDomain = {}, caseRows = [];
+  const byRule = {}, byType = {}, byDept = {}, byDomain = {}, byMonth = {}, byDoctor = {}, caseRows = [];
   let suspectedTotal = 0, clueTotal = 0, amountTotal = 0, cleanPass = 0, cleanTotal = 0;
   for (const id of Object.keys(DB.cases)) {
     if (id === 'uploaded') continue;                       // 跳过临时导入件
@@ -504,18 +504,32 @@ function institutionPortrait(DB) {
     const dm = byDomain[domain] = byDomain[domain] || { domain, cases: 0, suspected: 0, amount: 0 };
     dm.cases++; dm.suspected += s.suspected_count; dm.amount += caseAmount;
     suspectedTotal += s.suspected_count; clueTotal += s.clue_count; amountTotal += caseAmount;
+    // 纵向回顾：按就诊月聚合（真实 admit_time）
+    const month = (rec.front_page?.admit_time || rec.front_page?.admission_time || '').slice(0, 7) || '未知';
+    const mo = byMonth[month] = byMonth[month] || { month, cases: 0, suspected: 0, clue: 0, amount: 0, _top: {} };
+    mo.cases++; mo.suspected += s.suspected_count; mo.clue += s.clue_count; mo.amount += caseAmount;
+    if (topRule) mo._top[topRule] = (mo._top[topRule] || 0) + 1;
+    // 维度切换：按主治医生聚合
+    const doctor = (rec.front_page?.attending_physician || '—').replace(/（.*?）|\(.*?\)/g, '').trim() || '—';
+    const dr = byDoctor[doctor] = byDoctor[doctor] || { doctor, cases: 0, suspected: 0, clue: 0, amount: 0 };
+    dr.cases++; dr.suspected += s.suspected_count; dr.clue += s.clue_count; dr.amount += caseAmount;
     caseRows.push({ id, label: rec.case_meta?.case_title, dept, domain, is_clean: isClean, suspected: s.suspected_count, clue: s.clue_count, amount: round2(caseAmount), top_rule: topRule });
   }
   const top_rules = Object.values(byRule).map(r => ({ rule_id: r.rule_id, rule_name: r.rule_name, count: r.count, amount: round2(r.amount), cases: r.cases.size })).sort((a, b) => b.amount - a.amount);
   const violation_types = Object.values(byType).map(t => ({ type: t.type, count: t.count, amount: round2(t.amount) })).sort((a, b) => b.amount - a.amount);
   const by_dept = Object.values(byDept).map(d => ({ dept: d.dept, cases: d.cases, suspected: d.suspected, clue: d.clue, amount: round2(d.amount) })).sort((a, b) => b.amount - a.amount);
   const by_domain = Object.values(byDomain).map(d => ({ domain: d.domain, cases: d.cases, suspected: d.suspected, amount: round2(d.amount) })).sort((a, b) => b.amount - a.amount);
+  const by_month = Object.values(byMonth).map(mo => {
+    const top = Object.entries(mo._top).sort((a, b) => b[1] - a[1])[0];
+    return { month: mo.month, cases: mo.cases, suspected: mo.suspected, clue: mo.clue, amount: round2(mo.amount), top_rule: top ? top[0] : null };
+  }).sort((a, b) => a.month.localeCompare(b.month));
+  const by_doctor = Object.values(byDoctor).map(d => ({ doctor: d.doctor, cases: d.cases, suspected: d.suspected, clue: d.clue, amount: round2(d.amount) })).sort((a, b) => b.amount - a.amount);
   return {
     hospital: '示范市第一人民医院（虚构演示）',
     generated: '运行时实测 · 对全部演示案卷批量初筛后聚合',
     disclaimer: '本画像由鹰眼对演示案卷集批量AI初筛后聚合，金额为初筛疑点金额（未计线索）。真实飞检按抽样案卷批量生成。',
     summary: { audited_cases: caseRows.length, suspected_total: suspectedTotal, clue_total: clueTotal, amount_total: round2(amountTotal), clean_pass: `${cleanPass}/${cleanTotal}`, domains_covered: by_domain.length },
-    top_rules, violation_types, by_dept, by_domain, case_rows: caseRows,
+    top_rules, violation_types, by_dept, by_domain, by_month, by_doctor, case_rows: caseRows,
   };
 }
 // iter18 机构画像导出：《院端体检报告》markdown（飞检前置/院端自查可交付物）

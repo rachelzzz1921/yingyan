@@ -1947,6 +1947,9 @@ async function showInstitution() {
   const deptRows = d.by_dept.map(x => `<tr><td>${esc(x.dept)}</td><td class="num">${x.cases}</td><td class="num">${x.suspected}</td><td class="num">${x.clue}</td><td class="num">¥${fmt(x.amount)}</td></tr>`).join('');
   const typeRows = d.violation_types.slice(0, 8).map(t => `<tr><td>${esc(t.type)}</td><td class="num">${t.count}</td><td class="num">¥${fmt(t.amount)}</td></tr>`).join('');
   const caseRows = d.case_rows.map(c => `<tr class="${c.is_clean ? 'ins-clean' : ''}"><td>${c.is_clean ? '🟢' : '🔴'} ${esc((c.label || c.id).slice(0, 26))}</td><td>${esc(c.dept)}</td><td>${esc(c.domain)}</td><td class="num">${c.suspected}</td><td class="num">${c.clue}</td><td class="num">¥${fmt(c.amount)}</td></tr>`).join('');
+  const maxMoAmt = Math.max(1, ...(d.by_month || []).map(x => x.amount));
+  const monthBars = (d.by_month || []).map(x => `<div class="ins-bar-row"><span class="ins-bar-label">${esc(x.month)}<span class="muted"> ·${x.cases}案</span></span><span class="ins-bar-track"><span class="ins-bar-fill" style="width:${Math.round(x.amount / maxMoAmt * 100)}%"></span></span><span class="ins-bar-val">¥${fmt(x.amount)}<span class="muted"> ·疑${x.suspected}/线${x.clue}</span></span></div>`).join('');
+  const doctorRows = (d.by_doctor || []).slice(0, 8).map(x => `<tr><td>${esc(x.doctor)}</td><td class="num">${x.cases}</td><td class="num">${x.suspected}</td><td class="num">${x.clue}</td><td class="num">¥${fmt(x.amount)}</td></tr>`).join('');
   const examMode = MODE === 'exam';
   const intro = examMode
     ? `把单件自查<b>升维到全院画像</b>——<b>本院对标自查</b>：看自己哪些规则/科室高发，优先自查整改、主动退回，避免被飞检点名（自查从宽、被查从严）。`
@@ -1962,13 +1965,19 @@ async function showInstitution() {
       <div class="bkpi green"><div class="n">${esc(s.clean_pass)}</div><div class="l">干净件零误报</div></div>
       <div class="bkpi"><div class="n">${s.domains_covered}</div><div class="l">覆盖专科领域</div></div>
     </div>
+    <div class="facts-h">📅 纵向回顾 · 按就诊月聚合（一段时间的整体复核 · 真实 admit_time）</div>
+    <div class="ins-bars">${monthBars}</div>
     <div class="facts-h">📊 高频违规规则 TOP（按涉及金额）</div>
     <div class="ins-bars">${ruleBars}</div>
     <div class="facts-h">🏥 专科领域分布（覆盖广度 · 现 ${s.domains_covered} 个可fire领域）</div>
     <div class="ins-bars">${domBars}</div>
     <div class="ins-2col">
       <div><div class="facts-h">科室分布</div><table class="fee-table"><thead><tr><th>科室</th><th class="num">案</th><th class="num">疑点</th><th class="num">线索</th><th class="num">金额</th></tr></thead><tbody>${deptRows}</tbody></table></div>
+      <div><div class="facts-h">主治医生分布（维度切换）</div><table class="fee-table"><thead><tr><th>医生</th><th class="num">案</th><th class="num">疑点</th><th class="num">线索</th><th class="num">金额</th></tr></thead><tbody>${doctorRows}</tbody></table></div>
+    </div>
+    <div class="ins-2col">
       <div><div class="facts-h">违规类型分布</div><table class="fee-table"><thead><tr><th>类型</th><th class="num">次</th><th class="num">金额</th></tr></thead><tbody>${typeRows}</tbody></table></div>
+      <div></div>
     </div>
     <div class="facts-h">受检案卷清单（点"红"为违规件、"绿"为合规件正确放行）</div>
     <table class="fee-table"><thead><tr><th>案卷</th><th>科室</th><th>领域</th><th class="num">疑点</th><th class="num">线索</th><th class="num">金额</th></tr></thead><tbody>${caseRows}</tbody></table>
