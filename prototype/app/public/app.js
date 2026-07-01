@@ -1626,6 +1626,7 @@ $('#btnInstitution').onclick = showInstitution;
 const _btnFoundation = $('#btnFoundation'); if (_btnFoundation) _btnFoundation.onclick = () => showHaven(0);
 const _btnTriad = $('#btnTriad'); if (_btnTriad) _btnTriad.onclick = () => showHaven(1);
 const _btnThreeStage = $('#btnThreeStage'); if (_btnThreeStage) _btnThreeStage.onclick = showThreeStage;
+const _btnAgentRuntime = $('#btnAgentRuntime'); if (_btnAgentRuntime) _btnAgentRuntime.onclick = showAgentRuntime;
 // v2bar 下拉（洞察/稽核引擎/工具与演示）：开合 + 点项后收起 + 点外部收起。
 // 关键：v2bar 有 backdrop-filter（给 fixed 建了包含块）+ overflow-x:auto（裁剪）——会把展开的菜单裁掉看不全。
 // 解法：把菜单 portal 到 <body>，脱离 v2bar 的包含块与 overflow，position:fixed 按触发钮定位，永不被裁。
@@ -2118,6 +2119,39 @@ async function showThreeStage() {
     <div class="stage-grid">${stageCards}</div>
     <div class="cov-statement" style="margin-top:10px">🎯 ${esc((d.narrative || '').replace(/\*\*/g, ''))}</div>`;
   openModal('🗺 院端三阶段自查 · 关口前移地图', html);
+}
+
+// agent 运行时：13 单元各司其职的本次实测（读现有 report_meta，无需额外调用）
+function showAgentRuntime() {
+  const m = REPORT && REPORT.report_meta;
+  if (!m) { openModal('🛠 agent 运行时', '<p class="muted">先跑一次稽核（点「开始稽核」）再看运行时数据。</p>'); return; }
+  const r = m.routing || {}, sc = r.short_circuit || {}, s = m.summary || {}, stg = m.stage_ms || {};
+  const llmOn = !!m.real_agent;
+  const superOn = !!(m.super_fused || LAST_RUN_PROFILE === 'super');
+  const stage = (name, role, stat, knob, cls) => `<tr>
+    <td><b class="${cls || ''}">${esc(name)}</b><div class="muted" style="font-size:11.5px">${esc(role)}</div></td>
+    <td class="rt-stat">${stat}</td>
+    <td class="muted" style="font-size:11.5px">${esc(knob)}</td></tr>`;
+  const detRows = [
+    stage('路由激活 Routing', '抽案件特征 → 只激活适用规则', `<b>${r.activated_count ?? '—'}/${r.total ?? 58}</b> 激活 · <span class="muted">${esc(sc.saved || '')}</span>`, 'trigger_logic / 覆盖维度'),
+    stage('规则引擎 · 26 checker', 'L1 时间/数量/互斥 + L2 结构', `命中 <b>${s.raw_findings_before_merge ?? '—'}</b> 条原始发现`, '阈值 / 除外清单'),
+    stage('合议去重 Reconcile', '同一笔钱多规则命中 → 只算一次', `<b>${s.raw_findings_before_merge ?? '—'} → ${s.total_findings ?? '—'}</b>（合并 ${s.merged_count ?? 0} 条）`, 'primaryScore 权重'),
+    stage('治理·分层 Governance', '观察期降权 · 疑点/线索/影子', `疑点 <b class="rt-red">${s.suspected_count ?? '—'}</b> · 线索 <b class="rt-amb">${s.clue_count ?? '—'}</b> · 影子 ${s.shadow_count ?? 0}`, 'shadow/retired 规则集'),
+  ].join('');
+  const llmStat = (v, alt) => v != null ? `<b class="rt-teal">${v}ms</b> · ${alt}` : '<span class="muted">未启用</span>';
+  const llmRows = [
+    stage('① 控方 prosecutor', '真读病历自由文本 · 三方交叉验证', llmStat(stg.prosecutor, '读病历提疑点'), 'system 人格 / 三要素门禁', 'rt-teal'),
+    stage('② CoVe 取证自检', '每疑点生成2问 · 独立回查', m.cove_error ? `<span class="rt-red">失败降级</span> <span class="muted">${esc(m.cove_error).slice(0, 30)}</span>` : llmStat(stg.cove, '维持/降级/撤销'), '批量vs逐条 / 并发池', 'rt-teal'),
+    stage('③ 控辩裁 P5', '辩方反驳 + 裁判位置交换防偏见', llmOn ? '<span class="muted">按需（点疑点「对抗辩论」启动）</span>' : '<span class="muted">未启用</span>', '模板版本 / 短路规则', 'rt-teal'),
+  ].join('');
+  const html = `
+    <p class="muted">同一个疑点报告，背后是 <b>13 个单元各司其职</b>。下面是本次实测（案卷 <code>${esc(CURRENT_CASE)}</code>）——每行第三列是该单元<b>可独立调优的旋钮</b>。</p>
+    <div class="facts-h">⚙ 确定性引擎路径 <span class="muted">（本次实跑 · 纯计算可复现）</span></div>
+    <table class="fee-table rt-table"><thead><tr><th>单元 / 职责</th><th>本次实测</th><th>调优旋钮</th></tr></thead><tbody>${detRows}</tbody></table>
+    <div class="facts-h" style="margin-top:14px">🧠 真·LLM 多 agent 路径 <span class="muted">（${llmOn ? (superOn ? '超级增强·已跑' : 'LLM·已跑') : '点「⚙稽核引擎 → LLM语义/超级增强」启用'}）</span></div>
+    <table class="fee-table rt-table"><thead><tr><th>agent / 职责</th><th>本次实测</th><th>调优旋钮</th></tr></thead><tbody>${llmRows}</tbody></table>
+    <div class="cov-statement" style="margin-top:12px">📌 各 agent 职责单一、互不混淆——所以可以<b>逐个精调</b>（改一个 agent 的 prompt/阈值/模型不影响其它）。harness 现状:防注入基线 + PII脱敏 + context预算 + 重试退避 + 结构化输出 + 失败不阻断。</div>`;
+  openModal('🛠 agent 运行时 · 13 单元各司其职（本次实测）', html);
 }
 
 // 对抗注入防护矩阵：多种技法各出不同结果（特征识别 / 架构守住），每种可一键注入到工作台稽核

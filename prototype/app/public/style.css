@@ -736,3 +736,7 @@ body.mode-exam .layout{grid-template-columns:1fr}
 .export-item .ex-tx .muted{font-size:12px}
 .export-item .ex-dl{font-size:18px;color:var(--muted);flex:none}
 .export-item:hover .ex-dl{color:var(--primary-d,#134E72)}
+/* agent 运行时面板 */
+.rt-table td{vertical-align:top;padding:9px 12px}
+.rt-table .rt-stat{font-size:13px;white-space:nowrap}
+.rt-red{color:var(--red,#d64545)}.rt-teal{color:#0e9d8a}.rt-amb{color:#b8860b}
