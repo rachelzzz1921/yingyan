@@ -899,7 +899,7 @@ function renderReport(report) {
   if (prevFinding) prevFinding.onclick = () => { FINDING_PAGE = Math.max(0, FINDING_PAGE - 1); renderReport(report); switchReportPage(1, true); };
   if (nextFinding) nextFinding.onclick = () => { FINDING_PAGE = Math.min(findings.length - 1, FINDING_PAGE + 1); renderReport(report); switchReportPage(1, true); };
 
-  pShield.innerHTML = `<div class="findings-section"><h3 class="sect-title green"><img src="/brand/icons/ok.svg" alt="" width="18" height="18" style="vertical-align:-3px"> 正确「不报」（误报防控 · 宁漏报不误报）</h3><div id="distractorList">${(report.correctly_not_flagged || []).map(distractorCard).join('')}</div></div>`;
+  pShield.innerHTML = `<div class="findings-section"><h3 class="sect-title green"><img src="/brand/icons/ok.svg" alt="" width="18" height="18" style="vertical-align:-3px"> 正确「不报」（误报防控 · 存疑转线索·不误报）</h3><div id="distractorList">${(report.correctly_not_flagged || []).map(distractorCard).join('')}</div></div>`;
   pDetail.innerHTML = `
     ${s.merged_count ? `<div class="recon-banner">🔗 <b>合议层</b>：合并前 ${s.raw_findings_before_merge} 条原始命中 → 去重后 <b>${s.total_findings} 条</b>（${s.merged_count} 条同笔费用多规则命中已合并）。疑点金额按费用行去重 <b>¥${fmt(s.suspected_amount)}</b>——若像传统做法各规则各算各的，会虚高到 <b style="color:var(--red)">¥${fmt(s.amount_if_double_counted)}</b>。</div>` : ''}
     ${s.shadow_count ? `<div class="shadow-banner">🌓 <b>规则状态机·观察期（shadow）</b>：${s.shadow_count} 条命中来自被复核高频驳回规则，暂不计入疑点/金额（扣留 ¥${fmt(s.shadow_amount_withheld)}）。</div>` : ''}
@@ -2199,7 +2199,7 @@ function renderReviewFlow(stats) {
 }
 function showPitch() {
   const html = `
-    <div class="pitch-block"><h4>一句话定位</h4><div class="pitch-quote">鹰眼是稽核员的 AI 初筛员——读懂非结构化病历，90 秒输出可对质的证据链稽核报告。</div></div>
+    <div class="pitch-block"><h4>一句话定位</h4><div class="pitch-quote">人少事多——8600 名监管员盯 13 亿参保人。鹰眼是<b>医保监管的 AI 人力倍增器</b>：看得懂非结构化病历，40 分钟→90 秒把线索变成<b>能对质的证据链</b>。</div></div>
     <div class="pitch-block"><h4>三支点</h4>
       <div class="pitch-quote">① 地位：站在官方规则库(88类/24.7万知识点)肩上的<b>语义增强层</b>，国家系统的"取证放大镜"。</div>
       <div class="pitch-quote">② 被验证：政策(AI+医保监管/智能监管年追26.72亿) · 商业(美国Alaffia·LLM读病历证据回链·提速20倍·收入翻4倍) · 地方(苏州4个月追回8151万·已自研AI比对模型)。</div>
