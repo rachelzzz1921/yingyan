@@ -1666,10 +1666,22 @@ const _btnEngStd = $('#btnEngStd'); if (_btnEngStd) _btnEngStd.onclick = () => r
 $('#btnGovernance').onclick = showGovernance;
 const btnRuleCatalog = $('#btnRuleCatalog');
 if (btnRuleCatalog) btnRuleCatalog.onclick = () => showRuleCatalog();
-$('#btnExport').onclick = () => {
-  const q = MODE === 'exam' ? `?mode=exam&case_id=${encodeURIComponent(CURRENT_CASE)}` : `?case_id=${encodeURIComponent(CURRENT_CASE)}`;
-  window.open('/api/export/checklist' + q, '_blank');
-};
+$('#btnExport').onclick = showExportMenu;
+function showExportMenu() {
+  const ex = MODE === 'exam';
+  const caseQ = `case_id=${encodeURIComponent(CURRENT_CASE)}`;
+  const chkQ = (ex ? 'mode=exam&' : '') + caseQ;
+  const item = (href, icon, title, sub) => `<a class="export-item" href="/api/export/${href}" target="_blank" rel="noopener"><span class="ex-ic">${icon}</span><span class="ex-tx"><b>${title}</b><span class="muted">${sub}</span></span><span class="ex-dl">⬇</span></a>`;
+  const html = `
+    <p class="muted">当前案卷 <code>${esc(CASE_LABELS[CURRENT_CASE] || CURRENT_CASE)}</code> · ${ex ? '体检' : '稽核'}模式 —— 一键下载结构化数据 / 清单 / 打印版。</p>
+    <div class="export-grid">
+      ${item(`findings?format=csv&${caseQ}`, '📊', '疑点表 · CSV', 'Excel 直接打开，逐条疑点带证据/金额/置信')}
+      ${item(`findings?format=json&${caseQ}`, '{ }', '疑点 · JSON', '结构化数据，供接口/二次处理')}
+      ${item(`checklist?${chkQ}`, '📄', ex ? '自查整改清单 · Markdown' : '飞检举证包 · Markdown', '三要素证据链清单 + 检查结论草稿')}
+      ${item(`checklist?format=html&${chkQ}`, '🖨', ex ? '自查清单 · 打印/存 PDF' : '举证包 · 打印/存 PDF', '浏览器打印为 PDF（服务端一键 PDF 建设中）')}
+    </div>`;
+  openModal('⬇ 导出报告 · 一键下载', html);
+}
 $('#btnPitch').onclick = showPitch;
 $('#modalRoot').onclick = (e) => { if (e.target.id === 'modalRoot') closeModal(); };
 

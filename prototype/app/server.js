@@ -1943,6 +1943,34 @@ const server = http.createServer(async (req, res) => {
       return res.end(md);
     }
 
+    // 结构化导出：疑点表 → CSV(带 BOM,Excel 中文不乱码) / JSON(带 meta)
+    if (p === '/api/export/findings') {
+      const caseId = url.searchParams.get('case_id') || 'main';
+      const record = DB.cases[caseId] || DB.record;
+      const fmt = url.searchParams.get('format') === 'csv' ? 'csv' : 'json';
+      let rep;
+      try { rep = runAuditForRecord(record); } catch (e) { return sendJSON(res, { error: '稽核失败：' + e.message }, 500); }
+      const COLS = ['案卷', '规则ID', '规则名', '违规类型', '定性', '风险', '涉及金额', '置信度', '优先分', '证据定位', '政策依据', '推理', '处置建议'];
+      const rows = (rep.findings || []).map(f => ({
+        案卷: caseId, 规则ID: f.rule_id, 规则名: f.rule_name, 违规类型: f.violation_type,
+        定性: f.status, 风险: f.risk_level, 涉及金额: f.amount_involved || 0,
+        置信度: f.confidence ?? '', 优先分: f.priority_score ?? '',
+        证据定位: (f.evidence || []).map(e => `${e.loc || e.type || ''}:${(e.text || '').slice(0, 40)}`).join(' ｜ '),
+        政策依据: (f.policy || []).map(p => p.ref).join('、'),
+        推理: f.reasoning || '', 处置建议: f.disposal_suggestion || '',
+      }));
+      const stamp = new Date().toISOString().slice(0, 10);
+      if (fmt === 'json') {
+        const out = { case_id: caseId, patient: rep.report_meta?.patient, summary: rep.report_meta?.summary, generated_at: new Date().toISOString(), findings: rows };
+        res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8', 'Content-Disposition': "attachment; filename=\"yingyan-findings.json\"; filename*=UTF-8''" + encodeURIComponent(`鹰眼-疑点-${caseId}-${stamp}.json`) });
+        return res.end(JSON.stringify(out, null, 2));
+      }
+      const esc = v => { const s = String(v ?? ''); return /[",\n\r]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s; };
+      const csv = '﻿' + [COLS.join(','), ...rows.map(r => COLS.map(c => esc(r[c])).join(','))].join('\r\n');
+      res.writeHead(200, { 'Content-Type': 'text/csv; charset=utf-8', 'Content-Disposition': "attachment; filename=\"yingyan-findings.csv\"; filename*=UTF-8''" + encodeURIComponent(`鹰眼-疑点-${caseId}-${stamp}.csv`) });
+      return res.end(csv);
+    }
+
     if (p === '/api/audit' && req.method === 'POST') {
       const body = await readBody(req);
       const mode = url.searchParams.get('mode');

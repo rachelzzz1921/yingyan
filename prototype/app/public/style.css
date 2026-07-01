@@ -726,3 +726,13 @@ body.mode-exam .layout{grid-template-columns:1fr}
   .intake-row{grid-template-columns:1fr auto;row-gap:6px}
   .intake-row .intake-slot{grid-column:1 / -1}
 }
+/* 一键导出菜单 */
+.export-grid{display:grid;gap:10px;margin-top:6px}
+.export-item{display:flex;align-items:center;gap:14px;padding:14px 16px;border:1px solid var(--line);border-radius:12px;text-decoration:none;color:var(--ink);background:#fff;transition:.15s}
+.export-item:hover{border-color:var(--primary-d,#134E72);background:#F4F8FB}
+.export-item .ex-ic{font-size:24px;width:34px;text-align:center;flex:none}
+.export-item .ex-tx{display:flex;flex-direction:column;gap:2px;flex:1}
+.export-item .ex-tx b{font-size:15px}
+.export-item .ex-tx .muted{font-size:12px}
+.export-item .ex-dl{font-size:18px;color:var(--muted);flex:none}
+.export-item:hover .ex-dl{color:var(--primary-d,#134E72)}
