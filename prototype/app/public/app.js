@@ -666,7 +666,9 @@ async function runAudit(opts = {}) {
     '风险分级、生成结构化报告…'];
   // 首屏走「即时路」：super→mode=super（含RAG）；llm→标准（秒出）；其余按原模式
   const fastQ = opts.super ? '?mode=super' : (rag ? '?rag=1' : (MODE === 'exam' ? '?mode=exam' : ''));
-  const fastBody = { inject: INJECT || !!opts.super, caseId: CURRENT_CASE, rag: !!opts.super || rag };
+  // inject 可为攻击 id 字符串（指定技法）或 true（默认第一种）；INJECT 用于超级增强等场景
+  const injectVal = opts.injectAttack || (INJECT ? true : false) || (opts.super ? true : false);
+  const fastBody = { inject: injectVal, caseId: CURRENT_CASE, rag: !!opts.super || rag };
   const fastTimeout = (opts.super || rag) ? 30000 : 15000;
   const waitHint = opts.super ? 'RAG + 对抗防护融合' : (rag ? 'RAG 向量检索中' : (opts.llm ? '先出确定性首屏，LLM 后台分析' : '规则引擎'));
   startScanWaitTicker('已提交稽核任务', waitHint);
@@ -798,6 +800,7 @@ function statusLineHTML(m, exam) {
     chips.push(`<span class="sl-chip super">⚡ 超级增强 · LLM${llmOn ? '✓' : '—'} RAG${ragOn ? '✓' : '—'} 防护${m.injected ? '✓' : '—'}</span>`);
   }
   if (exam) chips.push(`<span class="sl-chip">🏥 院端规则子集 ${m.exam_rule_filter?.used ?? '—'}/${m.exam_rule_filter?.total ?? '—'} 条</span>`);
+  if (m.injected_attack) chips.push(`<span class="sl-chip warn" title="目标 ${esc(m.injected_attack.targets)}：${esc(m.injected_attack.goal)}">🎭 对抗注入·${esc(m.injected_attack.technique)}（已防御）</span>`);
   if ((m.overlay_rules || []).length) chips.push(`<span class="sl-chip">📎 overlay ${m.overlay_rules.map(esc).join('、')}</span>`);
   return `<div class="status-line" title="${esc(m.engine_mode || '')}">${chips.join('')}<span class="sl-hint">ⓘ 悬停看引擎明细</span></div>`;
 }
@@ -1608,7 +1611,7 @@ function setMode(mode) {
 $$('.mode-btn').forEach(b => b.onclick = () => setMode(b.dataset.mode));
 $$('.rtab').forEach(b => b.onclick = () => switchReportView(b.dataset.view));
 // v2 工具
-$('#btnInject').onclick = () => { INJECT = true; runAudit(); };
+$('#btnInject').onclick = showInjectionDefense;
 $('#btnLLM').onclick = () => runAudit({ llm: true });
 const btnRag = $('#btnRag');
 if (btnRag) btnRag.onclick = () => runAudit({ rag: true });
@@ -2104,6 +2107,36 @@ async function showThreeStage() {
     <div class="cov-statement" style="margin-top:10px">🎯 ${esc((d.narrative || '').replace(/\*\*/g, ''))}</div>`;
   openModal('🗺 院端三阶段自查 · 关口前移地图', html);
 }
+
+// 对抗注入防护矩阵：多种技法各出不同结果（特征识别 / 架构守住），每种可一键注入到工作台稽核
+async function showInjectionDefense() {
+  let d;
+  try { d = await fetch('/api/injection-defense').then(r => r.json()); }
+  catch (e) { openModal('🛡 对抗注入防护', `<p class="muted">加载失败：${esc(String(e))}</p>`); return; }
+  if (d.error) { openModal('🛡 对抗注入防护', `<p class="muted">${esc(d.error)}</p>`); return; }
+  const sm = d.summary || {};
+  const rows = (d.attacks || []).map(a => `<tr>
+    <td><b>${esc(a.technique)}</b><div class="muted" style="font-size:11px">目标 ${typeof ruleLink === 'function' ? ruleLink(a.targets, { compact: true }) : esc(a.targets)} · ${esc(a.goal)}</div></td>
+    <td class="muted" style="font-size:11.5px">「${esc(a.text.slice(0, 32))}${a.text.length > 32 ? '…' : ''}」<div style="font-size:10.5px;opacity:.7">位置：${esc(a.loc)}</div></td>
+    <td style="text-align:center">${a.signature_detected ? '<span class="kind-tag real">✓ 特征识别</span>' : '<span class="kind-tag script">✗ 躲过特征</span>'}</td>
+    <td style="text-align:center">${a.target_held ? '<span class="kind-tag" style="background:#eafaf3;color:#0d7a4e;border:1px solid #b7e6cf">✓ 守住</span>' : '<span class="kind-tag" style="background:#fdeaea;color:#c0392b">✗ 失守</span>'}</td>
+    <td style="text-align:center"><button type="button" class="v2btn" style="padding:3px 9px;font-size:11.5px" onclick="runInjectionAttack('${esc(a.id)}')">▶ 注入并稽核</button></td>
+  </tr>`).join('');
+  const html = `
+    <p class="muted">对抗注入 = "写给 AI 的小抄"（夹页批注/页脚小字/角色劫持…）想诱导审核系统跳过核查。下面 <b>${sm.total}</b> 种技法<b>各产出不同结果</b>：</p>
+    <div class="bench-kpis" style="grid-template-columns:repeat(3,1fr)">
+      <div class="bkpi"><div class="n">${sm.total}</div><div class="l">对抗技法</div></div>
+      <div class="bkpi real"><div class="n">${sm.signature_detected}</div><div class="l">特征库识别(E-503)</div></div>
+      <div class="bkpi green"><div class="n">${sm.all_held ? '全部' : '部分'}</div><div class="l">架构层守住核查</div></div>
+    </div>
+    <table class="fee-table"><thead><tr><th>攻击技法 / 目标</th><th>注入话术 / 位置</th><th style="text-align:center">① 特征识别</th><th style="text-align:center">② 目标核查</th><th style="text-align:center">实测</th></tr></thead><tbody>${rows}</tbody></table>
+    <div class="cov-statement" style="margin-top:12px">🛡 <b>深度防御两层</b>：${esc(d.note)}</div>
+    <p class="muted" style="font-size:11.5px;margin-top:8px">基线疑点 ${d.baseline_suspected} 条；每种攻击注入后疑点数均与基线一致——<b>没有任何一种注入能诱导引擎少报或漏判</b>。第 5 种"变体绕过"特征库、但架构层照样守住，正是"不读自由文本指令、只在结构化事实上判定"的价值。</p>`;
+  openModal('🛡 对抗注入防护矩阵 · 5 种技法各不相同', html);
+}
+
+// 从防护矩阵一键注入指定攻击并在工作台跑一次真稽核
+window.runInjectionAttack = (attackId) => { closeModal(); runAudit({ injectAttack: attackId }); };
 
 const STATUS_META = { active: { label: '在役 active', cls: 'gv-active' }, shadow: { label: '观察期 shadow', cls: 'gv-shadow' }, deprecated: { label: '已下线 deprecated', cls: 'gv-dep' } };
 async function showGovernance() {
