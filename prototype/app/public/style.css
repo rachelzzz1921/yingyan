@@ -740,3 +740,7 @@ body.mode-exam .layout{grid-template-columns:1fr}
 .rt-table td{vertical-align:top;padding:9px 12px}
 .rt-table .rt-stat{font-size:13px;white-space:nowrap}
 .rt-red{color:var(--red,#d64545)}.rt-teal{color:#0e9d8a}.rt-amb{color:#b8860b}
+/* 导入解析置信回显 */
+.intake-parse-meta{margin:8px 0;padding:9px 12px;border-radius:9px;font-size:13px;border:1px solid var(--line)}
+.intake-parse-meta.ok{background:#eafaf3;border-color:#b7e6cf}
+.intake-parse-meta.warn{background:var(--amber-bg,#fdf3dd);border-color:#f0d9a8}

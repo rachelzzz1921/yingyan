@@ -1833,7 +1833,12 @@ function renderIntakeBatchResult(r, out) {
     `<span class="intake-slot-badge" data-tab="${esc(s.tab || '')}">${esc(s.label)}</span>`).join('');
   out.innerHTML = `
     ${r.errors?.length ? `<div class="ingest-err">部分失败：${esc(r.errors.join('；'))}</div>` : ''}
-    ${r.warnings?.length ? `<div class="muted" style="margin:8px 0">${esc(r.warnings.join(' · '))}</div>` : ''}
+    <div class="intake-parse-meta ${r.warnings?.length ? 'warn' : 'ok'}">
+      🔎 解析：<b>${esc(r.source || r.parse_engine || 'OCR/结构化')}</b>
+      ${r.warnings?.length
+    ? `· <span class="rt-amb">${r.warnings.length} 处字段解析降级，请人工核对补全</span><div class="muted" style="margin-top:4px;font-size:11.5px">${esc(r.warnings.join(' · '))}</div>`
+    : '· <span class="rt-teal">契约完整 · 字段可信</span>'}
+    </div>
     <div class="ingest-ok">✓ 已填入 ${(r.slotsFilled || []).length} 个材料区块${r.record?.front_page?.patient_name ? ' · ' + esc(r.record.front_page.patient_name) : ''}</div>
     <div class="intake-filled">${filled || '<span class="muted">暂无有效字段</span>'}</div>
     <div class="intake-result-list">${rows}</div>
