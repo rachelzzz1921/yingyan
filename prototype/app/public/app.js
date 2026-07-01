@@ -786,6 +786,50 @@ function collectFlaggedLines(report) {
   return set;
 }
 
+// 单行状态面包屑：引擎档位 + 超级增强 + 体检子集 + overlay 合成一行（替代原 3-4 条横幅）
+function statusLineHTML(m, exam) {
+  const engCls = m.real_agent ? 'real' : (m.llm_needs_key ? 'warn' : 'det');
+  const eng = m.real_agent ? '🧠 真·LLM 语义' : (m.llm_needs_key ? '⚠ 语义未启用（缺 Key）' : '⚙ 确定性规则引擎');
+  const chips = [`<span class="sl-chip ${engCls}" title="${esc(m.engine_mode || '')}">${eng}</span>`];
+  const superOn = !!(m.super_fused || LAST_RUN_PROFILE === 'super');
+  if (superOn) {
+    const llmOn = m.super_llm === 'ok' || m.real_agent;
+    const ragOn = !!(m.rag?.hits?.length || /RAG/.test(m.engine_mode || ''));
+    chips.push(`<span class="sl-chip super">⚡ 超级增强 · LLM${llmOn ? '✓' : '—'} RAG${ragOn ? '✓' : '—'} 防护${m.injected ? '✓' : '—'}</span>`);
+  }
+  if (exam) chips.push(`<span class="sl-chip">🏥 院端规则子集 ${m.exam_rule_filter?.used ?? '—'}/${m.exam_rule_filter?.total ?? '—'} 条</span>`);
+  if ((m.overlay_rules || []).length) chips.push(`<span class="sl-chip">📎 overlay ${m.overlay_rules.map(esc).join('、')}</span>`);
+  return `<div class="status-line" title="${esc(m.engine_mode || '')}">${chips.join('')}<span class="sl-hint">ⓘ 悬停看引擎明细</span></div>`;
+}
+
+// 人力倍增卡：40分钟VS实测 + 人少事多语境 合成单块（默认展开，核心论题）
+function leverageCardHTML(m, report, exam) {
+  const n = (report.findings || []).length;
+  return `<div class="leverage-card">
+    <div class="compare-banner leverage">
+      <div class="compare-col human"><span class="big">40<small>分钟</small></span><span>人工单案逐页审阅</span></div>
+      <div class="vs">VS</div>
+      <div class="compare-col agent"><span class="big">${(m.elapsed_ms != null && m.elapsed_ms < 1000) ? m.elapsed_ms + '<small>ms</small>' : '90<small>秒</small>'}</span><span>鹰眼初筛（实测 ${m.elapsed_ms ?? '—'}ms）</span></div>
+      <div class="vs">≈</div>
+      <div class="compare-col mult"><span class="big">${Math.round(40 * 60 / 90)}<small>×</small></span><span>人力倍增</span></div>
+    </div>
+    <div class="leverage-note">🚀 <b>人少事多 · AI 人力倍增器</b>：全国 <b>8600</b> 名医保监管员盯 <b>13 亿</b>参保人 / <b>28.99 万</b>家机构（人均是美国 4 倍），飞检一年只查得过来 <b>500</b> 家。${exam ? '院端把历史案卷自查干净、主动退回，<b>从源头替监管侧卸载工作量</b>；' : '本次把一名稽核员 <b>40 分钟</b>的单案初筛压到 90 秒内，'}${n} 条疑点已带三要素证据链——<b>人只需复核真争议、真违规</b>。</div>
+  </div>`;
+}
+
+// P3 证据链快速统计：把护城河动作（申诉/控辩/补材料）提到总览级，避免多疑点案卷遗漏
+function evidenceActionsHTML(report) {
+  const fs = report.findings || [];
+  const suspected = fs.filter(f => f.status === '疑点').length;
+  const needMore = fs.filter(f => (f.needs_more || []).length > 0 || f.status === '线索').length;
+  if (!suspected && !needMore) return '';
+  const llmReady = !!(window.APP_HEALTH && APP_HEALTH.llm_ready);
+  const chips = [`🛡 <b>${suspected}</b> 条可生成申诉材料`];
+  if (needMore) chips.push(`⊕ <b>${needMore}</b> 条标注需补材料/线索`);
+  if (llmReady && suspected) chips.push(`⚔ <b>${suspected}</b> 条可对抗辩论`);
+  return `<div class="evidence-actions" onclick="switchReportPage(1)" title="点开疑点卡逐条操作">🔗 证据链动作：${chips.join(' · ')} <span class="ea-go">→ 去疑点页操作</span></div>`;
+}
+
 let VIEW_EXAM = false;
 function renderReport(report) {
   ensureReportPagerShell();
@@ -829,19 +873,10 @@ function renderReport(report) {
 
   pOverview.innerHTML = `
     ${reportHeroHTML(report, s, exam)}
-    <div class="compare-banner leverage">
-      <div class="compare-col human"><span class="big">40<small>分钟</small></span><span>人工单案逐页审阅</span></div>
-      <div class="vs">VS</div>
-      <div class="compare-col agent"><span class="big">${(m.elapsed_ms != null && m.elapsed_ms < 1000) ? m.elapsed_ms + '<small>ms</small>' : '90<small>秒</small>'}</span><span>鹰眼初筛（实测 ${m.elapsed_ms ?? '—'}ms）</span></div>
-      <div class="vs">≈</div>
-      <div class="compare-col mult"><span class="big">${Math.round(40 * 60 / 90)}<small>×</small></span><span>人力倍增(端到端)</span></div>
-    </div>
-    <div class="leverage-note">🚀 <b>人少事多 · AI 人力倍增器</b>：全国 <b>8600</b> 名医保监管员盯 <b>13 亿</b>参保人 / <b>28.99 万</b>家机构（人均是美国 4 倍），飞检一年只查得过来 <b>500</b> 家。${exam ? '院端把历史案卷自查干净、主动退回，<b>从源头替监管侧卸载工作量</b>；' : '本次把一名稽核员 <b>40 分钟</b>的单案初筛压到 90 秒内，'}${(report.findings || []).length} 条疑点已带三要素证据链——<b>人只需复核真争议、真违规</b>。</div>
-    <div class="mode-banner ${m.real_agent ? 'real' : (m.llm_needs_key ? 'warn' : 'det')}" title="${esc(m.engine_mode || '')}">${m.real_agent ? '🧠 真·LLM 语义分析' : (m.llm_needs_key ? '⚠ 真·语义分析未启用（缺 Key）' : '⚙ 确定性规则引擎')}${exam ? ` · 院端规则子集 ${m.exam_rule_filter?.used ?? '—'}/${m.exam_rule_filter?.total ?? '—'} 条` : ''}<span class="mb-hint">ⓘ 悬停看引擎明细</span></div>
-    ${renderSuperAuditStatus(m)}
-    ${exam ? `<div class="exam-banner">🏥 <b>体检模式</b>：院端规则子集 ${m.exam_rule_filter?.used ?? '—'}/${m.exam_rule_filter?.total ?? '—'} 条。报告审阅完成后，请进入 <button type="button" class="linkish" onclick="switchReportView('rectification')">→ 登记整改</button> 填写整改时限、人工判断对错（回流规则治理）。</div>` : ''}
-    ${(m.overlay_rules || []).length ? `<div class="exam-banner">📎 规则 overlay 预览已合并：${m.overlay_rules.map(esc).join('、')}</div>` : ''}
+    ${statusLineHTML(m, exam)}
     <div class="summary-cards">${cards.map(c => `<div class="scard ${c.c}"><img class="scard-icon" src="/brand/icons/${c.icon || 'rules'}.svg" alt="" width="28" height="28"><div class="scard-body"><div class="n">${c.n}</div><div class="l">${c.l}</div></div></div>`).join('')}</div>
+    ${evidenceActionsHTML(report)}
+    ${leverageCardHTML(m, report, exam)}
   `;
 
   const findings = report.findings || [];
@@ -886,22 +921,7 @@ function renderReport(report) {
   }
 }
 
-function renderSuperAuditStatus(m) {
-  const superOn = !!(m?.report_meta?.super_fused || m?.super_fused || LAST_RUN_PROFILE === 'super');
-  if (!superOn) return '';
-  const llmOn = m?.super_llm === 'ok' || m?.real_agent;
-  const ragOn = !!(m?.rag?.hits?.length || /RAG/.test(m?.engine_mode || ''));
-  const injectOn = !!m?.injected;
-  const cell = (label, on) => `<div class="super-pill ${on ? 'on' : 'off'}"><span class="dot"></span>${label}</div>`;
-  return `<div class="super-status">
-    <div class="super-title">⚡ 超级增强稽核状态</div>
-    <div class="super-grid">
-      ${cell('LLM 语义', llmOn)}
-      ${cell('RAG 增强', ragOn)}
-      ${cell('注入防护', injectOn)}
-    </div>
-  </div>`;
-}
+// 超级增强状态已合入 statusLineHTML 的单行面包屑（P3 报告顶部横条精简），原 renderSuperAuditStatus 已移除
 
 function switchReportPage(idx, keepScroll = false) {
   REPORT_PAGE = Math.max(0, Math.min(idx, REPORT_PAGES.length - 1));
@@ -933,6 +953,8 @@ window.switchReportView = (view, opts = {}) => {
     $('#rectificationBody')?.scrollTo?.(0, 0);
   } else {
     setWorkflowStep(3);
+    // 切回「报告」视图时报告内分页归位总览，避免两套 tab 交错让人迷向
+    if (typeof switchReportPage === 'function') switchReportPage(0);
   }
 };
 
@@ -1909,8 +1931,12 @@ async function showInstitution() {
   const deptRows = d.by_dept.map(x => `<tr><td>${esc(x.dept)}</td><td class="num">${x.cases}</td><td class="num">${x.suspected}</td><td class="num">${x.clue}</td><td class="num">¥${fmt(x.amount)}</td></tr>`).join('');
   const typeRows = d.violation_types.slice(0, 8).map(t => `<tr><td>${esc(t.type)}</td><td class="num">${t.count}</td><td class="num">¥${fmt(t.amount)}</td></tr>`).join('');
   const caseRows = d.case_rows.map(c => `<tr class="${c.is_clean ? 'ins-clean' : ''}"><td>${c.is_clean ? '🟢' : '🔴'} ${esc((c.label || c.id).slice(0, 26))}</td><td>${esc(c.dept)}</td><td>${esc(c.domain)}</td><td class="num">${c.suspected}</td><td class="num">${c.clue}</td><td class="num">¥${fmt(c.amount)}</td></tr>`).join('');
+  const examMode = MODE === 'exam';
+  const intro = examMode
+    ? `把单件自查<b>升维到全院画像</b>——<b>本院对标自查</b>：看自己哪些规则/科室高发，优先自查整改、主动退回，避免被飞检点名（自查从宽、被查从严）。`
+    : `把单件 AI 初筛<b>升维到机构画像</b>——飞检前先给被检机构做一次"院端体检"，<b>指导飞检抽样</b>：优先查金额高发规则/高发科室，把有限人力压到高风险处。`;
   const html = `
-    <p class="muted">${esc(d.generated)}。把单件 AI 初筛<b>升维到机构画像</b>——飞检前先给被检机构做一次"院端体检"，定位高风险规则/科室、指导抽样。
+    <p class="muted">${esc(d.generated)}。${intro}
       <button class="v2btn" style="margin-left:8px;padding:3px 10px;font-size:12px" onclick="window.open('/api/export/institution','_blank')">📄 Markdown</button>
       <button class="v2btn" style="margin-left:4px;padding:3px 10px;font-size:12px" onclick="window.open('/api/export/institution?format=html','_blank')">🖨 打印/PDF</button></p>
     <div class="bench-kpis">
@@ -1931,7 +1957,7 @@ async function showInstitution() {
     <div class="facts-h">受检案卷清单（点"红"为违规件、"绿"为合规件正确放行）</div>
     <table class="fee-table"><thead><tr><th>案卷</th><th>科室</th><th>领域</th><th class="num">疑点</th><th class="num">线索</th><th class="num">金额</th></tr></thead><tbody>${caseRows}</tbody></table>
     <p class="muted" style="margin-top:10px">${esc(d.disclaimer)}</p>`;
-  openModal('🏥 机构汇总画像 · ' + esc(d.hospital), html);
+  openModal(`🏥 机构画像 · ${examMode ? '本院自查对标' : '飞检抽样指导'} · ${esc(d.hospital)}`, html);
 }
 
 async function foundationHtml() {
