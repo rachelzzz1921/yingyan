@@ -722,6 +722,11 @@ function renderChecklist(rep, record, mode) {
   L.push(`\n**${exam ? '自查机构' : '被检对象'}**：${record.front_page?.hospital || '—'}　**患者**：${m.patient}　**住院号**：${record.front_page?.admission_no || '—'}`);
   L.push(`**${exam ? '自查范围' : '稽核范围'}**：${m.audit_scope}`);
   L.push(`**结论**：${exam ? '风险点' : '疑点'} ${s.suspected_count} 项（${exam ? '飞检暴露金额' : '涉及金额'} ¥${s.suspected_amount}）、线索 ${s.clue_count} 项；规则路由 ${m.routing?.activated_count}/${m.routing?.total} 激活。${exam ? '建议飞检前完成自查整改、主动退回。' : ''}\n`);
+  if (!exam) {
+    // 检查结论草稿(供稽核员改写)——监管侧举证包的监管口径结论段
+    L.push(`## 检查结论草稿（供稽核员改写）`);
+    L.push(`经核查，被检对象本次住院医保结算存在疑点 ${s.suspected_count} 项、涉及医保基金 ¥${s.suspected_amount}，另有线索 ${s.clue_count} 项。其中${(rep.findings || []).filter(f => f.status === '疑点').slice(0, 3).map(f => `${f.rule_id}（${f.rule_name}，¥${f.amount_involved}）`).join('、')}等证据链闭环。建议责令退回相应医保结算金额并按《医疗保障基金使用监督管理条例》处理；机构如有异议可在收到判定结果后 10 个工作日内提出申诉。（本段为初稿，最终定性由飞检组集体研判。）\n`);
+  }
   L.push(`---\n`);
   rep.findings.forEach((f, i) => {
     L.push(`## ${i + 1}. 【${exam ? '风险点' : f.status}·${f.risk_level}】${f.rule_id} ${f.rule_name}　涉及金额 ¥${f.amount_involved}（置信 ${f.confidence || '—'}）`);
@@ -740,12 +745,41 @@ function renderChecklist(rep, record, mode) {
       if (rect.judgment) L.push(`- **人工判断**：${rect.judgment}${rect.judgment_reason ? '（' + rect.judgment_reason + '）' : ''}`);
       if (rect.rectify_note) L.push(`- **院端说明**：${rect.rectify_note}`);
     } else {
+      // 可申诉性预判(监管侧举证包特有)：提前判断机构可能怎么申诉,飞检先备
+      try {
+        const { judgeAppealability } = require('./engine/appeal-draft');
+        const ap = judgeAppealability(f, (DB.rulesDoc.rules || []).find(r => r.rule_id === f.rule_id) || {});
+        L.push(`- **可申诉性预判**：${ap.level}——${ap.reason}`);
+      } catch (e) { /* 预判失败不阻断清单 */ }
       L.push(`- **机构申诉/复核意见**：☐ 采纳　☐ 驳回（原因：________）　☐ 存疑补材料`);
     }
     L.push('');
   });
   L.push(`---\n*本清单由鹰眼自动生成，每条${exam ? '风险点' : '疑点'}均附三要素证据链，${exam ? '院端可据此飞检前自查整改' : '可直接落条款对质'}。政策条款原文取自知识库，未凭记忆生成。*`);
   return L.join('\n');
+}
+
+// 轻量 Markdown → 可打印 HTML（供检查/自查清单导出 PDF 用）
+function checklistMdToHtml(md, title) {
+  const esc = (s) => String(s).replace(/[&<>]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]));
+  const lines = md.split('\n'); const out = []; let inList = false;
+  const inline = (t) => esc(t).replace(/\*\*(.+?)\*\*/g, '<b>$1</b>').replace(/☐/g, '&#9744;');
+  for (const raw of lines) {
+    const line = raw.replace(/\r$/, '');
+    if (/^## /.test(line)) { if (inList) { out.push('</ul>'); inList = false; } out.push(`<h2>${inline(line.slice(3))}</h2>`); }
+    else if (/^# /.test(line)) { out.push(`<h1>${inline(line.slice(2))}</h1>`); }
+    else if (/^> /.test(line)) { out.push(`<blockquote>${inline(line.slice(2))}</blockquote>`); }
+    else if (/^\s*- /.test(line)) { if (!inList) { out.push('<ul>'); inList = true; } out.push(`<li>${inline(line.replace(/^\s*- /, ''))}</li>`); }
+    else if (/^---/.test(line)) { if (inList) { out.push('</ul>'); inList = false; } out.push('<hr>'); }
+    else { if (inList) { out.push('</ul>'); inList = false; } if (line.trim()) out.push(`<p>${inline(line)}</p>`); }
+  }
+  if (inList) out.push('</ul>');
+  return `<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8"><title>${esc(title)}</title>
+<style>body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;color:#0f1b2d;max-width:900px;margin:28px auto;padding:0 24px;line-height:1.7}
+h1{color:#002FA7;font-size:22px;border-bottom:3px solid #002FA7;padding-bottom:8px}h2{color:#002FA7;font-size:15px;margin-top:22px;background:#f5f8ff;padding:6px 10px;border-radius:5px}
+blockquote{color:#6b7a90;font-size:12.5px;border-left:3px solid #d8e2f5;margin:6px 0;padding:4px 12px}
+ul{margin:6px 0}li{font-size:13px;margin:3px 0}hr{border:none;border-top:1px solid #e6ebf2;margin:14px 0}p{font-size:13px}
+@media print{body{margin:0}h2{page-break-after:avoid}}</style></head><body>${out.join('\n')}</body></html>`;
 }
 
 // ---------- 路由 ----------
@@ -1800,7 +1834,12 @@ const server = http.createServer(async (req, res) => {
       if (exMode === 'exam') rep._exam_rectification = loadExamRectification().entries || {};
       rep.report_meta.overlay_rules = Object.keys(precipService.loadRuleOverlay(DATA).patches || {});
       const md = renderChecklist(rep, record, exMode);
-      const fname = exMode === 'exam' ? '自查整改清单.md' : '疑点核查清单.md';
+      const title = exMode === 'exam' ? '自查整改清单' : '飞检举证包·疑点核查清单';
+      if (url.searchParams.get('format') === 'html') {
+        res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
+        return res.end(checklistMdToHtml(md, title));
+      }
+      const fname = (exMode === 'exam' ? '自查整改清单' : '飞检举证包') + '.md';
       res.writeHead(200, { 'Content-Type': 'text/markdown; charset=utf-8', 'Content-Disposition': "attachment; filename=\"yingyan-checklist.md\"; filename*=UTF-8''" + encodeURIComponent(fname) });
       return res.end(md);
     }

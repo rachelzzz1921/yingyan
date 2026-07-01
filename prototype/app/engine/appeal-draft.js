@@ -83,4 +83,4 @@ function computeAppealDraft(finding, record, opts = {}) {
   };
 }
 
-module.exports = { computeAppealDraft };
+module.exports = { computeAppealDraft, judgeAppealability };
