@@ -830,11 +830,14 @@ function renderReport(report) {
 
   pOverview.innerHTML = `
     ${reportHeroHTML(report, s, exam)}
-    <div class="compare-banner">
-      <div class="compare-col human"><span class="big">40<small>分钟</small></span><span>人工逐页审阅</span></div>
+    <div class="compare-banner leverage">
+      <div class="compare-col human"><span class="big">40<small>分钟</small></span><span>人工单案逐页审阅</span></div>
       <div class="vs">VS</div>
-      <div class="compare-col agent"><span class="big">${(m.elapsed_ms != null && m.elapsed_ms < 1000) ? m.elapsed_ms + '<small>ms</small>' : '90<small>秒</small>'}</span><span>鹰眼 AI 初筛（实测 ${m.elapsed_ms ?? '—'}ms）</span></div>
+      <div class="compare-col agent"><span class="big">${(m.elapsed_ms != null && m.elapsed_ms < 1000) ? m.elapsed_ms + '<small>ms</small>' : '90<small>秒</small>'}</span><span>鹰眼初筛（实测 ${m.elapsed_ms ?? '—'}ms）</span></div>
+      <div class="vs">≈</div>
+      <div class="compare-col mult"><span class="big">${Math.round(40 * 60 / 90)}<small>×</small></span><span>人力倍增(端到端)</span></div>
     </div>
+    <div class="leverage-note">🚀 <b>人少事多 · AI 人力倍增器</b>：全国 <b>8600</b> 名医保监管员盯 <b>13 亿</b>参保人 / <b>28.99 万</b>家机构（人均是美国 4 倍），飞检一年只查得过来 <b>500</b> 家。${exam ? '院端把历史案卷自查干净、主动退回，<b>从源头替监管侧卸载工作量</b>；' : '本次把一名稽核员 <b>40 分钟</b>的单案初筛压到 90 秒内，'}${(report.findings || []).length} 条疑点已带三要素证据链——<b>人只需复核真争议、真违规</b>。</div>
     <div class="mode-banner ${m.real_agent ? 'real' : (m.llm_needs_key ? 'warn' : 'det')}">${m.real_agent ? '🧠 真·LLM语义分析' : (m.llm_needs_key ? '⚠ 真·语义分析未启用' : '⚙ 确定性规则引擎')} · ${esc(m.engine_mode || '')}</div>
     ${renderSuperAuditStatus(m)}
     ${exam ? `<div class="exam-banner">🏥 <b>体检模式</b>：院端规则子集 ${m.exam_rule_filter?.used ?? '—'}/${m.exam_rule_filter?.total ?? '—'} 条。报告审阅完成后，请进入 <button type="button" class="linkish" onclick="switchReportView('rectification')">→ 登记整改</button> 填写整改时限、人工判断对错（回流规则治理）。</div>` : ''}
