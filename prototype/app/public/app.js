@@ -1242,6 +1242,7 @@ function renderActions(f) {
     : '';
   return `<div class="actions" data-fid="${esc(f.finding_id || '')}" data-rule="${esc(f.rule_id || '')}">
     ${debateBtn}
+    <button type="button" class="act appeal" data-action="申诉材料" title="生成申诉书草稿+举证材料清单+医理/药理依据">📝 申诉材料</button>
     <button type="button" class="act adopt" data-action="采纳">✓ 采纳</button>
     <button type="button" class="act reject" data-action="驳回">✗ 驳回(误报回流)</button>
     <button type="button" class="act more" data-action="补材料">⊕ 存疑补材料</button>
@@ -1339,8 +1340,44 @@ function askGovernanceReason(title, placeholder) {
   });
 }
 
+// 申诉副驾:疑点 → 申诉书草稿 + 举证材料清单 + 医理/药理循证依据
+async function showAppealDraft(btn) {
+  const box = btn.closest('.actions');
+  const fid = box && box.dataset.fid;
+  const f = (REPORT && REPORT.findings || []).find(x => x.finding_id === fid);
+  if (!f) return;
+  const tip = box.querySelector('.act-tip'); if (tip) tip.textContent = '生成申诉材料中…';
+  let d;
+  try { d = await fetch('/api/appeal-draft', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ finding: f, caseId: CURRENT_CASE }) }).then(r => r.json()); }
+  catch (e) { if (tip) tip.textContent = '失败:' + e.message; return; }
+  if (tip) tip.textContent = '';
+  if (d.error) { openModal('📝 申诉材料', `<p class="muted">${esc(d.error)}</p>`); return; }
+  const ap = d.appealability || {}, dr = d.draft || {};
+  const matRows = (d.materials || []).map(m => `<tr><td>${esc(m.item)}</td><td>${esc(m.status)}</td><td class="muted">${esc(m.note)}</td></tr>`).join('');
+  const refs = (d.clinical_refs || []).map(r => `<li><b>${esc(r.ref)}</b> ${esc(r.verify_status)}<div class="muted" style="font-size:11.5px">${esc(r.text)}…</div></li>`).join('');
+  const html = `
+    <p class="muted">把疑点自动落成<b>申诉书草稿 + 举证材料清单 + 医理/药理依据</b>——对齐官方法定申诉六环、10 工作日死线。 可申诉性:<span class="kind-tag ${ap.color === 'green' ? 'real' : 'script'}">${esc(ap.level || '')}</span></p>
+    <div class="cov-statement">${esc(ap.reason || '')}　|　${esc(d.process_note || '')}</div>
+    <div class="facts-h">📄 申诉书草稿</div>
+    <pre class="rule-detail-pre">【标题】${esc(dr.title || '')}
+【患者】${esc(dr.patient || '')}
+【问题陈述】${esc(dr.problem_statement || '')}
+【逐条核查】
+${(dr.item_review || []).map(esc).join('\n')}
+【申诉理由】${esc(dr.appeal_reason || '')}
+【结论】${esc(dr.conclusion || '')}
+${esc(dr.deadline || '')}</pre>
+    <div class="ins-2col">
+      <div><div class="facts-h">📎 举证材料清单</div><table class="fee-table"><thead><tr><th>材料</th><th>状态</th><th>说明</th></tr></thead><tbody>${matRows}</tbody></table></div>
+      <div><div class="facts-h">📖 医理/药理循证依据</div><ul style="font-size:12.5px;padding-left:18px;margin:6px 0">${refs || '<li class="muted">附诊疗规范/药品说明书</li>'}</ul></div>
+    </div>
+    <div class="cov-statement" style="margin-top:10px">📌 ${esc(d.honesty_note || '')}</div>`;
+  openModal('📝 申诉副驾 · ' + esc(d.rule_name || d.rule_id || ''), html);
+}
+
 window.reviewAction = async (btn, kind) => {
   if (kind === '对抗辩论') return runDebateForFinding(btn);
+  if (kind === '申诉材料') return showAppealDraft(btn);
   const box = btn.closest('.actions');
   if (!box) return;
   let reason = '';

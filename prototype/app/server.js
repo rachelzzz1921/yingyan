@@ -1528,6 +1528,19 @@ const server = http.createServer(async (req, res) => {
       }
     }
 
+    if (p === '/api/appeal-draft' && req.method === 'POST') {
+      // 申诉副驾:疑点 → 申诉书草稿 + 举证材料清单 + 医理/药理循证依据
+      const body = await readBody(req);
+      const finding = body.finding;
+      if (!finding || !finding.rule_id) return sendJSON(res, { error: '缺少 finding' }, 400);
+      const record = body.record || DB.cases[body.caseId || 'main'] || DB.record;
+      const rule = (DB.rulesDoc.rules || []).find(r => r.rule_id === finding.rule_id) || {};
+      try {
+        const { computeAppealDraft } = require('./engine/appeal-draft');
+        return sendJSON(res, computeAppealDraft(finding, record, { rule }));
+      } catch (e) { return sendJSON(res, { error: '申诉草稿生成失败:' + e.message }, 500); }
+    }
+
     if (p === '/api/debate' && req.method === 'POST') {
       const body = await readBody(req);
       const finding = body.finding;

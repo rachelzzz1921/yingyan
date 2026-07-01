@@ -394,6 +394,8 @@ h1,h2,h3{font-weight:700;letter-spacing:-.02em}
 .actions{display:flex;gap:8px;margin-top:10px;position:relative;z-index:2;flex-wrap:wrap}
 .act{flex:1;padding:7px;border-radius:8px;border:1px solid var(--line);background:#fff;font-size:12px;cursor:pointer;font-weight:600;font-family:var(--font);position:relative;z-index:1;min-width:88px}
 .act:active{transform:scale(.98)}
+.act.appeal{color:var(--primary-d)}
+.act.appeal:hover{background:var(--yy-amber-l,#fdf3dd);border-color:var(--yy-amber,#e8a838);color:#8a5a00}
 .act.adopt:hover{background:var(--green-bg);border-color:var(--green);color:var(--green)}
 .act.reject:hover{background:var(--red-bg);border-color:var(--red);color:var(--red)}
 .act.more:hover{background:var(--amber-bg);border-color:var(--amber);color:var(--amber)}
