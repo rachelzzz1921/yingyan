@@ -196,10 +196,6 @@ function setWorkflowStep(n) {
     el.classList.toggle('active', s === n);
     el.classList.toggle('done', s < n);
   });
-  $$('.qk-item').forEach(el => {
-    const s = Number(el.dataset.qk);
-    el.classList.toggle('active', s === Math.min(n, 3));
-  });
 }
 
 function applyModeUI() {
@@ -227,10 +223,7 @@ function applyModeUI() {
   else if (leftTitle && !exam) leftTitle.innerHTML = '<span class="panel-icon">📁</span> 患者就诊材料包';
 
   const btnAudit = $('#btnAudit');
-  const btnAuditBar = $('#btnAuditBar');
-  const auditLabel = exam ? '▶ 开始自查' : '▶ 开始稽核';
   if (btnAudit) btnAudit.innerHTML = `<span class="btn-icon">▶</span> ${exam ? '开始自查' : '开始稽核'}`;
-  if (btnAuditBar) btnAuditBar.textContent = auditLabel;
 
   const wf2 = document.querySelector('.wf-step[data-step="2"] .wf-text');
   const wf3 = document.querySelector('.wf-step[data-step="3"] .wf-text');
@@ -381,8 +374,7 @@ async function loadCase(id) {
   $('#reportTabs')?.classList.add('hidden');
   REPORT_VIEW = 'report';
   $$('.rtab').forEach(t => t.classList.toggle('active', t.dataset.view === 'report'));
-  $('#engineMode').textContent = '';
-  const btn = $('#btnAudit'); if (btn) { btn.disabled = false; btn.textContent = '▶ 开始稽核'; }
+  const btn = $('#btnAudit'); if (btn) { btn.disabled = false; btn.innerHTML = `<span class="btn-icon">▶</span> ${MODE === 'exam' ? '开始自查' : '开始稽核'}`; }
 }
 
 function renderTabs() {
@@ -646,7 +638,6 @@ async function auditFetch(query, body, timeoutMs) {
 
 async function runAudit(opts = {}) {
   const btn = $('#btnAudit');
-  const btnBar = $('#btnAuditBar');
   const btnSuper = $('#btnSuperAudit');
   const rag = !!opts.rag;
   // shadow 提速：LLM/超级增强先用「确定性+RAG」秒出首屏，真·LLM 作为影子后台跑完再静默合并
@@ -655,7 +646,6 @@ async function runAudit(opts = {}) {
   if (llmShadowTimer) { clearInterval(llmShadowTimer); llmShadowTimer = null; }
   LAST_RUN_PROFILE = opts.super ? 'super' : (opts.llm ? 'llm' : (rag ? 'rag' : (INJECT ? 'inject' : 'standard')));
   btn.disabled = true; btn.textContent = opts.llm ? 'LLM 分析中…' : (opts.super ? '超级增强中…' : (rag ? 'RAG 增强稽核中…' : '稽核中…'));
-  if (btnBar) { btnBar.disabled = true; btnBar.textContent = opts.super ? '超级增强中…' : (rag ? 'RAG 稽核中…' : '稽核中…'); }
   if (btnSuper) btnSuper.disabled = true;
   setWorkflowStep(2);
   $('#reportEmpty').classList.add('hidden');
@@ -727,8 +717,7 @@ async function runAudit(opts = {}) {
     }
     setWorkflowStep(1);
   }
-  btn.disabled = false; btn.textContent = '▶ 重新稽核';
-  if (btnBar) { btnBar.disabled = false; btnBar.textContent = '▶ 开始稽核'; }
+  btn.disabled = false; btn.innerHTML = `<span class="btn-icon">▶</span> ${MODE === 'exam' ? '重新自查' : '重新稽核'}`;
   if (btnSuper) btnSuper.disabled = false;
 }
 
@@ -799,7 +788,6 @@ function renderReport(report) {
   $('#reportBody')?.classList.remove('hidden');
   const m = report.report_meta, s = m.summary;
   const exam = m.panel === '体检'; VIEW_EXAM = exam;
-  $('#engineMode').textContent = m.engine_mode || '';
 
   const ruleCount = exam
     ? (m.exam_rule_filter?.used ?? RULES.rules.length)
@@ -838,7 +826,7 @@ function renderReport(report) {
       <div class="compare-col mult"><span class="big">${Math.round(40 * 60 / 90)}<small>×</small></span><span>人力倍增(端到端)</span></div>
     </div>
     <div class="leverage-note">🚀 <b>人少事多 · AI 人力倍增器</b>：全国 <b>8600</b> 名医保监管员盯 <b>13 亿</b>参保人 / <b>28.99 万</b>家机构（人均是美国 4 倍），飞检一年只查得过来 <b>500</b> 家。${exam ? '院端把历史案卷自查干净、主动退回，<b>从源头替监管侧卸载工作量</b>；' : '本次把一名稽核员 <b>40 分钟</b>的单案初筛压到 90 秒内，'}${(report.findings || []).length} 条疑点已带三要素证据链——<b>人只需复核真争议、真违规</b>。</div>
-    <div class="mode-banner ${m.real_agent ? 'real' : (m.llm_needs_key ? 'warn' : 'det')}">${m.real_agent ? '🧠 真·LLM语义分析' : (m.llm_needs_key ? '⚠ 真·语义分析未启用' : '⚙ 确定性规则引擎')} · ${esc(m.engine_mode || '')}</div>
+    <div class="mode-banner ${m.real_agent ? 'real' : (m.llm_needs_key ? 'warn' : 'det')}" title="${esc(m.engine_mode || '')}">${m.real_agent ? '🧠 真·LLM 语义分析' : (m.llm_needs_key ? '⚠ 真·语义分析未启用（缺 Key）' : '⚙ 确定性规则引擎')}${exam ? ` · 院端规则子集 ${m.exam_rule_filter?.used ?? '—'}/${m.exam_rule_filter?.total ?? '—'} 条` : ''}<span class="mb-hint">ⓘ 悬停看引擎明细</span></div>
     ${renderSuperAuditStatus(m)}
     ${exam ? `<div class="exam-banner">🏥 <b>体检模式</b>：院端规则子集 ${m.exam_rule_filter?.used ?? '—'}/${m.exam_rule_filter?.total ?? '—'} 条。报告审阅完成后，请进入 <button type="button" class="linkish" onclick="switchReportView('rectification')">→ 登记整改</button> 填写整改时限、人工判断对错（回流规则治理）。</div>` : ''}
     ${(m.overlay_rules || []).length ? `<div class="exam-banner">📎 规则 overlay 预览已合并：${m.overlay_rules.map(esc).join('、')}</div>` : ''}
@@ -1162,7 +1150,7 @@ function reportHeroHTML(report, s, exam) {
     : '本案卷通过 G0 误报防控校验';
   return `<section class="report-hero ${level}">
     <div class="rh-main"><span class="rh-badge">${exam ? '体检模式' : '稽核模式'}</span><h3 class="rh-title">${title}</h3><p class="rh-sub">${sub}</p></div>
-    <div class="rh-meta"><span>${esc(m.engine_mode || '确定性引擎')}</span><span>${m.elapsed_ms != null ? m.elapsed_ms + 'ms' : '—'}</span></div>
+    <div class="rh-meta"><span>⚡ ${m.elapsed_ms != null ? m.elapsed_ms + 'ms' : '—'}</span></div>
   </section>`;
 }
 
@@ -1575,8 +1563,6 @@ function scanningHTML() {
 }
 
 $('#btnAudit').onclick = () => runAudit();
-const btnAuditBar = $('#btnAuditBar');
-if (btnAuditBar) btnAuditBar.onclick = () => runAudit();
 $('#btnReset').onclick = () => location.reload();
 // 双模式
 function setMode(mode) {
