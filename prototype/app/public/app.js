@@ -1603,6 +1603,7 @@ $('#btnBench').onclick = showBench;
 $('#btnInstitution').onclick = showInstitution;
 const _btnFoundation = $('#btnFoundation'); if (_btnFoundation) _btnFoundation.onclick = showFoundation;
 const _btnTriad = $('#btnTriad'); if (_btnTriad) _btnTriad.onclick = showProvenanceTriad;
+const _btnThreeStage = $('#btnThreeStage'); if (_btnThreeStage) _btnThreeStage.onclick = showThreeStage;
 // 「洞察」下拉：开合 + 点项后收起 + 点外部收起（收纳事实层/机构画像/合规地基/取证三件套，顶栏不再换行）
 (function setupInsightDropdown() {
   const dd = $('#ddInsight'), menuBtn = $('#btnInsightMenu'), menu = $('#insightMenu');
@@ -1997,6 +1998,33 @@ async function showProvenanceTriad() {
     <p class="muted" style="font-size:11.5px">${esc(cf.note || '')}</p>
   `;
   openModal('🔬 取证可信度三件套 · 第一护城河（可演证）', html);
+}
+
+// 院端三阶段自查地图：事前开单可防 / 事中结算前可拦 / 事后需深查 · 关口前移
+async function showThreeStage() {
+  let d;
+  try { d = await fetch('/api/three-stage').then(r => r.json()); }
+  catch (e) { openModal('🗺 院端三阶段自查', `<p class="muted">加载失败：${esc(String(e))}</p>`); return; }
+  if (d.error) { openModal('🗺 院端三阶段自查', `<p class="muted">${esc(d.error)}</p>`); return; }
+  const sm = d.summary || {};
+  const stageCards = (d.stages || []).map(s => {
+    const rows = (s.findings || []).map(f => `<li>${typeof ruleLink === 'function' ? ruleLink(f.rule_id, { compact: true }) : esc(f.rule_id)} ${esc(f.rule_name || '')} <span class="muted">¥${fmt(f.amount)}</span></li>`).join('');
+    return `<div class="stage-card ${esc(s.color)}">
+      <div class="stage-hd"><b>${esc(s.label)}</b><span class="stage-n">${s.count}<small>条</small> · ¥${fmt(s.amount)}</span></div>
+      <div class="stage-prevent muted">${esc(s.prevent)}</div>
+      <ul class="stage-list">${rows || '<li class="muted">本案无</li>'}</ul>
+    </div>`;
+  }).join('');
+  const html = `
+    <p class="muted">官方三阶段闭环:<b>事前提醒 → 事中结算审核 → 事后监管(飞检=事后一部分)</b>。把本案疑点按"<b>最早能在哪个阶段拦住</b>"分类,给院端一张关口前移地图——也是"从源头替监管侧减负"的可视化。</p>
+    <div class="bench-kpis" style="grid-template-columns:repeat(3,1fr)">
+      <div class="bkpi green"><div class="n">${sm.preventable_count || 0}<small>条</small></div><div class="l">可前移(事前+事中)</div></div>
+      <div class="bkpi"><div class="n">¥${fmt(sm.preventable_amount)}</div><div class="l">前移可省金额</div></div>
+      <div class="bkpi red"><div class="n">${sm.deep_count || 0}<small>条</small></div><div class="l">事后需深查(飞检重点)</div></div>
+    </div>
+    <div class="stage-grid">${stageCards}</div>
+    <div class="cov-statement" style="margin-top:10px">🎯 ${esc((d.narrative || '').replace(/\*\*/g, ''))}</div>`;
+  openModal('🗺 院端三阶段自查 · 关口前移地图', html);
 }
 
 const STATUS_META = { active: { label: '在役 active', cls: 'gv-active' }, shadow: { label: '观察期 shadow', cls: 'gv-shadow' }, deprecated: { label: '已下线 deprecated', cls: 'gv-dep' } };

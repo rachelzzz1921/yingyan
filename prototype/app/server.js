@@ -1822,6 +1822,17 @@ const server = http.createServer(async (req, res) => {
 
     if (p === '/api/institution') return sendJSON(res, institutionPortrait(DB));
 
+    // 院端三阶段自查地图：把疑点按"最早能在哪个阶段拦住"分类(事前/事中/事后),体现关口前移
+    if (p === '/api/three-stage') {
+      const caseId = url.searchParams.get('case_id') || 'main';
+      const record = DB.cases[caseId] || DB.record;
+      try {
+        const rep = runAuditForRecord(record, {});
+        const { computeThreeStage } = require('./engine/three-stage');
+        return sendJSON(res, computeThreeStage(rep.findings || []));
+      } catch (e) { return sendJSON(res, { error: '三阶段自查计算失败:' + e.message }, 500); }
+    }
+
     // 文书化输出：稽核《疑点核查清单》(飞检对质) / 体检《自查整改清单》(院端自查)
     if (p === '/api/export/checklist') {
       const exMode = url.searchParams.get('mode') === 'exam' ? 'exam' : 'audit';
