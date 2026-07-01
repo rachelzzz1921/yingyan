@@ -1679,7 +1679,7 @@ function showExportMenu() {
       ${item(`findings?format=csv&${caseQ}`, '📊', '疑点表 · CSV', 'Excel 直接打开，逐条疑点带证据/金额/置信')}
       ${item(`findings?format=json&${caseQ}`, '{ }', '疑点 · JSON', '结构化数据，供接口/二次处理')}
       ${item(`checklist?${chkQ}`, '📄', ex ? '自查整改清单 · Markdown' : '飞检举证包 · Markdown', '三要素证据链清单 + 检查结论草稿')}
-      ${item(`checklist?format=html&${chkQ}`, '🖨', ex ? '自查清单 · 打印/存 PDF' : '举证包 · 打印/存 PDF', '浏览器打印为 PDF（服务端一键 PDF 建设中）')}
+      ${item(`checklist?format=pdf&${chkQ}`, '📕', ex ? '自查整改清单 · PDF' : '飞检举证包 · PDF', '服务端一键 PDF（未装 PDF 引擎则自动转浏览器打印）')}
     </div>`;
   openModal('⬇ 导出报告 · 一键下载', html);
 }

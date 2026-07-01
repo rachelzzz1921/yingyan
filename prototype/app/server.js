@@ -796,6 +796,20 @@ function renderChecklist(rep, record, mode) {
 }
 
 // 轻量 Markdown → 可打印 HTML（供检查/自查清单导出 PDF 用）
+// 服务端 HTML→PDF：懒加载 puppeteer（可选依赖）。缺则抛错，端点回退可打印 HTML。
+// ECS 部署真出 PDF 需：npm i puppeteer + 安装中文字体(如 fonts-noto-cjk)。
+let _puppeteer;
+async function htmlToPdf(html) {
+  if (_puppeteer === undefined) { try { _puppeteer = require('puppeteer'); } catch { _puppeteer = null; } }
+  if (!_puppeteer) throw new Error('puppeteer 未安装（回退可打印 HTML）');
+  const browser = await _puppeteer.launch({ headless: 'new', args: ['--no-sandbox', '--disable-setuid-sandbox'] });
+  try {
+    const page = await browser.newPage();
+    await page.setContent(html, { waitUntil: 'networkidle0', timeout: 30000 });
+    return await page.pdf({ format: 'A4', printBackground: true, margin: { top: '14mm', bottom: '14mm', left: '12mm', right: '12mm' } });
+  } finally { await browser.close(); }
+}
+
 function checklistMdToHtml(md, title) {
   const esc = (s) => String(s).replace(/[&<>]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]));
   const lines = md.split('\n'); const out = []; let inList = false;
@@ -1922,9 +1936,23 @@ const server = http.createServer(async (req, res) => {
       rep.report_meta.overlay_rules = Object.keys(precipService.loadRuleOverlay(DATA).patches || {});
       const md = renderChecklist(rep, record, exMode);
       const title = exMode === 'exam' ? '自查整改清单' : '飞检举证包·疑点核查清单';
-      if (url.searchParams.get('format') === 'html') {
+      const outFmt = url.searchParams.get('format');
+      if (outFmt === 'html' || outFmt === 'pdf') {
+        const html = checklistMdToHtml(md, title);
+        if (outFmt === 'pdf') {
+          try {
+            const pdf = await htmlToPdf(html);
+            const fn = (exMode === 'exam' ? '自查整改清单' : '飞检举证包') + '.pdf';
+            res.writeHead(200, { 'Content-Type': 'application/pdf', 'Content-Disposition': "attachment; filename=\"yingyan-checklist.pdf\"; filename*=UTF-8''" + encodeURIComponent(fn) });
+            return res.end(pdf);
+          } catch (e) {
+            // puppeteer 未装/渲染失败 → 回退可打印 HTML，自动弹出打印对话框存 PDF（零依赖兜底）
+            res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8', 'X-PDF-Fallback': 'print-html' });
+            return res.end(html.replace('</body>', '<script>setTimeout(function(){try{window.print()}catch(e){}},500)</script></body>'));
+          }
+        }
         res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
-        return res.end(checklistMdToHtml(md, title));
+        return res.end(html);
       }
       const fname = (exMode === 'exam' ? '自查整改清单' : '飞检举证包') + '.md';
       res.writeHead(200, { 'Content-Type': 'text/markdown; charset=utf-8', 'Content-Disposition': "attachment; filename=\"yingyan-checklist.md\"; filename*=UTF-8''" + encodeURIComponent(fname) });
