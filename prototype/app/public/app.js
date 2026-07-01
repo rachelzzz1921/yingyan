@@ -168,6 +168,7 @@ function bindRuleLinkDelegation() {
 let RECORD = null, RULES = null, REPORT = null, FLAGGED_LINES = new Set();
 let RULE_MAP = {};
 let MODE = 'audit', INJECT = false, CURRENT_CASE = 'main';
+let ROLE = 'audit'; // audit=监管侧飞检工作台 / hospital=院端合规自查驾驶舱（由 home.html 的 ?role= 进入）
 let REVIEW_CACHE = [];
 let RECT_MAP = {}, REPORT_VIEW = 'report', PRECIP_DATA = { items: [], drafts: [] };
 let REPORT_PAGE = 0, FINDING_PAGE = 0;
@@ -323,6 +324,16 @@ async function init() {
   try {
     const savedMode = sessionStorage.getItem('yingyan_mode');
     if (savedMode === 'exam' || savedMode === 'audit') MODE = savedMode;
+    // 角色路由：home.html 的两个入口带 ?role=audit|hospital 进来 → 定 MODE + 角色前台
+    const qRole = new URLSearchParams(location.search).get('role');
+    if (qRole === 'hospital' || qRole === 'audit') {
+      ROLE = qRole; MODE = qRole === 'hospital' ? 'exam' : 'audit';
+      sessionStorage.setItem('yingyan_role', ROLE); sessionStorage.setItem('yingyan_mode', MODE);
+    } else {
+      ROLE = sessionStorage.getItem('yingyan_role') || (MODE === 'exam' ? 'hospital' : 'audit');
+    }
+    document.body.classList.toggle('role-hospital', ROLE === 'hospital');
+    document.body.classList.toggle('role-audit', ROLE === 'audit');
     const [health, rules, cases, gov] = await Promise.all([
       fetch('/api/health').then(r => r.json()),
       fetch('/api/rules').then(r => r.json()),

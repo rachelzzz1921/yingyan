@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>鹰眼 EAGLEEYE · 医保基金合规运营平台</title>
+<meta name="theme-color" content="#0D0F14">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<style>
+  :root{--red:#FF3B4E;--teal:#37E0CC;--teal2:#14B8A6;--amber:#F5C842;--navy:#12294A;--ink:#0D0F14;--line:rgba(255,255,255,.1)}
+  *{box-sizing:border-box;margin:0}
+  html{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
+  body{font-family:"PingFang SC","Hiragino Sans GB","Noto Sans SC","Microsoft YaHei",-apple-system,sans-serif;background:#0D0F14;color:#E6EAF0;min-height:100vh;line-height:1.65}
+  .wrap{max-width:1160px;margin:0 auto;padding:48px 28px 60px}
+  .top{display:flex;align-items:center;gap:16px;margin-bottom:8px}
+  .mark{width:60px;height:60px;flex:none}
+  .brand h1{font-size:34px;font-weight:800;letter-spacing:.01em}
+  .brand h1 .en{color:var(--teal);font-weight:800;font-family:Inter,sans-serif}
+  .brand p{font-size:15px;color:#98A4B4;margin-top:2px}
+  .tag{margin-left:auto;font-size:13px;color:#FF6070;font-family:"SF Mono",monospace;border:1px solid rgba(255,59,78,.4);border-radius:20px;padding:5px 14px;white-space:nowrap}
+  .lead{margin:34px 0 8px;font-size:clamp(30px,5vw,52px);font-weight:800;color:#fff;letter-spacing:.01em;text-wrap:balance}
+  .lead .red{color:var(--red)}
+  .sub{font-size:17px;color:#98A4B4;max-width:760px;margin-bottom:6px}
+  .rail{display:inline-block;width:70px;height:5px;border-radius:3px;background:linear-gradient(90deg,var(--red),#FF7A87);margin:16px 0 34px}
+  .pick{font-size:14px;color:#6E7B8C;letter-spacing:.14em;margin-bottom:16px}
+  .cards{display:grid;grid-template-columns:1fr 1fr;gap:22px}
+  @media(max-width:760px){.cards{grid-template-columns:1fr}}
+  .card{display:block;text-decoration:none;color:inherit;border-radius:20px;padding:30px 30px 26px;border:1px solid var(--line);background:#15181F;position:relative;overflow:hidden;transition:.18s}
+  .card:hover{transform:translateY(-4px);border-color:rgba(255,255,255,.28)}
+  .card .accent{position:absolute;top:0;left:0;width:100%;height:6px}
+  .card.reg .accent{background:linear-gradient(90deg,var(--red),#FF7A87)}
+  .card.hos .accent{background:linear-gradient(90deg,var(--teal),var(--teal2))}
+  .card .role{font-size:14px;font-weight:600;letter-spacing:.06em;margin:6px 0 2px}
+  .card.reg .role{color:var(--red)} .card.hos .role{color:var(--teal)}
+  .card h2{font-size:30px;font-weight:800;color:#fff;margin-bottom:6px}
+  .card .who{font-size:14px;color:#8A97A8;margin-bottom:18px}
+  .flow{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:18px}
+  .flow span{font-size:13px;padding:6px 12px;border-radius:9px;background:rgba(255,255,255,.05);border:1px solid var(--line);color:#C6CEDA}
+  .kpi{display:flex;align-items:baseline;gap:10px;margin-bottom:20px}
+  .kpi b{font-size:34px;font-weight:800;font-family:"SF Mono",monospace}
+  .card.reg .kpi b{color:var(--red)} .card.hos .kpi b{color:var(--teal)}
+  .kpi span{font-size:14px;color:#8A97A8}
+  .go{display:inline-flex;align-items:center;gap:8px;font-size:16px;font-weight:700;padding:12px 22px;border-radius:12px}
+  .card.reg .go{background:var(--red);color:#2A0006} .card.hos .go{background:var(--teal);color:#053B34}
+  .foot{margin-top:40px;padding-top:20px;border-top:1px solid var(--line);font-size:13px;color:#6E7B8C;display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px}
+  .foot .same{color:#98A4B4}
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <header class="top">
+      <svg class="mark" viewBox="0 0 64 64" role="img" aria-label="鹰眼 logo"><defs><linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#0B2A4A"/><stop offset="1" stop-color="#134E72"/></linearGradient><linearGradient id="ir" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#2DD4BF"/><stop offset="1" stop-color="#14B8A6"/></linearGradient><linearGradient id="am" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#E8A838"/><stop offset="1" stop-color="#F5C842"/></linearGradient></defs><rect width="64" height="64" rx="16" fill="url(#bg)"/><circle cx="32" cy="32" r="26" stroke="url(#am)" stroke-width="1.8" stroke-opacity=".5" fill="none"/><path d="M32 10 A22 22 0 0 1 54 32" stroke="url(#am)" stroke-width="3" stroke-linecap="round" fill="none"/><path d="M12 32 C17 20 47 20 52 32 C47 44 17 44 12 32 Z" stroke="#fff" stroke-width="2.2" stroke-linejoin="round" fill="none" opacity=".93"/><circle cx="32" cy="32" r="11" fill="url(#ir)"/><circle cx="32" cy="32" r="5" fill="#061829"/><circle cx="35" cy="29" r="2" fill="#fff" opacity=".95"/></svg>
+      <div class="brand">
+        <h1>鹰眼 <span class="en">EAGLEEYE</span></h1>
+        <p>医保基金合规运营平台</p>
+      </div>
+      <div class="tag">模法黑客松 S4 · 2026</div>
+    </header>
+
+    <h2 class="lead">看得懂病历的稽核 AI，把线索变成<span class="red">能对质的证据</span>。</h2>
+    <p class="sub">同一套取证引擎，服务两类用户——引不出原文的疑点，不输出。</p>
+    <div class="rail"></div>
+
+    <div class="pick">选择你的工作台</div>
+    <div class="cards">
+      <a class="card reg" href="/?role=audit">
+        <div class="accent"></div>
+        <div class="role">监管侧 · 医保局飞检组</div>
+        <h2>飞检取证工作台</h2>
+        <div class="who">拿到待查案卷，40 分钟的人工翻阅压到 90 秒内出可对质证据。</div>
+        <div class="flow"><span>机构画像抽样</span><span>深读取证</span><span>三要素举证包</span><span>申诉复审</span></div>
+        <div class="kpi"><b>40′→90″</b><span>单案取证提效 · 举证包一键出</span></div>
+        <span class="go">进入飞检工作台 →</span>
+      </a>
+      <a class="card hos" href="/?role=hospital">
+        <div class="accent"></div>
+        <div class="role">院端 · 医院合规科 / 医务科</div>
+        <h2>合规自查驾驶舱</h2>
+        <div class="who">飞检前先给自己做一次体检，自查从宽、被查从严。</div>
+        <div class="flow"><span>批量自查体检</span><span>整改跟进闭环</span><span>整改后重跑对比</span><span>申诉副驾</span></div>
+        <div class="kpi"><b>源头减负</b><span>自查干净，避免被飞检点名</span></div>
+        <span class="go">进入自查驾驶舱 →</span>
+      </a>
+    </div>
+
+    <div class="foot">
+      <span class="same">同一套引擎 · 三要素证据链 · 取证三件套 · 站在国家两库肩上</span>
+      <span>让每一分救命钱，都查得有据可对质</span>
+    </div>
+  </div>
+</body>
+</html>
