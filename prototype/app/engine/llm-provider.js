@@ -94,45 +94,73 @@ function nonEmpty(content, label) {
   return content;
 }
 
-async function callLLM({ system, user, maxTokens = 4000, temperature = 0.2, timeoutMs = DEFAULT_TIMEOUT }) {
+// 瞬时错误判定：限流/过载/超时/空响应/网络抖动 → 可重试；4xx(非429)/缺key → 不重试
+function isRetryable(err) {
+  if (err && err.needsKey) return false;
+  const m = String((err && err.message) || '');
+  if (/\b(429|500|502|503|504)\b/.test(m)) return true;
+  if (/超时|限流|过载|配额|空内容|rate.?limit|overload|timeout|ECONNRESET|ETIMEDOUT|EAI_AGAIN|fetch failed|socket hang/i.test(m)) return true;
+  return false;
+}
+
+// 带指数退避的重试（默认 2 次）：让一次瞬时抖动不至于丢掉整阶段真分析
+async function withRetry(label, fn, retries = Number(process.env.YINGYAN_LLM_RETRIES ?? 2)) {
+  let lastErr;
+  for (let attempt = 0; attempt <= retries; attempt++) {
+    try { return await fn(attempt); }
+    catch (e) {
+      lastErr = e;
+      if (attempt === retries || !isRetryable(e)) throw e;
+      const backoff = 600 * Math.pow(2, attempt) + attempt * 250; // 600ms → 1450ms → …
+      if (process.env.YINGYAN_LLM_TIMING !== '0') console.log(`  [llm-provider] ${label} 第${attempt + 1}次失败(${String(e.message).slice(0, 60)})，${backoff}ms 后重试`);
+      await new Promise(r => setTimeout(r, backoff));
+    }
+  }
+  throw lastErr;
+}
+
+// OpenAI 兼容 provider（SiliconFlow/MiniMax）的一次调用
+async function callOpenAICompatible({ base, key, model, system, user, maxTokens, temperature, timeoutMs, jsonMode, label, minimax }) {
+  const messages = [];
+  if (system) messages.push({ role: 'system', content: system });
+  messages.push({ role: 'user', content: user });
+  const body = { model, messages, max_tokens: maxTokens, temperature };
+  if (jsonMode) body.response_format = { type: 'json_object' }; // 结构化输出：强制合法 JSON，减少解析兜底
+  const r = await fetchWithTimeout(base, {
+    method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + key },
+    body: JSON.stringify(body),
+  }, timeoutMs);
+  if (!r.ok) throw new Error(`${label} ${r.status}: ${(await r.text()).slice(0, 200)}`);
+  const data = await r.json();
+  if (minimax && data.base_resp && data.base_resp.status_code) throw new Error(`${label}: ${data.base_resp.status_msg}`);
+  return nonEmpty(data.choices?.[0]?.message?.content, label);
+}
+
+// jsonMode=true → 请求方保证 prompt 里出现 "JSON" 字样且请求的是 JSON 对象（response_format:json_object 要求对象根）
+async function callLLM({ system, user, maxTokens = 4000, temperature = 0.2, timeoutMs = DEFAULT_TIMEOUT, jsonMode = false }) {
   const p = provider();
   if (!p) { const e = new Error('真·语义分析需配置 SILICONFLOW_API_KEY / MINIMAX_API_KEY / ANTHROPIC_API_KEY'); e.needsKey = true; throw e; }
 
   if (p === 'siliconflow') {
-    const messages = [];
-    if (system) messages.push({ role: 'system', content: system });
-    messages.push({ role: 'user', content: user });
-    const r = await fetchWithTimeout(SF_BASE, {
-      method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + sfKey() },
-      body: JSON.stringify({ model: SF_MODEL, messages, max_tokens: maxTokens, temperature }),
-    }, timeoutMs);
-    if (!r.ok) throw new Error(`SiliconFlow ${r.status}: ${(await r.text()).slice(0, 200)}`);
-    const data = await r.json();
-    return nonEmpty(data.choices?.[0]?.message?.content, 'SiliconFlow');
+    return withRetry('SiliconFlow', () => callOpenAICompatible({
+      base: SF_BASE, key: sfKey(), model: SF_MODEL, system, user, maxTokens, temperature, timeoutMs, jsonMode, label: 'SiliconFlow',
+    }));
   }
-
   if (p === 'minimax') {
-    const messages = [];
-    if (system) messages.push({ role: 'system', content: system });
-    messages.push({ role: 'user', content: user });
-    const r = await fetchWithTimeout(MINIMAX_BASE, {
-      method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + process.env.MINIMAX_API_KEY },
-      body: JSON.stringify({ model: MINIMAX_MODEL, messages, max_tokens: maxTokens, temperature }),
-    }, timeoutMs);
-    if (!r.ok) throw new Error(`MiniMax HTTP ${r.status}: ${(await r.text()).slice(0, 160)}`);
-    const data = await r.json();
-    if (data.base_resp && data.base_resp.status_code) throw new Error('MiniMax: ' + data.base_resp.status_msg);
-    return nonEmpty(data.choices?.[0]?.message?.content, 'MiniMax');
+    return withRetry('MiniMax', () => callOpenAICompatible({
+      base: MINIMAX_BASE, key: process.env.MINIMAX_API_KEY, model: MINIMAX_MODEL, system, user, maxTokens, temperature, timeoutMs, jsonMode, label: 'MiniMax', minimax: true,
+    }));
   }
-
-  // anthropic
-  const r = await fetchWithTimeout(ANTHROPIC_URL, {
-    method: 'POST', headers: { 'content-type': 'application/json', 'x-api-key': process.env.ANTHROPIC_API_KEY, 'anthropic-version': '2023-06-01' },
-    body: JSON.stringify({ model: ANTHROPIC_MODEL, max_tokens: maxTokens, system, messages: [{ role: 'user', content: user }] }),
-  }, timeoutMs);
-  if (!r.ok) throw new Error(`Anthropic ${r.status}: ${(await r.text()).slice(0, 160)}`);
-  const data = await r.json();
-  return nonEmpty((data.content || []).map(c => c.text || '').join(''), 'Anthropic');
+  // anthropic（无 response_format；靠 prompt 约束 JSON）
+  return withRetry('Anthropic', async () => {
+    const r = await fetchWithTimeout(ANTHROPIC_URL, {
+      method: 'POST', headers: { 'content-type': 'application/json', 'x-api-key': process.env.ANTHROPIC_API_KEY, 'anthropic-version': '2023-06-01' },
+      body: JSON.stringify({ model: ANTHROPIC_MODEL, max_tokens: maxTokens, system, messages: [{ role: 'user', content: user }] }),
+    }, timeoutMs);
+    if (!r.ok) throw new Error(`Anthropic ${r.status}: ${(await r.text()).slice(0, 160)}`);
+    const data = await r.json();
+    return nonEmpty((data.content || []).map(c => c.text || '').join(''), 'Anthropic');
+  });
 }
 
 // 多模态：text + images(base64)。视觉提供方独立选择（默认 MiniMax-VL）
