@@ -69,7 +69,7 @@
       </div>`;
   }
 
-  function showOverlay(result) {
+  function showOverlay(result, ctx = {}) {
     document.getElementById('yy-precheck-overlay')?.remove();
     const box = document.createElement('div');
     box.id = 'yy-precheck-overlay';
@@ -96,25 +96,74 @@
       body = section('🟥 明确违规(硬性交叉核验,可直接拦截)', hard, '#b91c1c')
            + section('🟨 可疑(需临床合理性合议,软提醒)', susp, '#a15c00');
     }
+    // 闭环:有命中时给医生处置动作(采纳整改 / 坚持提交+理由),写入事前台账
+    const actions = hits.length ? `<div id="yy-actions" style="padding:10px 14px;border-top:1px solid #edf1f6;display:flex;gap:8px;align-items:center">
+        <button id="yy-heed" style="flex:1;padding:7px;border:0;border-radius:6px;background:#0a7a4b;color:#fff;font-size:12px;font-weight:700;cursor:pointer">✓ 采纳建议·整改(消灭在萌芽)</button>
+        <button id="yy-override" style="padding:7px 10px;border:1px solid #d0a800;border-radius:6px;background:#fffbe6;color:#8a6d00;font-size:12px;cursor:pointer">⚠ 坚持提交</button>
+      </div>` : '';
     const foot = `<div style="padding:8px 14px;font-size:11px;color:#8a99ab;border-top:1px solid #edf1f6">${esc(result.engine || 'L1确定性·毫秒级')} · 本地运行,数据不出机 · 依据国家医保两库与相关号令 · 违规消除在"萌芽"</div>`;
-    box.innerHTML = head + body + foot;
+    box.innerHTML = head + body + actions + foot;
     document.body.appendChild(box);
     box.querySelector('#yy-close').onclick = () => box.remove();
+    wireActions(box, result, ctx);
+  }
+
+  // 事前台账:记录处置。ctx={patient, engineBase, scenario}
+  async function logDisposition(ctx, result, action, reason) {
+    try {
+      await fetch((ctx.engineBase || '') + '/api/precheck/log', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ source: ctx.source || 'plugin', patient: ctx.patient, scenario: ctx.scenario || null, hits: result.hits || [], action, reason: reason || '' }),
+      });
+    } catch (_) { /* 台账写入失败不阻断 */ }
+  }
+
+  function wireActions(box, result, ctx) {
+    const heed = box.querySelector('#yy-heed');
+    const override = box.querySelector('#yy-override');
+    if (heed) heed.onclick = async () => {
+      heed.disabled = true; if (override) override.disabled = true; // 防 await 期间连点重复写台账
+      await logDisposition(ctx, result, 'heeded');
+      if (typeof window.__yingyanOnHeed === 'function') { try { window.__yingyanOnHeed(result.hits || []); } catch (_) {} } // 让靶站移除标注行(整改可见)
+      box.querySelector('#yy-actions').outerHTML = '<div style="padding:14px;text-align:center;color:#0a7a4b;font-weight:600">🟩 已采纳整改 · 违规消灭在萌芽<div style="font-size:11px;color:#5b6d82;font-weight:400;margin-top:4px">监管侧少处理一条 · 已计入院端看板</div></div>';
+    };
+    if (override) override.onclick = () => {
+      const wrap = box.querySelector('#yy-actions');
+      wrap.innerHTML = `<div style="width:100%">
+        <div style="font-size:12px;color:#8a6d00;margin-bottom:6px">坚持提交需记录理由(将进入监管重点审核):</div>
+        <select id="yy-reason" style="width:100%;padding:6px;border:1px solid #d0a800;border-radius:5px;font-size:12px;margin-bottom:6px">
+          <option value="临床确有必要,已知情告知">临床确有必要,已知情告知</option>
+          <option value="外院已有检测/评估结果,待补录">外院已有检测/评估结果,待补录</option>
+          <option value="患者要求且自费部分已说明">患者要求且自费部分已说明</option>
+          <option value="其他(见病历记录)">其他(见病历记录)</option>
+        </select>
+        <button id="yy-override-confirm" style="width:100%;padding:7px;border:0;border-radius:6px;background:#b45309;color:#fff;font-size:12px;font-weight:700;cursor:pointer">确认坚持提交并记录</button>
+      </div>`;
+      box.querySelector('#yy-override-confirm').onclick = async (e) => {
+        e.target.disabled = true; // 防连点重复写台账
+        const reason = box.querySelector('#yy-reason').value;
+        await logDisposition(ctx, result, 'overridden', reason);
+        wrap.outerHTML = '<div style="padding:14px;text-align:center;color:#b45309;font-weight:600">⚠ 已记录:开单时已提醒·未遵从<div style="font-size:11px;color:#5b6d82;font-weight:400;margin-top:4px">该单已进入监管侧重点审核队列(事中/事后)· 理由随附</div></div>';
+      };
+    };
   }
 
   async function run(opts = {}) {
     const engineBase = opts.engineBase ?? 'http://localhost:3700';
-    const payload = { patient: scrapePatient(), items: scrapeOrders() };
+    const patient = scrapePatient();
+    const payload = { patient, items: scrapeOrders() };
+    const ctx = { patient, engineBase, source: opts.source || 'plugin', scenario: opts.scenario || null };
     try {
       const r = await fetch(engineBase + '/api/precheck', {
         method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload),
       });
       const j = await r.json();
       // opts.showClean===false 时,合规(无命中)不弹绿浮层(设置项);有命中始终弹
-      if (!(opts.showClean === false && (j.hits || []).length === 0)) showOverlay(j);
+      if (!(opts.showClean === false && (j.hits || []).length === 0)) showOverlay(j, ctx);
+      else if ((j.hits || []).length === 0) logDisposition(ctx, j, 'no_hit'); // 关了绿浮层时仍记合规审方一笔(no_hit 不计入遵从率分母,仅留痕)
       return j;
     } catch (e) {
-      showOverlay({ hits: [], engine: '引擎未连接(' + e.message + ')——请确认鹰眼本地服务已启动' });
+      showOverlay({ hits: [], engine: '引擎未连接(' + e.message + ')——请确认鹰眼本地服务已启动' }, ctx);
       return null;
     }
   }

@@ -1352,6 +1352,31 @@ const server = http.createServer(async (req, res) => {
       const ruleId = url.searchParams.get('rule_id') || null;
       return sendJSON(res, precipService.getPrecipitationSummary(DATA, ruleId));
     }
+    // F1 闭环·事前提醒台账:记录医生处置(采纳整改/坚持提交+理由)。CORS 全开(插件跨域调)
+    if (p === '/api/precheck/log') {
+      // CORS 全开:插件在任意 HIS/结算页(任意 origin)写台账。演示态;生产收窄为院内 origin 白名单+token。
+      res.setHeader('Access-Control-Allow-Origin', '*');
+      res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+      res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+      if (req.method === 'OPTIONS') { res.writeHead(204); return res.end(); }
+      if (req.method !== 'POST') return sendJSON(res, { error: 'method not allowed' }, 405);
+      const body = await readBody(req);
+      const { record } = require('./engine/precheck-ledger'); // record 内部已截断字段/限行数,防畸形 body
+      const entry = record(body);
+      return sendJSON(res, { ok: true, entry });
+    }
+    // F1 闭环·院端看板汇总 + 监管联动清单(未遵从待重点审核)
+    if (p === '/api/precheck/ledger') {
+      res.setHeader('Access-Control-Allow-Origin', '*');
+      const { summary, reset } = require('./engine/precheck-ledger');
+      if (req.method === 'POST') { // 清台账=写操作,接管理鉴权(演示态 demo_open 放行,生产需 token)
+        if (!enforceAdmin(req, res, sendJSON)) return;
+        const body = await readBody(req);
+        if (body.action === 'reset') { reset(); return sendJSON(res, { ok: true, reset: true }); }
+      }
+      return sendJSON(res, summary());
+    }
+
     // E2 沉淀门禁·回放预览:对指定草案跑全历史案卷 diff(不落任何盘)
     if (p === '/api/rule-precipitation/replay' && req.method === 'POST') {
       const body = await readBody(req);
@@ -2610,6 +2635,7 @@ const server = http.createServer(async (req, res) => {
 if (require.main === module) {
 server.listen(PORT, async () => {
   await refreshLiveKB();
+  try { const pruned = require('./engine/precheck-ledger').pruneStale(); if (pruned) console.log(`  ▸ 事前提醒台账已清陈旧 ${pruned} 条(仅保留今日)`); } catch (_) { /* 台账不存在忽略 */ }
   console.log(`\n  鹰眼·稽核工作台已启动`);
   console.log(`  ▸ http://localhost:${PORT}`);
   console.log(`  ▸ 交付文档（PPT/架构图）http://localhost:${PORT}/deliverables/`);

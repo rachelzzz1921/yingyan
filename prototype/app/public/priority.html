@@ -81,6 +81,16 @@
     <div id="screeningFunnel" class="hidden" style="margin-top:10px"></div>
   </section>
 
+  <section class="pri-queue card" id="preAlertSection" style="padding:12px 16px;border-left:4px solid #f59e0b">
+    <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+      <h2 style="margin:0;font-size:15px">⚠ 事前已提醒·未遵从 · 重点审核预警台账</h2>
+      <span id="preAlertMeta" class="muted"></span>
+      <button type="button" class="btn sm secondary" id="btnPreAlertRefresh" style="margin-left:auto">↻</button>
+    </div>
+    <p class="muted" style="font-size:12px;margin:4px 0">院端插件开单时已提醒、医生仍坚持提交的单,由同一引擎登记于此供监管侧优先盯防。<b>独立预警面板</b>——当前为并列展示,让审核员据此手工提级;并入下方 api_score 排序队列为路线图。</p>
+    <div id="preAlertBody"></div>
+  </section>
+
   <section class="pri-queue card" id="queueSection">
     <h2>稽核队列 <span class="muted" id="queueCount"></span></h2>
     <p class="pri-score-legend muted" id="queueLegend"></p>

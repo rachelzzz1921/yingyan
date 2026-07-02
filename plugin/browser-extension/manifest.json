@@ -7,6 +7,7 @@
   "host_permissions": ["http://localhost:3700/*", "http://127.0.0.1:3700/*"],
   "optional_host_permissions": ["http://*/*"],
   "options_page": "options.html",
+  "action": { "default_popup": "popup.html", "default_title": "鹰眼 · 开单事前提醒" },
   "content_scripts": [
     {
       "matches": ["http://localhost:3700/mockhis.html*", "http://127.0.0.1:3700/mockhis.html*", "http://*/mockhis.html*"],

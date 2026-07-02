@@ -60,3 +60,6 @@ scripts/crawl/node_modules/
 
 # 运行态降级台账(Q7,每次运行重新生成)
 prototype/data/_runtime/
+
+# F1 事前提醒台账(演示运行态,起于空实时累积)
+prototype/data/precheck_ledger.json

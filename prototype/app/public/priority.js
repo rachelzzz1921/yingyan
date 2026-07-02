@@ -546,6 +546,23 @@ $('#btnConfig').addEventListener('click', openConfig);
 $('#btnConfigCancel').addEventListener('click', () => $('#configModal').classList.add('hidden'));
 $('#btnConfigSave').addEventListener('click', saveConfig);
 $('#btnReport').addEventListener('click', () => { $('#reportModal').classList.remove('hidden'); previewReport(); });
+// 闭环第三环:事前已提醒·未遵从 → 监管重点审核(与院端插件同一台账)
+async function loadPreAlerts() {
+  try {
+    const d = await fetch('/api/precheck/ledger').then(r => r.json());
+    const pend = d.pending_supervision || [];
+    $('#preAlertMeta').textContent = pend.length ? `${pend.length} 单待重点审核 · 院端今日萌芽拦截 ${d.budding_intercepts || 0} 条` : '暂无未遵从(院端均采纳整改)';
+    const body = $('#preAlertBody');
+    if (!pend.length) { body.innerHTML = '<p class="muted" style="font-size:12px">暂无——医生均采纳了事前提醒,违规都消灭在开单环节。</p>'; return; }
+    const hhmm = (iso) => { try { return new Date(iso).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }); } catch (_) { return String(iso).slice(11, 16); } };
+    body.innerHTML = `<table class="pri-table"><thead><tr><th>时间</th><th>科室</th><th>患者</th><th>开单命中</th><th>医生坚持理由</th><th>标记</th></tr></thead><tbody>${
+      pend.map(e => `<tr><td>${esc(hhmm(e.at))}</td><td>${esc(e.dept || '—')}</td><td>${esc((e.sex || '') + (e.age != null ? e.age + '岁' : ''))} ${esc(e.diagnosis || '')}</td><td>${(e.rules || []).map(r => `<span class="tri-badge tri-hard">${esc(r)}</span>`).join(' ')}</td><td class="muted">${esc(e.reason || '—')}</td><td><span class="nature-badge" style="background:#fffbe6;color:#b45309;border:1px solid #fde68a">⚠开单时已提醒</span></td></tr>`).join('')
+    }</tbody></table>`;
+  } catch (_) { $('#preAlertMeta').textContent = ''; }
+}
+$('#btnPreAlertRefresh')?.addEventListener('click', loadPreAlerts);
+loadPreAlerts();
+
 // E1 批量筛查漏斗:1000条结算明细行级确定性筛查(毫秒级),三档漏斗+真值对账
 $('#btnScreening')?.addEventListener('click', async () => {
   $('#screeningResult').textContent = '筛查中…';
