@@ -33,7 +33,18 @@ button.ghost{background:#fff;color:#2c5788}
   <span class="tag">演示靶站 · 模拟院内 HIS 开单页(虚构数据)</span>
 </div>
 <div class="his-main">
-  <div class="his-bar">门诊医嘱开立</div>
+  <div class="his-bar" style="display:flex; align-items:center; justify-content:space-between;">
+    <span>门诊医嘱开立</span>
+    <label style="font-weight:400; font-size:12px; color:#41556b;">演示场景
+      <select id="scenarioPick" style="font-size:12px; padding:3px 6px; border:1px solid #c6d4e2; border-radius:3px;">
+        <option value="S1">S1 · 未成年+喹诺酮(AGE-101)</option>
+        <option value="S2">S2 · 女性开男性专属项目(F-001)</option>
+        <option value="S3">S3 · 靶向药无基因检测(T-201)</option>
+        <option value="S4">S4 · 超目录限定支付(B-201)</option>
+        <option value="S0">S0 · 干净件(合规放行)</option>
+      </select>
+    </label>
+  </div>
   <div class="his-sec">
     <table class="pt" id="patientInfo">
       <tr>
@@ -89,6 +100,33 @@ button.ghost{background:#fff;color:#2c5788}
   <div class="note">本页为鹰眼插件产品线的演示靶站:安装鹰眼浏览器扩展后,提交医嘱时自动触发事前提醒(两库依据+政策原文),无需 HIS 做任何对接改造。右下角"内嵌演示"按钮为插件未安装时的等价通道。</div>
 </div>
 <script>
+// 演示场景:每个触发不同事前规则,一键切换重写患者信息与医嘱行
+var SCENARIOS = {
+  S1: { patient: { patient_name:'王小雨', sex:'女', age:'16岁', insurance:'城乡居民基本医疗保险', dept:'呼吸内科', diagnosis:'社区获得性肺炎(J15.900)' },
+        orders: [['左氧氟沙星氯化钠注射液','0.5g:100ml','5','袋','ivgtt qd'],['小儿氨酚黄那敏颗粒','6g×10袋','2','盒','po tid'],['血常规','—','1','次','立即']] },
+  S2: { patient: { patient_name:'李慧', sex:'女', age:'52岁', insurance:'城镇职工基本医疗保险', dept:'泌尿外科', diagnosis:'尿路感染(N39.000)' },
+        orders: [['前列腺特异性抗原(PSA)测定','—','1','次','立即'],['经直肠前列腺超声','—','1','次','立即'],['头孢呋辛酯片','0.25g','1','盒','po bid']] },
+  S3: { patient: { patient_name:'张国强', sex:'男', age:'63岁', insurance:'城镇职工基本医疗保险', dept:'肿瘤内科', diagnosis:'肺恶性肿瘤(C34.900)' },
+        orders: [['注射用奥希替尼','80mg','1','盒','po qd'],['昂丹司琼注射液','8mg','2','支','ivgtt'],['血常规','—','1','次','立即']] },
+  S4: { patient: { patient_name:'赵敏', sex:'女', age:'34岁', insurance:'城镇职工基本医疗保险', dept:'消化内科', diagnosis:'低蛋白血症(E88.000)' },
+        orders: [['人血白蛋白','10g:50ml','3','瓶','ivgtt'],['波生坦分散片','62.5mg','1','盒','po bid']] },
+  S0: { patient: { patient_name:'孙建', sex:'男', age:'45岁', insurance:'城镇职工基本医疗保险', dept:'心血管内科', diagnosis:'高血压病(I10.x00)' },
+        orders: [['苯磺酸氨氯地平片','5mg','1','盒','po qd'],['血常规','—','1','次','立即']] },
+};
+function applyScenario(key) {
+  var s = SCENARIOS[key]; if (!s) return;
+  for (var f in s.patient) { var el = document.querySelector('[data-field="'+f+'"]'); if (el) el.textContent = s.patient[f]; }
+  var tb = document.querySelector('#orderTable tbody');
+  tb.innerHTML = '';
+  s.orders.forEach(function(o){
+    var tr = document.createElement('tr');
+    tr.innerHTML = '<td><input class="ord-name" value="'+o[0]+'"></td><td><input class="ord-spec" value="'+o[1]+'"></td><td><input class="ord-qty" value="'+o[2]+'" type="number"></td><td><input class="ord-unit" value="'+o[3]+'"></td><td><input class="ord-usage" value="'+o[4]+'"></td><td><button class="ghost btn-del" type="button">删行</button></td>';
+    tb.appendChild(tr);
+  });
+  document.getElementById('yy-precheck-overlay') && document.getElementById('yy-precheck-overlay').remove();
+}
+document.getElementById('scenarioPick').onchange = function(){ applyScenario(this.value); };
+
 // 靶站自身只做最小交互;审方逻辑在插件(plugin/browser-extension)或内嵌通道里
 document.getElementById('btnAddRow').onclick = () => {
   const tb = document.querySelector('#orderTable tbody');

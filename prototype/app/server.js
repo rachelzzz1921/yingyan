@@ -322,7 +322,12 @@ async function refreshLiveKB() {
     if (maps.source === 'supabase') {
       DB.policyTexts = maps.policyTexts;
       DB.policyVerified = maps.policyVerified;
-      DB.policyMapsRaw = { ...DB.policyMapsRaw, policyTexts: maps.policyTexts, policyVerified: maps.policyVerified };
+      DB.policyMapsRaw = {
+        ...DB.policyMapsRaw,
+        policyTexts: maps.policyTexts,
+        policyVerified: maps.policyVerified,
+        policyPending: maps.policyPending || {},
+      };
       DB.kbSource = 'supabase';
       console.log(`  ▸ KB Live（Supabase）${maps.entry_count} 条 ref_id`);
     } else {
@@ -1968,9 +1973,28 @@ const server = http.createServer(async (req, res) => {
         return sendJSON(res, { error: '批量筛查失败:' + e.message + '(先跑 node scripts/gen-settlement-1000.js 生成演示数据)' }, 500);
       }
     }
+    // F2 桌面哨兵·剪贴板通道:任意结算行(Excel 选区 TSV 解析结果)→ 行级筛查漏斗。CORS 全开。
+    if (p === '/api/screening/rows') {
+      res.setHeader('Access-Control-Allow-Origin', '*');
+      res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+      res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+      if (req.method === 'OPTIONS') { res.writeHead(204); return res.end(); }
+      if (req.method !== 'POST') return sendJSON(res, { error: 'method not allowed' }, 405);
+      const body = await readBody(req);
+      if (!Array.isArray(body.rows)) return sendJSON(res, { error: 'rows 必须是数组' }, 400);
+      if (body.rows.length > 2000) return sendJSON(res, { error: 'rows 超过 2000 行上限(防误粘大文件)' }, 400);
+      try {
+        const { screenExternalRows } = require('./engine/screening');
+        return sendJSON(res, screenExternalRows(body.rows));
+      } catch (e) {
+        return sendJSON(res, { error: '剪贴板筛查失败:' + e.message }, 500);
+      }
+    }
 
     // F1 插件产品线·开单事前提醒:患者+医嘱行 → L1 事前规则子集 → 命中+两库依据
-    // CORS 全开:浏览器扩展要在任意 HIS 页面(任意 origin)调用本地引擎
+    // CORS 全开:浏览器扩展要在任意 HIS 页面(任意 origin)调用本地引擎。
+    // 【演示态安全说明】ACAO:* 让任意网页可 POST 并回读本次提交的规则命中元数据(非持久患者数据);
+    //   生产必须收窄为按 Origin 白名单(仅放行院内 HIS 域与回环)+ 端点加 token。留待私有化部署配置。
     if (p === '/api/precheck') {
       res.setHeader('Access-Control-Allow-Origin', '*');
       res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
@@ -1979,9 +2003,13 @@ const server = http.createServer(async (req, res) => {
       if (req.method !== 'POST') return sendJSON(res, { error: 'method not allowed' }, 405);
       const body = await readBody(req);
       const patient = body.patient || {};
-      const items = Array.isArray(body.items) ? body.items : [];
-      // 事前场景规则白名单:开单时点可判的 L1 规则(无费用/医嘱执行数据,虚记/超量类规则不适用)
-      const PRECHECK_RULES = new Set(['AGE-101', 'F-001', 'B-201', 'A-110']);
+      const rawItems = Array.isArray(body.items) ? body.items : [];
+      if (rawItems.length > 500) return sendJSON(res, { error: 'items 超过 500 行上限' }, 400);
+      const items = rawItems.filter(x => x && typeof x === 'object'); // 防畸形元素
+      // 事前双通道:① AGE-101 走主引擎(年龄×药名纯开单可硬判) ② 原生检测器(性别互斥/靶向未检/超限定)。
+      //   主引擎里 F-001 有目录定义却无 checker(挂名从不触发);B-201/A-110 的 checker 依赖检验白蛋白值=事后。
+      //   故这三条在事前层由 precheck-native 以"纯开单输入"重新落地,并诚实降级(除性别硬互斥外只出可疑/线索)。
+      const ENGINE_PRECHECK_RULES = new Set(['AGE-101']);
       const drugLike = (n) => /注射液|注射用|片|胶囊|颗粒|散|口服液|软膏|栓|丸|雾化|滴/.test(n);
       const pseudoRecord = {
         case_meta: { case_id: 'PRECHECK-' + Date.now(), settlement_summary: {} },
@@ -2001,12 +2029,18 @@ const server = http.createServer(async (req, res) => {
         const rules = rulesWithOverlay(DB.rulesDoc.rules);
         const ctx = auditContextForRecord(pseudoRecord);
         const rep = runAudit(pseudoRecord, rules, { policyTexts: ctx.policyTexts, policyVerified: ctx.policyVerified });
-        const hits = (rep.findings || []).filter(f => PRECHECK_RULES.has(f.rule_id)).map(f => ({
+        const engineHits = (rep.findings || []).filter(f => ENGINE_PRECHECK_RULES.has(f.rule_id)).map(f => ({
           rule_id: f.rule_id, rule_name: f.rule_name, nature: f.nature, status: f.status,
           violation_type: f.violation_type, policy: (f.policy || []).slice(0, 3),
           reasoning: f.reasoning, disposal_suggestion: f.disposal_suggestion,
         }));
-        return sendJSON(res, { hits, clean: hits.length === 0, engine: 'L1确定性·毫秒级·本地', checked_rules_count: PRECHECK_RULES.size, elapsed_ms: 0 });
+        const { detectNative } = require('./engine/precheck-native');
+        const nativeHits = detectNative(patient, items, { policyTexts: ctx.policyTexts, policyVerified: ctx.policyVerified });
+        const seen = new Set(engineHits.map(h => h.rule_id + '|' + (h.evidence?.[0]?.text || '')));
+        const hits = [...engineHits, ...nativeHits.filter(h => !seen.has(h.rule_id + '|' + (h.evidence?.[0]?.text || '')))];
+        hits.sort((a, b) => (a.nature === '明确违规' ? 0 : 1) - (b.nature === '明确违规' ? 0 : 1));
+        const checked = ['AGE-101 未成年用药', 'F-001 性别互斥', 'T-201 靶向未检', 'B-201 超限定支付'];
+        return sendJSON(res, { hits, clean: hits.length === 0, engine: 'L1确定性+事前原生·毫秒级·本地', checked_rules: checked, checked_rules_count: checked.length, elapsed_ms: 0 });
       } catch (e) {
         return sendJSON(res, { error: '事前预检失败:' + e.message }, 500);
       }

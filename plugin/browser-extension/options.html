@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>鹰眼插件 · 设置</title>
+<style>
+body{font-family:"PingFang SC","Microsoft YaHei",sans-serif;font-size:13px;color:#1a2b3c;padding:18px;width:360px}
+h1{font-size:15px;margin:0 0 4px}
+.sub{color:#7a8ba0;font-size:12px;margin-bottom:16px}
+label{display:block;margin:12px 0 4px;font-weight:600}
+input[type=text]{width:100%;padding:6px 8px;border:1px solid #c6d4e2;border-radius:4px;font-size:13px;box-sizing:border-box}
+.row{display:flex;align-items:center;gap:8px;margin:10px 0}
+.row label{margin:0;font-weight:400}
+select{padding:5px 8px;border:1px solid #c6d4e2;border-radius:4px}
+button{margin-top:8px;padding:6px 14px;border:1px solid #2c5788;background:#fff;color:#2c5788;border-radius:4px;cursor:pointer}
+button.primary{background:#33608f;color:#fff}
+#status{margin-top:10px;font-size:12px;color:#0a7a4b}
+</style>
+</head>
+<body>
+<h1>🦅 鹰眼 · 开单事前提醒 · 设置</h1>
+<div class="sub">数据不出机:插件只与你填写的本地引擎地址通信。</div>
+
+<label>本地引擎地址</label>
+<input type="text" id="engineBase" placeholder="http://localhost:3700">
+<button id="btnTest">测试连接</button>
+
+<div class="row"><input type="checkbox" id="interceptSubmit"><label for="interceptSubmit">拦截"提交医嘱"先审方(关闭则只点右上角徽标手动审)</label></div>
+<div class="row"><input type="checkbox" id="showCleanBadge"><label for="showCleanBadge">合规时也显示绿色放行浮层</label></div>
+<div class="row"><label for="natureFilter">暂缓提交阈值</label>
+  <select id="natureFilter">
+    <option value="any">命中任意(明确违规/可疑)即暂缓</option>
+    <option value="hard">仅"明确违规"才暂缓</option>
+  </select>
+</div>
+
+<button class="primary" id="btnSave">保存</button>
+<div id="status"></div>
+<script src="options.js"></script>
+</body>
+</html>

@@ -17,7 +17,8 @@ const PEDIATRIC_RE = /^小儿|儿童型/;
 const MALE_ONLY_RE = /前列腺|精液|睾酮(?!.*女)/;
 const FEMALE_ONLY_RE = /宫颈|子宫|卵巢|阴道|TCT|HPV/;
 
-function screenRows(rows) {
+function screenRows(rowsIn) {
+  const rows = (rowsIn || []).filter(r => r && typeof r === 'object'); // 防 null/非对象行让整次筛查 500
   const hits = [];
   const hit = (row, rule, nature, reason) => hits.push({
     row_id: row.row_id, rule_id: rule, nature, reason,
@@ -60,6 +61,24 @@ function runScreening() {
   const data = JSON.parse(fs.readFileSync(DATA_FILE, 'utf8'));
   const rows = data.rows || [];
   const hits = screenRows(rows);
+  const agg = aggregateHits(rows, hits, t0);
+  const hitRows = new Set(hits.map(h => h.row_id));
+  // 真值对账(诚实呈现:检出/漏检/误报——评委可任指一条,仅内置演示数据有 manifest)
+  const truthSet = new Set((data.embedded_truth || []).filter(t => !/首笔/.test(t.note)).map(t => t.row_id));
+  const detected = [...truthSet].filter(id => hitRows.has(id)).length;
+  const falsePos = [...hitRows].filter(id => !truthSet.has(id) && !(data.embedded_truth || []).some(t => t.row_id === id)).length;
+  return {
+    ...agg,
+    ground_truth_check: {
+      embedded: truthSet.size, detected,
+      missed: truthSet.size - detected, false_positives: falsePos,
+      note: '与生成时埋点真值 manifest 对账(评委可任指一条核对);首笔追溯码行不算违规行',
+    },
+  };
+}
+
+// 漏斗聚合(runScreening 与 /api/screening/rows 剪贴板通道共用同一段统计,单一事实源)
+function aggregateHits(rows, hits, t0 = Date.now()) {
   const hitRows = new Set(hits.map(h => h.row_id));
   const byNature = { 明确违规: 0, 可疑: 0 };
   const byRule = {};
@@ -69,13 +88,9 @@ function runScreening() {
     byRule[h.rule_id] = (byRule[h.rule_id] || 0) + 1;
     hitAmount += h.amount || 0;
   }
-  // 真值对账(诚实呈现:检出/漏检/误报——评委可任指一条)
-  const truthSet = new Set((data.embedded_truth || []).filter(t => !/首笔/.test(t.note)).map(t => t.row_id));
-  const detected = [...truthSet].filter(id => hitRows.has(id)).length;
-  const falsePos = [...hitRows].filter(id => !truthSet.has(id) && !(data.embedded_truth || []).some(t => t.row_id === id)).length;
-
+  const ms = Date.now() - t0;
   return {
-    elapsed_ms: Date.now() - t0,
+    elapsed_ms: ms,
     funnel: {
       total_rows: rows.length,
       hit_rows: hitRows.size,
@@ -84,15 +99,18 @@ function runScreening() {
       by_rule: byRule,
       hit_amount: Math.round(hitAmount * 100) / 100,
     },
-    ground_truth_check: {
-      embedded: truthSet.size, detected,
-      missed: truthSet.size - detected, false_positives: falsePos,
-      note: '与生成时埋点真值 manifest 对账(评委可任指一条核对);首笔追溯码行不算违规行',
-    },
     top20: hits.slice().sort((a, b) => (b.amount || 0) - (a.amount || 0)).slice(0, 20),
     hits_sample: hits.slice(0, 100),
-    statement: `${rows.length} 条结算明细行级筛查 ${Date.now() - t0}ms 完成:命中 ${hitRows.size} 行(明确违规 ${byNature.明确违规} / 可疑 ${byNature.可疑}),涉及 ¥${Math.round(hitAmount)},其余 ${rows.length - hitRows.size} 行放行——这是"1万条/月过3遍"的第一遍,人只接手命中行。`,
+    statement: `${rows.length} 条结算明细行级筛查 ${ms}ms 完成:命中 ${hitRows.size} 行(明确违规 ${byNature.明确违规} / 可疑 ${byNature.可疑}),涉及 ¥${Math.round(hitAmount)},其余 ${rows.length - hitRows.size} 行放行——这是"1万条/月过3遍"的第一遍,人只接手命中行。`,
   };
 }
 
-module.exports = { runScreening, screenRows };
+// 剪贴板/任意行级筛查:接受外部 rows(如 Excel 选区 TSV 解析结果),复用同一引擎与聚合
+function screenExternalRows(rowsIn) {
+  const t0 = Date.now();
+  const rows = (rowsIn || []).filter(r => r && typeof r === 'object');
+  const hits = screenRows(rows);
+  return aggregateHits(rows, hits, t0);
+}
+
+module.exports = { runScreening, screenRows, aggregateHits, screenExternalRows };
