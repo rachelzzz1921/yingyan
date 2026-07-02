@@ -4,12 +4,19 @@
     "gold_standard": true,
     "gold_standard_note": "Oracle 引擎自动生成，供 YHF/shadow 使用",
     "summary": {
-      "suspected_count": 2,
+      "suspected_count": 3,
       "clue_count": 2,
-      "total_findings": 4
+      "total_findings": 5
     }
   },
   "findings": [
+    {
+      "rule_id": "TRACE-101",
+      "rule_name": "同一追溯码重复结算(回流药)",
+      "status": "疑点",
+      "amount_involved": 145,
+      "violation_type": "欺诈骗保/回流药重复结算"
+    },
     {
       "rule_id": "P-303",
       "rule_name": "生活用品串换为医保药品",

@@ -1,7 +1,7 @@
 ####################################################################
 # 鹰眼 · 医保基金稽核规则库（全量机读版）rules.yaml
 # 版本：v0.3  生成日期：2026-06-12（口径修订 2026-07-02）
-# 规则总数：58（通用33: F6/A10/B8/C4/D3/E3 + 肿瘤T8 + 专科扩展17: M4/ICU3/P3/IMG3/CV2/BP1）
+# 规则总数：61（通用33: F6/A10/B8/C4/D3/E3 + 肿瘤T8 + 专科扩展17: M4/ICU3/P3/IMG3/CV2/BP1 + 赛前A3埋点3: TRACE1/NUR1/AGE1）
 # Schema：见主文档 3.2 节
 # 法规基准：《医疗保障基金使用监督管理条例》(国务院令735号)
 #          +《实施细则》(国家医保局令第7号, 2026-04-01施行)
@@ -18,7 +18,7 @@ meta:
   schema_version: "3.2"
   rules_version: "v0.3"
   generated_date: "2026-06-12"
-  total_rules: 58  # 由 build-rules.js 校验与 rules 数组实际条数一致
+  total_rules: 61  # 由 build-rules.js 校验与 rules 数组实际条数一致(58 + 赛前A3埋点3: TRACE-101/NUR-303/AGE-101)
   three_element_gate: ["原始证据定位", "违反的政策条款原文", "完整推理过程"]
   output_states: ["疑点", "线索", "不输出"]
   execution_order:
@@ -1302,3 +1302,53 @@ rules:
     params: {}
     governance: {note: "血液净化逐字证据最弱,具体场景(置管护理/冲管/复用)待手动抓吉林省负面清单PDF核验"}
     demo_seed: "血透另收置换液；血液灌流与血液透析并收"
+
+  # ============ 赛前A3 高回声埋点规则(2026-07-02,曝光台/答疑同源) ============
+
+  - rule_id: TRACE-101
+    rule_name: 同一追溯码重复结算(回流药)
+    category: E资质数据
+    violation_type: 欺诈骗保/回流药重复结算
+    layer: L1确定性
+    risk_level: 高
+    applies_to: [药店, 门诊, 住院]
+    specialty_tags: [定点零售药店, 通用]
+    trigger_logic: "IF 同一药品追溯码出现在 ≥2 笔医保结算中(药品追溯码一物一码全国唯一,重复即同一盒药被结算多次): 命中→疑点。GROUP fee_list BY trace_code(仅真实码,排除'完整/断链/—'等状态词) HAVING count≥2"
+    evidence_min_set: ["重复结算的费用行组(≥2行)", "同一追溯码原文", "追溯码唯一性规则(2025-07起强制扫码结算)"]
+    exclusions: "追溯码字段为状态词而非真实码的;同一笔结算冲正/红冲重传的(结算流水号相同)"
+    policy_basis: ["KB1-条例-第40条", "曝光台-国家局2026-05药店飞检(同一追溯码两次结算)", "追溯码强制扫码结算政策(2025-07起)"]
+    kb2_refs: []
+    params: {trace_code_pattern: "^[0-9A-Z]{10,}$"}
+    demo_seed: "同一盒恩替卡韦的追溯码在6-10与6-17两次医保结算——回流药典型痕迹"
+
+  - rule_id: NUR-303
+    rule_name: 护理收费与护理记录执行天数不符
+    category: A收费合规
+    violation_type: 虚记费用(护理)
+    layer: L1确定性
+    risk_level: 中—高
+    applies_to: [住院]
+    specialty_tags: [通用]
+    trigger_logic: "IF 护理费计费天数(qty) > 护理记录实际记录执行天数(nursing_records.days_documented): 命中→疑点,差额=(qty-实际天数)×单价。护理记录未给出明确执行天数时不判(宁漏不误)"
+    evidence_min_set: ["护理费用行(计费天数)", "护理记录单(实际执行天数)", "差额计算"]
+    exclusions: "护理记录不完整/未标明执行天数的(不判);等级不符走A-105不在此重复"
+    policy_basis: ["KB1-条例-第38条(一)", "曝光台-四川省第四人民医院(护理记录与收费不一致)"]
+    kb2_refs: []
+    params: {}
+    demo_seed: "护理费按8日计费,护理记录仅记录5日实际执行"
+
+  - rule_id: AGE-101
+    rule_name: 未成年用药年龄分层(14/18岁两档)
+    category: B诊疗合理
+    violation_type: 超限定支付范围用药(年龄限制)
+    layer: L1确定性
+    risk_level: 高
+    applies_to: [住院, 门诊]
+    specialty_tags: [通用, 儿科]
+    trigger_logic: "两档年龄分层: ① IF 患者年龄<18 AND 费用含喹诺酮类(左氧氟沙星/环丙沙星/莫西沙星等,说明书18岁以下禁用): 命中→疑点(全额); ② IF 患者年龄≥14 AND 费用含儿童专用制剂(名称含'小儿'/'儿童型',两库限儿童支付): 命中→疑点(全额)"
+    evidence_min_set: ["药品费用行", "病案首页年龄", "年龄限制依据(说明书禁忌/两库限定)"]
+    exclusions: "说明书允许的特殊获益人群(需病历记载评估);年龄缺失不判"
+    policy_basis: ["KB1-条例-第38条(六)", "KB1-两库2025-国家医保局关于更新发布有-药品限儿童使用-1", "KB2-喹诺酮说明书禁忌(18岁以下)"]
+    kb2_refs: ["KB2-喹诺酮说明书禁忌"]
+    params: {quinolone_pattern: "左氧氟沙星|环丙沙星|莫西沙星|氧氟沙星|诺氟沙星|培氟沙星|洛美沙星|司帕沙星|加替沙星", pediatric_pattern: "^小儿|儿童型", minor_age: 18, pediatric_age: 14}
+    demo_seed: "16岁肺炎患者使用左氧氟沙星注射液(18岁以下禁用)——答疑现场周夕鸣亲口举例的14/18两档"

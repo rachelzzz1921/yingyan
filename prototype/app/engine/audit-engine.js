@@ -98,6 +98,9 @@ const ruleCheckers = {
   /** F-003 时间逻辑冲突：费用日期晚于出院/死亡日期 */
   'F-003': (ctx) => {
     const { record } = ctx;
+    // 出院后计费是住院概念:门诊/药店件(front_page.discharge_time 实为结算日)不适用,
+    // 否则药店跨日多次结算(如追溯码复用的第二笔)会被误咬——那是 TRACE-101 的地盘
+    if (record.pharmacy_info || /药店|门诊/.test(record.case_meta?.scene || '')) return [];
     const discharge = parseDate(record.front_page.discharge_time);
     const bad = [];
     for (const line of record.fee_list.items) {
@@ -731,6 +734,102 @@ const ruleCheckers = {
     return findings;
   },
 
+  /** TRACE-101 同一追溯码重复结算(回流药)——药品追溯码一物一码,重复即同一盒药结算多次
+   *  (赛前A3①:国家局2026-05药店飞检曝光同款;2025-07起强制扫码结算) */
+  'TRACE-101': (ctx) => {
+    const { record } = ctx;
+    const codePattern = /^[0-9A-Z]{10,}$/i; // 仅真实追溯码,排除"完整/断链/—"等状态词
+    const byCode = new Map();
+    for (const l of record.fee_list.items) {
+      const code = String(l.trace_code || '').trim();
+      if (!codePattern.test(code)) continue;
+      if (!byCode.has(code)) byCode.set(code, []);
+      byCode.get(code).push(l);
+    }
+    const findings = [];
+    for (const [code, lines] of byCode) {
+      if (lines.length < 2) continue;
+      const dupAmt = money(lines.slice(1).reduce((s, l) => s + (l.amount || 0), 0));
+      findings.push(mkFinding(ctx, 'TRACE-101', {
+        status: '疑点', risk_level: '高', amount_involved: dupAmt,
+        evidence: [
+          ...lines.map(l => ev('结算明细', `医保结算 第${l.line_no}行`, `${l.fee_date}「${l.item_name}」${money(l.amount)}元 追溯码 ${code}`)),
+          ev('追溯码', `药品追溯码·${code}`, `同一追溯码在 ${lines.length} 笔结算中重复出现——药品追溯码一物一码、全国唯一,重复出现即同一盒药被结算 ${lines.length} 次（2025-07 起医保药品强制扫码结算）`),
+        ],
+        reasoning: `药品追溯码 ${code} 在费用清单第 ${lines.map(l => l.line_no).join('、')} 行重复出现（${lines.map(l => l.fee_date).join(' 与 ')} 各结算一次）。追溯码一物一码,同一码重复结算即同一盒药被医保基金支付 ${lines.length} 次,系回流药/空刷的确定性痕迹（国家局 2026-05 药店飞检曝光同款案例:同一追溯码两次结算）。重复部分金额 ${dupAmt} 元。`,
+        disposal: `建议责令退回重复结算金额 ${dupAmt} 元,并循追溯码核查药品来源,涉嫌回流药的移交欺诈骗保线索。`,
+      }));
+    }
+    return findings;
+  },
+
+  /** NUR-303 护理收费与护理记录执行天数不符(赛前A3②:仿四川省第四人民医院曝光案)
+   *  护理记录未给出明确执行天数(days_documented)时不判——宁漏不误 */
+  'NUR-303': (ctx) => {
+    const { record } = ctx;
+    const actualDays = record.nursing_records?.days_documented;
+    if (actualDays == null) return [];
+    const findings = [];
+    for (const l of record.fee_list.items) {
+      if (!/护理/.test(l.item_name)) continue;
+      if (!/日|天/.test(String(l.unit || ''))) continue;
+      if (l.qty > actualDays) {
+        const overDays = l.qty - actualDays;
+        const overAmt = money(overDays * l.unit_price);
+        findings.push(mkFinding(ctx, 'NUR-303', {
+          status: '疑点', risk_level: '中—高', amount_involved: overAmt,
+          evidence: [
+            ev('费用行', `费用清单 第${l.line_no}行`, `「${l.item_name}」计费 ${l.qty}${l.unit} 单价${l.unit_price}元 金额${money(l.amount)}元`),
+            ev('护理记录', '护理记录单', `护理记录实际记录执行 ${actualDays} 日（${record.nursing_records.nursing_level_executed || ''}）`),
+            ev('计算', '差额', `计费${l.qty} − 实际${actualDays} = 超${overDays}日 × ${l.unit_price} = ${overAmt}元`),
+          ],
+          reasoning: `费用清单第${l.line_no}行「${l.item_name}」按 ${l.qty} 日计费,护理记录单实际仅记录 ${actualDays} 日执行——护理收费天数大于护理记录实际执行天数,构成虚记护理费用（条例第38条(一)；曝光台四川省第四人民医院同类案:护理记录与收费不一致）。差额 ${overAmt} 元。`,
+          disposal: `建议按护理记录实际执行天数重新核算,责令退回差额 ${overAmt} 元。`,
+        }));
+      }
+    }
+    return findings;
+  },
+
+  /** AGE-101 未成年用药年龄分层(14/18岁两档)(赛前A3③:答疑现场亲口举例;两库第一批药品限儿童+第八批项目限年龄)
+   *  ①<18岁使用喹诺酮类(说明书禁忌) ②≥14岁使用儿童专用制剂(限儿童支付) */
+  'AGE-101': (ctx) => {
+    const { record } = ctx;
+    const age = Number(record.front_page?.age);
+    if (!Number.isFinite(age)) return []; // 年龄缺失不判
+    const rule = ctx.rules['AGE-101'] || {};
+    const quinoloneRe = new RegExp(rule.params?.quinolone_pattern || '左氧氟沙星|环丙沙星|莫西沙星|氧氟沙星|诺氟沙星|培氟沙星|洛美沙星|司帕沙星|加替沙星');
+    const pediatricRe = new RegExp(rule.params?.pediatric_pattern || '^小儿|儿童型');
+    const findings = [];
+    for (const l of record.fee_list.items) {
+      if (!/药/.test(l.category || '')) continue;
+      if (age < 18 && quinoloneRe.test(l.item_name)) {
+        findings.push(mkFinding(ctx, 'AGE-101', {
+          status: '疑点', risk_level: '高', amount_involved: l.amount,
+          evidence: [
+            ev('费用行', `费用清单 第${l.line_no}行`, `「${l.item_name}」×${l.qty}${l.unit} 金额${money(l.amount)}元`),
+            ev('病案首页', '病案首页·年龄', `患者年龄 ${age} 岁（<18 岁未成年）`),
+            ev('年龄限制依据', '喹诺酮类说明书禁忌', '喹诺酮类抗菌药物 18 岁以下儿童及青少年禁用（影响软骨发育）——两库第八批项目限年龄同源'),
+          ],
+          reasoning: `患者 ${age} 岁（未成年 18 岁档）,费用清单第${l.line_no}行使用喹诺酮类「${l.item_name}」${money(l.amount)}元。喹诺酮类说明书明确 18 岁以下禁用,属超说明书禁忌用药且超限定支付范围（两库第一批药品限儿童/第八批项目限年龄的年龄分层逻辑:未成年用药有 14 岁与 18 岁两个层次,本条命中 18 岁档）。`,
+          disposal: `建议全额拒付 ${money(l.amount)} 元并核查用药医嘱合理性,如病历记载特殊获益评估可申诉复核。`,
+        }));
+      } else if (age >= 14 && pediatricRe.test(l.item_name)) {
+        findings.push(mkFinding(ctx, 'AGE-101', {
+          status: '疑点', risk_level: '中—高', amount_involved: l.amount,
+          evidence: [
+            ev('费用行', `费用清单 第${l.line_no}行`, `「${l.item_name}」×${l.qty}${l.unit} 金额${money(l.amount)}元`),
+            ev('病案首页', '病案首页·年龄', `患者年龄 ${age} 岁（≥14 岁）`),
+            ev('年龄限制依据', '两库第一批·药品限儿童', '儿童专用制剂医保限 14 岁以下儿童支付——14 岁档'),
+          ],
+          reasoning: `患者 ${age} 岁,费用清单第${l.line_no}行使用儿童专用制剂「${l.item_name}」${money(l.amount)}元。该类制剂医保限儿童（14 岁档）支付,≥14 岁使用超限定支付范围（两库第一批药品限儿童）。`,
+          disposal: `建议拒付超限定支付部分 ${money(l.amount)} 元。`,
+        }));
+      }
+    }
+    return findings;
+  },
+
   /** ICU-302 按小时计价监护项目计费时长虚计（重症问题清单序174）——呼吸机/CRRT/监测时长>实际 */
   'ICU-302': (ctx) => {
     const { record } = ctx;
@@ -1024,6 +1123,22 @@ const triggerPredicates = {
   'M-302': (c, r) => !!r.anesthesia_record?.anesthesia_method,
   'M-303': (c, r) => (r.anesthesia_record?.drugs_used || []).length > 0,
   'M-304': (c, r) => r.anesthesia_record?.pacu_used === false && c.fee_lines.some(f => /恢复室/.test(f.name)),
+  'TRACE-101': (c, r) => {
+    const seen = new Set();
+    for (const x of (r.fee_list?.items || [])) {
+      const code = String(x.trace_code || '').trim();
+      if (!/^[0-9A-Z]{10,}$/i.test(code)) continue;
+      if (seen.has(code)) return true;
+      seen.add(code);
+    }
+    return false;
+  },
+  'NUR-303': (c, r) => r.nursing_records?.days_documented != null && (r.fee_list?.items || []).some(x => /护理/.test(x.item_name || '') && /日|天/.test(String(x.unit || '')) && x.qty > r.nursing_records.days_documented),
+  'AGE-101': (c, r) => {
+    const age = Number(r.front_page?.age);
+    if (!Number.isFinite(age)) return false;
+    return (r.fee_list?.items || []).some(x => /药/.test(x.category || '') && ((age < 18 && /左氧氟沙星|环丙沙星|莫西沙星|氧氟沙星|诺氟沙星|培氟沙星|洛美沙星|司帕沙星|加替沙星/.test(x.item_name || '')) || (age >= 14 && /^小儿|儿童型/.test(x.item_name || ''))));
+  },
   'P-301': (c, r) => (r.fee_list?.items || []).some(x => x.inventory_supported === false),
   'P-302': (c, r) => (r.fee_list?.items || []).some(x => /断链|异常/.test(x.trace_code || '')),
   'P-303': (c, r) => (r.fee_list?.items || []).some(x => x.actual_sold && /生活用品|保健品|化妆品|口罩|酒精|米面|粮油|日用|护肤|食品/.test(x.actual_sold.category || x.actual_sold.name || '')),
@@ -1293,13 +1408,13 @@ function reconcile(rawFindings) {
 
 // ---------- doc08宏观② 覆盖度清单 Coverage Manifest ----------
 const COVERAGE_DIMENSIONS = [
-  { key: '费用↔医嘱/执行一致性', rules: ['A-108', 'A-109', 'T-204'] },
-  { key: '费用↔诊断/限定支付', rules: ['B-201', 'A-110', 'T-201', 'T-202', 'T-203'] },
+  { key: '费用↔医嘱/执行一致性', rules: ['A-108', 'A-109', 'T-204', 'NUR-303'] },
+  { key: '费用↔诊断/限定支付', rules: ['B-201', 'A-110', 'T-201', 'T-202', 'T-203', 'AGE-101'] },
   { key: '收费规范(重复/分解/超标/串换)', rules: ['A-101', 'A-102', 'A-103', 'A-104', 'A-105', 'A-106', 'A-107', 'T-206'] },
   { key: '住院行为', rules: ['C-301', 'C-302', 'C-303'] },
   { key: '支付方式(高套/转嫁)', rules: ['D-401', 'D-402', 'T-207', 'T-208'] },
   { key: '基础逻辑底线', rules: ['F-001', 'F-002', 'F-003', 'F-004', 'F-005', 'F-006'] },
-  { key: '资质数据/对抗鲁棒', rules: ['E-501', 'E-502', 'E-503'] },
+  { key: '资质数据/对抗鲁棒', rules: ['E-501', 'E-502', 'E-503', 'TRACE-101'] },
 ];
 function coverageManifest(routing, record, findings) {
   const activated = new Set(routing.activated);

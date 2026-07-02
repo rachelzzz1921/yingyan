@@ -1,0 +1,29 @@
+{
+  "report_meta": {
+    "case_id": "YY-BENCH-VIOL-AGE-001",
+    "gold_standard": true,
+    "gold_standard_note": "Oracle 引擎自动生成，供 YHF/shadow 使用",
+    "summary": {
+      "suspected_count": 2,
+      "clue_count": 0,
+      "total_findings": 2
+    }
+  },
+  "findings": [
+    {
+      "rule_id": "AGE-101",
+      "rule_name": "未成年用药年龄分层(14/18岁两档)",
+      "status": "疑点",
+      "amount_involved": 140,
+      "violation_type": "超限定支付范围用药(年龄限制)"
+    },
+    {
+      "rule_id": "NUR-303",
+      "rule_name": "护理收费与护理记录执行天数不符",
+      "status": "疑点",
+      "amount_involved": 36,
+      "violation_type": "虚记费用(护理)"
+    }
+  ],
+  "correctly_not_flagged": []
+}

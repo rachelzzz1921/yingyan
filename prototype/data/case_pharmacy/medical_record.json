@@ -4,11 +4,11 @@
     "case_title": "门诊·定点零售药店 备演材料包（串换/空刷/回流药 · 跳出住院场景）",
     "disclaimer": "虚构数据。门诊/零售药店场景真fire示范件（继肿瘤/骨科/DRG/影像/麻醉后第6个完整可fire领域，且首次跳出住院病案结构）：以销售小票/进销存为事实基准，对医保结算明细做硬比对——生活用品串换医保药品(P-303,材料内可闭环→疑点)/空刷医保凭证(P-301,需进销存佐证→线索)/回流药追溯码断链(P-302,需追溯码佐证→线索)。另设1干扰(二甲双胍真实售药,正确不报)。依据取官方定点零售药店问题清单逐字(序1/5/7,✅已核实)。",
     "scene": "门诊药店",
-    "embedded_violation_count": 2,
+    "embedded_violation_count": 3,
     "distractor_count": 1,
     "clue_count": 2,
     "specialty": "定点零售药店",
-    "settlement_summary": {"total_amount": 373.0, "insurance_paid_amount": 373.0, "currency": "CNY", "settle_type": "门诊统筹·定点零售药店刷卡结算"}
+    "settlement_summary": {"total_amount": 663.0, "insurance_paid_amount": 663.0, "currency": "CNY", "settle_type": "门诊统筹·定点零售药店刷卡结算"}
   },
   "front_page": {
     "doc_type": "门诊购药结算凭证", "hospital": "示范市惠民大药房（医保定点·虚构）", "hospital_level": "定点零售药店",
@@ -47,10 +47,12 @@
       {"line_no": 2, "fee_date": "2026-06-10", "category": "西药费", "item_name": "蒙脱石散", "spec": "3g×10", "qty": 1, "unit": "盒", "unit_price": 60.0, "amount": 60.0, "insurance_class": "医保乙", "linked_order": "POS-02", "actual_sold": {"name": "蛋白粉（保健品）", "category": "保健品"}, "inventory_supported": true, "trace_code": "—", "flag": "★实际售保健品,串换为蒙脱石散结算→P-303"},
       {"line_no": 3, "fee_date": "2026-06-10", "category": "西药费", "item_name": "二甲双胍片", "spec": "0.5g×30", "qty": 2, "unit": "盒", "unit_price": 45.0, "amount": 90.0, "insurance_class": "医保甲", "linked_order": "RX-3302-01", "actual_sold": {"name": "二甲双胍片", "category": "医保目录内药品"}, "inventory_supported": true, "trace_code": "完整", "flag": "正常（真实售药·有处方·进销存支持·追溯完整→干扰项,正确不报）"},
       {"line_no": 4, "fee_date": "2026-06-10", "category": "西药费", "item_name": "布洛芬缓释胶囊", "spec": "0.3g×20", "qty": 1, "unit": "盒", "unit_price": 38.0, "amount": 38.0, "insurance_class": "医保乙", "linked_order": "POS-04", "actual_sold": null, "inventory_supported": false, "trace_code": "—", "flag": "★刷卡结算但进销存无销售出库记录→P-301空刷线索"},
-      {"line_no": 5, "fee_date": "2026-06-10", "category": "西药费", "item_name": "阿托伐他汀钙片", "spec": "20mg×7", "qty": 1, "unit": "盒", "unit_price": 100.0, "amount": 100.0, "insurance_class": "医保乙", "linked_order": "POS-05", "actual_sold": {"name": "阿托伐他汀钙片", "category": "医保目录内药品"}, "inventory_supported": true, "trace_code": "断链", "flag": "★药品追溯码断链/进货来源异常→P-302回流药线索"}
+      {"line_no": 5, "fee_date": "2026-06-10", "category": "西药费", "item_name": "阿托伐他汀钙片", "spec": "20mg×7", "qty": 1, "unit": "盒", "unit_price": 100.0, "amount": 100.0, "insurance_class": "医保乙", "linked_order": "POS-05", "actual_sold": {"name": "阿托伐他汀钙片", "category": "医保目录内药品"}, "inventory_supported": true, "trace_code": "断链", "flag": "★药品追溯码断链/进货来源异常→P-302回流药线索"},
+      {"line_no": 6, "fee_date": "2026-06-10", "category": "西药费", "item_name": "恩替卡韦分散片", "spec": "0.5mg×28", "qty": 1, "unit": "盒", "unit_price": 145.0, "amount": 145.0, "insurance_class": "医保乙", "linked_order": "POS-06", "actual_sold": {"name": "恩替卡韦分散片", "category": "医保目录内药品"}, "inventory_supported": true, "trace_code": "81069847100523916482", "flag": "追溯码 81069847100523916482 首次结算（与第7行同码→TRACE-101）"},
+      {"line_no": 7, "fee_date": "2026-06-17", "category": "西药费", "item_name": "恩替卡韦分散片", "spec": "0.5mg×28", "qty": 1, "unit": "盒", "unit_price": 145.0, "amount": 145.0, "insurance_class": "医保乙", "linked_order": "POS-07", "actual_sold": {"name": "恩替卡韦分散片", "category": "医保目录内药品"}, "inventory_supported": true, "trace_code": "81069847100523916482", "flag": "★同一追溯码 6-17 二次结算——同一盒药被医保支付两次(回流药)→TRACE-101疑点(仿国家局2026-05药店飞检曝光案)"}
     ],
-    "absent_items_note": "门诊药店件：以销售小票/进销存为事实基准。P-303串换2笔(口罩/保健品→疑点) + P-301空刷1笔(线索) + P-302回流药1笔(线索)；二甲双胍真实售药为干扰项(正确不报)。",
-    "total_amount": 373.0
+    "absent_items_note": "门诊药店件：以销售小票/进销存为事实基准。P-303串换2笔(口罩/保健品→疑点) + TRACE-101同追溯码重复结算1组(疑点) + P-301空刷1笔(线索) + P-302回流药1笔(线索)；二甲双胍真实售药为干扰项(正确不报)。",
+    "total_amount": 663.0
   },
   "discharge_summary": {"doc_type": "门诊购药小结", "admit_date": "2026-06-10", "discharge_date": "2026-06-10", "discharge_diagnosis": ["2型糖尿病（门诊慢特病）"], "hospital_course": "门诊统筹定点药店刷卡购药结算。", "discharge_orders": [], "discharge_meds": []}
 }
