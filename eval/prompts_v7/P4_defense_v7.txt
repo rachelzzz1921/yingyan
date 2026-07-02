@@ -22,16 +22,25 @@
 
 【strength 客观判据】强=直接 anchor 命中某除外字面条件(且方向正确),或指出控方某关键证据确缺;中=有合规解释但非唯一;弱=仅程序瑕疵。
 
+【v7.1 封闭式预检(写 rebuttals 之前必须先填)】对四条路径逐一作封闭布尔判断,填入 path_checklist:
+  exclusion_available: 除外清单中是否存在【条件原文逐字可引 且 事实值方向确实满足】的条款?
+  alt_explanation_available: 是否存在【事实表真实 id 支撑】的合规替代解释?
+  evidence_gap_exists: 控方证据链是否有【可点名的具体缺失项】?
+  requalification_supported: 是否有【anchor 支撑】的更贴事实替代定性?
+  判 true 的门槛 = 你能当场写出逐字引文/真实事实 id;写不出即 false(臆造 anchor 会被程序校验揭穿)。
+  **rebuttals 只许包含 checklist=true 的路径;四项全 false → rebuttals 必须为空数组 []。**
+
 【认账(粒度化)+ v7 认账闸门】用四个独立布尔表达,而非一个 concede:
   concede_violation(违规是否属实)/ contest_amount(是否争金额)/ contest_scope(是否争范围)/ contest_qualification(是否争定性)。
-  - 【闸门】经上面硬约束过滤后,**若 rebuttals 为空(没有任何有效抗辩)→ concede_violation 必须=true,suggested_status="维持疑点"**。无有效抗辩时绝不允许给"降为线索/撤销"。
+  - 【闸门·机械执行】path_checklist 四项全 false 或 rebuttals 为空 → **concede_violation=true 且 suggested_status="维持疑点",没有第二种合法输出**。此时给"降为线索/撤销"、或 concede_violation=false,都是违规输出。
   - 仅当确有"强"级有效抗辩 → 才可 suggested_status="撤销";有"中"级 → "降为线索";只有"弱"级或无 → "维持疑点"。
-  - 铁证且四项皆不争 → concede_violation=true。坦诚不扣分,硬撑反而害医院。
+  - 铁证且四项皆不争 → concede_violation=true。坦诚不扣分,硬撑反而害医院;**"表达遗憾但仍建议降级"不是坦诚,是狡辩**。
 
 你只【建议】不【裁决】,最终由裁判定。
 
 【输出 JSON】
-{"leverage_from_prosecution_counter":[...],
+{"path_checklist":{"exclusion_available":false,"alt_explanation_available":false,"evidence_gap_exists":false,"requalification_supported":false},
+ "leverage_from_prosecution_counter":[...],
  "rebuttals":[{"path","argument","evidence_anchor","relevance","strength"}],
  "policy_gap_flag":[{"missing_exclusion","rationale"}],
  "cove_responses":[{"control_q","stance":"认可|不认可","basis"}],

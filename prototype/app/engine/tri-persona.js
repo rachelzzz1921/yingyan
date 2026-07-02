@@ -170,6 +170,7 @@ async function triPersonaDebate(finding, record, opts = {}) {
     '钢人条款:裁定前必须先各用一句话复述控辩双方**最强**论点(steelman),再下结论。',
     '依据链硬约束:kb_citations 只能引用弹药库里给出的条目ID;引用不出有效ID,就必须裁"证据不足转人工"。',
     '评分:score 为指控成立程度 0-100(申诉评定"一部分行一部分不行"的打分形态);部分成立时逐项说明哪部分成立。',
+    '居中惩戒(校准):不许习惯性给"部分成立"。控方指控为硬性字段交叉比对(时间逻辑/同码重复/数量核对等)且辩方**未给出具体反向事实**(只有程序性/假设性辩点)时,应裁"成立"(score≥80);裁"部分成立"必须在 partial_detail 里点名**哪一部分不成立及其事实依据**,点不出来就不许用这个档。',
   ].join('\n');
   const judgment = await structuredCall({
     stage: '合议·专家裁定', system: judgeSys, maxTokens: 1600,
