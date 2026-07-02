@@ -247,6 +247,14 @@ function applyDraftToOverlay(dataDir, draft, action) {
   return overlay;
 }
 
+/** E2 回放门禁用:按 draft_id 找草案(不改状态) */
+function findDraft(dataDir, draftId) {
+  const q = loadPrecipQueue(dataDir);
+  return (q.reject_drafts || []).find(d => d.id === draftId)
+    || (q.adopt_drafts || []).find(d => d.id === draftId)
+    || null;
+}
+
 function resolveDraft(dataDir, draftId, action, note) {
   const q = loadPrecipQueue(dataDir);
   let draft = (q.reject_drafts || []).find(d => d.id === draftId);
@@ -309,5 +317,6 @@ module.exports = {
   maybeEnqueueAndRun,
   autoRunAgent,
   resolveDraft,
+  findDraft,
   getPrecipitationSummary,
 };

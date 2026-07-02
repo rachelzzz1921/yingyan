@@ -1347,18 +1347,48 @@ const server = http.createServer(async (req, res) => {
       const ruleId = url.searchParams.get('rule_id') || null;
       return sendJSON(res, precipService.getPrecipitationSummary(DATA, ruleId));
     }
+    // E2 沉淀门禁·回放预览:对指定草案跑全历史案卷 diff(不落任何盘)
+    if (p === '/api/rule-precipitation/replay' && req.method === 'POST') {
+      const body = await readBody(req);
+      const draft = precipService.findDraft(DATA, body.draft_id);
+      if (!draft) return sendJSON(res, { error: 'draft 不存在' }, 404);
+      const { replayDraft } = require('./engine/precip-replay');
+      const report = replayDraft(DATA, draft, rulesWithOverlay(DB.rulesDoc.rules));
+      return sendJSON(res, { ok: true, replay: report });
+    }
     if (p === '/api/rule-precipitation/apply' && req.method === 'POST') {
       const body = await readBody(req);
+      // E2 沉淀门禁(Q14):转正(approve)前强制历史案卷回放——新增误报>0 或 漏检回退>0 即拦下,
+      // 除非显式 force(留给演示讲"人可以看着报告拍板",默认不给过)
+      let replay = null;
+      if (body.action !== 'dismiss') {
+        const draft = precipService.findDraft(DATA, body.draft_id);
+        if (!draft) return sendJSON(res, { error: 'draft 不存在' }, 404);
+        try {
+          const { replayDraft } = require('./engine/precip-replay');
+          replay = replayDraft(DATA, draft, rulesWithOverlay(DB.rulesDoc.rules));
+        } catch (e) {
+          return sendJSON(res, { error: '回放门禁执行失败:' + e.message }, 500);
+        }
+        if (!replay.pass && !body.force) {
+          return sendJSON(res, {
+            ok: false, gate: 'replay_failed', replay,
+            note: `回放门禁未过(新增误报 ${replay.new_false_positives} / 漏检回退 ${replay.gold_regressions})——"成熟一条应用一条,假阳性率高即停用",草案退回候选池。`,
+          }, 409);
+        }
+      }
       const resolved = precipService.resolveDraft(DATA, body.draft_id, body.action === 'dismiss' ? 'dismiss' : 'approve', body.note || '');
       if (resolved.error) return sendJSON(res, { error: resolved.error }, 404);
+      if (replay && resolved.draft) resolved.draft.replay_report = { pass: replay.pass, new_detections: replay.new_detections, new_false_positives: replay.new_false_positives, gold_regressions: replay.gold_regressions, note: replay.note, replayed_at: replay.replayed_at };
       return sendJSON(res, {
         ok: true,
         draft: resolved.draft,
         track: resolved.track,
         overlay: resolved.overlay,
+        replay,
         note: resolved.draft.resolution === 'dismissed'
           ? '草案已忽略'
-          : '已写入 rule_patch_overlay.json 预览（源 rules.json 未改）',
+          : `回放门禁通过(${replay ? `新增检出 ${replay.new_detections} / 新增误报 ${replay.new_false_positives}` : '—'})·已写入 rule_patch_overlay.json 预览（源 rules.json 未改）`,
       });
     }
     if (p === '/api/rule-overlay') {

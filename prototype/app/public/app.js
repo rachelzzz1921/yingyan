@@ -1206,6 +1206,15 @@ window.applyPrecipDraft = async (draftId, action) => {
   const r = await fetch('/api/rule-precipitation/apply', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ draft_id: draftId, action }) }).then(x => x.json());
   await loadPrecipitationData();
   if (REPORT && VIEW_EXAM) renderRectificationRegistry(REPORT);
+  // E2 沉淀门禁:转正前全历史案卷回放,未过即拦(gate=replay_failed)
+  if (r.gate === 'replay_failed' && r.replay) {
+    alert(`⛔ 回放门禁未过\n新增误报 ${r.replay.new_false_positives} · 漏检回退 ${r.replay.gold_regressions}\n${r.replay.note}`);
+    return;
+  }
+  if (r.replay) {
+    alert(`✅ 回放门禁通过(全库 ${r.replay.cases_replayed} 案)\n新增检出 ${r.replay.new_detections} · 新增误报 ${r.replay.new_false_positives} · 减少误报 ${r.replay.fp_reduced}\n${r.replay.note}`);
+    return;
+  }
   if (r.note) alert(r.note);
 };
 
