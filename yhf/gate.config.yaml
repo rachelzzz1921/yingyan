@@ -23,6 +23,7 @@ gates:
     warn_below: 0.5        # report-only 时低于此值在 gate 标 ⚠
     score_mode: primary     # all=双裁判均绿 | primary=仅主裁判(MiniMax)计 G2
     primary_judge: MiniMax-Text-01
+    source_file: baseline_p5.json  # G2 基线钉住(qwen_* 迁移产物不自动顶替;切目标模型时改这里)
     secondary_report: true # abab 裁判仅报告,不阻塞 G2
 
   G3_latency:

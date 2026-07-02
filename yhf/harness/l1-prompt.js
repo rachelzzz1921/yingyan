@@ -8,7 +8,15 @@ const fs = require('fs');
 const path = require('path');
 const { DEFAULTS, REPO_ROOT } = require('../lib/paths');
 
-function findLatestResult() {
+function findLatestResult(pinned) {
+  // G2 基线可在 gate.config.yaml 用 source_file 钉住(千问迁移期间 qwen_* 中间产物会更"新",
+  // 若按 mtime 选会把跑到一半的迁移基线当门禁输入——2026-07-02 实翻过车)
+  if (pinned) {
+    for (const dir of ['eval/results', 'yhf/results']) {
+      const fp = path.join(REPO_ROOT, dir, pinned);
+      if (fs.existsSync(fp)) return fp;
+    }
+  }
   const dirs = [
     path.join(REPO_ROOT, 'eval/results'),
     path.join(REPO_ROOT, 'yhf/results'),
@@ -18,6 +26,7 @@ function findLatestResult() {
     if (!fs.existsSync(dir)) continue;
     for (const f of fs.readdirSync(dir)) {
       if (!f.endsWith('.json') || f.includes('raw') || f.startsWith('gate_')) continue;
+      if (f.startsWith('qwen_')) continue; // 迁移实验产物不自动当 G2 基线(显式 source_file 才用)
       const fp = path.join(dir, f);
       const st = fs.statSync(fp);
       if (!best || st.mtimeMs > best.mtimeMs) best = { fp, mtimeMs: st.mtimeMs };
@@ -112,6 +121,7 @@ function loadG2Opts() {
     return {
       score_mode: g2.score_mode || 'all',
       primary_judge: g2.primary_judge || 'MiniMax-Text-01',
+      source_file: g2.source_file || null,
     };
   } catch {
     return { score_mode: 'all', primary_judge: 'MiniMax-Text-01' };
@@ -119,11 +129,12 @@ function loadG2Opts() {
 }
 
 function runPromptHarness() {
-  const latest = findLatestResult();
+  const g2Pre = loadG2Opts();
+  const latest = findLatestResult(g2Pre.source_file);
   if (latest) {
     try {
       const data = JSON.parse(fs.readFileSync(latest, 'utf8'));
-      const g2Opts = loadG2Opts();
+      const g2Opts = g2Pre;
       const sum = summarizeEvalJson(data, g2Opts);
       if (sum && sum.total > 0) {
         const pass = sum.pass_rate === 1;
