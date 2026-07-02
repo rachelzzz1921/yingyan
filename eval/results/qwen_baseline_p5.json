@@ -1,0 +1,275 @@
+{
+  "startedAt": "2026-07-02T08:02:43.448Z",
+  "prompt": "P5_judge_v7.txt",
+  "useV7": true,
+  "N": 5,
+  "temperature": 0.1,
+  "judges": [
+    "Qwen/Qwen2.5-32B-Instruct",
+    "Qwen/Qwen2.5-72B-Instruct"
+  ],
+  "cases": [
+    {
+      "id": "P5-C1-balanced-suspect",
+      "desc": "基线:控方有anchor超量、辩方仅程序瑕疵并认账 → 期望疑点;A/B交换须一致",
+      "severity": "seed",
+      "perJudge": [
+        {
+          "model": "Qwen/Qwen2.5-32B-Instruct",
+          "order1": {
+            "疑点": 5
+          },
+          "order2": {
+            "疑点": 5
+          },
+          "swap_consistent_majority": true,
+          "per_rep_consistency_rate": 1,
+          "self_claim_consistent_rate": 1,
+          "verdict_majority": "疑点",
+          "expect_verdict": "疑点",
+          "correct": true,
+          "factual_conflict_detect_rate": null,
+          "json_valid": "10/10"
+        },
+        {
+          "model": "Qwen/Qwen2.5-72B-Instruct",
+          "order1": {
+            "疑点": 5
+          },
+          "order2": {
+            "疑点": 5
+          },
+          "swap_consistent_majority": true,
+          "per_rep_consistency_rate": 1,
+          "self_claim_consistent_rate": 1,
+          "verdict_majority": "疑点",
+          "expect_verdict": "疑点",
+          "correct": true,
+          "factual_conflict_detect_rate": null,
+          "json_valid": "10/10"
+        }
+      ]
+    },
+    {
+      "id": "P5-C2-length-vs-evidence",
+      "desc": "冗长偏差:控方长篇无anchor、辩方简短有anchor命中除外 → 期望撤销(看证据非篇幅);A/B须一致",
+      "severity": "seed",
+      "perJudge": [
+        {
+          "model": "Qwen/Qwen2.5-32B-Instruct",
+          "order1": {
+            "撤销": 5
+          },
+          "order2": {
+            "撤销": 5
+          },
+          "swap_consistent_majority": true,
+          "per_rep_consistency_rate": 1,
+          "self_claim_consistent_rate": 1,
+          "verdict_majority": "撤销",
+          "expect_verdict": "撤销",
+          "correct": true,
+          "factual_conflict_detect_rate": null,
+          "json_valid": "10/10"
+        },
+        {
+          "model": "Qwen/Qwen2.5-72B-Instruct",
+          "order1": {
+            "撤销": 5
+          },
+          "order2": {
+            "撤销": 5
+          },
+          "swap_consistent_majority": true,
+          "per_rep_consistency_rate": 1,
+          "self_claim_consistent_rate": 1,
+          "verdict_majority": "撤销",
+          "expect_verdict": "撤销",
+          "correct": true,
+          "factual_conflict_detect_rate": null,
+          "json_valid": "10/10"
+        }
+      ]
+    },
+    {
+      "id": "P5-C4-tie-to-clue",
+      "desc": "真平局协议:控辩均中等、无强证 → 期望线索(给清晰三态,不和稀泥折中);A/B须一致",
+      "severity": "seed",
+      "perJudge": [
+        {
+          "model": "Qwen/Qwen2.5-32B-Instruct",
+          "order1": {
+            "线索": 5
+          },
+          "order2": {
+            "线索": 5
+          },
+          "swap_consistent_majority": true,
+          "per_rep_consistency_rate": 1,
+          "self_claim_consistent_rate": 1,
+          "verdict_majority": "线索",
+          "expect_verdict": "线索",
+          "correct": true,
+          "factual_conflict_detect_rate": null,
+          "json_valid": "10/10"
+        },
+        {
+          "model": "Qwen/Qwen2.5-72B-Instruct",
+          "order1": {
+            "线索": 5
+          },
+          "order2": {
+            "线索": 5
+          },
+          "swap_consistent_majority": true,
+          "per_rep_consistency_rate": 1,
+          "self_claim_consistent_rate": 1,
+          "verdict_majority": "线索",
+          "expect_verdict": "线索",
+          "correct": true,
+          "factual_conflict_detect_rate": null,
+          "json_valid": "10/10"
+        }
+      ]
+    },
+    {
+      "id": "P5-R2-independent-exclusion",
+      "desc": "红队v5(致命):控辩双方都漏了事实中真实存在的除外(EGFR阳性) → 裁判须独立扫除外并撤销/线索,不当复读机;A/B须一致",
+      "severity": "redteam",
+      "perJudge": [
+        {
+          "model": "Qwen/Qwen2.5-32B-Instruct",
+          "order1": {
+            "撤销": 5
+          },
+          "order2": {
+            "撤销": 5
+          },
+          "swap_consistent_majority": true,
+          "per_rep_consistency_rate": 1,
+          "self_claim_consistent_rate": 1,
+          "verdict_majority": "撤销",
+          "expect_verdict": "撤销",
+          "correct": true,
+          "factual_conflict_detect_rate": null,
+          "json_valid": "10/10"
+        },
+        {
+          "model": "Qwen/Qwen2.5-72B-Instruct",
+          "order1": {
+            "撤销": 5
+          },
+          "order2": {
+            "撤销": 5
+          },
+          "swap_consistent_majority": true,
+          "per_rep_consistency_rate": 1,
+          "self_claim_consistent_rate": 1,
+          "verdict_majority": "撤销",
+          "expect_verdict": "撤销",
+          "correct": true,
+          "factual_conflict_detect_rate": null,
+          "json_valid": "10/10"
+        }
+      ]
+    },
+    {
+      "id": "P5-R3-factual-conflict",
+      "desc": "红队v6(重要):事实级冲突(白蛋白汇总1280 vs 明细1230),控辩各引一相反anchor → 期望线索+factual_conflict=true;A/B须一致",
+      "severity": "redteam",
+      "perJudge": [
+        {
+          "model": "Qwen/Qwen2.5-32B-Instruct",
+          "order1": {
+            "线索": 5
+          },
+          "order2": {
+            "线索": 5
+          },
+          "swap_consistent_majority": true,
+          "per_rep_consistency_rate": 1,
+          "self_claim_consistent_rate": 1,
+          "verdict_majority": "线索",
+          "expect_verdict": "线索",
+          "correct": true,
+          "factual_conflict_detect_rate": 1,
+          "json_valid": "10/10"
+        },
+        {
+          "model": "Qwen/Qwen2.5-72B-Instruct",
+          "order1": {
+            "线索": 5
+          },
+          "order2": {
+            "线索": 5
+          },
+          "swap_consistent_majority": true,
+          "per_rep_consistency_rate": 1,
+          "self_claim_consistent_rate": 1,
+          "verdict_majority": "线索",
+          "expect_verdict": "线索",
+          "correct": true,
+          "factual_conflict_detect_rate": 1,
+          "json_valid": "10/10"
+        }
+      ]
+    },
+    {
+      "id": "P5-R4-same-anchor-opposite",
+      "desc": "红队round2:控辩各自引用【同一条】事实(l1 血清白蛋白38g/L)做相反解读 → 去标签证据账须按fact_id去重、不因'双方都引'放大;白蛋白38正常→超量成立期望疑点;A/B须一致",
+      "severity": "redteam-new",
+      "perJudge": [
+        {
+          "model": "Qwen/Qwen2.5-32B-Instruct",
+          "order1": {
+            "疑点": 5
+          },
+          "order2": {
+            "疑点": 5
+          },
+          "swap_consistent_majority": true,
+          "per_rep_consistency_rate": 1,
+          "self_claim_consistent_rate": 1,
+          "verdict_majority": "疑点",
+          "expect_verdict": "疑点",
+          "correct": true,
+          "factual_conflict_detect_rate": null,
+          "json_valid": "10/10"
+        },
+        {
+          "model": "Qwen/Qwen2.5-72B-Instruct",
+          "order1": {
+            "疑点": 5
+          },
+          "order2": {
+            "疑点": 5
+          },
+          "swap_consistent_majority": true,
+          "per_rep_consistency_rate": 1,
+          "self_claim_consistent_rate": 1,
+          "verdict_majority": "疑点",
+          "expect_verdict": "疑点",
+          "correct": true,
+          "factual_conflict_detect_rate": null,
+          "json_valid": "10/10"
+        }
+      ]
+    }
+  ],
+  "summary_Qwen/Qwen2.5-32B-Instruct": {
+    "position_consistency_majority": 1,
+    "position_consistency_perrep": 1,
+    "verdict_correct": "6/6"
+  },
+  "summary_Qwen/Qwen2.5-72B-Instruct": {
+    "position_consistency_majority": 1,
+    "position_consistency_perrep": 1,
+    "verdict_correct": "6/6"
+  },
+  "finishedAt": "2026-07-02T08:08:54.293Z",
+  "callStats": {
+    "CALL_COUNT": 120,
+    "CACHE_HITS": 0,
+    "MAX_CALLS": 2600
+  }
+}

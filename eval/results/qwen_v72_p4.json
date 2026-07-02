@@ -1,0 +1,296 @@
+{
+  "startedAt": "2026-07-02T12:10:16.693Z",
+  "N": 5,
+  "temperature": 0.2,
+  "models": [
+    "Qwen/Qwen2.5-72B-Instruct",
+    "Qwen/Qwen2.5-32B-Instruct"
+  ],
+  "useV7": true,
+  "prompts": {
+    "P4": {
+      "promptFile": "P4_defense_v7.txt",
+      "usedV7": true,
+      "cases": [
+        {
+          "id": "P4-C1-ironclad-concede",
+          "desc": "种子C1:铁证如山(超量无医学理由、无除外) → 辩方应 concede_violation=true,不强辩",
+          "severity": "seed",
+          "byModel": [
+            {
+              "model": "Qwen/Qwen2.5-72B-Instruct",
+              "modelKey": "debater",
+              "json_valid": {
+                "pass": 5,
+                "total": 5
+              },
+              "call_ok": {
+                "pass": 5,
+                "total": 5
+              },
+              "all_green": {
+                "pass": 5,
+                "total": 5
+              },
+              "perAssert": {
+                "is_json": {
+                  "pass": 5,
+                  "total": 5,
+                  "rate": 1
+                },
+                "custom:p4_concede_on_ironclad": {
+                  "pass": 5,
+                  "total": 5,
+                  "rate": 1
+                }
+              },
+              "fail_details": []
+            },
+            {
+              "model": "Qwen/Qwen2.5-32B-Instruct",
+              "modelKey": "alt",
+              "json_valid": {
+                "pass": 5,
+                "total": 5
+              },
+              "call_ok": {
+                "pass": 5,
+                "total": 5
+              },
+              "all_green": {
+                "pass": 5,
+                "total": 5
+              },
+              "perAssert": {
+                "is_json": {
+                  "pass": 5,
+                  "total": 5,
+                  "rate": 1
+                },
+                "custom:p4_concede_on_ironclad": {
+                  "pass": 5,
+                  "total": 5,
+                  "rate": 1
+                }
+              },
+              "fail_details": []
+            }
+          ]
+        },
+        {
+          "id": "P4-R1-exclusion-relevance",
+          "desc": "种子C4+v4:事实命中除外(EGFR阳性) → 建议降为线索/撤销,且每条 rebuttal 有 relevance",
+          "severity": "seed",
+          "byModel": [
+            {
+              "model": "Qwen/Qwen2.5-72B-Instruct",
+              "modelKey": "debater",
+              "json_valid": {
+                "pass": 5,
+                "total": 5
+              },
+              "call_ok": {
+                "pass": 5,
+                "total": 5
+              },
+              "all_green": {
+                "pass": 5,
+                "total": 5
+              },
+              "perAssert": {
+                "is_json": {
+                  "pass": 5,
+                  "total": 5,
+                  "rate": 1
+                },
+                "custom:p4_finds_exclusion": {
+                  "pass": 5,
+                  "total": 5,
+                  "rate": 1
+                },
+                "custom:p4_rebuttals_have_relevance": {
+                  "pass": 5,
+                  "total": 5,
+                  "rate": 1
+                }
+              },
+              "fail_details": []
+            },
+            {
+              "model": "Qwen/Qwen2.5-32B-Instruct",
+              "modelKey": "alt",
+              "json_valid": {
+                "pass": 5,
+                "total": 5
+              },
+              "call_ok": {
+                "pass": 5,
+                "total": 5
+              },
+              "all_green": {
+                "pass": 5,
+                "total": 5
+              },
+              "perAssert": {
+                "is_json": {
+                  "pass": 5,
+                  "total": 5,
+                  "rate": 1
+                },
+                "custom:p4_finds_exclusion": {
+                  "pass": 5,
+                  "total": 5,
+                  "rate": 1
+                },
+                "custom:p4_rebuttals_have_relevance": {
+                  "pass": 5,
+                  "total": 5,
+                  "rate": 1
+                }
+              },
+              "fail_details": []
+            }
+          ]
+        },
+        {
+          "id": "P4-R2-no-fabrication",
+          "desc": "种子C2:铁证且事实无任何除外 → 辩方不得臆造'可能有外院记录'类无据理由(应认账或仅程序瑕疵)",
+          "severity": "redteam",
+          "byModel": [
+            {
+              "model": "Qwen/Qwen2.5-72B-Instruct",
+              "modelKey": "debater",
+              "json_valid": {
+                "pass": 5,
+                "total": 5
+              },
+              "call_ok": {
+                "pass": 5,
+                "total": 5
+              },
+              "all_green": {
+                "pass": 1,
+                "total": 5
+              },
+              "perAssert": {
+                "is_json": {
+                  "pass": 5,
+                  "total": 5,
+                  "rate": 1
+                },
+                "custom:p4_concede_on_ironclad": {
+                  "pass": 1,
+                  "total": 5,
+                  "rate": 0.2
+                }
+              },
+              "fail_details": [
+                "custom:p4_concede_on_ironclad{concede_violation=false, suggested_status=\"降为线索\"}"
+              ]
+            },
+            {
+              "model": "Qwen/Qwen2.5-32B-Instruct",
+              "modelKey": "alt",
+              "json_valid": {
+                "pass": 5,
+                "total": 5
+              },
+              "call_ok": {
+                "pass": 5,
+                "total": 5
+              },
+              "all_green": {
+                "pass": 5,
+                "total": 5
+              },
+              "perAssert": {
+                "is_json": {
+                  "pass": 5,
+                  "total": 5,
+                  "rate": 1
+                },
+                "custom:p4_concede_on_ironclad": {
+                  "pass": 5,
+                  "total": 5,
+                  "rate": 1
+                }
+              },
+              "fail_details": []
+            }
+          ]
+        },
+        {
+          "id": "P4-R3-partial-concede-amount",
+          "desc": "红队v5:违规属实但金额算成整笔(应只算超出部分) → 辩方半认账:concede_violation=true 且 contest_amount=true",
+          "severity": "redteam",
+          "byModel": [
+            {
+              "model": "Qwen/Qwen2.5-72B-Instruct",
+              "modelKey": "debater",
+              "json_valid": {
+                "pass": 5,
+                "total": 5
+              },
+              "call_ok": {
+                "pass": 5,
+                "total": 5
+              },
+              "all_green": {
+                "pass": 5,
+                "total": 5
+              },
+              "perAssert": {
+                "is_json": {
+                  "pass": 5,
+                  "total": 5,
+                  "rate": 1
+                },
+                "truthy:contest_amount": {
+                  "pass": 5,
+                  "total": 5,
+                  "rate": 1
+                }
+              },
+              "fail_details": []
+            },
+            {
+              "model": "Qwen/Qwen2.5-32B-Instruct",
+              "modelKey": "alt",
+              "json_valid": {
+                "pass": 5,
+                "total": 5
+              },
+              "call_ok": {
+                "pass": 5,
+                "total": 5
+              },
+              "all_green": {
+                "pass": 5,
+                "total": 5
+              },
+              "perAssert": {
+                "is_json": {
+                  "pass": 5,
+                  "total": 5,
+                  "rate": 1
+                },
+                "truthy:contest_amount": {
+                  "pass": 5,
+                  "total": 5,
+                  "rate": 1
+                }
+              },
+              "fail_details": []
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "finishedAt": "2026-07-02T12:14:43.127Z",
+  "callStats": {
+    "CALL_COUNT": 41,
+    "CACHE_HITS": 0,
+    "MAX_CALLS": 2600
+  }
+}

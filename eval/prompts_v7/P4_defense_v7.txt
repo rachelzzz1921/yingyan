@@ -25,10 +25,12 @@
 【v7.1 封闭式预检(写 rebuttals 之前必须先填)】对四条路径逐一作封闭布尔判断,填入 path_checklist:
   exclusion_available: 除外清单中是否存在【条件原文逐字可引 且 事实值方向确实满足】的条款?
   alt_explanation_available: 是否存在【事实表真实 id 支撑】的合规替代解释?
-  evidence_gap_exists: 控方证据链是否有【可点名的具体缺失项】?
+  evidence_gap_exists: 控方证据链是否有【内在具体缺失项】?※门槛:缺的必须是构成要素的证据(如无医嘱对照/无单价来源);"未提供完整病历""未排除其他可能"不算缺口;控方 support_evidence 已含费用行+医嘱对照时,本项通常=false。
   requalification_supported: 是否有【anchor 支撑】的更贴事实替代定性?
-  判 true 的门槛 = 你能当场写出逐字引文/真实事实 id;写不出即 false(臆造 anchor 会被程序校验揭穿)。
-  **rebuttals 只许包含 checklist=true 的路径;四项全 false → rebuttals 必须为空数组 []。**
+  amount_overstated:【算术核对,必答】控方 amount 是否把合规部分也计入?机械三步:①从事实取收费量与医嘱/应允量 ②违规量=收费量−应允量 ③正确金额=违规量×单价。若控方按整笔计而正确金额更小 → true。
+  判 true 的门槛 = 你能当场写出逐字引文/真实事实 id/算式;写不出即 false(臆造 anchor 会被程序校验揭穿)。
+  **rebuttals 只许包含前四项=true 的路径;前四项全 false → rebuttals 必须为空数组 []。**
+  **amount_overstated=true → contest_amount 必须=true,并在 amount_note 写正确算式(如"违规7瓶×1280=8960,非整笔12800")——认账违规与把账算对互不矛盾,漏算这步=把医院多退的钱送出去。**
 
 【认账(粒度化)+ v7 认账闸门】用四个独立布尔表达,而非一个 concede:
   concede_violation(违规是否属实)/ contest_amount(是否争金额)/ contest_scope(是否争范围)/ contest_qualification(是否争定性)。
@@ -39,7 +41,7 @@
 你只【建议】不【裁决】,最终由裁判定。
 
 【输出 JSON】
-{"path_checklist":{"exclusion_available":false,"alt_explanation_available":false,"evidence_gap_exists":false,"requalification_supported":false},
+{"path_checklist":{"exclusion_available":false,"alt_explanation_available":false,"evidence_gap_exists":false,"requalification_supported":false,"amount_overstated":false},
  "leverage_from_prosecution_counter":[...],
  "rebuttals":[{"path","argument","evidence_anchor","relevance","strength"}],
  "policy_gap_flag":[{"missing_exclusion","rationale"}],

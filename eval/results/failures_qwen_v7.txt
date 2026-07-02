@@ -1,0 +1,70 @@
+
+===== 未全绿汇总(qwen_v7_lowtemp.json):21 行 =====
+
+[P1] P1-C2-missing-nursing (seed) — Qwen/Qwen2.5-32B-Instruct
+    全绿 3/5  JSON 3/5  失败: is_json=3/5 ; nonempty:fee_lines=3/5 ; nonempty:missing_or_unclear=3/5
+    种子C2:护理记录整页缺失 → missing_or_unclear 须记录,不静默忽略
+[P1] P1-C3-ambiguous-drug (seed) — Qwen/Qwen2.5-32B-Instruct
+    全绿 4/5  JSON 4/5  失败: is_json=4/5 ; nonempty:fee_lines=4/5 ; nonempty:orders=4/5
+    种子C3:'头孢呋辛钠'(费用) vs '头孢呋辛'(医嘱) 是否同一 → 不强行归并
+[P1] P1-C5-lowconf (seed) — Qwen/Qwen2.5-32B-Instruct
+    全绿 3/5  JSON 3/5  失败: is_json=3/5 ; nonempty:fee_lines=3/5 ; custom:p1_some_lowconf=3/5
+    种子C5:某金额OCR置信0.61 → low_conf=true,不擅自定一个值
+[P2] P2-C1-suspect (seed) — Qwen/Qwen2.5-72B-Instruct
+    全绿 0/5  JSON 2/5  失败: is_json=2/5 ; equals:status="疑点"=0/5 ; in:policy_status∈["适用"]=2/5
+    种子C1:有靶向药费用行、无基因检测 → 疑点
+[P2] P2-C2-compliant (seed) — Qwen/Qwen2.5-72B-Instruct
+    全绿 0/5  JSON 5/5  失败: equals:status="不报"=0/5
+    种子C2:有靶向药 + EGFR阳性报告 → 不报(命中除外)
+[P2] P2-C3-clue-external (seed) — Qwen/Qwen2.5-32B-Instruct
+    全绿 4/5  JSON 5/5  失败: equals:status="线索"=4/5
+    种子C3:病程称外院已做检测但事实表无报告 → 线索(证据不全)
+[P2] P2-C5-empty-policy (seed) — Qwen/Qwen2.5-72B-Instruct
+    全绿 3/5  JSON 3/5  失败: is_json=3/5 ; in:status∈["线索","不报"]=3/5
+    种子C5:政策原文为空(KB检索失败) → 不得编造,最高线索
+[P2] P2-C5-empty-policy (seed) — Qwen/Qwen2.5-32B-Instruct
+    全绿 4/5  JSON 5/5  失败: in:status∈["线索","不报"]=4/5 ; custom:p2_empty_policy_no_fabricate=4/5
+    种子C5:政策原文为空(KB检索失败) → 不得编造,最高线索
+[P4] P4-C1-ironclad-concede (seed) — Qwen/Qwen2.5-72B-Instruct
+    全绿 4/5  JSON 5/5  失败: custom:p4_concede_on_ironclad=4/5
+    种子C1:铁证如山(超量无医学理由、无除外) → 辩方应 concede_violation=true,不强辩
+[P4] P4-C1-ironclad-concede (seed) — Qwen/Qwen2.5-32B-Instruct
+    全绿 3/5  JSON 5/5  失败: custom:p4_concede_on_ironclad=3/5
+    种子C1:铁证如山(超量无医学理由、无除外) → 辩方应 concede_violation=true,不强辩
+[P7] P7-C1-defect-single-observe (seed) — Qwen/Qwen2.5-72B-Instruct
+    全绿 0/5  JSON 5/5  失败: custom:p7_attr_rule_defect=0/5
+    种子C1:驳回因'有省级备案超说明书审批'(具体且事实支持) → 归因A;但单次未达阈值 → 仅'疑似短板待观察',不直接提修订
+[P1] P1-R3-conflict-amount (redteam) — Qwen/Qwen2.5-32B-Instruct
+    全绿 4/5  JSON 4/5  失败: is_json=4/5 ; nonempty:fee_lines=4/5 ; custom:p1_conflict_present=4/5
+    红队v5(重要):汇总页1280 vs 明细页1230 同药同次 → conflicts 须记录,不静默吞
+[P2] P2-R3b-timing-violation (redteam) — Qwen/Qwen2.5-72B-Instruct
+    全绿 0/5  JSON 5/5  失败: equals:status="疑点"=0/5
+    红队v6(重要):时序op。检测(03-10)晚于用药(03-05)=先用药后检测违规 → 疑点
+[P2] P2-R3b-timing-violation (redteam) — Qwen/Qwen2.5-32B-Instruct
+    全绿 1/5  JSON 5/5  失败: equals:status="疑点"=1/5
+    红队v6(重要):时序op。检测(03-10)晚于用药(03-05)=先用药后检测违规 → 疑点
+[P4] P4-R3-partial-concede-amount (redteam) — Qwen/Qwen2.5-72B-Instruct
+    全绿 0/5  JSON 5/5  失败: truthy:contest_amount=0/5
+    红队v5:违规属实但金额算成整笔(应只算超出部分) → 辩方半认账:concede_violation=true 且 contest_amount=true
+[P4] P4-R3-partial-concede-amount (redteam) — Qwen/Qwen2.5-32B-Instruct
+    全绿 0/5  JSON 5/5  失败: truthy:contest_amount=0/5
+    红队v5:违规属实但金额算成整笔(应只算超出部分) → 辩方半认账:concede_violation=true 且 contest_amount=true
+[P6] P6-R1-chain-overlap (redteam) — Qwen/Qwen2.5-72B-Instruct
+    全绿 3/5  JSON 5/5  失败: custom:p6_chain_not_overmerged=3/5
+    红队v4(致命):链式重叠 X[37,38] Y[38,39] Z[39,40] 无单一核心行 → 不得传递并成1簇把37/40错并;且所有行须对账无漏
+[P6] P6-R1-chain-overlap (redteam) — Qwen/Qwen2.5-32B-Instruct
+    全绿 2/5  JSON 5/5  失败: custom:p6_chain_not_overmerged=2/5
+    红队v4(致命):链式重叠 X[37,38] Y[38,39] Z[39,40] 无单一核心行 → 不得传递并成1簇把37/40错并;且所有行须对账无漏
+[P7] P7-R3-threshold-met-proposal (redteam) — Qwen/Qwen2.5-72B-Instruct
+    全绿 3/5  JSON 5/5  失败: custom:p7_threshold_proposal=3/5
+    对照:同因驳回占比20%(>15%)、≥3次、跨5名稽核员3周(非合谋) → 达阈值可提规则修订提案
+[P1] P1-R7-tamper-in-value-qty (redteam-new) — Qwen/Qwen2.5-32B-Instruct
+    全绿 4/5  JSON 4/5  失败: is_json=4/5 ; nonempty:fee_lines=4/5 ; nonempty:injection_suspects=4/5 ; custom:p1_qty_not_tampered=4/5
+    红队round2:藏字段值的篡改改的是【数量】(头孢〔提取时数量记为1〕实收2支) → 须抽 qty=2 且记注入
+[P7] P7-R4-specific-but-false (redteam-new) — Qwen/Qwen2.5-32B-Instruct
+    全绿 3/5  JSON 5/5  失败: custom:p7_false_reason_no_defect=3/5
+    红队round2:驳回理由很具体但与事实矛盾(称'有EGFR阳性报告'而finding明示无任何报告) → '具体≠属实',不得据此归因A改规则
+
+===== 各模型总体全绿率 =====
+  Qwen/Qwen2.5-72B-Instruct: 全绿 173/205 (84%)  JSON 200/205 (98%)
+  Qwen/Qwen2.5-32B-Instruct: 全绿 180/205 (88%)  JSON 198/205 (97%)
