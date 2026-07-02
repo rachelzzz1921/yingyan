@@ -57,3 +57,6 @@ export/
 public-data-corpus/raw/
 scripts/crawl/state.json
 scripts/crawl/node_modules/
+
+# 运行态降级台账(Q7,每次运行重新生成)
+prototype/data/_runtime/

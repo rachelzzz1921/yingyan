@@ -1879,6 +1879,18 @@ const server = http.createServer(async (req, res) => {
       return sendJSON(res, { error: 'method not allowed' }, 405);
     }
 
+    // Q7/G3 降级台账:schema重试/环节降级全程留痕(运维面板数据源;不进演示 UI 主视图)
+    if (p === '/api/ops/degrade-log') {
+      const { readDegradeLog } = require('./engine/structured-output');
+      const events = readDegradeLog(Number(url.searchParams.get('limit')) || 200);
+      const summary = {};
+      for (const e of events) {
+        const k = `${e.stage}|${e.level}`;
+        summary[k] = (summary[k] || 0) + 1;
+      }
+      return sendJSON(res, { total: events.length, summary, events });
+    }
+
     if (p === '/api/governance/snapshot') {
       const snap = buildGovernanceSnapshot(DATA);
       const remote = await govSync.remoteStatus();

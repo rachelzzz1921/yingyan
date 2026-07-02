@@ -170,10 +170,12 @@ function buildDefense(rebuttal) {
 }
 
 async function callJudge(prompt) {
-  const raw = await callLLM({ system: '严格按用户指令输出单个 JSON 对象。', user: prompt, maxTokens: 2500 });
-  const j = extractJson(raw);
-  if (!j) throw new Error('P5 裁判未返回 JSON: ' + String(raw).slice(0, 120));
-  return j;
+  // Q7 包装器:裁判输出 schema 校验+带错重试;耗尽后上抛,由 llm-agent 转人工
+  const { structuredCall } = require('./structured-output');
+  return structuredCall({
+    stage: '裁定(P5裁判)', system: '严格按用户指令输出单个 JSON 对象。', user: prompt, maxTokens: 2500,
+    schema: { type: 'object', required: ['verdict'], properties: { verdict: { type: 'string' }, reasoning: { type: 'string' } } },
+  });
 }
 
 async function judgeOnce({ prosecution, defense, facts, rulePolicy, swap }) {
