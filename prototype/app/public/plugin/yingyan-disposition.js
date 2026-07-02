@@ -22,7 +22,7 @@
       const vc = String(p.verify_status || '').indexOf('已核') >= 0 ? '#0a7a4b' : '#a97a00';
       return '<div style="margin-top:4px;font-size:11.5px;color:#5b6d82;background:#f6f9fc;border-left:3px solid ' + border + ';padding:5px 8px">' + esc(p.ref) + (p.verify_status ? ' <span style="color:' + vc + '">' + esc(p.verify_status) + '</span>' : '') + (p.text ? '<br>' + esc(String(p.text).slice(0, 90)) : '') + '</div>';
     }).join('');
-    const ev = (h.evidence || []).map(function (e) { return '<div style="font-size:12px;color:#3c4d61;margin-top:3px">· <b>' + esc(e.type) + '</b> ' + esc(e.text) + '</div>'; }).join('');
+    const ev = (h.evidence || []).map(function (e) { return '<div style="font-size:12px;color:#3c4d61;margin-top:3px">· <b>' + esc(e.type) + '</b> ' + esc(e.text) + (e.loc ? ' <span style="color:#94a3b8;font-size:11px">[' + esc(e.loc) + ']</span>' : '') + '</div>'; }).join('');
     return '<div style="padding:10px 12px;border:1px solid #eef2f7;border-left:4px solid ' + border + ';border-radius:8px;margin-bottom:8px">'
       + '<div style="margin-bottom:4px"><span style="background:' + border + ';color:#fff;font-size:11px;font-weight:800;padding:1px 8px;border-radius:5px">' + esc(h.nature || '可疑') + '</span> <b>' + esc(h.rule_id) + ' ' + esc(h.rule_name) + '</b>' + (h.amount_involved ? ' <span style="color:#b91c1c;font-weight:700">涉及 ¥' + Number(h.amount_involved).toLocaleString() + '</span>' : '') + '</div>'
       + '<div style="color:#3c4d61;line-height:1.5">' + esc(h.reasoning) + '</div>' + ev
@@ -34,6 +34,11 @@
   function renderDisposition(mountEl, result, ctx) {
     const el = typeof mountEl === 'string' ? document.querySelector(mountEl) : mountEl;
     if (!el) return;
+    // 引擎报错(500/{error})不伪装成绿色"校验通过",也不写假 no_hit 台账
+    if (!result || result.error) {
+      el.innerHTML = '<div style="padding:14px;text-align:center;color:#b91c1c;font-weight:600;border:1px solid #fecaca;background:#fef2f2;border-radius:10px">⚠ 校验未完成:' + esc((result && result.error) || '引擎未连接') + '</div>';
+      return;
+    }
     const hits = result.hits || [];
     if (!hits.length) {
       el.innerHTML = '<div style="padding:16px;text-align:center;color:#0a7a4b;font-weight:600;border:1px solid #a7f3d0;background:#ecfdf5;border-radius:10px">🟩 校验通过 · 未命中事前提醒规则</div>';

@@ -62,7 +62,7 @@ a{color:#2c5788}
     <a href="/plugin-dashboard.html" style="font-size:12px">院端运营看板 →</a>
   </div>
   <div id="result"></div>
-  <div class="note">编码员在提交病案首页编码前校验:主诊断按重症编码但病历无重症依据 → 鹰眼当场提示高套 + 实施细则第35条差额(复用 DRG 分组器)。把 D-401 高套从事后翻账前移到编码桌。命中处置(采纳改编码/坚持提交)与开单、结算共用同一事前台账,汇入院端看板与监管预警。</div>
+  <div class="note">⚠ 分组结果来自<b>演示子集数据表</b>(CHS-DRG 2.0,仅覆盖肺炎 J12–J18 示范病种,非全量分组器;费率 ¥8500/权重为虚构脱敏演示值)。编码员在提交病案首页编码前校验:主诊断按重症编码但病历无重症依据 → 鹰眼当场提示高套 + 实施细则第三十五条(一)"两病种支付标准差额"(复用 DRG 分组器)。把 D-401 高套从事后翻账前移到编码桌。命中处置(采纳降编/坚持提交)与开单、结算共用<b>同一事前台账</b>,汇入院端看板与监管预警。</div>
 </div>
 <script src="/plugin/yingyan-disposition.js"></script>
 <script>
@@ -90,8 +90,9 @@ document.getElementById('btnCheck').onclick = async function(){
   var patient = { sex: document.querySelector('[data-field="sex"]').textContent, age: parseInt(document.querySelector('[data-field="age"]').textContent), dept: '病案科', diagnosis: payload.diagnosis };
   window.YingyanDisposition.renderDisposition('#result', r, {
     engineBase:'', source:'coder', patient: patient,
-    heedLabel:'采纳建议·按实际应入组重新编码',
-    onHeed: function(){ document.getElementById('severeEvidence').checked = true; } // 整改可见:补录重症依据/改编码
+    heedLabel:'采纳建议·降编到实际应入组(ES35)',
+    // 整改=降编:把主诊断改为非重症名并保持不勾重症依据 → 重跑入 base 组、正确不报(而非替高套背书)
+    onHeed: function(){ document.getElementById('dxName').value = '社区获得性肺炎(降编)'; document.getElementById('dxIcd').value = 'J15.900'; document.getElementById('severeEvidence').checked = false; }
   });
 };
 </script>

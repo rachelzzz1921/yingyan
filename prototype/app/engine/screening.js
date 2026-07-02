@@ -38,7 +38,8 @@ function screenRows(rowsIn) {
     if (list.length < 2) continue;
     list.sort((a, b) => String(a.settle_date).localeCompare(String(b.settle_date))); // 首笔=最早结算,其后皆为重复
     for (const r of list.slice(1)) {
-      hit(r, 'TRACE-101', '明确违规', `追溯码 ${code.slice(0, 6)}…${code.slice(-4)} 与 ${list[0].row_id}(${list[0].settle_date}) 重复——一物一码,同一盒药结算 ${list.length} 次`);
+      const firstDate = list[0].settle_date ? `,${list[0].settle_date}` : '';
+      hit(r, 'TRACE-101', '明确违规', `追溯码 ${code.slice(0, 6)}…${code.slice(-4)} 与首笔 ${list[0].row_id}${firstDate} 重复——一物一码,同一盒药结算 ${list.length} 次`);
     }
   }
 

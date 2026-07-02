@@ -30,7 +30,7 @@ const path = require('path');
     }
   } catch (e) { /* 无 .env 则跳过 */ }
 })();
-const { runAudit, ruleCheckerIds } = require('./engine/audit-engine');
+const { runAudit, ruleCheckerIds, buildIndicationLlmFindings } = require('./engine/audit-engine');
 const { computeFoundation, renderFoundationMarkdown, renderFoundationHtml } = require('./engine/foundation');
 const precipService = require('./engine/rule-precipitation-service');
 const { ingestStructured, ingestDocument } = require('./engine/ingest');
@@ -1362,8 +1362,9 @@ const server = http.createServer(async (req, res) => {
       const body = await readBody(req);
       try {
         const { detectDrgUpcoding } = require('./engine/precheck-drg');
-        const hits = detectDrgUpcoding(body || {});
-        return sendJSON(res, { hits, clean: hits.length === 0, engine: 'DRG分组器·第35条算钱·本地', checked_rules: ['D-401 DRG高套(编码时点)'], checked_rules_count: 1 });
+        const ctx = auditContextForRecord({ case_meta: {}, front_page: {}, fee_list: { items: [] } }); // 取 KB 真原文与真实核验状态
+        const hits = detectDrgUpcoding(body || {}, { policyTexts: ctx.policyTexts, policyVerified: ctx.policyVerified });
+        return sendJSON(res, { hits, clean: hits.length === 0, engine: 'DRG分组器(演示子集)·第35条差额·本地', checked_rules: ['D-401 DRG高套(编码时点)'], checked_rules_count: 1 });
       } catch (e) {
         return sendJSON(res, { error: '编码校验失败:' + e.message }, 500);
       }
@@ -2438,6 +2439,14 @@ const server = http.createServer(async (req, res) => {
         policyTexts = enriched.policyTexts;
         policyVerified = enriched.policyVerified;
         ragMeta = { query: enriched.rag_query, hits: enriched.rag_hits };
+        let extraFindings = [];
+        let indicationSemantic = 'sync';
+        if (llmReady()) {
+          try {
+            extraFindings = await buildIndicationLlmFindings(record, rules, policyTexts, policyVerified);
+            if (extraFindings.length) indicationSemantic = 'llm';
+          } catch (_) { /* LLM 适应症层失败回退 sync */ }
+        }
         const report = runAudit(record, rules, {
           policyTexts,
           policyVerified,
@@ -2445,13 +2454,18 @@ const server = http.createServer(async (req, res) => {
           parseQuality: ctx.parseQuality,
           shadowRules: currentShadowRules(),
           retiredRules: currentRetiredRules(),
+          extraFindings: indicationSemantic === 'llm' ? extraFindings : [],
+          skipIndicationSync: indicationSemantic === 'llm',
         });
         annotateNature(report);
         if (ragMeta) report.report_meta.rag = ragMeta;
         report.report_meta.super_fused = true;
-        report.report_meta.super_llm = llmReady() ? 'deferred' : 'fallback';
+        report.report_meta.indication_semantic = indicationSemantic;
+        report.report_meta.super_llm = llmReady() ? (indicationSemantic === 'llm' ? 'indication+B-201' : 'deferred') : 'fallback';
         report.report_meta.engine_mode = llmReady()
-          ? '超级增强：RAG+对抗防护+规则合议（LLM 语义请点「真·语义分析」）'
+          ? (indicationSemantic === 'llm'
+            ? '超级增强：RAG+适应症LLM语义(B-201)+规则合议'
+            : '超级增强：RAG+对抗防护+规则合议（LLM 语义请点「真·语义分析」）')
           : '超级增强：RAG+对抗防护（LLM 未配置）';
         report.report_meta.analysis_kind = 'deterministic+template+rag';
         report.report_meta.real_agent = false;

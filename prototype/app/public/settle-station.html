@@ -61,12 +61,12 @@ a{color:#2c5788}
 // 该出院患者费用清单(埋 3 处:未成年喹诺酮 / 超常输液 / 同追溯码重复)
 var TRACE='81069847100523916482';
 var FEE = [
-  { item_name:'床位费(三人间)', qty:6, amount:300, trace_code:'—' },
-  { item_name:'左氧氟沙星氯化钠注射液', qty:5, amount:140, trace_code:'—' },
-  { item_name:'静脉输液', qty:35, amount:280, trace_code:'—' },
-  { item_name:'恩替卡韦分散片', qty:1, amount:145, trace_code:TRACE },
-  { item_name:'恩替卡韦分散片', qty:1, amount:145, trace_code:TRACE },
-  { item_name:'血常规', qty:2, amount:50, trace_code:'—' },
+  { item_name:'床位费(三人间)', qty:6, amount:300, trace_code:'—', settle_date:'2026-06-16' },
+  { item_name:'左氧氟沙星氯化钠注射液', qty:5, amount:140, trace_code:'—', settle_date:'2026-06-16' },
+  { item_name:'静脉输液', qty:35, amount:280, trace_code:'—', settle_date:'2026-06-16' },
+  { item_name:'恩替卡韦分散片', qty:1, amount:145, trace_code:TRACE, settle_date:'2026-06-11' },
+  { item_name:'恩替卡韦分散片', qty:1, amount:145, trace_code:TRACE, settle_date:'2026-06-16' },
+  { item_name:'血常规', qty:2, amount:50, trace_code:'—', settle_date:'2026-06-16' },
 ];
 var AGE=16, SEX='女', DEPT='呼吸内科';
 function renderFee(){
@@ -77,7 +77,7 @@ function renderFee(){
 renderFee();
 document.getElementById('btnSettle').onclick = function(){ alert('已提交医保结算(未经鹰眼自查——演示对照组)'); };
 document.getElementById('btnCheck').onclick = async function(){
-  var rows = FEE.map(function(f,i){ return { row_id:'R'+(i+1), item_name:f.item_name, qty:f.qty, amount:f.amount, trace_code:f.trace_code, patient_age:AGE, patient_sex:SEX, dept:DEPT }; });
+  var rows = FEE.map(function(f,i){ return { row_id:'R'+(i+1), item_name:f.item_name, qty:f.qty, amount:f.amount, trace_code:f.trace_code, settle_date:f.settle_date, patient_age:AGE, patient_sex:SEX, dept:DEPT }; });
   var r = await fetch('/api/screening/rows', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ rows: rows }) }).then(x=>x.json());
   var f = r.funnel || {by_nature:{}};
   document.getElementById('funnel').innerHTML = '本单 '+f.total_rows+' 行 → <span class="tri" style="background:#b91c1c">明确违规 '+(f.by_nature['明确违规']||0)+'</span> <span class="tri" style="background:#f59e0b">可疑 '+(f.by_nature['可疑']||0)+'</span> <span class="tri" style="background:#0a7a4b">放行 '+f.clean_rows+'</span> · 命中涉及 ¥'+(f.hit_amount||0).toLocaleString();
