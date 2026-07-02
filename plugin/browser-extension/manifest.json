@@ -1,0 +1,16 @@
+{
+  "manifest_version": 3,
+  "name": "鹰眼 EagleEye · 开单事前提醒",
+  "version": "0.1.0",
+  "description": "把国家医保两库置于本机构信息化系统:读取开单页面,本地引擎毫秒级事前提醒(命中规则+两库批次依据+政策原文)。安装即用,无需对接,数据不出机。",
+  "permissions": [],
+  "host_permissions": ["http://localhost:3700/*", "http://127.0.0.1:3700/*"],
+  "content_scripts": [
+    {
+      "matches": ["http://localhost:3700/mockhis.html*", "http://127.0.0.1:3700/mockhis.html*", "http://*/mockhis.html*"],
+      "js": ["yingyan-precheck.js", "content.js"],
+      "run_at": "document_idle"
+    }
+  ],
+  "icons": {}
+}

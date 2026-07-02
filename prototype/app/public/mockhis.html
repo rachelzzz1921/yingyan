@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>示范市第一人民医院 · 医生工作站(演示靶站)</title>
+<style>
+/* 刻意做成"老HIS"观感:蓝灰系统蓝、紧凑表格——被鹰眼插件套壳的演示靶站 */
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:"Microsoft YaHei","PingFang SC",sans-serif;background:#d6e2ee;font-size:13px;color:#1a2b3c}
+.his-top{background:linear-gradient(#3a6ea5,#2c5788);color:#fff;padding:6px 14px;display:flex;justify-content:space-between;align-items:center}
+.his-top .sys{font-weight:700;font-size:14px}
+.his-top .tag{font-size:11px;background:#ffffff22;padding:2px 8px;border-radius:3px}
+.his-main{max-width:980px;margin:12px auto;background:#f4f7fb;border:1px solid #9db4cb;box-shadow:0 2px 6px #0002}
+.his-bar{background:#e3ecf5;border-bottom:1px solid #b9cadc;padding:6px 12px;font-weight:700;color:#2c5788}
+.his-sec{padding:10px 14px}
+table.pt{width:100%;border-collapse:collapse;margin-bottom:8px}
+table.pt td{border:1px solid #b9cadc;padding:5px 8px;background:#fff}
+table.pt td.l{background:#e9f0f7;width:90px;color:#41556b;font-weight:600}
+table.orders{width:100%;border-collapse:collapse}
+table.orders th{background:#e3ecf5;border:1px solid #b9cadc;padding:6px;color:#2c5788}
+table.orders td{border:1px solid #b9cadc;background:#fff;padding:5px 8px}
+table.orders input,table.orders select{width:100%;border:1px solid #c6d4e2;padding:4px;font-size:13px}
+.his-actions{padding:10px 14px;display:flex;gap:10px;border-top:1px solid #b9cadc;background:#eef3f9}
+button{padding:6px 18px;border:1px solid #2c5788;background:linear-gradient(#4a7fb5,#33608f);color:#fff;cursor:pointer;border-radius:3px;font-size:13px}
+button.ghost{background:#fff;color:#2c5788}
+.note{font-size:11px;color:#6b7f93;padding:4px 14px 12px}
+</style>
+</head>
+<body>
+<div class="his-top">
+  <span class="sys">🏥 示范市第一人民医院 · 医生工作站 v6.2</span>
+  <span class="tag">演示靶站 · 模拟院内 HIS 开单页(虚构数据)</span>
+</div>
+<div class="his-main">
+  <div class="his-bar">门诊医嘱开立</div>
+  <div class="his-sec">
+    <table class="pt" id="patientInfo">
+      <tr>
+        <td class="l">姓名</td><td data-field="patient_name">王小雨</td>
+        <td class="l">性别</td><td data-field="sex">女</td>
+        <td class="l">年龄</td><td data-field="age">16岁</td>
+      </tr>
+      <tr>
+        <td class="l">就诊卡号</td><td>MZ-20260702-0316</td>
+        <td class="l">医保类型</td><td data-field="insurance">城乡居民基本医疗保险</td>
+        <td class="l">科室</td><td data-field="dept">呼吸内科</td>
+      </tr>
+      <tr>
+        <td class="l">临床诊断</td><td colspan="5" data-field="diagnosis">社区获得性肺炎(J15.900)</td>
+      </tr>
+    </table>
+    <table class="orders" id="orderTable">
+      <thead><tr><th style="width:36%">药品/项目名称</th><th>规格</th><th>数量</th><th>单位</th><th>用法</th><th style="width:60px">操作</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><input class="ord-name" value="左氧氟沙星氯化钠注射液"></td>
+          <td><input class="ord-spec" value="0.5g:100ml"></td>
+          <td><input class="ord-qty" value="5" type="number"></td>
+          <td><input class="ord-unit" value="袋"></td>
+          <td><input class="ord-usage" value="ivgtt qd"></td>
+          <td><button class="ghost btn-del" type="button">删行</button></td>
+        </tr>
+        <tr>
+          <td><input class="ord-name" value="小儿氨酚黄那敏颗粒"></td>
+          <td><input class="ord-spec" value="6g×10袋"></td>
+          <td><input class="ord-qty" value="2" type="number"></td>
+          <td><input class="ord-unit" value="盒"></td>
+          <td><input class="ord-usage" value="po tid"></td>
+          <td><button class="ghost btn-del" type="button">删行</button></td>
+        </tr>
+        <tr>
+          <td><input class="ord-name" value="血常规"></td>
+          <td><input class="ord-spec" value="—"></td>
+          <td><input class="ord-qty" value="1" type="number"></td>
+          <td><input class="ord-unit" value="次"></td>
+          <td><input class="ord-usage" value="立即"></td>
+          <td><button class="ghost btn-del" type="button">删行</button></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="his-actions">
+    <button type="button" id="btnAddRow" class="ghost">+ 加一行</button>
+    <button type="button" id="btnSubmit">提交医嘱</button>
+    <span style="flex:1"></span>
+    <button type="button" id="btnEmbedCheck" class="ghost" title="插件未安装时的内嵌演示通道(功能同插件)">🦅 鹰眼审方(内嵌演示)</button>
+  </div>
+  <div class="note">本页为鹰眼插件产品线的演示靶站:安装鹰眼浏览器扩展后,提交医嘱时自动触发事前提醒(两库依据+政策原文),无需 HIS 做任何对接改造。右下角"内嵌演示"按钮为插件未安装时的等价通道。</div>
+</div>
+<script>
+// 靶站自身只做最小交互;审方逻辑在插件(plugin/browser-extension)或内嵌通道里
+document.getElementById('btnAddRow').onclick = () => {
+  const tb = document.querySelector('#orderTable tbody');
+  const tr = document.createElement('tr');
+  tr.innerHTML = '<td><input class="ord-name" value=""></td><td><input class="ord-spec" value=""></td><td><input class="ord-qty" value="1" type="number"></td><td><input class="ord-unit" value="盒"></td><td><input class="ord-usage" value=""></td><td><button class="ghost btn-del" type="button">删行</button></td>';
+  tb.appendChild(tr);
+};
+document.getElementById('orderTable').addEventListener('click', (e) => {
+  if (e.target.classList.contains('btn-del')) e.target.closest('tr').remove();
+});
+document.getElementById('btnSubmit').onclick = () => {
+  // 插件安装时,content script 会拦截此事件先审方;未安装则直接"提交成功"
+  if (!window.__yingyanPluginActive) alert('医嘱已提交(未经鹰眼审方——演示对照组)');
+};
+
+// 内嵌演示通道:与插件同一 API,同一浮层逻辑(H2 分镜降级预案)
+document.getElementById('btnEmbedCheck').onclick = async () => {
+  const s = document.createElement('script');
+  s.src = '/plugin/yingyan-precheck.js'; // 与扩展 content.js 同源实现
+  s.onload = () => window.YingyanPrecheck && window.YingyanPrecheck.run({ engineBase: '' });
+  document.body.appendChild(s);
+};
+</script>
+</body>
+</html>

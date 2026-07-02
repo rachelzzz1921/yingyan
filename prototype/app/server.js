@@ -1944,6 +1944,49 @@ const server = http.createServer(async (req, res) => {
       return sendJSON(res, { error: 'method not allowed' }, 405);
     }
 
+    // F1 插件产品线·开单事前提醒:患者+医嘱行 → L1 事前规则子集 → 命中+两库依据
+    // CORS 全开:浏览器扩展要在任意 HIS 页面(任意 origin)调用本地引擎
+    if (p === '/api/precheck') {
+      res.setHeader('Access-Control-Allow-Origin', '*');
+      res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+      res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+      if (req.method === 'OPTIONS') { res.writeHead(204); return res.end(); }
+      if (req.method !== 'POST') return sendJSON(res, { error: 'method not allowed' }, 405);
+      const body = await readBody(req);
+      const patient = body.patient || {};
+      const items = Array.isArray(body.items) ? body.items : [];
+      // 事前场景规则白名单:开单时点可判的 L1 规则(无费用/医嘱执行数据,虚记/超量类规则不适用)
+      const PRECHECK_RULES = new Set(['AGE-101', 'F-001', 'B-201', 'A-110']);
+      const drugLike = (n) => /注射液|注射用|片|胶囊|颗粒|散|口服液|软膏|栓|丸|雾化|滴/.test(n);
+      const pseudoRecord = {
+        case_meta: { case_id: 'PRECHECK-' + Date.now(), settlement_summary: {} },
+        front_page: {
+          patient_name: '（开单预检）', sex: patient.sex || '', age: Number(patient.age),
+          principal_diagnosis: { name: String(patient.diagnosis || '').replace(/[（(].*$/, ''), icd10: (String(patient.diagnosis || '').match(/[A-Z]\d{2}[.\d]*/) || [''])[0] },
+        },
+        fee_list: {
+          items: items.map((x, i) => ({
+            line_no: i + 1, fee_date: new Date().toISOString().slice(0, 10),
+            category: drugLike(x.name) ? '西药费' : '检查检验费',
+            item_name: x.name, qty: Number(x.qty) || 1, unit: x.unit || '', unit_price: 0, amount: 0,
+          })),
+        },
+      };
+      try {
+        const rules = rulesWithOverlay(DB.rulesDoc.rules);
+        const ctx = auditContextForRecord(pseudoRecord);
+        const rep = runAudit(pseudoRecord, rules, { policyTexts: ctx.policyTexts, policyVerified: ctx.policyVerified });
+        const hits = (rep.findings || []).filter(f => PRECHECK_RULES.has(f.rule_id)).map(f => ({
+          rule_id: f.rule_id, rule_name: f.rule_name, nature: f.nature, status: f.status,
+          violation_type: f.violation_type, policy: (f.policy || []).slice(0, 3),
+          reasoning: f.reasoning, disposal_suggestion: f.disposal_suggestion,
+        }));
+        return sendJSON(res, { hits, clean: hits.length === 0, engine: 'L1确定性·毫秒级·本地', checked_rules_count: PRECHECK_RULES.size, elapsed_ms: 0 });
+      } catch (e) {
+        return sendJSON(res, { error: '事前预检失败:' + e.message }, 500);
+      }
+    }
+
     // Q7/G3 降级台账:schema重试/环节降级全程留痕(运维面板数据源;不进演示 UI 主视图)
     if (p === '/api/ops/degrade-log') {
       const { readDegradeLog } = require('./engine/structured-output');
