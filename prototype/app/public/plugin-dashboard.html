@@ -35,18 +35,23 @@ button{padding:5px 12px;border:1px solid #cbd5e1;background:#fff;border-radius:6
 <body>
 <div class="topbar">
   <div style="flex:1"><h1>🦅 鹰眼 · 院端事前提醒运营看板</h1>
-  <div class="sub">开单事前提醒的处置闭环:违规消灭在萌芽 · 未遵从转监管重点审核。<span id="ts"></span></div></div>
-  <a href="/mockhis.html">← 开单靶站</a>
-  <a href="/priority.html">监管工作台 →</a>
+  <div class="sub">三个角色触点、同一引擎、同一台账:违规消灭在萌芽 · 未遵从转监管重点审核。<span id="ts"></span></div></div>
   <button id="btnRefresh">↻ 刷新</button>
   <button id="btnReset" title="演示前清空台账">清空</button>
 </div>
+<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;font-size:12px">
+  <a href="/mockhis.html" style="padding:5px 12px;background:#fff;border:1px solid #cbd5e1;border-radius:20px">👨‍⚕️ 医生开单靶站</a>
+  <a href="/coder-station.html" style="padding:5px 12px;background:#fff;border:1px solid #cbd5e1;border-radius:20px">📑 编码员工作站</a>
+  <a href="/settle-station.html" style="padding:5px 12px;background:#fff;border:1px solid #cbd5e1;border-radius:20px">💳 结算员工作站</a>
+  <a href="/priority.html" style="padding:5px 12px;background:#fff;border:1px solid #cbd5e1;border-radius:20px">🛡 监管工作台 →</a>
+</div>
 
 <div class="cards" id="cards"></div>
+<div class="panel" id="rolePanel" style="display:none"><h2>📍 三角色触点分布</h2><div id="byRole" style="display:flex;gap:12px;flex-wrap:wrap"></div></div>
 
 <div class="panel">
   <h2>⚠ 事前已提醒·未遵从 → 监管重点审核清单</h2>
-  <div class="sub" style="margin-bottom:8px">医生开单时已收到提醒仍坚持提交的单——同一引擎推送到监管侧,事中/事后重点盯,并附医生填写的理由。这是院端↔监管闭环的落点。</div>
+  <div class="sub" style="margin-bottom:8px">三个角色(医生开单/编码员/结算员)在各自时点已收到提醒仍坚持提交的单——同一引擎登记于此,供监管侧事中/事后重点盯,并附经办人理由。这是院端↔监管闭环的落点。</div>
   <div id="pending"></div>
 </div>
 
@@ -70,18 +75,25 @@ async function load(){
     ['未遵从待监管', t.overridden||0, 'amber', '强行提交·转监管重点审核'],
   ].map(function(c){return '<div class="card"><div class="n '+c[2]+'">'+c[1]+'</div><div class="l">'+c[0]+'</div><div class="hint">'+c[3]+'</div></div>';}).join('');
 
+  const roles = d.by_role||{};
+  const rkeys = Object.keys(roles);
+  document.getElementById('rolePanel').style.display = rkeys.length ? '' : 'none';
+  document.getElementById('byRole').innerHTML = ['医生开单','编码员','结算员'].filter(function(r){return roles[r];}).map(function(r){
+    return '<div style="padding:8px 16px;background:#f1f5f9;border-radius:10px"><b style="font-size:18px">'+roles[r]+'</b> <span style="color:#7a8ba0">'+r+'</span></div>';
+  }).join('') || '<span class="empty">暂无</span>';
+
   const pend = d.pending_supervision||[];
   document.getElementById('pending').innerHTML = pend.length
-    ? '<table><thead><tr><th>时间</th><th>科室</th><th>患者</th><th>命中</th><th>医生理由</th><th></th></tr></thead><tbody>'
-      + pend.map(function(e){return '<tr><td>'+hhmm(e.at)+'</td><td>'+esc(e.dept||'—')+'</td><td>'+esc((e.sex||'')+(e.age!=null?e.age+'岁':''))+' '+esc(e.diagnosis||'')+'</td><td>'+(e.rules||[]).map(function(r){return '<span class="badge b-hard">'+esc(r)+'</span>';}).join(' ')+'</td><td>'+esc(e.reason||'—')+'</td><td><span class="badge b-over">⚠开单时已提醒未遵从</span></td></tr>';}).join('')
+    ? '<table><thead><tr><th>时间</th><th>角色</th><th>科室</th><th>患者</th><th>命中</th><th>坚持理由</th><th></th></tr></thead><tbody>'
+      + pend.map(function(e){return '<tr><td>'+hhmm(e.at)+'</td><td>'+esc(e.role||'—')+'</td><td>'+esc(e.dept||'—')+'</td><td>'+esc((e.sex||'')+(e.age!=null?e.age+'岁':''))+' '+esc(e.diagnosis||'')+'</td><td>'+(e.rules||[]).map(function(r){return '<span class="badge b-hard">'+esc(r)+'</span>';}).join(' ')+'</td><td>'+esc(e.reason||'—')+'</td><td><span class="badge b-over">⚠已提醒未遵从</span></td></tr>';}).join('')
       + '</tbody></table>'
-    : '<div class="empty">暂无未遵从记录——医生均采纳了事前提醒(全部消灭在萌芽)。</div>';
+    : '<div class="empty">暂无未遵从记录——均采纳了事前提醒(全部消灭在萌芽)。</div>';
 
   const rec = d.recent||[];
   const actLabel = {heeded:'<span class="badge b-heed">采纳整改</span>', overridden:'<span class="badge b-over">坚持提交</span>', pending:'待处置'};
   document.getElementById('recent').innerHTML = rec.length
-    ? '<table><thead><tr><th>时间</th><th>科室</th><th>命中(硬/软)</th><th>首要规则</th><th>处置</th><th>理由</th></tr></thead><tbody>'
-      + rec.map(function(e){return '<tr><td>'+hhmm(e.at)+'</td><td>'+esc(e.dept||'—')+'</td><td>'+(e.hard_count||0)+' / '+(e.suspect_count||0)+'</td><td>'+esc(e.top_rule||'—')+'</td><td>'+(actLabel[e.action]||esc(e.action))+'</td><td>'+esc(e.reason||'')+'</td></tr>';}).join('')
+    ? '<table><thead><tr><th>时间</th><th>角色</th><th>科室</th><th>命中(硬/软)</th><th>首要规则</th><th>处置</th><th>理由</th></tr></thead><tbody>'
+      + rec.map(function(e){return '<tr><td>'+hhmm(e.at)+'</td><td>'+esc(e.role||'—')+'</td><td>'+esc(e.dept||'—')+'</td><td>'+(e.hard_count||0)+' / '+(e.suspect_count||0)+'</td><td>'+esc(e.top_rule||'—')+'</td><td>'+(actLabel[e.action]||esc(e.action))+'</td><td>'+esc(e.reason||'')+'</td></tr>';}).join('')
       + '</tbody></table>'
     : '<div class="empty">今日暂无提醒记录。去 <a href="/mockhis.html">开单靶站</a> 触发几条,回来看闭环。</div>';
 }

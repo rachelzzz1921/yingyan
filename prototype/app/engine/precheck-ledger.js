@@ -88,6 +88,10 @@ function summary() {
   const pendingSupervision = overridden.filter(e => e.hits.length > 0);
   const byRule = {};
   for (const e of fired) for (const h of e.hits) byRule[h.rule_id] = (byRule[h.rule_id] || 0) + 1;
+  // 三角色触点(同一引擎、同一台账):医生开单 / 编码员 / 结算员
+  const ROLE = { plugin: '医生开单', embed: '医生开单', coder: '编码员', settle: '结算员' };
+  const byRole = {};
+  for (const e of fired) { const r = ROLE[e.source] || '其他'; byRole[r] = (byRole[r] || 0) + 1; }
   const decided = heeded.length + overridden.length;
   return {
     generated_at: new Date().toISOString(),
@@ -98,15 +102,16 @@ function summary() {
       pending_decision: fired.length - decided,
     },
     heed_rate: decided ? Math.round((heeded.length / decided) * 100) : null,
-    budding_intercepts: buddingIntercepts.length, // 院端开单环节拦下的明确违规(院端拦截量,非监管实际减少量)
+    budding_intercepts: buddingIntercepts.length, // 院端拦下的明确违规(院端拦截量,非监管实际减少量)
     by_rule: byRule,
+    by_role: byRole, // 三角色触点分布(医生开单/编码员/结算员)
     pending_supervision: pendingSupervision.slice(-20).reverse().map(e => ({
-      id: e.id, at: e.at, dept: e.patient.dept, sex: e.patient.sex, age: e.patient.age,
+      id: e.id, at: e.at, role: ROLE[e.source] || '其他', dept: e.patient.dept, sex: e.patient.sex, age: e.patient.age,
       diagnosis: e.patient.diagnosis, top_rule: e.top_rule, hard_count: e.hard_count,
       reason: e.reason, rules: e.hits.map(h => h.rule_id),
     })),
     recent: fired.slice(-25).reverse().map(e => ({
-      id: e.id, at: e.at, dept: e.patient.dept, action: e.action,
+      id: e.id, at: e.at, role: ROLE[e.source] || '其他', dept: e.patient.dept, action: e.action,
       hard_count: e.hard_count, suspect_count: e.suspect_count, top_rule: e.top_rule, reason: e.reason,
     })),
     total_all_time: ev.length,

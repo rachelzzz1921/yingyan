@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>示范市第一人民医院 · 出院结算工作站(演示靶站)</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:"Microsoft YaHei","PingFang SC",sans-serif;background:#d6e2ee;font-size:13px;color:#1a2b3c}
+.his-top{background:linear-gradient(#3a6ea5,#2c5788);color:#fff;padding:6px 14px;display:flex;justify-content:space-between;align-items:center}
+.his-top .sys{font-weight:700;font-size:14px}
+.his-top .tag{font-size:11px;background:#ffffff22;padding:2px 8px;border-radius:3px}
+.his-main{max-width:920px;margin:12px auto;background:#f4f7fb;border:1px solid #9db4cb;box-shadow:0 2px 6px #0002}
+.his-bar{background:#e3ecf5;border-bottom:1px solid #b9cadc;padding:6px 12px;font-weight:700;color:#2c5788}
+.his-sec{padding:12px 14px}
+table.pt{width:100%;border-collapse:collapse;margin-bottom:10px}
+table.pt td{border:1px solid #b9cadc;padding:6px 8px;background:#fff}
+table.pt td.l{background:#e9f0f7;width:96px;color:#41556b;font-weight:600}
+table.fee{width:100%;border-collapse:collapse;font-size:12.5px}
+table.fee th{background:#e3ecf5;border:1px solid #b9cadc;padding:5px 7px;color:#2c5788}
+table.fee td{border:1px solid #b9cadc;background:#fff;padding:4px 7px}
+.his-actions{padding:10px 14px;display:flex;gap:10px;border-top:1px solid #b9cadc;background:#eef3f9;align-items:center}
+button{padding:6px 18px;border:1px solid #2c5788;background:linear-gradient(#4a7fb5,#33608f);color:#fff;cursor:pointer;border-radius:3px;font-size:13px}
+button.ghost{background:#fff;color:#2c5788}
+.funnel{padding:8px 14px;font-size:13px}
+.note{font-size:11px;color:#6b7f93;padding:4px 14px 12px}
+a{color:#2c5788}
+#result{padding:0 14px 14px}
+.tri{display:inline-block;padding:1px 8px;border-radius:5px;font-size:11px;font-weight:800;color:#fff}
+</style>
+</head>
+<body>
+<div class="his-top">
+  <span class="sys">🏥 示范市第一人民医院 · 出院结算工作站 v5.0</span>
+  <span class="tag">演示靶站 · 结算员角色(虚构数据)</span>
+</div>
+<div class="his-main">
+  <div class="his-bar">出院费用结算</div>
+  <div class="his-sec">
+    <table class="pt">
+      <tr><td class="l">姓名</td><td data-field="name">王小雨</td><td class="l">性别</td><td data-field="sex">女</td><td class="l">年龄</td><td data-field="age">16岁</td></tr>
+      <tr><td class="l">住院号</td><td>ZY-20260702-0208</td><td class="l">科室</td><td data-field="dept">呼吸内科</td><td class="l">住院天数</td><td>6日</td></tr>
+    </table>
+    <table class="fee" id="feeTable">
+      <thead><tr><th>行</th><th>项目名称</th><th>数量</th><th>金额</th><th>追溯码</th></tr></thead>
+      <tbody></tbody>
+    </table>
+  </div>
+  <div class="his-actions">
+    <button type="button" id="btnCheck">🦅 结算前整单自查</button>
+    <button type="button" id="btnSettle" class="ghost">直接结算(对照组)</button>
+    <span style="flex:1"></span>
+    <a href="/plugin-dashboard.html" style="font-size:12px">院端运营看板 →</a>
+  </div>
+  <div class="funnel" id="funnel"></div>
+  <div id="result"></div>
+  <div class="note">结算员在出院结算提交医保前一键把整份费用清单过筛查漏斗(复用与监管侧 1000 条批量同一引擎)。命中行三档呈现,处置(采纳整改/坚持结算)与开单、编码共用同一事前台账。对齐"一切以结算数据为锚"。</div>
+</div>
+<script src="/plugin/yingyan-disposition.js"></script>
+<script>
+// 该出院患者费用清单(埋 3 处:未成年喹诺酮 / 超常输液 / 同追溯码重复)
+var TRACE='81069847100523916482';
+var FEE = [
+  { item_name:'床位费(三人间)', qty:6, amount:300, trace_code:'—' },
+  { item_name:'左氧氟沙星氯化钠注射液', qty:5, amount:140, trace_code:'—' },
+  { item_name:'静脉输液', qty:35, amount:280, trace_code:'—' },
+  { item_name:'恩替卡韦分散片', qty:1, amount:145, trace_code:TRACE },
+  { item_name:'恩替卡韦分散片', qty:1, amount:145, trace_code:TRACE },
+  { item_name:'血常规', qty:2, amount:50, trace_code:'—' },
+];
+var AGE=16, SEX='女', DEPT='呼吸内科';
+function renderFee(){
+  document.querySelector('#feeTable tbody').innerHTML = FEE.map(function(f,i){
+    return '<tr><td>'+(i+1)+'</td><td>'+f.item_name+'</td><td>'+f.qty+'</td><td>'+f.amount.toFixed(2)+'</td><td>'+(f.trace_code==='—'?'—':f.trace_code.slice(0,6)+'…'+f.trace_code.slice(-4))+'</td></tr>';
+  }).join('');
+}
+renderFee();
+document.getElementById('btnSettle').onclick = function(){ alert('已提交医保结算(未经鹰眼自查——演示对照组)'); };
+document.getElementById('btnCheck').onclick = async function(){
+  var rows = FEE.map(function(f,i){ return { row_id:'R'+(i+1), item_name:f.item_name, qty:f.qty, amount:f.amount, trace_code:f.trace_code, patient_age:AGE, patient_sex:SEX, dept:DEPT }; });
+  var r = await fetch('/api/screening/rows', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ rows: rows }) }).then(x=>x.json());
+  var f = r.funnel || {by_nature:{}};
+  document.getElementById('funnel').innerHTML = '本单 '+f.total_rows+' 行 → <span class="tri" style="background:#b91c1c">明确违规 '+(f.by_nature['明确违规']||0)+'</span> <span class="tri" style="background:#f59e0b">可疑 '+(f.by_nature['可疑']||0)+'</span> <span class="tri" style="background:#0a7a4b">放行 '+f.clean_rows+'</span> · 命中涉及 ¥'+(f.hit_amount||0).toLocaleString();
+  var RN = {'AGE-101':'未成年用药年龄分层','TRACE-101':'同一追溯码重复结算(回流药)','F-001':'性别—项目冲突','QTY-901':'单日数量超常'};
+  var hits = (r.top20||[]).map(function(h){ return { rule_id:h.rule_id, rule_name:RN[h.rule_id]||'', nature:h.nature, reasoning:'第'+String(h.row_id).replace('R','')+'行「'+h.item_name+'」:'+h.reason, amount_involved:h.amount, evidence:[], policy:[], disposal_suggestion:'' }; });
+  window.YingyanDisposition.renderDisposition('#result', { hits: hits, engine: r.elapsed_ms+'ms · 行级筛查·本地' }, {
+    engineBase:'', source:'settle', patient:{ sex:SEX, age:AGE, dept:DEPT, diagnosis:'社区获得性肺炎' },
+    heedLabel:'采纳建议·整改后结算', overrideLabel:'坚持结算',
+    onHeed: function(){ document.getElementById('funnel').innerHTML += ' <b style="color:#0a7a4b">· 已整改标注行,可重新结算</b>'; }
+  });
+};
+</script>
+</body>
+</html>

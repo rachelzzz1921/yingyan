@@ -1352,6 +1352,23 @@ const server = http.createServer(async (req, res) => {
       const ruleId = url.searchParams.get('rule_id') || null;
       return sendJSON(res, precipService.getPrecipitationSummary(DATA, ruleId));
     }
+    // 角色场景②·编码员 DRG 高套事前校验(复用 drg-grouper,第35条算钱)。CORS 全开
+    if (p === '/api/precheck/drg') {
+      res.setHeader('Access-Control-Allow-Origin', '*');
+      res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+      res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+      if (req.method === 'OPTIONS') { res.writeHead(204); return res.end(); }
+      if (req.method !== 'POST') return sendJSON(res, { error: 'method not allowed' }, 405);
+      const body = await readBody(req);
+      try {
+        const { detectDrgUpcoding } = require('./engine/precheck-drg');
+        const hits = detectDrgUpcoding(body || {});
+        return sendJSON(res, { hits, clean: hits.length === 0, engine: 'DRG分组器·第35条算钱·本地', checked_rules: ['D-401 DRG高套(编码时点)'], checked_rules_count: 1 });
+      } catch (e) {
+        return sendJSON(res, { error: '编码校验失败:' + e.message }, 500);
+      }
+    }
+
     // F1 闭环·事前提醒台账:记录医生处置(采纳整改/坚持提交+理由)。CORS 全开(插件跨域调)
     if (p === '/api/precheck/log') {
       // CORS 全开:插件在任意 HIS/结算页(任意 origin)写台账。演示态;生产收窄为院内 origin 白名单+token。

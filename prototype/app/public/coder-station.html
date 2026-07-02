@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>示范市第一人民医院 · 病案首页编码工作站(演示靶站)</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:"Microsoft YaHei","PingFang SC",sans-serif;background:#d6e2ee;font-size:13px;color:#1a2b3c}
+.his-top{background:linear-gradient(#3a6ea5,#2c5788);color:#fff;padding:6px 14px;display:flex;justify-content:space-between;align-items:center}
+.his-top .sys{font-weight:700;font-size:14px}
+.his-top .tag{font-size:11px;background:#ffffff22;padding:2px 8px;border-radius:3px}
+.his-main{max-width:900px;margin:12px auto;background:#f4f7fb;border:1px solid #9db4cb;box-shadow:0 2px 6px #0002}
+.his-bar{background:#e3ecf5;border-bottom:1px solid #b9cadc;padding:6px 12px;font-weight:700;color:#2c5788;display:flex;justify-content:space-between;align-items:center}
+.his-sec{padding:12px 14px}
+table.pt{width:100%;border-collapse:collapse;margin-bottom:10px}
+table.pt td{border:1px solid #b9cadc;padding:6px 8px;background:#fff}
+table.pt td.l{background:#e9f0f7;width:96px;color:#41556b;font-weight:600}
+input,select{border:1px solid #c6d4e2;padding:5px 7px;font-size:13px;border-radius:3px}
+input[type=text]{width:100%}
+.field{margin-bottom:10px}
+.field label{display:block;font-weight:600;color:#41556b;margin-bottom:3px}
+.chk{display:flex;align-items:center;gap:8px;padding:8px 10px;background:#fff8e6;border:1px solid #f0d488;border-radius:5px}
+.his-actions{padding:10px 14px;display:flex;gap:10px;border-top:1px solid #b9cadc;background:#eef3f9;align-items:center}
+button{padding:6px 18px;border:1px solid #2c5788;background:linear-gradient(#4a7fb5,#33608f);color:#fff;cursor:pointer;border-radius:3px;font-size:13px}
+button.ghost{background:#fff;color:#2c5788}
+.note{font-size:11px;color:#6b7f93;padding:4px 14px 12px}
+a{color:#2c5788}
+#result{padding:0 14px 14px}
+</style>
+</head>
+<body>
+<div class="his-top">
+  <span class="sys">🏥 示范市第一人民医院 · 病案首页编码工作站 v3.1</span>
+  <span class="tag">演示靶站 · 编码员角色(虚构数据)</span>
+</div>
+<div class="his-main">
+  <div class="his-bar">
+    <span>DRG 病案编码</span>
+    <label style="font-weight:400;font-size:12px">演示场景
+      <select id="scenarioPick" style="font-size:12px">
+        <option value="C1">C1 · 重症肺炎·病历无重症依据(高套)</option>
+        <option value="C2">C2 · 重症肺炎·病历支持重症(合规)</option>
+        <option value="C0">C0 · 社区获得性肺炎(普通,合规)</option>
+      </select>
+    </label>
+  </div>
+  <div class="his-sec">
+    <table class="pt">
+      <tr><td class="l">姓名</td><td data-field="name">陈国栋</td><td class="l">性别</td><td data-field="sex">男</td><td class="l">年龄</td><td data-field="age">68岁</td></tr>
+      <tr><td class="l">病案号</td><td>BA-20260702-0451</td><td class="l">科室</td><td data-field="dept">呼吸内科</td><td class="l">医保</td><td>城镇职工</td></tr>
+    </table>
+    <div class="field"><label>主诊断名称</label><input type="text" id="dxName" value="重症肺炎"></div>
+    <div class="field"><label>主诊断 ICD-10</label><input type="text" id="dxIcd" value="J15.901" style="width:200px"></div>
+    <div class="field"><label>手术/操作(可空)</label><input type="text" id="proc" value="—"></div>
+    <div class="chk"><input type="checkbox" id="severeEvidence"><label for="severeEvidence" style="margin:0">病历支持重症依据(呼吸衰竭 / 机械通气 / 感染性休克 / ICU 记录)</label></div>
+  </div>
+  <div class="his-actions">
+    <button type="button" id="btnCheck">🦅 提交编码前校验</button>
+    <button type="button" id="btnSubmit" class="ghost">直接提交编码(对照组)</button>
+    <span style="flex:1"></span>
+    <a href="/plugin-dashboard.html" style="font-size:12px">院端运营看板 →</a>
+  </div>
+  <div id="result"></div>
+  <div class="note">编码员在提交病案首页编码前校验:主诊断按重症编码但病历无重症依据 → 鹰眼当场提示高套 + 实施细则第35条差额(复用 DRG 分组器)。把 D-401 高套从事后翻账前移到编码桌。命中处置(采纳改编码/坚持提交)与开单、结算共用同一事前台账,汇入院端看板与监管预警。</div>
+</div>
+<script src="/plugin/yingyan-disposition.js"></script>
+<script>
+var SC = {
+  C1: { name:'重症肺炎', icd:'J15.901', severe:false },
+  C2: { name:'重症肺炎', icd:'J15.901', severe:true },
+  C0: { name:'社区获得性肺炎', icd:'J15.900', severe:false },
+};
+document.getElementById('scenarioPick').onchange = function(){
+  var s = SC[this.value]; if(!s) return;
+  document.getElementById('dxName').value = s.name;
+  document.getElementById('dxIcd').value = s.icd;
+  document.getElementById('severeEvidence').checked = s.severe;
+  document.getElementById('result').innerHTML = '';
+};
+document.getElementById('btnSubmit').onclick = function(){ alert('编码已提交(未经鹰眼校验——演示对照组)'); };
+document.getElementById('btnCheck').onclick = async function(){
+  var payload = {
+    diagnosis: document.getElementById('dxName').value,
+    icd10: document.getElementById('dxIcd').value,
+    has_severe_evidence: document.getElementById('severeEvidence').checked,
+    procedures: document.getElementById('proc').value,
+  };
+  var r = await fetch('/api/precheck/drg', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(payload) }).then(x=>x.json());
+  var patient = { sex: document.querySelector('[data-field="sex"]').textContent, age: parseInt(document.querySelector('[data-field="age"]').textContent), dept: '病案科', diagnosis: payload.diagnosis };
+  window.YingyanDisposition.renderDisposition('#result', r, {
+    engineBase:'', source:'coder', patient: patient,
+    heedLabel:'采纳建议·按实际应入组重新编码',
+    onHeed: function(){ document.getElementById('severeEvidence').checked = true; } // 整改可见:补录重症依据/改编码
+  });
+};
+</script>
+</body>
+</html>

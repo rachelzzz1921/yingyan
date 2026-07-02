@@ -555,8 +555,8 @@ async function loadPreAlerts() {
     const body = $('#preAlertBody');
     if (!pend.length) { body.innerHTML = '<p class="muted" style="font-size:12px">暂无——医生均采纳了事前提醒,违规都消灭在开单环节。</p>'; return; }
     const hhmm = (iso) => { try { return new Date(iso).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }); } catch (_) { return String(iso).slice(11, 16); } };
-    body.innerHTML = `<table class="pri-table"><thead><tr><th>时间</th><th>科室</th><th>患者</th><th>开单命中</th><th>医生坚持理由</th><th>标记</th></tr></thead><tbody>${
-      pend.map(e => `<tr><td>${esc(hhmm(e.at))}</td><td>${esc(e.dept || '—')}</td><td>${esc((e.sex || '') + (e.age != null ? e.age + '岁' : ''))} ${esc(e.diagnosis || '')}</td><td>${(e.rules || []).map(r => `<span class="tri-badge tri-hard">${esc(r)}</span>`).join(' ')}</td><td class="muted">${esc(e.reason || '—')}</td><td><span class="nature-badge" style="background:#fffbe6;color:#b45309;border:1px solid #fde68a">⚠开单时已提醒</span></td></tr>`).join('')
+    body.innerHTML = `<table class="pri-table"><thead><tr><th>时间</th><th>角色</th><th>科室</th><th>患者</th><th>命中</th><th>坚持理由</th><th>标记</th></tr></thead><tbody>${
+      pend.map(e => `<tr><td>${esc(hhmm(e.at))}</td><td>${esc(e.role || '—')}</td><td>${esc(e.dept || '—')}</td><td>${esc((e.sex || '') + (e.age != null ? e.age + '岁' : ''))} ${esc(e.diagnosis || '')}</td><td>${(e.rules || []).map(r => `<span class="tri-badge tri-hard">${esc(r)}</span>`).join(' ')}</td><td class="muted">${esc(e.reason || '—')}</td><td><span class="nature-badge" style="background:#fffbe6;color:#b45309;border:1px solid #fde68a">⚠开单时已提醒</span></td></tr>`).join('')
     }</tbody></table>`;
   } catch (_) { $('#preAlertMeta').textContent = ''; }
 }
