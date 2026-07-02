@@ -1,6 +1,7 @@
 'use strict';
 
 const { scoreCase, sortRanked, activeFindings } = require('./priority-score');
+const { NATURE_BASIS, findingNature } = require('./nature');
 const priorityStore = require('./priority-store');
 const { enrichFindingsPipeline, mergeCaseIntoStore } = require('./priority-enrich');
 const { loadRegistry } = require('./case-id');
@@ -98,14 +99,23 @@ function aggregateHistory(store, filters = {}) {
   };
 }
 
+// 三档(Q4)出口统一补齐:老快照/缓存无 nature 字段时按同一口径回推,任何出口不裸奔
+function decorateNature(findings) {
+  for (const f of (findings || [])) {
+    f.nature = findingNature(f);
+    f.nature_basis = f.nature_basis || NATURE_BASIS[f.nature];
+  }
+  return findings;
+}
+
 async function ensureFindings(store, caseApiId, record, runAuditFn, { force = false, examMode = false } = {}) {
   const c = store.cases[caseApiId];
   if (!force && c?.findings_cache && c.findings_cached_at) {
-    return c.findings_cache;
+    return decorateNature(c.findings_cache);
   }
   const report = runAuditFn(record);
   const enriched = enrichFindingsPipeline(report.findings || [], record, store, store.config, { examMode });
-  const findings = enriched.findings;
+  const findings = decorateNature(enriched.findings);
   if (c) {
     Object.assign(c, mergeCaseIntoStore(c, enriched.case_fields));
     c.suppressed_special_case = enriched.suppressed_special_case;
@@ -147,6 +157,7 @@ function buildRankRow(store, caseApiId, record, findings, config, peerAmountsByD
     completeness: c.completeness,
     tier: scored.tier,
     tier_label: scored.tier === 1 ? '疑点' : scored.tier === 2 ? '线索' : '无命中',
+    nature: scored.nature, // 三档(Q4):明确违规/可疑/干净,UI 第一层级
     api_score: scored.api_score,
     breakdown: scored.breakdown,
     suspected_count: scored.suspected_count,
@@ -301,7 +312,7 @@ function getCaseDetail(store, caseApiId, record, { maskPii = true } = {}) {
       } : record.front_page,
       fee_list: record.fee_list,
     } : null,
-    findings: c?.findings_cache || [],
+    findings: decorateNature(c?.findings_cache || []),
     slots,
     audit_records: (store.audit_records || []).filter(r => r.case_id === caseApiId).slice(-10).reverse(),
   };

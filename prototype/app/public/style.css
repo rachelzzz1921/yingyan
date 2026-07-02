@@ -536,6 +536,15 @@ h1,h2,h3{font-weight:700;letter-spacing:-.02em}
 .nature-badge.n-subj{background:#fdeaea;color:#a03030;border-color:#f3c6c6}
 .nature-badge.n-obj{background:#e8f3ec;color:#2c6e49;border-color:#c5e0d0}
 .nature-badge.n-tbd{background:#f4f0e6;color:#8a6d1a;border-color:#e6dcc0}
+/* 三档(Q4 第一层级):明确违规/可疑/干净 */
+.tri-badge{display:inline-block;padding:2px 9px;border-radius:6px;font-size:11px;font-weight:900;letter-spacing:.5px;white-space:nowrap}
+.tri-hard{background:#b91c1c;color:#fff}
+.tri-suspect{background:#fef3c7;color:#92400e;border:1px solid #fcd34d}
+.tri-clean{background:#ecfdf5;color:#047857;border:1px solid #a7f3d0}
+.tri-banner{display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:10px;margin:10px 0;font-size:13px}
+.tri-banner.b-hard{background:#fef2f2;color:#7f1d1d;border:1px solid #fecaca}
+.tri-banner.b-suspect{background:#fffbeb;color:#78350f;border:1px solid #fde68a}
+.tri-banner.b-clean{background:#ecfdf5;color:#065f46;border:1px solid #a7f3d0}
 .finding.shadow{border-left:4px solid #9b93c4 !important;opacity:.72;background:#fafaff}
 .finding.shadow .amount s{color:#9a93b8}
 .shadow-note{background:#f4f3f9;border:1px dashed #cbc5e0;border-radius:8px;padding:8px 11px;margin-bottom:10px;font-size:12px;color:#5b5280;line-height:1.55}

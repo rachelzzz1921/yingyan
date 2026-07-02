@@ -209,6 +209,13 @@ async function llmAgentAudit(record, rules, opts = {}) {
   merged = gov.findings;
   const suspected = gov.suspected, clues = gov.clues;
   findings = merged;
+  // 三档定性(Q4):LLM 路径与确定性路径同一定档口径
+  const { NATURE_BASIS, findingNature, caseNature, natureCounts } = require('./nature');
+  for (const f of findings) {
+    f.nature = findingNature(f);
+    f.nature_basis = NATURE_BASIS[f.nature];
+  }
+  const case_nature = caseNature(findings);
   return {
     report_meta: {
       case_id: record.case_meta?.case_id, patient: `${record.front_page?.patient_name} ${record.front_page?.sex} ${record.front_page?.age}岁`,
@@ -219,7 +226,8 @@ async function llmAgentAudit(record, rules, opts = {}) {
       stage_ms: { prosecutor: t_prosecutor, cove: t_cove },
       cove_error: coveError || undefined,
       human_baseline_minutes: 40, agent_seconds: 90, elapsed_ms: Date.now() - t0,
-      summary: { ...gov.summary, suspected_amount: gov.summary.suspected_amount, clue_amount_flagged: gov.summary.clue_amount_flagged },
+      case_nature, case_nature_basis: NATURE_BASIS[case_nature],
+      summary: { case_nature, nature_counts: natureCounts(findings), ...gov.summary, suspected_amount: gov.summary.suspected_amount, clue_amount_flagged: gov.summary.clue_amount_flagged },
     },
     findings, correctly_not_flagged: [], real_agent: true,
   };

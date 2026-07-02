@@ -18,6 +18,7 @@ const fs = require('fs');
 const path = require('path');
 const { genDebate } = require('./debate');
 const { compileCaseObject } = require('./case-object');
+const { NATURE, NATURE_BASIS, findingNature, caseNature, natureCounts } = require('./nature');
 const { applyComplianceGate } = require('./compliance-gate');
 const { JIANGSU_NURSING_PRICE, REF_ID: JIANGSU_NURSING_REF } = require('../kb/jiangsu-prices');
 const { applyParseQAToConfidence } = require('./parse-qa');
@@ -1412,6 +1413,13 @@ function runAudit(record, rulesArray, options = {}) {
   const { suspected, clues, shadowed, summary: govSummary } = gov;
   const coverage = coverageManifest(routing, record, merged); // doc08宏观②
 
+  // 三档定性(Q4):治理(shadow/合规前置降级)之后定档,保证降级过的 finding 档位正确
+  for (const f of merged) {
+    f.nature = findingNature(f);
+    f.nature_basis = NATURE_BASIS[f.nature];
+  }
+  const case_nature = caseNature(merged);
+
   return {
     report_meta: {
       case_id: record.case_meta?.case_id,
@@ -1426,7 +1434,11 @@ function runAudit(record, rulesArray, options = {}) {
       reconciliation_log: rec.reconciliation_log, // 合议日志（去重证明）
       arbitration_log: arb.arbitration_log,       // 定义层仲裁日志（subsumes/互斥/全局豁免）
       coverage,                                    // 覆盖度声明
+      case_nature,                                 // 三档:明确违规/可疑/干净(UI 第一层级)
+      case_nature_basis: NATURE_BASIS[case_nature],
       summary: {
+        case_nature,
+        nature_counts: natureCounts(merged),
         raw_findings_before_merge: findings.length,
         merged_count: findings.length - merged.length,
         amount_if_double_counted: money(rec.reconciliation_log.reduce((s, l) => s + (l.amount_if_double_counted - l.amount_once), 0) + suspected.reduce((s, f) => s + (f.amount_involved || 0), 0)),

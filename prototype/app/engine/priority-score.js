@@ -6,6 +6,7 @@
  */
 
 const { natureSevBoost } = require('./priority-nature');
+const { NATURE_RANK, caseNature } = require('./nature');
 
 const DEFAULT_CONFIG = {
   W_CLUE: 0.4,
@@ -175,10 +176,13 @@ function scoreCase(input) {
   const suspected = active.filter(f => f.status === '疑点');
   const clues = active.filter(f => f.status === '线索');
 
+  const nature = caseNature(all); // 三档(Q4):UI 第一层级,排序第一键
+
   if (!active.length) {
     const outlierResult = computeOutlier(0, input.peerAmounts || [], cfg, input.special_case_review);
     return {
       tier,
+      nature,
       api_score: 0,
       breakdown: {
         ec: 0, amt: 0, sev: 0, core: 0,
@@ -215,6 +219,7 @@ function scoreCase(input) {
 
   return {
     tier,
+    nature,
     api_score: apiScore,
     breakdown: {
       ec: Math.round(ec * 1000) / 1000,
@@ -249,6 +254,8 @@ function scoreCase(input) {
 
 function sortRanked(items) {
   return [...items].sort((a, b) => {
+    const nr = (NATURE_RANK[a.nature] ?? 1) - (NATURE_RANK[b.nature] ?? 1);
+    if (nr !== 0) return nr; // 三档第一键:明确违规 > 可疑 > 干净
     if (a.tier !== b.tier) return a.tier - b.tier;
     if (b.api_score !== a.api_score) return b.api_score - a.api_score;
     return (b.breakdown?.S || 0) - (a.breakdown?.S || 0);

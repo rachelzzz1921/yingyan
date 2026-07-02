@@ -895,9 +895,22 @@ function renderReport(report) {
       <span class="muted">— 整改留痕已存快照，可供飞检对质</span>
     </div>` : '';
 
+  // 三档(Q4 第一层级)案卷定档横幅:明确违规/可疑/干净(老快照无字段时由 findings 客户端回推)
+  const caseNat = m.case_nature || s.case_nature || ((report.findings || []).some(f => !f.shadow)
+    ? ((report.findings || []).some(f => !f.shadow && f.nature === '明确违规') ? '明确违规' : '可疑') : '干净');
+  const natCls = caseNat === '明确违规' ? 'hard' : caseNat === '可疑' ? 'suspect' : 'clean';
+  const nc = s.nature_counts || {};
+  const triBanner = `
+    <div class="tri-banner b-${natCls}">
+      <span class="tri-badge tri-${natCls}">${caseNat}</span>
+      <span>${m.case_nature_basis || ''}${(nc['明确违规'] || nc['可疑']) ? ` — 明确违规 <b>${nc['明确违规'] || 0}</b> 条 · 可疑 <b>${nc['可疑'] || 0}</b> 条` : ''}
+      <span class="muted">（三档口径对齐两库「政策限定类/合理使用类」规则运行结果）</span></span>
+    </div>`;
+
   pOverview.innerHTML = `
     ${reportHeroHTML(report, s, exam)}
     ${statusLineHTML(m, exam)}
+    ${triBanner}
     ${diffBanner}
     <div class="summary-cards">${cards.map(c => `<div class="scard ${c.c}"><img class="scard-icon" src="/brand/icons/${c.icon || 'rules'}.svg" alt="" width="28" height="28"><div class="scard-body"><div class="n">${c.n}</div><div class="l">${c.l}</div></div></div>`).join('')}</div>
     ${evidenceActionsHTML(report)}
@@ -1510,8 +1523,10 @@ function findingCard(f) {
   const needsLabel = VIEW_EXAM ? '建议补全材料：' : '需调阅材料清单：';
   const needs = (f.needs_more && f.needs_more.length) ? `<div class="needs"><b>${needsLabel}</b><ul>${f.needs_more.map(n => `<li>${esc(n)}</li>`).join('')}</ul></div>` : '';
   const statusLabel = VIEW_EXAM && f.status === '疑点' ? '风险点' : f.status;
+  const triCls = f.nature === '明确违规' ? 'tri-hard' : 'tri-suspect';
   return `<div class="finding ${esc(f.status)}${f.shadow ? ' shadow' : ''}" data-fid="${esc(f.finding_id)}">
     <div class="f-head">
+      ${f.nature ? `<span class="tri-badge ${triCls}" title="${esc(f.nature_basis || '')}">${esc(f.nature)}</span>` : ''}
       <span class="status-badge ${esc(f.status)}">${esc(statusLabel)}</span>
       ${f.violation_nature ? `<span class="nature-badge n-${f.violation_nature === '主观嫌疑' ? 'subj' : f.violation_nature === '非主观差错' ? 'obj' : 'tbd'}" title="违规性质（主观嫌疑/非主观差错/待定）${esc(f.nature_upgrade_reason ? '·' + f.nature_upgrade_reason : '')}">${esc(f.violation_nature)}</span>` : ''}
       ${f.shadow ? '<span class="shadow-badge" title="规则因高频驳回转入观察期，暂不计分">🌓 观察期·不计分</span>' : ''}

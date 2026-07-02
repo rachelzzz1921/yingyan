@@ -42,7 +42,10 @@ async function loadRank() {
     const data = await parseJsonResponse(r, '队列加载');
     lastRank = data;
     renderQueue(data);
-    $('#rankMeta').textContent = `更新于 ${new Date(data.computed_at).toLocaleTimeString()} · 队列 ${data.total} 案${data.boundary_count ? ` · 边界 ${data.boundary_count}` : ''}`;
+    const nc = {};
+    for (const r of data.queue || []) nc[r.nature || '可疑'] = (nc[r.nature || '可疑'] || 0) + 1;
+    const natureStat = ['明确违规', '可疑', '干净'].filter(n => nc[n]).map(n => `${n} ${nc[n]}`).join(' / ');
+    $('#rankMeta').textContent = `更新于 ${new Date(data.computed_at).toLocaleTimeString()} · 队列 ${data.total} 案${natureStat ? ` · ${natureStat}` : ''}${data.boundary_count ? ` · 边界 ${data.boundary_count}` : ''}`;
   } catch (e) {
     $('#rankMeta').textContent = '加载失败';
     toast(e.message, true);
@@ -62,6 +65,19 @@ function natureBadge(n) {
   return `<span class="tier-badge ${cls}">${esc(n)}</span>`;
 }
 
+// 三档(第一层级):明确违规=政策限定类可拦截 / 可疑=合理使用类需合议 / 干净
+const NATURE_CLS = { 明确违规: 'tri-hard', 可疑: 'tri-suspect', 干净: 'tri-clean' };
+const NATURE_ORDER = ['明确违规', '可疑', '干净'];
+const NATURE_HINT = {
+  明确违规: '政策限定类 · 硬性字段交叉核验，可直接拦截',
+  可疑: '合理使用类 · 需临床合理性合议，应听申诉',
+  干净: '本次核验各维度未见异常',
+};
+function caseNatureBadge(n) {
+  if (!n) return '';
+  return `<span class="tri-badge ${NATURE_CLS[n] || 'tri-suspect'}" title="${esc(NATURE_HINT[n] || '')}">${esc(n)}</span>`;
+}
+
 function tierBadge(tier, label) {
   const cls = `tier-badge tier-${tier}`;
   const text = examMode && tier === 1 ? '风险点' : (label || (tier === 1 ? '疑点' : tier === 2 ? '线索' : '—'));
@@ -74,12 +90,25 @@ function renderQueue(data) {
   selected.clear();
   updateSelHint();
 
+  // 三档=第一层级:按 nature 分节渲染(队列已由后端按 明确违规>可疑>干净 排序)
+  let lastNature = null;
+  const natureTotals = {};
+  for (const r of data.queue || []) natureTotals[r.nature || '可疑'] = (natureTotals[r.nature || '可疑'] || 0) + 1;
+
   for (const row of data.queue || []) {
+    const nat = row.nature || '可疑';
+    if (nat !== lastNature) {
+      lastNature = nat;
+      const sec = document.createElement('tr');
+      sec.className = 'nature-section';
+      sec.innerHTML = `<td colspan="11">${caseNatureBadge(nat)} <span class="nature-section-hint">${esc(NATURE_HINT[nat] || '')}</span> <span class="muted">${natureTotals[nat]} 案</span></td>`;
+      tbody.appendChild(sec);
+    }
     const tr = document.createElement('tr');
     tr.dataset.caseId = row.case_id;
     tr.innerHTML = `
       <td><input type="checkbox" class="row-chk" data-id="${row.case_id}"></td>
-      <td>${tierBadge(row.tier, row.tier_label)}</td>
+      <td>${caseNatureBadge(nat)}<br>${tierBadge(row.tier, row.tier_label)}</td>
       <td class="num"><span class="score-pill">${row.api_score}</span></td>
       <td><strong>${esc(row.case_title || row.case_id)}</strong><br><span class="muted">${esc(row.case_id)}</span></td>
       <td>${esc(row.dept || '—')}${(row.risk_tags || []).length ? `<br><span class="muted">${row.risk_tags.slice(0,2).join('·')}</span>` : ''}</td>
@@ -281,7 +310,7 @@ function renderFindings(list, shadow, caseId) {
   if (!list.length) return '<p class="muted">无</p>';
   return list.map(f => `
     <div class="pri-finding ${f.status === '疑点' ? 'suspected' : 'clue'}${shadow ? ' muted' : ''}">
-      <h4>${esc(f.rule_id)} · ${esc(f.status)} · ${fmtMoney(f.amount_involved)} ${shadow ? '(shadow 不计分)' : ''}${f.violation_nature ? ' · ' + esc(f.violation_nature) : ''}</h4>
+      <h4>${caseNatureBadge(f.nature)} ${esc(f.rule_id)} · ${esc(f.status)} · ${fmtMoney(f.amount_involved)} ${shadow ? '(shadow 不计分)' : ''}${f.violation_nature ? ' · ' + esc(f.violation_nature) : ''}</h4>
       <div class="muted">${esc(f.violation_type)}${f.disposition_suggestion ? ' · ' + esc(f.disposition_suggestion) : ''}</div>
       <div class="pri-evidence"><strong>证据</strong>\n${(f.evidence || []).map(e => `[${e.type}] ${e.loc}: ${e.text}`).join('\n')}</div>
       <div class="pri-evidence"><strong>条款</strong>\n${(f.policy || []).map(p => `${p.ref}: ${p.text}`).join('\n')}${examMode && (f.policy || []).length ? '\n\n【体检教育说明】以上条款原文供院端自查对照，分数/三态不因展示口径改变。' : ''}</div>
