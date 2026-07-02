@@ -1412,6 +1412,44 @@ function reconcile(rawFindings) {
   return { findings: out, reconciliation_log: log };
 }
 
+// ---------- A1/Q1 证据链完整度(数据侧) ----------
+// 以结算费用明细为主锚:一笔费用能召集到几张关联表作证(医嘱/护理/检验/手术/影像/追溯码…)。
+// 与"覆盖度"(规则侧:哪些规则维度查过)明确区分,UI 分开放置。
+function evidenceChainCompleteness(record) {
+  const items = record.fee_list?.items || [];
+  if (!items.length) return null;
+  const orderIds = new Set([
+    ...(record.long_term_orders?.items || []).map(o => o.order_id),
+    ...(record.temporary_orders?.items || []).map(o => o.order_id),
+  ]);
+  const per = [];
+  for (const l of items) {
+    const witnesses = [];
+    if (l.linked_order && l.linked_order !== '—' && orderIds.has(l.linked_order)) witnesses.push('医嘱单');
+    const n = l.item_name || '';
+    if (/护理/.test(n) && (record.nursing_records?.entries || []).length) witnesses.push('护理记录');
+    if (/检验|血常规|血气|生化|培养/.test(n) && (record.lab_reports || []).length) witnesses.push('检验报告');
+    if (/术|耗材|骨水泥|球囊|套管|钉|板/.test(n) && record.operation_note?.operation_name) witnesses.push('手术记录');
+    if (/CT|磁共振|MRI|X线|摄影|胶片|超声|造影/.test(n) && (record.imaging_record?.items || record.imaging_record?.note)) witnesses.push('影像记录');
+    if (/麻醉|恢复室/.test(n) && record.anesthesia_record?.anesthesia_method) witnesses.push('麻醉记录');
+    if (/监护|呼吸机|CRRT|血液净化/.test(n) && record.icu_record?.nursing_level) witnesses.push('重症记录');
+    if (/药|注射|片|胶囊|颗粒/.test(l.category || n) && /^[0-9A-Z]{10,}$/i.test(String(l.trace_code || ''))) witnesses.push('追溯码');
+    if (/药/.test(l.category || '') && (record.progress_notes || []).length) witnesses.push('病程记录');
+    per.push({ line_no: l.line_no, item: n, witness_tables: witnesses, witness_count: witnesses.length });
+  }
+  // 每行按"≥2 张关联表=满分,1 张=半分"计,案卷分=均值(费用行是主锚,病案首页/患者信息为底座不计)
+  const lineScore = (c) => (c >= 2 ? 1 : c * 0.5);
+  const score = Math.round((per.reduce((s, x) => s + lineScore(x.witness_count), 0) / per.length) * 100);
+  const weak = per.filter(x => x.witness_count === 0).map(x => `第${x.line_no}行「${x.item}」`);
+  return {
+    score,
+    anchor: '结算费用明细(主锚)',
+    lines: per,
+    weak_lines: weak,
+    statement: `以费用明细为主锚,${per.length} 行费用平均每行由 ${(per.reduce((s, x) => s + x.witness_count, 0) / per.length).toFixed(1)} 张关联表作证,证据链完整度 ${score}/100${weak.length ? `;${weak.length} 行无关联表作证(${weak.slice(0, 3).join('、')}${weak.length > 3 ? '…' : ''}),稽核结论对这些行依赖单表,置信应下调` : ''}。(数据侧口径,与规则覆盖度分开)`,
+  };
+}
+
 // ---------- doc08宏观② 覆盖度清单 Coverage Manifest ----------
 const COVERAGE_DIMENSIONS = [
   { key: '费用↔医嘱/执行一致性', rules: ['A-108', 'A-109', 'T-204', 'NUR-303'] },
@@ -1533,6 +1571,8 @@ function runAudit(record, rulesArray, options = {}) {
   merged = gov.findings;
   const { suspected, clues, shadowed, summary: govSummary } = gov;
   const coverage = coverageManifest(routing, record, merged); // doc08宏观②
+  let evidence_chain = null;
+  try { evidence_chain = evidenceChainCompleteness(record); } catch (_) { /* 数据侧完整度失败不阻断 */ }
 
   // 三档定性(Q4):治理(shadow/合规前置降级)之后定档,保证降级过的 finding 档位正确
   for (const f of merged) {
@@ -1554,7 +1594,8 @@ function runAudit(record, rulesArray, options = {}) {
       caseobject_summary: caseObj.summary,
       reconciliation_log: rec.reconciliation_log, // 合议日志（去重证明）
       arbitration_log: arb.arbitration_log,       // 定义层仲裁日志（subsumes/互斥/全局豁免）
-      coverage,                                    // 覆盖度声明
+      coverage,                                    // 覆盖度声明(规则侧)
+      evidence_chain,                              // 证据链完整度(数据侧,Q1:与覆盖度分开)
       case_nature,                                 // 三档:明确违规/可疑/干净(UI 第一层级)
       case_nature_basis: NATURE_BASIS[case_nature],
       summary: {

@@ -940,6 +940,7 @@ function renderReport(report) {
     ${s.shadow_count ? `<div class="shadow-banner">🌓 <b>规则状态机·观察期（shadow）</b>：${s.shadow_count} 条命中来自被复核高频驳回规则，暂不计入疑点/金额（扣留 ¥${fmt(s.shadow_amount_withheld)}）。</div>` : ''}
     ${routingBar(m.routing, exam)}
     ${renderRagSection(m)}
+    ${renderEvidenceChain(m.evidence_chain)}
     ${renderCoverage(m.coverage)}
   `;
 
@@ -1596,6 +1597,18 @@ function renderDebate(d) {
     return `<details class="debate-exam-optional"><summary class="muted">🗣 监管对质参考（院端可忽略 · 点击展开）</summary><div class="debate">${inner}</div></details>`;
   }
   return `<div class="debate">${inner}</div>`;
+}
+
+// A1/Q1 证据链完整度(数据侧):费用主锚召集到几张关联表作证——与规则侧覆盖度分开放
+function renderEvidenceChain(ec) {
+  if (!ec) return '';
+  const cls = ec.score >= 80 ? 'keep' : ec.score >= 50 ? '' : 'down';
+  const topLines = (ec.lines || []).slice(0, 8).map(l =>
+    `<tr><td>${l.line_no}</td><td>${esc(l.item)}</td><td class="num">${l.witness_count}</td><td>${(l.witness_tables || []).join('、') || '<span style="color:var(--red)">无关联表</span>'}</td></tr>`).join('');
+  return `<div class="findings-section"><h3 class="sect-title">⛓ 证据链完整度 <span class="verdict ${cls}" style="font-size:13px">${ec.score}/100</span> <span class="muted" style="font-size:11px">数据侧:一笔费用有几张关联表作证 · 与"覆盖度"(规则侧)不同口径</span></h3>
+    <div class="muted" style="font-size:12px;margin:4px 0 8px">${esc(ec.statement)}</div>
+    <table class="fee-table"><thead><tr><th>行</th><th>费用项目(主锚)</th><th>作证表数</th><th>关联表</th></tr></thead><tbody>${topLines}</tbody></table>
+    ${(ec.lines || []).length > 8 ? `<div class="muted" style="font-size:11px">…共 ${ec.lines.length} 行(前8行展示)</div>` : ''}</div>`;
 }
 
 function renderDebateHistory(f) {

@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>鹰眼 · 运维面板(降级台账)</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:"PingFang SC","Microsoft YaHei",sans-serif;background:#0e1726;color:#dbe6f3;font-size:13px;padding:20px}
+h1{font-size:18px;margin-bottom:4px}
+.sub{color:#7d93ad;font-size:12px;margin-bottom:16px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px;margin-bottom:16px}
+.card{background:#16233a;border:1px solid #24344f;border-radius:10px;padding:12px}
+.card .n{font-size:24px;font-weight:800}
+.card .l{color:#7d93ad;font-size:11px;margin-top:2px}
+table{width:100%;border-collapse:collapse;background:#121e33;border-radius:10px;overflow:hidden}
+th{background:#1b2a44;text-align:left;padding:8px 10px;color:#9db4cf;font-size:12px}
+td{padding:7px 10px;border-top:1px solid #1e2d47;font-family:ui-monospace,Menlo,monospace;font-size:12px}
+.lv-retry{color:#f0b429}.lv-degrade{color:#ef6b6b}
+.empty{padding:30px;text-align:center;color:#54810a}
+.note{margin-top:14px;color:#7d93ad;font-size:11.5px;line-height:1.7}
+a{color:#6db3f7}
+</style>
+</head>
+<body>
+<h1>🦅 鹰眼 · 运维面板 <span style="font-size:12px;color:#7d93ad">降级台账(Q7/G3)</span></h1>
+<div class="sub">四级降级梯子:①schema校验失败带错重试(≤2) → ②取预载真实结果 → ③纯确定性路径 → ④静态兜底。任何一级切换<b>界面无感,内部有痕</b>——本页就是"痕"。 <a href="javascript:location.reload()">↻ 刷新</a></div>
+<div class="grid" id="statCards"></div>
+<table><thead><tr><th style="width:170px">时间</th><th style="width:170px">环节(stage)</th><th style="width:80px">级别</th><th>原因</th></tr></thead><tbody id="rows"></tbody></table>
+<div class="note">
+留痕语义:retry=schema/解析失败后带报错重试(最终成功);degrade=重试耗尽按环节降级(筛查→纯确定性/裁定→转人工/CoVe→存疑转线索)。<br>
+每个 Agent 的可见域与弹药库在 harness 中显式声明(SKILL.md 化,见三人格 info_partition 字段)——调用链全程留痕,可适配医保生产环境 agent 管理平台的账号分配与编排审批模式。
+</div>
+<script>
+(async () => {
+  const r = await fetch('/api/ops/degrade-log?limit=200').then(x => x.json());
+  const esc = s => String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;');
+  const byStage = {};
+  let retries = 0, degrades = 0;
+  for (const e of r.events) {
+    byStage[e.stage] = (byStage[e.stage] || 0) + 1;
+    if (e.level === 'retry') retries++; else degrades++;
+  }
+  document.getElementById('statCards').innerHTML = [
+    `<div class="card"><div class="n">${r.total}</div><div class="l">台账事件(近200)</div></div>`,
+    `<div class="card"><div class="n lv-retry">${retries}</div><div class="l">带错重试(自愈)</div></div>`,
+    `<div class="card"><div class="n lv-degrade">${degrades}</div><div class="l">环节降级(转人工/确定性)</div></div>`,
+    `<div class="card"><div class="n">${Object.keys(byStage).length}</div><div class="l">涉及环节数</div></div>`,
+  ].join('');
+  document.getElementById('rows').innerHTML = r.events.length
+    ? r.events.slice().reverse().map(e => `<tr><td>${esc((e.at||'').replace('T',' ').slice(0,19))}</td><td>${esc(e.stage)}</td><td class="lv-${esc(e.level)}">${esc(e.level)}</td><td>${esc(e.reason)}${e.rule_id ? ' <span style="color:#7d93ad">['+esc(e.rule_id)+']</span>' : ''}</td></tr>`).join('')
+    : '<tr><td colspan="4" class="empty">台账为空——本次运行期间 LLM 结构化输出零重试零降级 ✓</td></tr>';
+})();
+</script>
+</body>
+</html>
