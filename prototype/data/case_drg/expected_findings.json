@@ -14,7 +14,7 @@
       "rule_id": "D-401",
       "rule_name": "高套分组—主诊断/主手术与病历不符",
       "status": "疑点",
-      "amount_involved": 3100,
+      "amount_involved": 4420,
       "violation_type": "高套分组"
     }
   ],
