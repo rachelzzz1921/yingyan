@@ -32,39 +32,9 @@ const PROMPT_DEFENSE = [
 async function callClaude(system, userText, maxTokens = 4000, jsonMode = true) {
   return callLLM({ system, user: userText, maxTokens, jsonMode });
 }
-const { structuredCall, StructuredOutputError, logDegrade } = require('./structured-output');
-// 从 LLM 文本里稳健抽取 JSON：① 去 ```json 围栏 ② 整体直 parse ③ 括号配对扫描首个完整 JSON 值
-// （兼容尾随解释文字、思维链前缀、多段输出；旧版贪婪正则会把 "{obj} 文字 {obj2}" 误并）
-function extractJSON(text) {
-  if (!text || !String(text).trim()) throw new Error('LLM未返回内容（空响应）');
-  let s = String(text).trim();
-  // 去除 Markdown 代码围栏
-  const fence = s.match(/```(?:json)?\s*([\s\S]*?)```/i);
-  if (fence) s = fence[1].trim();
-  // 先尝试整体解析
-  try { return JSON.parse(s); } catch (_) { /* 继续括号扫描 */ }
-  // 括号配对扫描：从首个 [ 或 { 起找到匹配的闭合，注意字符串内的括号/转义
-  const start = s.search(/[[{]/);
-  if (start < 0) throw new Error('LLM未返回JSON: ' + s.slice(0, 120));
-  const open = s[start], close = open === '[' ? ']' : '}';
-  let depth = 0, inStr = false, esc = false;
-  for (let i = start; i < s.length; i++) {
-    const c = s[i];
-    if (inStr) {
-      if (esc) esc = false;
-      else if (c === '\\') esc = true;
-      else if (c === '"') inStr = false;
-      continue;
-    }
-    if (c === '"') inStr = true;
-    else if (c === open) depth++;
-    else if (c === close) { depth--; if (depth === 0) return JSON.parse(s.slice(start, i + 1)); }
-  }
-  // 兜底：从 start 到最后一个闭合符
-  const last = s.lastIndexOf(close);
-  if (last > start) return JSON.parse(s.slice(start, last + 1));
-  throw new Error('LLM返回的JSON不完整: ' + s.slice(0, 120));
-}
+const { structuredCall, StructuredOutputError, logDegrade, extractJSON } = require('./structured-output');
+// 稳健 JSON 抽取已统一收敛到 structured-output.extractJSON:
+// 收集全部候选(围栏/整体/括号扫描),从后往前取——吸收"解说+回显输入+末尾答案"的输出形状(Qwen72B 实测)
 
 // ---------- Stage 1：稽核 Agent（控方）——真读自由文本提疑点 ----------
 async function prosecutor(record, rules, kb) {

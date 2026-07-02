@@ -36,18 +36,17 @@ function readDegradeLog(limit = 200) {
   } catch (_) { return []; }
 }
 
-// ---------- 稳健 JSON 抽取(与 llm-agent.extractJSON 同源:围栏→直parse→括号配对扫描) ----------
-function extractJSON(text) {
-  if (!text || !String(text).trim()) throw new Error('LLM未返回内容（空响应）');
-  let s = String(text).trim();
-  const fence = s.match(/```(?:json)?\s*([\s\S]*?)```/i);
-  if (fence) s = fence[1].trim();
-  try { return JSON.parse(s); } catch (_) { /* 继续括号扫描 */ }
-  const start = s.search(/[[{]/);
-  if (start < 0) throw new Error('LLM未返回JSON: ' + s.slice(0, 120));
-  const open = s[start], close = open === '[' ? ']' : '}';
+// ---------- 稳健 JSON 抽取 ----------
+// 现实失败形状(Qwen72B 实测):模型先解说、把**输入数据回显**在第一个 ```json 围栏里,
+// 真正答案在最后。所以不能"取第一个围栏块"——要收集全部候选,**从后往前**优先
+// (答案跟在叙述后面),有 schema 时由 structuredCall 选第一个过校验的候选。
+
+/** 从文本里扫出一个平衡的 JSON 值(自 startIdx 起);失败返回 null */
+function scanBalanced(s, startIdx) {
+  const open = s[startIdx], close = open === '[' ? ']' : '}';
+  if (open !== '[' && open !== '{') return null;
   let depth = 0, inStr = false, esc = false;
-  for (let i = start; i < s.length; i++) {
+  for (let i = startIdx; i < s.length; i++) {
     const c = s[i];
     if (inStr) {
       if (esc) esc = false;
@@ -57,11 +56,45 @@ function extractJSON(text) {
     }
     if (c === '"') inStr = true;
     else if (c === open) depth++;
-    else if (c === close) { depth--; if (depth === 0) return JSON.parse(s.slice(start, i + 1)); }
+    else if (c === close) { depth--; if (depth === 0) return s.slice(startIdx, i + 1); }
   }
-  const last = s.lastIndexOf(close);
-  if (last > start) return JSON.parse(s.slice(start, last + 1));
-  throw new Error('LLM返回的JSON不完整: ' + s.slice(0, 120));
+  return null;
+}
+
+/** 收集全部可解析候选,按"越靠后越优先"排序返回(已 parse 的值数组) */
+function extractJSONCandidates(text) {
+  if (!text || !String(text).trim()) throw new Error('LLM未返回内容（空响应）');
+  const s = String(text).trim();
+  const rawCandidates = [];
+  // ① 全部围栏块
+  const fenceRe = /```(?:json)?\s*([\s\S]*?)```/gi;
+  let m;
+  while ((m = fenceRe.exec(s))) rawCandidates.push({ text: m[1].trim(), pos: m.index });
+  // ② 整体
+  rawCandidates.push({ text: s, pos: -1 });
+  // ③ 括号扫描:每个顶层 { / [ 起点的平衡值(限收 40 个防病态输入)
+  for (let i = 0, g = 0; i < s.length && g < 40; i++) {
+    if (s[i] === '{' || s[i] === '[') {
+      const v = scanBalanced(s, i);
+      if (v) { rawCandidates.push({ text: v, pos: i }); i += v.length - 1; g++; }
+    }
+  }
+  // 去重 + parse,按位置倒序(答案在后)
+  const seen = new Set();
+  const parsed = [];
+  for (const c of rawCandidates.sort((a, b) => b.pos - a.pos)) {
+    const key = c.text.slice(0, 200);
+    if (seen.has(key)) continue;
+    seen.add(key);
+    try { parsed.push(JSON.parse(c.text)); } catch (_) { /* 不可解析的候选跳过 */ }
+  }
+  if (!parsed.length) throw new Error('LLM未返回可解析JSON: ' + s.slice(0, 120));
+  return parsed;
+}
+
+/** 兼容旧签名:返回最靠后的可解析 JSON 值 */
+function extractJSON(text) {
+  return extractJSONCandidates(text)[0];
 }
 
 // ---------- 轻量 schema 校验器(支持 type/required/properties/items/enum,够七环节用,零依赖) ----------
@@ -133,12 +166,21 @@ async function structuredCall(opts) {
       throw new StructuredOutputError(stage, attempt + 1, e.message);
     }
     try {
-      let val = extractJSON(raw);
-      if (normalize) val = normalize(val);
-      const errs = schema ? validateSchema(val, schema) : [];
-      if (errs.length) throw new Error('schema校验失败: ' + errs.slice(0, 5).join('; '));
-      if (attempt > 0) logDegrade(stage, 'retry', `第${attempt}次带错重试后成功`, { attempt });
-      return val;
+      // 候选从后往前试(答案在叙述后面);有 schema 时取第一个过校验的候选——
+      // 模型"解说+回显输入+末尾答案"的输出形状被这里吸收,不浪费一次重试
+      const candidates = extractJSONCandidates(raw);
+      let lastErrs = null;
+      for (const cand of candidates) {
+        let val = cand;
+        try { if (normalize) val = normalize(cand); } catch (_) { continue; }
+        const errs = schema ? validateSchema(val, schema) : [];
+        if (!errs.length) {
+          if (attempt > 0) logDegrade(stage, 'retry', `第${attempt}次带错重试后成功`, { attempt });
+          return val;
+        }
+        lastErrs = errs;
+      }
+      throw new Error('schema校验失败(全部' + candidates.length + '个JSON候选): ' + (lastErrs || []).slice(0, 5).join('; '));
     } catch (e) {
       lastErr = e.message;
       if (attempt < retries) logDegrade(stage, 'retry', e.message, { attempt: attempt + 1 });
@@ -148,4 +190,4 @@ async function structuredCall(opts) {
   throw new StructuredOutputError(stage, retries + 1, lastErr);
 }
 
-module.exports = { structuredCall, StructuredOutputError, validateSchema, extractJSON, logDegrade, readDegradeLog, DEGRADE_LOG };
+module.exports = { structuredCall, StructuredOutputError, validateSchema, extractJSON, extractJSONCandidates, logDegrade, readDegradeLog, DEGRADE_LOG };
