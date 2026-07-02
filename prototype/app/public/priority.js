@@ -546,6 +546,31 @@ $('#btnConfig').addEventListener('click', openConfig);
 $('#btnConfigCancel').addEventListener('click', () => $('#configModal').classList.add('hidden'));
 $('#btnConfigSave').addEventListener('click', saveConfig);
 $('#btnReport').addEventListener('click', () => { $('#reportModal').classList.remove('hidden'); previewReport(); });
+// E1 批量筛查漏斗:1000条结算明细行级确定性筛查(毫秒级),三档漏斗+真值对账
+$('#btnScreening')?.addEventListener('click', async () => {
+  $('#screeningResult').textContent = '筛查中…';
+  try {
+    const r = await fetch('/api/screening/run').then(x => x.json());
+    if (r.error) { $('#screeningResult').textContent = r.error; return; }
+    $('#screeningResult').textContent = `${r.elapsed_ms}ms 完成`;
+    const f = r.funnel, g = r.ground_truth_check;
+    const fn = $('#screeningFunnel');
+    fn.classList.remove('hidden');
+    fn.innerHTML = `
+      <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;font-size:13px">
+        <span class="score-pill">${f.total_rows}</span> 条明细 →
+        ${caseNatureBadge('明确违规')} <b>${f.by_nature['明确违规'] || 0}</b> ·
+        ${caseNatureBadge('可疑')} <b>${f.by_nature['可疑'] || 0}</b> ·
+        ${caseNatureBadge('干净')} <b>${f.clean_rows}</b> 放行
+        <span class="muted">| 命中涉及 ¥${f.hit_amount.toLocaleString()} · 规则分布 ${Object.entries(f.by_rule).map(([k, v]) => k + '×' + v).join(' ')}</span>
+      </div>
+      <div class="muted" style="font-size:12px;margin-top:6px">真值对账(ground-truth manifest):埋点 ${g.embedded} 处 · 检出 ${g.detected} · 漏检 ${g.missed} · 误报 ${g.false_positives} —— 评委可任指一条核对</div>
+      <table class="pri-table" style="margin-top:8px"><thead><tr><th>行号</th><th>档位</th><th>规则</th><th>科室/医生</th><th>项目</th><th>金额</th><th>筛查理由</th></tr></thead>
+      <tbody>${r.top20.slice(0, 10).map(h => `<tr><td>${esc(h.row_id)}</td><td>${caseNatureBadge(h.nature)}</td><td>${esc(h.rule_id)}</td><td>${esc(h.dept)}·${esc(h.doctor)}</td><td>${esc(h.item_name)}</td><td class="num">¥${h.amount}</td><td class="muted">${esc(h.reason)}</td></tr>`).join('')}</tbody></table>
+      <div class="muted" style="font-size:11px;margin-top:4px">命中行进入优先队列走单案深审(明细审核/调查核实)——本漏斗对应官方规程"数据比对/违规筛查"环节。</div>`;
+  } catch (e) { $('#screeningResult').textContent = '失败:' + e.message; }
+});
+
 // E3 领导版一键报告:勾选了案卷则只报勾选范围,否则全库;新标签打开可打印 HTML(内含浏览器打印→PDF)
 $('#btnLeaderReport').addEventListener('click', () => {
   const ids = [...selected].join(',');

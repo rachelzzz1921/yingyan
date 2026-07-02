@@ -1944,6 +1944,16 @@ const server = http.createServer(async (req, res) => {
       return sendJSON(res, { error: 'method not allowed' }, 405);
     }
 
+    // E1 监管侧批量链·行级筛查漏斗:1000条结算明细→确定性筛查→三档漏斗+top20(毫秒级)
+    if (p === '/api/screening/run') {
+      try {
+        const { runScreening } = require('./engine/screening');
+        return sendJSON(res, runScreening());
+      } catch (e) {
+        return sendJSON(res, { error: '批量筛查失败:' + e.message + '(先跑 node scripts/gen-settlement-1000.js 生成演示数据)' }, 500);
+      }
+    }
+
     // F1 插件产品线·开单事前提醒:患者+医嘱行 → L1 事前规则子集 → 命中+两库依据
     // CORS 全开:浏览器扩展要在任意 HIS 页面(任意 origin)调用本地引擎
     if (p === '/api/precheck') {

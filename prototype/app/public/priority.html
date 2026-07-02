@@ -73,6 +73,14 @@
     <span id="rankMeta" class="muted"></span>
   </section>
 
+  <section class="pri-queue card" id="screeningSection" style="padding:12px 16px">
+    <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+      <button type="button" class="btn secondary" id="btnScreening" title="E1:全量结算明细行级筛查(确定性,毫秒级)——'1万条/月过3遍'的第一遍">⚡ 批量筛查演示(1000条结算明细)</button>
+      <span id="screeningResult" class="muted"></span>
+    </div>
+    <div id="screeningFunnel" class="hidden" style="margin-top:10px"></div>
+  </section>
+
   <section class="pri-queue card" id="queueSection">
     <h2>稽核队列 <span class="muted" id="queueCount"></span></h2>
     <p class="pri-score-legend muted" id="queueLegend"></p>
