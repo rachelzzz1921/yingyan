@@ -546,6 +546,11 @@ $('#btnConfig').addEventListener('click', openConfig);
 $('#btnConfigCancel').addEventListener('click', () => $('#configModal').classList.add('hidden'));
 $('#btnConfigSave').addEventListener('click', saveConfig);
 $('#btnReport').addEventListener('click', () => { $('#reportModal').classList.remove('hidden'); previewReport(); });
+// E3 领导版一键报告:勾选了案卷则只报勾选范围,否则全库;新标签打开可打印 HTML(内含浏览器打印→PDF)
+$('#btnLeaderReport').addEventListener('click', () => {
+  const ids = [...selected].join(',');
+  window.open(`/api/report/leader?format=html${ids ? '&case_ids=' + encodeURIComponent(ids) : ''}${examMode ? '&mode=exam' : ''}`, '_blank');
+});
 $('#btnReportRefresh').addEventListener('click', previewReport);
 $('#btnReportExport').addEventListener('click', () => {
   const groupBy = $('#reportGroupBy').value;

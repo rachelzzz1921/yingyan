@@ -1026,6 +1026,41 @@ const server = http.createServer(async (req, res) => {
       }
       return sendJSON(res, result);
     }
+    // E3 一键稽核报告(领导版):批量筛查结果自动成文,md/html/pdf 三格式
+    if (p === '/api/report/leader' && req.method === 'GET') {
+      const { buildLeaderReport, renderLeaderReportMarkdown } = require('./engine/leader-report');
+      const store = priorityStore.loadStore();
+      priorityStore.syncCasesFromDb(store, DB.cases);
+      const caseIds = (url.searchParams.get('case_ids') || '').split(',').filter(Boolean);
+      const examMode = url.searchParams.get('mode') === 'exam';
+      const rep = buildLeaderReport({
+        casesMap: DB.cases, store,
+        caseIds: caseIds.length ? caseIds : undefined,
+        examMode, topN: Number(url.searchParams.get('top')) || 10,
+      });
+      const outFmt = url.searchParams.get('format') || 'json';
+      if (outFmt === 'json') return sendJSON(res, rep);
+      const md = renderLeaderReportMarkdown(rep);
+      const title = examMode ? '院端自查情况报告' : '医保基金智能审核情况报告';
+      if (outFmt === 'html' || outFmt === 'pdf') {
+        const html = checklistMdToHtml(md, title);
+        if (outFmt === 'pdf') {
+          try {
+            const pdf = await htmlToPdf(html);
+            res.writeHead(200, { 'Content-Type': 'application/pdf', 'Content-Disposition': "attachment; filename=\"yingyan-leader-report.pdf\"; filename*=UTF-8''" + encodeURIComponent(title + '.pdf') });
+            return res.end(pdf);
+          } catch (e) {
+            // puppeteer 未装/渲染失败 → 回退可打印 HTML(与 checklist 同款零依赖兜底)
+            res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8', 'X-PDF-Fallback': 'print-html' });
+            return res.end(html.replace('</body>', '<script>setTimeout(function(){try{window.print()}catch(e){}},500)</script></body>'));
+          }
+        }
+        res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
+        return res.end(html);
+      }
+      res.writeHead(200, { 'Content-Type': 'text/markdown; charset=utf-8', 'Content-Disposition': "attachment; filename=\"yingyan-leader-report.md\"; filename*=UTF-8''" + encodeURIComponent(title + '.md') });
+      return res.end(md);
+    }
     if (p === '/api/report/violation-summary' && req.method === 'GET') {
       const store = priorityStore.loadStore();
       priorityStore.syncCasesFromDb(store, DB.cases);
