@@ -282,9 +282,13 @@ async function llmAgentAudit(record, rules, opts = {}) {
   };
 }
 
-// 按需：对单条疑点跑真·控辩裁（P5 v7 裁判）
+// 按需：对单条疑点跑真·对抗合议。
+// 默认 C3 三人格(信息不对称:辩方只见临床/控方只见规则+结算/裁定只见陈述书+弹药库);
+// YINGYAN_DEBATE_MODE=legacy 退回旧版控辩裁(P5 v7 裁判)。
 async function runDebate(finding, record, kb, opts = {}) {
-  return defenderJudge(finding, record, kb, opts);
+  if (process.env.YINGYAN_DEBATE_MODE === 'legacy') return defenderJudge(finding, record, kb, opts);
+  const { runTriPersona } = require('./tri-persona');
+  return runTriPersona(finding, record, opts);
 }
 
 module.exports = { llmAgentAudit, runDebate };

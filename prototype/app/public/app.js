@@ -1570,12 +1570,19 @@ function renderDebate(d) {
     return `<div class="exch ${meta.cls}"><div class="exch-role">${meta.icon} ${esc(meta.tag)}<span class="stance">${esc(e.stance)}</span></div><div class="exch-text">${esc(e.text)}</div></div>`;
   }).join('');
   const realAgent = d.real_agent || d.p5_v7 || REPORT?.report_meta?.real_agent;
-  const agentLabel = d.p5_v7 ? `真·P5 v7${d.prompt ? ' · ' + d.prompt : ''}` : (realAgent ? '真·LLM多Agent' : '脚本演示·真版切LLM');
-  const inner = `<div class="debate-head">🗣 控辩裁三方对质 <span class="kind-tag ${realAgent || d.p5_v7 ? 'real' : 'script'}">${agentLabel}</span> <span class="muted">（${d.rounds}轮封顶 · 申诉Agent=误报过滤器）</span>
-      <span class="verdict ${downgrade ? 'down' : 'keep'}">裁定：${esc(d.verdict)}</span></div>
+  const agentLabel = d.tri_persona ? '真·三人格合议(信息不对称)' : (d.p5_v7 ? `真·P5 v7${d.prompt ? ' · ' + d.prompt : ''}` : (realAgent ? '真·LLM多Agent' : '脚本演示·真版切LLM'));
+  const scoreChip = d.tri_persona && d.score != null ? ` <span class="verdict keep" title="申诉评定打分形态:指控成立程度 0-100">评分 ${esc(String(d.score))}/100</span>` : '';
+  const citeLine = d.tri_persona && (d.kb_citations || []).length
+    ? `<div class="muted" style="padding:2px 12px;font-size:11px">依据链(可解析条目ID): ${d.kb_citations.map(c => `<code>${esc(c)}</code>`).join(' · ')}</div>` : '';
+  const footNote = d.tri_persona
+    ? '三人格信息不对称：辩方只见临床材料、控方只见规则命中+结算数据、专家只见双方陈述书+弹药库(两库/判例/裁量依据)；裁定引用不出可解析 KB 条目 ID 即自动转人工（代码硬校验）。'
+    : '裁判防偏见：控辩材料位置交换二次裁决，不一致判平→降级线索；裁判与辩手用不同模型（防自我偏好）。';
+  const inner = `<div class="debate-head">🗣 ${d.tri_persona ? '对抗合议·三人格' : '控辩裁三方对质'} <span class="kind-tag ${realAgent || d.p5_v7 ? 'real' : 'script'}">${agentLabel}</span> <span class="muted">（${d.rounds}轮封顶${d.tri_persona ? ' · 立论→质证→裁定' : ' · 申诉Agent=误报过滤器'}）</span>
+      <span class="verdict ${downgrade ? 'down' : 'keep'}">裁定：${esc(d.verdict)}</span>${scoreChip}</div>
     <div class="exch-list">${exch}</div>
     <div class="verdict-reason ${downgrade ? 'down' : ''}">▸ ${esc(d.verdict_reason)}</div>
-    <div class="muted" style="padding:6px 12px;font-size:11px">裁判防偏见：控辩材料位置交换二次裁决，不一致判平→降级线索；裁判与辩手用不同模型（防自我偏好）。</div>`;
+    ${citeLine}
+    <div class="muted" style="padding:6px 12px;font-size:11px">${footNote}</div>`;
   if (VIEW_EXAM) {
     return `<details class="debate-exam-optional"><summary class="muted">🗣 监管对质参考（院端可忽略 · 点击展开）</summary><div class="debate">${inner}</div></details>`;
   }
