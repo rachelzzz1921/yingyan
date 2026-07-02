@@ -25,15 +25,30 @@ function queryParams() {
   return p.toString();
 }
 
+async function parseJsonResponse(r, label) {
+  const ct = r.headers.get('content-type') || '';
+  if (!r.ok) {
+    const err = ct.includes('json') ? (await r.json()).error : await r.text();
+    throw new Error(err || `${label}失败 (${r.status})`);
+  }
+  return r.json();
+}
+
 async function loadRank() {
   $('#rankMeta').textContent = '计算中…';
-  const qs = queryParams();
-  const r = await fetch('/api/priority/rank' + (qs ? '?' + qs : ''));
-  const data = await r.json();
-  lastRank = data;
-  renderQueue(data);
-  $('#rankMeta').textContent = `更新于 ${new Date(data.computed_at).toLocaleTimeString()} · 队列 ${data.total} 案${data.boundary_count ? ` · 边界 ${data.boundary_count}` : ''}`;
-  delete $('#btnRefresh').dataset.force;
+  try {
+    const qs = queryParams();
+    const r = await fetch('/api/priority/rank' + (qs ? '?' + qs : ''));
+    const data = await parseJsonResponse(r, '队列加载');
+    lastRank = data;
+    renderQueue(data);
+    $('#rankMeta').textContent = `更新于 ${new Date(data.computed_at).toLocaleTimeString()} · 队列 ${data.total} 案${data.boundary_count ? ` · 边界 ${data.boundary_count}` : ''}`;
+  } catch (e) {
+    $('#rankMeta').textContent = '加载失败';
+    toast(e.message, true);
+  } finally {
+    delete $('#btnRefresh').dataset.force;
+  }
 }
 
 function amountLabel(row) {
@@ -132,7 +147,15 @@ async function runBatch() {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ caseIds: [...selected], mode: 'live', priority: true, concurrency: 3 }),
   });
-  const data = await r.json();
+  let data;
+  try {
+    data = await parseJsonResponse(r, '批量入队');
+  } catch (e) {
+    alert(e.message);
+    $('#btnBatch').textContent = '加入批量稽核';
+    $('#btnBatch').disabled = false;
+    return;
+  }
   $('#btnBatch').textContent = '加入批量稽核';
   if (data.ok) {
     alert(`已入队 ${data.job?.id}\n进度可在看板「批量初筛」或 GET /api/audit/batch/${data.job?.id} 查看`);
@@ -160,7 +183,15 @@ async function runBatchTopN() {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ priority: true, top_n, mode: 'live', skip: ['uploaded'], concurrency: 3 }),
   });
-  const data = await r.json();
+  let data;
+  try {
+    data = await parseJsonResponse(r, '队首入队');
+  } catch (e) {
+    alert(e.message);
+    btn.textContent = '🎯 队首 N 入队';
+    btn.disabled = false;
+    return;
+  }
   btn.textContent = '🎯 队首 N 入队';
   btn.disabled = false;
   if (data.ok) {
@@ -189,15 +220,15 @@ function toast(msg, isErr) {
 async function fetchCaseDetail(caseId, { refresh = false } = {}) {
   const qs = refresh ? '?refresh=1' : '';
   const r = await fetch(`/api/cases/${encodeURIComponent(caseId)}${qs}`);
-  const data = await r.json();
-  if (!r.ok) throw new Error(data.error || `加载失败 (${r.status})`);
-  return data;
+  return parseJsonResponse(r, '案卷详情加载');
 }
 
 async function showDetail(caseId) {
   const panel = $('#detailPanel');
   $('#detailTitle').textContent = '加载中…';
   $('#detailContent').innerHTML = '<p class="muted">正在拉取 Findings 与 enrich 管道…</p>';
+  const wb = $('#btnOpenWorkbench');
+  if (wb) wb.href = '/?case=' + encodeURIComponent(caseId);
   panel.classList.remove('hidden');
   panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
   try {
@@ -302,7 +333,7 @@ async function loadProfile() {
   const el = $('#profileBody');
   try {
     const r = await fetch('/api/history');
-    const d = await r.json();
+    const d = await parseJsonResponse(r, '历史画像加载');
     const dims = ['dept', 'doctor', 'drg_group'];
     el.innerHTML = dims.map(dim => {
       const rows = (d.hit_rates?.[dim] || []).slice(0, 5);
@@ -319,31 +350,67 @@ async function previewReport() {
   const groupBy = $('#reportGroupBy').value;
   const groupLabel = { violation_type: '违规类型', nature: '违规性质', dept: '科室' }[groupBy] || groupBy;
   const mode = examMode ? '&mode=exam' : '';
-  const r = await fetch(`/api/report/violation-summary?group_by=${groupBy}${mode}`);
-  const d = await r.json();
-  $('#reportBody').textContent = [
-    `# 违规统计 · 按${groupLabel}分组（${groupBy}）`,
-    `生成于 ${d.exported_at || new Date().toISOString()}`,
-    '',
-    ...(d.tables?.recognition || []).map(t => JSON.stringify(t, null, 2)),
-    '',
-    ...(d.tables?.amount || []).map(t => JSON.stringify(t, null, 2)),
-  ].join('\n');
+  try {
+    const r = await fetch(`/api/report/violation-summary?group_by=${groupBy}${mode}`);
+    const d = await parseJsonResponse(r, '违规统计预览');
+    $('#reportBody').textContent = [
+      `# 违规统计 · 按${groupLabel}分组（${groupBy}）`,
+      `生成于 ${d.exported_at || new Date().toISOString()}`,
+      '',
+      ...(d.tables?.recognition || []).map(t => JSON.stringify(t, null, 2)),
+      '',
+      ...(d.tables?.amount || []).map(t => JSON.stringify(t, null, 2)),
+    ].join('\n');
+  } catch (e) {
+    $('#reportBody').textContent = '预览失败: ' + e.message;
+    toast(e.message, true);
+  }
 }
 
+// 全量自查清单工作台：官方问题清单(12领域236条)逐条勾选 + 领域完成率 + 引擎命中对照
+const CHECKLIST_STATUSES = ['未查', '已查无问题', '发现问题', '已整改'];
 async function openChecklistModal() {
   const caseId = selected.size ? [...selected][0] : 'main';
-  const r = await fetch(`/api/checklist/national-2026-self/map?case_id=${caseId}`);
+  const r = await fetch(`/api/checklist/full?case_id=${caseId}`);
   const d = await r.json();
-  const hits = (d.rows || []).filter(x => x.hit).length;
-  $('#checklistMeta').textContent = `案卷 ${caseId} · 命中 ${hits}/${d.rows?.length || 0}`;
-  $('#checklistBody').innerHTML = (d.rows || []).map(row => `
-    <div class="pri-check-item ${row.hit ? 'hit' : ''}">
-      <strong>${esc(row.item_id || row.title)}</strong> ${row.hit ? '✓ 命中' : '—'}
-      <div class="muted">${esc(row.title || row.description || '')}</div>
-      ${row.matched_finding ? `<div class="muted">→ ${esc(row.matched_finding.violation_type || row.matched_finding.rule_id)}</div>` : ''}
-      ${examMode && row.policy_hint ? `<div class="pri-evidence">${esc(row.policy_hint)}</div>` : ''}
-    </div>`).join('') || '<p class="muted">清单为空</p>';
+  const s = d.summary || {};
+  $('#checklistMeta').textContent = `官方全量 ${s.total} 条 · 已查 ${s.checked}（${s.completion}%）· 发现问题 ${s.found} · 已整改 ${s.rectified} · 对照案卷 ${caseId}`;
+  const byDomain = {};
+  for (const row of d.rows || []) (byDomain[row.domain] = byDomain[row.domain] || []).push(row);
+  const domStats = Object.fromEntries((d.by_domain || []).map(x => [x.domain, x]));
+  $('#checklistBody').innerHTML = Object.entries(byDomain).map(([domain, rows]) => {
+    const st = domStats[domain] || {};
+    const items = rows.map(row => `
+      <div class="pri-check-item ${row.engine_hit ? 'hit' : ''}" data-item="${esc(row.id)}">
+        <div class="pri-check-line">
+          <span><strong>${row.no != null ? '序' + row.no : ''}</strong> [${esc(row.type)}] ${esc(row.text)}</span>
+          <select class="pri-check-status" data-item="${esc(row.id)}">
+            ${CHECKLIST_STATUSES.map(x => `<option ${x === row.status ? 'selected' : ''}>${x}</option>`).join('')}
+          </select>
+        </div>
+        <div class="muted">
+          ${row.engine_hit ? `⚡ 引擎命中: ${row.engine_findings.map(f => `${esc(f.rule_id)}(${esc(f.status)})`).join(' ')}` : (row.rule_profile || []).length ? `可对照规则: ${row.rule_profile.join(' ')}` : '暂无对应引擎规则（人工自查项）'}
+          ${row.dept ? ` · 科室:${esc(row.dept)}` : ''}${row.note ? ` · ${esc(row.note)}` : ''}
+        </div>
+      </div>`).join('');
+    return `
+      <details class="pri-check-domain" ${st.found || st.engine_hits ? 'open' : ''}>
+        <summary><b>${esc(domain)}</b> <span class="muted">${st.checked || 0}/${st.total || rows.length} 已查${st.found ? ` · 发现${st.found}` : ''}${st.engine_hits ? ` · ⚡引擎命中${st.engine_hits}` : ''}</span></summary>
+        ${items}
+      </details>`;
+  }).join('') || '<p class="muted">清单为空</p>';
+  $('#checklistBody').querySelectorAll('.pri-check-status').forEach(sel => {
+    sel.addEventListener('change', async (e) => {
+      const itemId = e.target.dataset.item;
+      try {
+        await fetch('/api/checklist/progress', {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ checklist_id: 'national-full-self', item_id: itemId, status: e.target.value }),
+        });
+        toast(`已登记：${e.target.value}`);
+      } catch (err) { toast('登记失败: ' + err.message, true); }
+    });
+  });
   $('#checklistModal').classList.remove('hidden');
 }
 

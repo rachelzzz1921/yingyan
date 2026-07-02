@@ -1,6 +1,7 @@
 import XLSX from 'xlsx';
 import fs from 'fs';
 import { refIdLiangku, slugPart } from '../lib/normalize.mjs';
+import { isJunkPolicyText } from '../lib/quality.mjs';
 
 function ruleCategoryFromSheet(sheetName) {
   const m = sheetName.match(/[""]([^""]+)[""]/);
@@ -8,16 +9,34 @@ function ruleCategoryFromSheet(sheetName) {
   return sheetName.replace(/规则对应知识点明细|知识点对应药品代码/g, '').trim() || sheetName;
 }
 
+// 表头识别加固：不再仅凭「序号+名称列」取首个命中行（历史上匹配到装饰行/合并单元格
+// 会导致整 sheet 列错位，把序号列拼进正文）。改为在前 20 行里给候选行按
+// 已知列名命中数打分，取得分最高者，且要求至少命中 2 个已知列。
+const HEADER_HINTS = [
+  '药品通用名', '通用名', '项目名称', '规则名称', '知识点名称', '知识点',
+  '检出逻辑', '限定条件', '逻辑依据', '政策依据', '文件依据',
+  '药品代码', '医保编码', '项目代码', '备注', '限定性别',
+];
+function headerScore(cells) {
+  let n = 0;
+  for (const h of HEADER_HINTS) {
+    if (cells.some((c) => c.includes(h))) n++;
+  }
+  return n;
+}
 function findHeaderRow(rows) {
-  for (let i = 0; i < Math.min(rows.length, 12); i++) {
+  let best = null;
+  for (let i = 0; i < Math.min(rows.length, 20); i++) {
     const row = rows[i];
     if (!Array.isArray(row)) continue;
     const cells = row.map((c) => String(c).trim());
-    if (cells.includes('序号') && (cells.some((c) => /药品通用名|通用名|项目名称/.test(c)))) {
-      return { headerIdx: i, headers: cells };
+    const hasName = cells.some((c) => /药品通用名|通用名|项目名称|规则名称|知识点名称/.test(c));
+    const score = headerScore(cells);
+    if (hasName && score >= 2 && (!best || score > best.score)) {
+      best = { headerIdx: i, headers: cells, score };
     }
   }
-  return null;
+  return best;
 }
 
 function readLiangkuSheets(filePath) {
@@ -58,6 +77,7 @@ export function parseLiangkuXlsx(filePath, meta = {}) {
   const batch = slugPart(meta.batch || meta.title || '批次', 16);
   const policies = [];
   let idx = 0;
+  let rejected = 0;
   for (const { category, rows } of sheets) {
     for (const row of rows) {
       const name = pickField(row, ['药品通用名', '规则名称', '知识点名称', '名称', '项目名称', '通用名']);
@@ -68,6 +88,8 @@ export function parseLiangkuXlsx(filePath, meta = {}) {
       const textParts = [name, logic, detail, basis, code].filter(Boolean);
       if (!textParts.length) continue;
       if (!name && !logic && !detail) continue;
+      // 质量门：表头错位产出的纯序号/合计行不入库
+      if (isJunkPolicyText(textParts.join(' · '))) { rejected++; continue; }
       idx++;
       const refId = refIdLiangku(batch, category || name || '知识点', idx);
       policies.push({
@@ -97,7 +119,7 @@ export function parseLiangkuXlsx(filePath, meta = {}) {
       });
     }
   }
-  return { policies, problemDomains: [], stats: { liangku_rows: idx, sheets: sheets.length } };
+  return { policies, problemDomains: [], stats: { liangku_rows: idx, sheets: sheets.length, quality_rejected: rejected } };
 }
 
 export function parseLiangkuFromFile(filePath, meta) {

@@ -1,4 +1,36 @@
 {
-  "meta": { "version": 1 },
-  "items": []
+  "meta": {
+    "version": 1
+  },
+  "items": [
+    {
+      "id": "ED-mqvsltka-45d1",
+      "case_id": "main",
+      "rule_id": "T-201",
+      "finding_id": "F-LLM-004",
+      "reject_reason": "测试驳回理由",
+      "gold_draft": {
+        "expected_status": "不输出",
+        "note": "测试驳回理由"
+      },
+      "source": "audit_review",
+      "status": "pending",
+      "created_at": "2026-06-27T03:20:49.643Z"
+    },
+    {
+      "id": "ED-mqvsx02m-050a",
+      "case_id": "main",
+      "rule_id": "T-201",
+      "finding_id": "F-NSCLC001-004",
+      "reject_reason": "费用清单和医嘱中明确记载了奥希替尼的使用，但病理报告和检验结果中未包含EGFR/ALK/ROS1等靶点检测的阳性报告。辩方提出了基于临床特征和经验性使用EGFR-TKI的合理性，但缺乏直接的靶点检测证据支持。根据医保目录和指导原则，奥希替尼的使用需靶点检测阳性，因此本案存在证据缺口，需进一步核实。",
+      "gold_draft": {
+        "expected_status": "线索",
+        "prior_status": "疑点",
+        "note": "P5控辩裁降级: 费用清单和医嘱中明确记载了奥希替尼的使用，但病理报告和检验结果中未包含EGFR/ALK/ROS1等靶点检测的阳性报告。辩方提出了基于临床特征和经验性使用EGFR-TKI的合理性，但缺乏直接的靶点检测证据支持。根据医保目录和指导原则，奥希替尼的使用需靶点检测阳性，因此本案存在证据缺口，需进一步核实。"
+      },
+      "source": "p5_debate",
+      "status": "pending",
+      "created_at": "2026-06-27T03:29:31.294Z"
+    }
+  ]
 }

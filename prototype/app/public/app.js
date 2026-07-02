@@ -885,9 +885,20 @@ function renderReport(report) {
   ).join('');
   $$('.pager-tab', nav).forEach(b => b.onclick = () => switchReportPage(Number(b.dataset.page)));
 
+  // 体检模式复跑对比横幅：与上一次自查 diff（已消除=整改生效 / 仍存在 / 新增）
+  const diffBanner = exam && m.exam_diff ? `
+    <div class="recon-banner" title="与上次自查快照（${esc(m.exam_diff.from_at || '')}）对比">
+      🔁 <b>复跑对比</b>：较上次自查
+      <b style="color:var(--green,#2c6e49)">已消除 ${m.exam_diff.resolved_count} 项（¥${fmt(m.exam_diff.resolved_amount)}）</b> ·
+      仍存在 ${m.exam_diff.persisting_count} 项（¥${fmt(m.exam_diff.persisting_amount)}） ·
+      ${m.exam_diff.added_count ? `<b style="color:var(--red)">新增 ${m.exam_diff.added_count} 项（¥${fmt(m.exam_diff.added_amount)}）</b>` : '无新增'}
+      <span class="muted">— 整改留痕已存快照，可供飞检对质</span>
+    </div>` : '';
+
   pOverview.innerHTML = `
     ${reportHeroHTML(report, s, exam)}
     ${statusLineHTML(m, exam)}
+    ${diffBanner}
     <div class="summary-cards">${cards.map(c => `<div class="scard ${c.c}"><img class="scard-icon" src="/brand/icons/${c.icon || 'rules'}.svg" alt="" width="28" height="28"><div class="scard-body"><div class="n">${c.n}</div><div class="l">${c.l}</div></div></div>`).join('')}</div>
     ${evidenceActionsHTML(report)}
     ${leverageCardHTML(m, report, exam)}
@@ -1502,6 +1513,7 @@ function findingCard(f) {
   return `<div class="finding ${esc(f.status)}${f.shadow ? ' shadow' : ''}" data-fid="${esc(f.finding_id)}">
     <div class="f-head">
       <span class="status-badge ${esc(f.status)}">${esc(statusLabel)}</span>
+      ${f.violation_nature ? `<span class="nature-badge n-${f.violation_nature === '主观嫌疑' ? 'subj' : f.violation_nature === '非主观差错' ? 'obj' : 'tbd'}" title="违规性质（主观嫌疑/非主观差错/待定）${esc(f.nature_upgrade_reason ? '·' + f.nature_upgrade_reason : '')}">${esc(f.violation_nature)}</span>` : ''}
       ${f.shadow ? '<span class="shadow-badge" title="规则因高频驳回转入观察期，暂不计分">🌓 观察期·不计分</span>' : ''}
       <span class="f-title">${ruleLink(f.rule_id)}${f.corroborations && f.corroborations.length ? `<span class="merge-chip" title="合议层合并">🔗合议 ${f._merged_count}→1</span>` : ''}</span>
       <span class="f-meta">${confBadge(f)}<span class="risk ${esc(f.risk_level)}">${esc(f.risk_level)}</span><span class="amount">${f.shadow ? '<s>¥' + fmt(f.amount_involved) + '</s>' : '¥' + fmt(f.amount_involved)}</span><span class="chev">▶</span></span>
@@ -1525,7 +1537,7 @@ function findingCard(f) {
         ${renderExamRectification(f)}
         ${renderActions(f)}
         ${renderComplianceFlags(f)}
-        <div class="muted" style="margin-top:8px">违规类型（官方术语）：${esc(f.violation_type)} · 规则层级：${esc(f.layer || f.layer_label || '')} · 优先分(金额×置信)：${f.priority_score ?? '—'}</div>
+        <div class="muted" style="margin-top:8px">违规类型（官方术语）：${esc(f.violation_type)}${f.violation_nature ? ' · 违规性质：' + esc(f.violation_nature) : ''}${f.disposition_suggestion ? ' · ' + esc(f.disposition_suggestion) : ''} · 规则层级：${esc(f.layer || f.layer_label || '')} · 优先分(金额×置信)：${f.priority_score ?? '—'}</div>
     </div></div>`;
 }
 
@@ -1954,7 +1966,8 @@ async function showBench() {
 }
 
 async function showInstitution() {
-  const d = await fetch('/api/institution').then(r => r.json());
+  const insQS = MODE === 'exam' ? '?mode=exam' : '';
+  const d = await fetch('/api/institution' + insQS).then(r => r.json());
   const s = d.summary;
   const maxRuleAmt = Math.max(1, ...d.top_rules.map(r => r.amount));
   const ruleBars = d.top_rules.slice(0, 8).map(r => `<div class="ins-bar-row"><span class="ins-bar-label">${ruleLink(r.rule_id, { compact: true })} ${esc(r.rule_name)}</span><span class="ins-bar-track"><span class="ins-bar-fill" style="width:${Math.round(r.amount / maxRuleAmt * 100)}%"></span></span><span class="ins-bar-val">¥${fmt(r.amount)}<span class="muted"> ·${r.cases}案</span></span></div>`).join('');
@@ -1972,8 +1985,8 @@ async function showInstitution() {
     : `把单件 AI 初筛<b>升维到机构画像</b>——飞检前先给被检机构做一次"院端体检"，<b>指导飞检抽样</b>：优先查金额高发规则/高发科室，把有限人力压到高风险处。`;
   const html = `
     <p class="muted">${esc(d.generated)}。${intro}
-      <button class="v2btn" style="margin-left:8px;padding:3px 10px;font-size:12px" onclick="window.open('/api/export/institution','_blank')">📄 Markdown</button>
-      <button class="v2btn" style="margin-left:4px;padding:3px 10px;font-size:12px" onclick="window.open('/api/export/institution?format=html','_blank')">🖨 打印/PDF</button></p>
+      <button class="v2btn" style="margin-left:8px;padding:3px 10px;font-size:12px" onclick="window.open('/api/export/institution${examMode ? '?mode=exam' : ''}','_blank')">📄 Markdown</button>
+      <button class="v2btn" style="margin-left:4px;padding:3px 10px;font-size:12px" onclick="window.open('/api/export/institution?format=html${examMode ? '&mode=exam' : ''}','_blank')">🖨 打印/PDF</button></p>
     <div class="bench-kpis">
       <div class="bkpi"><div class="n">${s.audited_cases}</div><div class="l">受检案卷</div></div>
       <div class="bkpi red"><div class="n">${s.suspected_total}</div><div class="l">疑点合计</div></div>
@@ -2122,7 +2135,8 @@ async function showHaven(tab = 0) {
 // 院端三阶段自查地图：事前开单可防 / 事中结算前可拦 / 事后需深查 · 关口前移
 async function showThreeStage() {
   let d;
-  try { d = await fetch('/api/three-stage').then(r => r.json()); }
+  const tsQS = MODE === 'exam' ? '?mode=exam' : '';
+  try { d = await fetch('/api/three-stage' + tsQS).then(r => r.json()); }
   catch (e) { openModal('🗺 院端三阶段自查', `<p class="muted">加载失败：${esc(String(e))}</p>`); return; }
   if (d.error) { openModal('🗺 院端三阶段自查', `<p class="muted">${esc(d.error)}</p>`); return; }
   const sm = d.summary || {};

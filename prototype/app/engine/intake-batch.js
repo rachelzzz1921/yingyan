@@ -59,12 +59,15 @@ function parseCsvFeeList(text, filename) {
   const iAmt = col(['金额', 'amount', '合计']);
   const iCat = col(['类别', 'category', '费用类别']);
   const iDate = col(['日期', 'fee_date', '收费日期']);
+  // 医院收费数据的标准化编码列（HIS 项目编码 / 国家医保编码）——真实场景最可依赖的字段
+  const iCode = col(['项目编码', '项目代码', '收费编码', 'item_code', '编码']);
+  const iInsCode = col(['医保编码', '国家医保代码', '医保代码', 'insurance_code', '贯标码']);
   const items = [];
   for (let r = 1; r < lines.length; r++) {
     const cols = lines[r].split(sep).map(c => c.trim().replace(/^"|"$/g, ''));
     if (!cols.some(Boolean)) continue;
     const amount = parseFloat(cols[iAmt >= 0 ? iAmt : 4]) || 0;
-    items.push({
+    const item = {
       line_no: r,
       fee_date: iDate >= 0 ? cols[iDate] : '',
       category: iCat >= 0 ? cols[iCat] : '未分类',
@@ -75,7 +78,10 @@ function parseCsvFeeList(text, filename) {
       amount,
       insurance_class: '医保',
       anchor: { doc: filename, ocr_conf: 0.7 },
-    });
+    };
+    if (iCode >= 0 && cols[iCode]) item.item_code = cols[iCode];
+    if (iInsCode >= 0 && cols[iInsCode]) item.insurance_code = cols[iInsCode];
+    items.push(item);
   }
   return { fee_list: { items, doc_type: '费用清单（CSV导入）' } };
 }

@@ -1,6 +1,7 @@
 import XLSX from 'xlsx';
 import fs from 'fs';
 import { refIdJiangsuDrug } from '../lib/normalize.mjs';
+import { CONFIG } from '../config.mjs';
 
 const DEMO_DRUGS = ['奥希替尼', '培美曲塞', '贝伐珠单抗', '人血白蛋白', '聚乙二醇化重组人粒细胞刺激因子', '升白', '曲妥珠单抗', '帕博利珠单抗'];
 
@@ -34,7 +35,7 @@ export function parseJiangsuXlsx(filePath, meta = {}) {
     const remark = pickField(row, ['备注', '限定', '支付范围', '医保支付标准', '支付标准']);
     const cls = pickField(row, ['医保类别', '甲乙类', '类别']);
     if (!name && !code) continue;
-    if (!isDemoDrug(name) && rows.length > 30) continue;
+    if (!CONFIG.fullImport && !isDemoDrug(name) && rows.length > 30) continue; // KB_FULL_IMPORT=1 解除demo截断
     idx++;
     const refId = code ? refIdJiangsuDrug(code) : `KB1-江苏-药品目录-行${idx}`;
     policies.push({
@@ -91,7 +92,7 @@ export function parseDrugNationalXlsx(filePath, meta = {}) {
     const remark = pickField(row, ['备注', '限定支付范围', '限定']);
     const cls = pickField(row, ['医保类别', '甲乙类', '类别']);
     if (!name) continue;
-    if (!isDemoDrug(name) && rows.length > 40) continue;
+    if (!CONFIG.fullImport && !isDemoDrug(name) && rows.length > 40) continue; // KB_FULL_IMPORT=1 解除demo截断
     policies.push({
       doc_id: meta.doc_id || 'KB1-目录2025',
       ref_id: `KB1-目录2025-${name.slice(0, 20).replace(/\s/g, '')}`,

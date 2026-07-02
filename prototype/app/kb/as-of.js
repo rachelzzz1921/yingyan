@@ -24,13 +24,15 @@ function filterPolicyMaps(maps, asOf) {
   if (!asOf || !maps) return maps;
   const policyTexts = {};
   const policyVerified = {};
+  const policyPending = {};
   for (const [refId, text] of Object.entries(maps.policyTexts || {})) {
     const meta = maps.policyMeta?.[refId];
     if (meta && !isEffective(meta, asOf)) continue;
     policyTexts[refId] = text;
     policyVerified[refId] = maps.policyVerified?.[refId];
+    if (maps.policyPending?.[refId]) policyPending[refId] = true;
   }
-  return { ...maps, policyTexts, policyVerified };
+  return { ...maps, policyTexts, policyVerified, policyPending };
 }
 
 function buildPolicyMetaFromKb(kb1, kb2) {

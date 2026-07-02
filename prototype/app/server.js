@@ -50,7 +50,10 @@ const priorityService = require('./engine/priority-service');
 const { buildEvidencePackage } = require('./engine/evidence-package');
 const { buildViolationSummary, renderSummaryMarkdown } = require('./engine/violation-report');
 const checklistStore = require('./engine/checklist-store');
+const examSnapshot = require('./engine/exam-snapshot');
+const { buildRefundEstimate, renderRefundMarkdown } = require('./engine/refund-estimate');
 const { enrichFindingsPipeline } = require('./engine/priority-enrich');
+const { enrichFindingNature } = require('./engine/priority-nature');
 const { buildGovernanceSnapshot } = require('./engine/governance-snapshot');
 const govSync = require('./engine/governance-sync');
 const { adminTokenConfigured, enforceAdmin } = require('./engine/admin-auth');
@@ -161,6 +164,7 @@ function auditContextForRecord(record) {
   return {
     policyTexts: filtered.policyTexts,
     policyVerified: filtered.policyVerified,
+    policyPending: filtered.policyPending || {},
     parseQuality,
     as_of: asOf ? asOf.toISOString().slice(0, 10) : null,
   };
@@ -170,14 +174,26 @@ function runAuditForRecord(record, extra = {}) {
   const ctx = auditContextForRecord(record);
   let rules = rulesWithOverlay(DB.rulesDoc.rules);
   if (extra.examMode) rules = filterRulesForExam(rules).active;
-  return runAudit(record, rules, {
+  const report = runAudit(record, rules, {
     policyTexts: ctx.policyTexts,
     policyVerified: ctx.policyVerified,
+    policyPending: ctx.policyPending,
     parseQuality: ctx.parseQuality,
     shadowRules: extra.shadowRules ?? currentShadowRules(),
     retiredRules: extra.retiredRules ?? currentRetiredRules(),
     ...extra,
   });
+  annotateNature(report, { examMode: !!extra.examMode });
+  return report;
+}
+
+// 单案稽核也标注违规性质（主观嫌疑/非主观差错/待定）——此前只有优先队列链路有。
+// 仅补充元数据，不改 status/金额/分数；跨案卷重复升级判断仍只在队列 pipeline 做（需 store 上下文）。
+function annotateNature(report, { examMode = false } = {}) {
+  for (const f of report?.findings || []) {
+    enrichFindingNature(f, { examMode });
+  }
+  return report;
 }
 
 // 对抗注入攻击库：多种技法，每种注入不同话术/位置、目标不同核查项，产出不同结果。
@@ -214,6 +230,7 @@ function runBatchCase(caseId, mode) {
     rep = runAudit(rec, rules, {
       policyTexts: ctx.policyTexts,
       policyVerified: ctx.policyVerified,
+      policyPending: ctx.policyPending,
       parseQuality: ctx.parseQuality,
       shadowRules: [],
       retiredRules: [],
@@ -344,10 +361,17 @@ function sendFile(res, file) {
   });
 }
 function readBody(req) {
-  return new Promise((resolve) => {
+  return new Promise((resolve, reject) => {
     let data = '';
     req.on('data', c => { data += c; if (data.length > 5e6) req.destroy(); });
-    req.on('end', () => { try { resolve(data ? JSON.parse(data) : {}); } catch { resolve({}); } });
+    req.on('end', () => {
+      try {
+        resolve(data ? JSON.parse(data) : {});
+      } catch (e) {
+        e.code = 'INVALID_JSON';
+        reject(e);
+      }
+    });
   });
 }
 
@@ -477,13 +501,14 @@ function patchTask(store, id, patch, by) {
 // ---------- iter14 机构汇总画像：对全部演示案卷批量初筛后聚合成「院端体检报告」 ----------
 const DOMAIN_BY_ID = { main: '肿瘤', clean: '肿瘤', edge_egfr: '肿瘤', edge_gcsf: '肿瘤', ortho: '骨科', drg: 'DRG/支付方式', imaging: '医学影像', anes: '麻醉', pharmacy: '定点零售药店', icu: '重症医学', uploaded: '导入件' };
 function round2(x) { return Math.round((x + Number.EPSILON) * 100) / 100; }
-function institutionPortrait(DB) {
+function institutionPortrait(DB, { examMode = false } = {}) {
   const byRule = {}, byType = {}, byDept = {}, byDomain = {}, byMonth = {}, byDoctor = {}, caseRows = [];
   let suspectedTotal = 0, clueTotal = 0, amountTotal = 0, cleanPass = 0, cleanTotal = 0;
   for (const id of Object.keys(DB.cases)) {
     if (id === 'uploaded') continue;                       // 跳过临时导入件
     const rec = DB.cases[id];
-    const rep = runAuditForRecord(rec);
+    // 院端口径（体检模式）：与单案自查一致走 exam 规则子集，画像数字不混入 E-/P- 监管侧规则
+    const rep = runAuditForRecord(rec, examMode ? { examMode: true } : {});
     const s = rep.report_meta.summary;
     const dept = rec.front_page?.admit_dept || '—';
     const domain = rec.case_meta?.specialty || DOMAIN_BY_ID[id] || '其他';
@@ -526,8 +551,11 @@ function institutionPortrait(DB) {
   const by_doctor = Object.values(byDoctor).map(d => ({ doctor: d.doctor, cases: d.cases, suspected: d.suspected, clue: d.clue, amount: round2(d.amount) })).sort((a, b) => b.amount - a.amount);
   return {
     hospital: '示范市第一人民医院（虚构演示）',
-    generated: '运行时实测 · 对全部演示案卷批量初筛后聚合',
+    generated: examMode
+      ? '运行时实测 · 院端体检口径（exam 规则子集）· 对全部演示案卷批量初筛后聚合'
+      : '运行时实测 · 对全部演示案卷批量初筛后聚合',
     disclaimer: '本画像由鹰眼对演示案卷集批量AI初筛后聚合，金额为初筛疑点金额（未计线索）。真实飞检按抽样案卷批量生成。',
+    rule_scope: examMode ? 'exam' : 'full',
     summary: { audited_cases: caseRows.length, suspected_total: suspectedTotal, clue_total: clueTotal, amount_total: round2(amountTotal), clean_pass: `${cleanPass}/${cleanTotal}`, domains_covered: by_domain.length },
     top_rules, violation_types, by_dept, by_domain, by_month, by_doctor, case_rows: caseRows,
   };
@@ -791,6 +819,14 @@ function renderChecklist(rep, record, mode) {
     }
     L.push('');
   });
+  if (exam) {
+    // 院端 ROI 闭环：整改清单末尾附主动退回测算（自查从宽 vs 飞检暴露区间）
+    try {
+      L.push('---');
+      L.push(renderRefundMarkdown(buildRefundEstimate(rep.findings || [])));
+      L.push('');
+    } catch (e) { /* 测算失败不阻断清单 */ }
+  }
   L.push(`---\n*本清单由鹰眼自动生成，每条${exam ? '风险点' : '疑点'}均附三要素证据链，${exam ? '院端可据此飞检前自查整改' : '可直接落条款对质'}。政策条款原文取自知识库，未凭记忆生成。*`);
   return L.join('\n');
 }
@@ -812,10 +848,19 @@ async function htmlToPdf(html) {
 
 function checklistMdToHtml(md, title) {
   const esc = (s) => String(s).replace(/[&<>]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]));
-  const lines = md.split('\n'); const out = []; let inList = false;
+  const lines = md.split('\n'); const out = []; let inList = false; let inTable = false;
   const inline = (t) => esc(t).replace(/\*\*(.+?)\*\*/g, '<b>$1</b>').replace(/☐/g, '&#9744;');
+  const closeTable = () => { if (inTable) { out.push('</table>'); inTable = false; } };
   for (const raw of lines) {
     const line = raw.replace(/\r$/, '');
+    if (/^\|/.test(line)) {
+      if (/^\|[-:|]+\|$/.test(line.replace(/\s/g, ''))) continue; // 分隔行
+      const cells = line.split('|').slice(1, -1).map(c => c.trim());
+      if (!inTable) { out.push('<table style="border-collapse:collapse;font-size:12.5px;margin:8px 0"><tr>' + cells.map(c => `<th style="border:1px solid #d8e2f5;padding:4px 8px;background:#f5f8ff">${inline(c)}</th>`).join('') + '</tr>'); inTable = true; continue; }
+      out.push('<tr>' + cells.map(c => `<td style="border:1px solid #e6ebf2;padding:4px 8px">${inline(c)}</td>`).join('') + '</tr>');
+      continue;
+    }
+    closeTable();
     if (/^## /.test(line)) { if (inList) { out.push('</ul>'); inList = false; } out.push(`<h2>${inline(line.slice(3))}</h2>`); }
     else if (/^# /.test(line)) { out.push(`<h1>${inline(line.slice(2))}</h1>`); }
     else if (/^> /.test(line)) { out.push(`<blockquote>${inline(line.slice(2))}</blockquote>`); }
@@ -824,6 +869,7 @@ function checklistMdToHtml(md, title) {
     else { if (inList) { out.push('</ul>'); inList = false; } if (line.trim()) out.push(`<p>${inline(line)}</p>`); }
   }
   if (inList) out.push('</ul>');
+  closeTable();
   return `<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8"><title>${esc(title)}</title>
 <style>body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;color:#0f1b2d;max-width:900px;margin:28px auto;padding:0 24px;line-height:1.7}
 h1{color:#002FA7;font-size:22px;border-bottom:3px solid #002FA7;padding-bottom:8px}h2{color:#002FA7;font-size:15px;margin-top:22px;background:#f5f8ff;padding:6px 10px;border-radius:5px}
@@ -841,7 +887,9 @@ const server = http.createServer(async (req, res) => {
 
     if (p === '/api/case') {
       const id = url.searchParams.get('id') || 'main';
-      return sendJSON(res, DB.cases[id] || DB.record);
+      const record = DB.cases[id];
+      if (!record) return sendJSON(res, { error: 'case not found', case_id: id }, 404);
+      return sendJSON(res, record);
     }
     if (p === '/api/cases') {
       const detail = url.searchParams.get('detail') === '1' || url.searchParams.has('status') || url.searchParams.has('dept');
@@ -1001,6 +1049,29 @@ const server = http.createServer(async (req, res) => {
       if (p === '/api/checklist' && req.method === 'GET') {
         return sendJSON(res, { checklists: checklistStore.listChecklists() });
       }
+      // 全量自查清单工作台：官方问题清单(12领域236条)逐条勾选 + 按领域完成率 + 引擎命中对照
+      if (p === '/api/checklist/full' && req.method === 'GET') {
+        const full = checklistStore.buildFullChecklist(DB.problemLists);
+        const caseId = url.searchParams.get('case_id');
+        let findings = null;
+        if (caseId) {
+          const store = priorityStore.loadStore();
+          findings = store.cases[caseId]?.findings_cache || null;
+          if (!findings && DB.cases[caseId]) {
+            try { findings = runAuditForRecord(DB.cases[caseId], { examMode: true }).findings; } catch { /* 非关键 */ }
+          }
+        }
+        return sendJSON(res, checklistStore.checklistWithProgress(full, findings));
+      }
+      // 勾选状态登记：未查/已查无问题/发现问题/已整改 + 责任科室 + 说明
+      if (p === '/api/checklist/progress' && req.method === 'POST') {
+        const body = await readBody(req);
+        if (!body.item_id) return sendJSON(res, { ok: false, error: '缺 item_id' }, 400);
+        const r = checklistStore.setItemProgress(body.checklist_id || 'national-full-self', body.item_id, {
+          status: body.status, dept: body.dept, note: body.note,
+        });
+        return sendJSON(res, r, r.ok ? 200 : 400);
+      }
       const clMatch = p.match(/^\/api\/checklist\/([^/]+)(?:\/map)?$/);
       if (clMatch && req.method === 'GET') {
         const cl = checklistStore.getChecklist(clMatch[1]);
@@ -1080,7 +1151,9 @@ const server = http.createServer(async (req, res) => {
     // 事实层：稽核案卷对象
     if (p === '/api/caseobject') {
       const id = url.searchParams.get('id') || 'main';
-      return sendJSON(res, runAuditForRecord(DB.cases[id] || DB.record).case_object);
+      const record = DB.cases[id];
+      if (!record) return sendJSON(res, { error: 'case not found', case_id: id }, 404);
+      return sendJSON(res, runAuditForRecord(record).case_object);
     }
 
     // 复核反馈闭环：采纳/驳回/补材料 → 双链沉淀（驳回≥3 / 采纳≥3且窗口内驳回≤1）
@@ -1494,6 +1567,38 @@ const server = http.createServer(async (req, res) => {
 
     if (p === '/api/maturity') {
       try {
+        if (url.searchParams.get('full') !== '1') {
+          const benchIds = benchCaseIds();
+          const goldCount = benchIds.filter(id => DB.expectedByCase?.[id]).length;
+          const reg = registryStats();
+          const asOfEarly = filterPolicyMaps(DB.policyMapsRaw, new Date('2024-06-01'));
+          const asOfLate = filterPolicyMaps(DB.policyMapsRaw, new Date('2025-06-01'));
+          const jiangsuRef = 'KB1-江苏-护理价格2025';
+          return sendJSON(res, {
+            giac_themes: ['上下文工程(as_of+预算)', '四类评测(YHF)', '合规前置', '垂直ParseQA', 'Intake/L1'],
+            g0: null,
+            g4: null,
+            g1: null,
+            g2: null,
+            g2_pass_rate: null,
+            g2_source: 'quick_snapshot',
+            l1_sidecar: null,
+            bench_cases: benchIds.length,
+            gold_ratio: goldCount / Math.max(benchIds.length, 1),
+            registry: reg,
+            shadow_summary: null,
+            as_of: {
+              ref: jiangsuRef,
+              excluded_before_2025: !asOfEarly.policyTexts[jiangsuRef],
+              included_after_2025: !!asOfLate.policyTexts[jiangsuRef],
+              pass: !asOfEarly.policyTexts[jiangsuRef] && !!asOfLate.policyTexts[jiangsuRef],
+            },
+            governance_auth: adminTokenConfigured() ? 'token' : 'demo_open',
+            governance_remote: { mode: 'quick_snapshot' },
+            l1_production: null,
+            quick: true,
+          });
+        }
         const payload = await cachedAsync('maturity', 120000, async () => {
         const { runYhfGate } = require(path.resolve(__dirname, '../../yhf/index.js'));
         const { runPromptHarness } = require(path.resolve(__dirname, '../../yhf/harness/l1-prompt'));
@@ -1870,7 +1975,7 @@ const server = http.createServer(async (req, res) => {
       });
     }
 
-    if (p === '/api/institution') return sendJSON(res, institutionPortrait(DB));
+    if (p === '/api/institution') return sendJSON(res, institutionPortrait(DB, { examMode: url.searchParams.get('mode') === 'exam' }));
 
     // 对抗注入防护矩阵：逐一注入多种技法的攻击，每种产出不同结果（特征识别 + 架构守住）
     if (p === '/api/injection-defense') {
@@ -1912,14 +2017,44 @@ const server = http.createServer(async (req, res) => {
       } catch (e) { return sendJSON(res, { error: '注入防护矩阵失败：' + e.message }, 500); }
     }
 
+    // 主动退回金额测算：按违规性质分档（自查从宽 vs 飞检暴露区间）——院端 ROI 核心
+    if (p === '/api/exam/refund-estimate') {
+      const caseId = url.searchParams.get('case_id') || 'main';
+      const record = DB.cases[caseId] || DB.record;
+      try {
+        const rep = runAuditForRecord(record, { examMode: true });
+        const est = buildRefundEstimate(rep.findings || []);
+        est.case_id = caseId;
+        if (url.searchParams.get('format') === 'md') {
+          res.writeHead(200, { 'Content-Type': 'text/markdown; charset=utf-8' });
+          return res.end(renderRefundMarkdown(est));
+        }
+        return sendJSON(res, est);
+      } catch (e) { return sendJSON(res, { error: '退回测算失败:' + e.message }, 500); }
+    }
+
+    // 自查复跑留痕与整改前后对比
+    if (p === '/api/exam/snapshots') {
+      const caseId = url.searchParams.get('case_id') || null;
+      return sendJSON(res, { snapshots: examSnapshot.listSnapshots(caseId).map(s => ({ snapshot_id: s.snapshot_id, case_id: s.case_id, at: s.at, summary: s.summary })) });
+    }
+    if (p === '/api/exam/diff') {
+      const caseId = url.searchParams.get('case_id') || 'main';
+      const r = examSnapshot.diffSnapshots(caseId, url.searchParams.get('from'), url.searchParams.get('to'));
+      return sendJSON(res, r, r.ok ? 200 : 400);
+    }
+
     // 院端三阶段自查地图：把疑点按"最早能在哪个阶段拦住"分类(事前/事中/事后),体现关口前移
     if (p === '/api/three-stage') {
       const caseId = url.searchParams.get('case_id') || 'main';
       const record = DB.cases[caseId] || DB.record;
+      const examMode = url.searchParams.get('mode') === 'exam';
       try {
-        const rep = runAuditForRecord(record, {});
+        const rep = runAuditForRecord(record, examMode ? { examMode: true } : {});
         const { computeThreeStage } = require('./engine/three-stage');
-        return sendJSON(res, computeThreeStage(rep.findings || []));
+        const out = computeThreeStage(rep.findings || []);
+        out.rule_scope = examMode ? 'exam' : 'full';
+        return sendJSON(res, out);
       } catch (e) { return sendJSON(res, { error: '三阶段自查计算失败:' + e.message }, 500); }
     }
 
@@ -1961,7 +2096,7 @@ const server = http.createServer(async (req, res) => {
 
     // iter18 机构画像导出：《院端体检报告》markdown
     if (p === '/api/export/institution') {
-      const portrait = institutionPortrait(DB);
+      const portrait = institutionPortrait(DB, { examMode: url.searchParams.get('mode') === 'exam' });
       const format = url.searchParams.get('format') || 'md';
       if (format === 'html') {
         res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
@@ -2016,7 +2151,8 @@ const server = http.createServer(async (req, res) => {
     if (p === '/api/audit' && req.method === 'POST') {
       const body = await readBody(req);
       const mode = url.searchParams.get('mode');
-      let record = body.record || DB.cases[body.caseId] || DB.record;
+      let record = body.record || DB.cases[body.caseId || 'main'];
+      if (!record) return sendJSON(res, { error: 'case not found', case_id: body.caseId || 'main' }, 404);
       // 对抗注入演示：注入指定攻击（body.inject 为攻击 id 字符串，或 true=默认第一种）
       let injectedAttack = null;
       if (body.inject) {
@@ -2051,6 +2187,7 @@ const server = http.createServer(async (req, res) => {
             report.report_meta.audit_scope = report.report_meta.audit_scope || det.report_meta.audit_scope;
             report.report_meta.caseobject_summary = report.report_meta.caseobject_summary || det.report_meta.caseobject_summary;
           } catch (_) { /* 补充元数据失败不影响主报告 */ }
+          annotateNature(report);
           report.report_meta.panel = '稽核';
           const llmOverlayIds = Object.keys(precipService.loadRuleOverlay(DATA).patches || {});
           if (llmOverlayIds.length) report.report_meta.overlay_rules = llmOverlayIds;
@@ -2083,10 +2220,12 @@ const server = http.createServer(async (req, res) => {
         const report = runAudit(record, rules, {
           policyTexts,
           policyVerified,
+          policyPending: ctx.policyPending,
           parseQuality: ctx.parseQuality,
           shadowRules: currentShadowRules(),
           retiredRules: currentRetiredRules(),
         });
+        annotateNature(report);
         if (ragMeta) report.report_meta.rag = ragMeta;
         report.report_meta.super_fused = true;
         report.report_meta.super_llm = llmReady() ? 'deferred' : 'fallback';
@@ -2126,10 +2265,12 @@ const server = http.createServer(async (req, res) => {
       const report = runAudit(record, rules, {
         policyTexts,
         policyVerified,
+        policyPending: ctx.policyPending,
         parseQuality: ctx.parseQuality,
         shadowRules: currentShadowRules(),
         retiredRules: currentRetiredRules(),
       });
+      annotateNature(report, { examMode: mode === 'exam' });
       if (ragMeta) report.report_meta.rag = ragMeta;
       report.report_meta.engine_mode = mode === 'exam'
         ? `体检模式（院端自查·${examFilterMeta.used}/${examFilterMeta.total} 条院端规则子集）`
@@ -2154,6 +2295,18 @@ const server = http.createServer(async (req, res) => {
       report.report_meta.injected = !!body.inject;
       if (injectedAttack) report.report_meta.injected_attack = { id: injectedAttack.id, technique: injectedAttack.technique, loc: injectedAttack.loc, targets: injectedAttack.targets, goal: injectedAttack.goal };
       if (body.persistHistory !== false) persistPriorityAudit(caseId, report, body.auditor_id);
+      // 体检模式落自查快照（整改前后复跑对比的留痕基础）；注入演示不入快照
+      if (mode === 'exam' && !body.inject) {
+        try {
+          const snap = examSnapshot.recordSnapshot(caseId, report);
+          report.report_meta.exam_snapshot_id = snap.snapshot_id;
+          const snaps = examSnapshot.listSnapshots(caseId);
+          if (snaps.length >= 2) {
+            const diff = examSnapshot.diffSnapshots(caseId);
+            if (diff.ok) report.report_meta.exam_diff = { from_at: diff.from.at, ...diff.summary };
+          }
+        } catch (e) { /* 快照失败不影响主报告 */ }
+      }
       return sendJSON(res, report);
     }
 
@@ -2259,11 +2412,18 @@ const server = http.createServer(async (req, res) => {
       return sendFile(res, dFile);
     }
 
+    if (p.startsWith('/api/')) {
+      return sendJSON(res, { error: 'API not found', path: p }, 404);
+    }
+
     // 静态文件
     let file = p === '/' ? path.join(PUBLIC, 'index.html') : path.join(PUBLIC, p);
     if (!file.startsWith(PUBLIC)) { res.writeHead(403); return res.end('Forbidden'); }
     return sendFile(res, file);
   } catch (e) {
+    if (e.code === 'INVALID_JSON') {
+      return sendJSON(res, { error: 'invalid JSON body' }, 400);
+    }
     sendJSON(res, { error: e.message, stack: e.stack }, 500);
   }
 });

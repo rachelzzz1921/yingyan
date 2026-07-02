@@ -1,6 +1,7 @@
 import fs from 'fs';
 import pdf from 'pdf-parse/lib/pdf-parse.js';
 import { drugRowsToPolicies, extractDrugRowsFromText } from './catalog-row.mjs';
+import { CONFIG } from '../config.mjs';
 
 export async function parsePdfDrugCatalog(filePath, meta = {}) {
   if (!fs.existsSync(filePath)) return { policies: [], problemDomains: [], stats: {} };
@@ -16,7 +17,8 @@ export async function parsePdfDrugCatalog(filePath, meta = {}) {
       stats: { error: e.message, parse_status: '待OCR' },
     };
   }
-  const rows = extractDrugRowsFromText(text, { demoOnly: true });
+  // demoOnly 默认开（只留演示药品）；KB_FULL_IMPORT=1 解除截断跑全量
+  const rows = extractDrugRowsFromText(text, { demoOnly: !CONFIG.fullImport });
   const policies = drugRowsToPolicies(rows, {
     ...meta,
     crawl_source: 'drug-catalog-2025-pdf',

@@ -14,6 +14,8 @@
 
 'use strict';
 
+const fs = require('fs');
+const path = require('path');
 const { genDebate } = require('./debate');
 const { compileCaseObject } = require('./case-object');
 const { applyComplianceGate } = require('./compliance-gate');
@@ -984,7 +986,7 @@ function mkFinding(ctx, ruleId, fields) {
     status: fields.status,
     amount_involved: fields.amount_involved ?? 0,
     evidence: fields.evidence || [],
-    policy: (rule.policy_basis || []).map(ref => ({ ref, text: lookupPolicy(ctx, ref), verify_status: ctx.policyVerified[ref] ? '✅已核验' : '⚠待核验逐字原文' })),
+    policy: (rule.policy_basis || []).map(ref => ({ ref, text: lookupPolicy(ctx, ref), verify_status: policyVerifyLabel(ctx, ref) })),
     reasoning: fields.reasoning || '',
     needs_more: fields.needs_more || [],
     disposal_suggestion: fields.disposal || '',
@@ -994,6 +996,13 @@ function mkFinding(ctx, ruleId, fields) {
 
 function lookupPolicy(ctx, ref) {
   return ctx.policyTexts?.[ref] || `（KB1/KB2 取原文，引用ID: ${ref}）`;
+}
+
+// 三态核验标注：人工核实 / 爬虫入库待抽检 / 不在库（待核验逐字原文）
+function policyVerifyLabel(ctx, ref) {
+  if (ctx.policyVerified?.[ref]) return '✅已核验';
+  if (ctx.policyPending?.[ref]) return '🕒爬虫入库·待人工抽检';
+  return '⚠待核验逐字原文';
 }
 
 // ---------- 升2 触发器路由：每条规则的廉价前置谓词（命中才"激活"，否则零成本跳过）----------
@@ -1143,6 +1152,111 @@ function computeConfidence(finding, minOcr, parseQuality) {
   return Math.max(5, Math.min(100, Math.round(c)));
 }
 
+// ---------- doc08宏观③ 定义层仲裁：relations(subsumes/互斥) + 全局豁免清单 ----------
+// 此前 yaml 里已声明 relations 与 meta.global_suppression_list，但引擎不读——doc08 的
+// 定义层治理停留在文档。本层在 reconcile 之前执行：
+//  ① subsumes：父规则命中时，其子规则命中降为父的明细（不平行计金额）
+//  ② mutually_exclusive_with：同一费用行同时命中互斥双方 → 取证据更强者，弱者记为备择定性
+//  ③ global_suppression_list：合法异常场景（放化疗周期/血透/特例单议/急诊转诊）统一豁免对应规则
+
+const SUPPRESSION_SCENE_DETECTORS = {
+  '放化疗周期规律住院': (record) => {
+    const dx = JSON.stringify(record.front_page?.principal_diagnosis || '') + JSON.stringify(record.discharge_summary?.discharge_diagnosis || '');
+    const notes = (record.progress_notes || []).map(n => n.text || '').join(' ');
+    return /恶性肿瘤|癌/.test(dx) && /化疗|放疗/.test(dx + notes) && /周期/.test(notes + JSON.stringify(record.case_meta || {}));
+  },
+  '血透按疗程规律住院': (record) => {
+    const all = JSON.stringify(record.long_term_orders?.items || []) + JSON.stringify(record.fee_list?.items || []);
+    return /血液透析|血透/.test(all);
+  },
+  'DRG特例单议病例': (record) => {
+    const scr = record.special_case_review || record.case_meta?.special_case_review;
+    return /已批准|approved/.test(String(scr || ''));
+  },
+  '急诊新发/转诊转院': (record) => {
+    return /急诊|转诊|转院/.test(String(record.front_page?.admit_type || '') + String(record.admission_note?.admit_way || ''));
+  },
+};
+
+let _rulesMetaCache;
+function loadRulesMeta() {
+  if (_rulesMetaCache !== undefined) return _rulesMetaCache;
+  try {
+    _rulesMetaCache = JSON.parse(fs.readFileSync(path.join(__dirname, '../../data/rules/rules.json'), 'utf8')).meta || null;
+  } catch { _rulesMetaCache = null; }
+  return _rulesMetaCache;
+}
+
+function applyRelationsArbitration(findings, rules, record) {
+  const log = { subsumed: [], exclusions: [], suppressed: [] };
+  let out = findings.slice();
+
+  // ③ 全局豁免（先做：合法异常整场景不进入后续定性）
+  const meta = loadRulesMeta();
+  for (const entry of meta?.global_suppression_list || []) {
+    const detect = SUPPRESSION_SCENE_DETECTORS[entry.scene];
+    if (!detect) continue;
+    let sceneOn = false;
+    try { sceneOn = detect(record); } catch { sceneOn = false; }
+    if (!sceneOn) continue;
+    const suppressIds = new Set(entry.suppresses || []);
+    const hit = out.filter(f => suppressIds.has(f.rule_id));
+    if (!hit.length) continue;
+    out = out.filter(f => !suppressIds.has(f.rule_id));
+    for (const f of hit) {
+      log.suppressed.push({ finding_id: f.finding_id, rule_id: f.rule_id, scene: entry.scene, basis: entry.basis });
+    }
+  }
+
+  // ① subsumes：父命中 → 子命中并入父的明细
+  const byRule = () => { const m = new Map(); for (const f of out) { if (!m.has(f.rule_id)) m.set(f.rule_id, []); m.get(f.rule_id).push(f); } return m; };
+  let idx = byRule();
+  for (const [ruleId, parents] of idx) {
+    const rel = rules[ruleId]?.relations;
+    if (!rel?.subsumes?.length) continue;
+    for (const childId of rel.subsumes) {
+      const children = idx.get(childId) || [];
+      if (!children.length) continue;
+      const parent = parents[0];
+      parent.corroborations = parent.corroborations || [];
+      for (const c of children) {
+        parent.corroborations.push({ rule_id: c.rule_id, rule_name: c.rule_name, status: c.status, violation_type: c.violation_type, reasoning: c.reasoning, policy: c.policy, subsumed: true });
+        log.subsumed.push({ parent: ruleId, child: childId, finding_id: c.finding_id, note: rel.note || '' });
+      }
+      out = out.filter(f => f.rule_id !== childId);
+      idx = byRule();
+    }
+  }
+
+  // ② 互斥：同一费用行同时命中互斥双方 → 证据更强者胜出，弱者记为备择定性
+  const dropped = new Set();
+  for (const f of out) {
+    if (dropped.has(f)) continue;
+    const rel = rules[f.rule_id]?.relations;
+    if (!rel?.mutually_exclusive_with?.length) continue;
+    const fKey = feeLineKey(f);
+    if (!fKey) continue;
+    for (const otherId of rel.mutually_exclusive_with) {
+      for (const o of out) {
+        if (o === f || dropped.has(o) || o.rule_id !== otherId) continue;
+        if (feeLineKey(o) !== fKey) continue;
+        const winner = primaryScore(f) >= primaryScore(o) ? f : o;
+        const loser = winner === f ? o : f;
+        winner.alternative_qualification = {
+          rule_id: loser.rule_id, rule_name: loser.rule_name, violation_type: loser.violation_type,
+          reasoning: loser.reasoning, note: '互斥定性：证据更强者胜出，此为备择定性（复核时可切换）',
+        };
+        dropped.add(loser);
+        log.exclusions.push({ fee_lines: fKey, kept: winner.rule_id, dropped: loser.rule_id, note: rel.note || '' });
+      }
+    }
+  }
+  out = out.filter(f => !dropped.has(f));
+
+  const touched = log.subsumed.length + log.exclusions.length + log.suppressed.length;
+  return { findings: out, arbitration_log: touched ? log : null };
+}
+
 // ---------- doc08宏观① 合议层 Reconciliation：一笔钱一主疑点、金额去重、多定性合并 ----------
 function feeLineKey(finding) {
   const ids = new Set();
@@ -1241,6 +1355,7 @@ function runAudit(record, rulesArray, options = {}) {
     },
     policyTexts: options.policyTexts || {},
     policyVerified: options.policyVerified || {},
+    policyPending: options.policyPending || {},
   };
 
   // 升2 触发器路由：先算哪些规则被激活（其余零成本跳过）
@@ -1267,8 +1382,11 @@ function runAudit(record, rulesArray, options = {}) {
   let distractors = [];
   try { distractors = checkDistractors(ctx); } catch (e) { /* 干扰项分析在异常材料形状下失败不阻断稽核 */ }
 
+  // doc08宏观③ 定义层仲裁：subsumes/互斥/全局豁免（在合议与计金额之前）
+  const arb = applyRelationsArbitration(findings, rules, record);
+
   // doc08宏观① 合议层：一笔钱被多规则命中→合并1主疑点+佐证视角、金额去重（必须在计金额前）
-  const rec = reconcile(findings);
+  const rec = reconcile(arb.findings);
   let merged = rec.findings;
   const parseQuality = record.case_meta?.parse_quality || options.parseQuality || null;
 
@@ -1306,6 +1424,7 @@ function runAudit(record, rulesArray, options = {}) {
       routing,
       caseobject_summary: caseObj.summary,
       reconciliation_log: rec.reconciliation_log, // 合议日志（去重证明）
+      arbitration_log: arb.arbitration_log,       // 定义层仲裁日志（subsumes/互斥/全局豁免）
       coverage,                                    // 覆盖度声明
       summary: {
         raw_findings_before_merge: findings.length,
@@ -1371,4 +1490,4 @@ function applyPostAuditGovernance(findings, options = {}) {
   };
 }
 
-module.exports = { runAudit, parseDate, computeExpectedQty, compileCaseObject, reconcile, applyPostAuditGovernance, ruleCheckerIds: Object.keys(ruleCheckers) };
+module.exports = { runAudit, parseDate, computeExpectedQty, compileCaseObject, reconcile, applyRelationsArbitration, applyPostAuditGovernance, ruleCheckerIds: Object.keys(ruleCheckers) };

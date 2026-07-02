@@ -78,6 +78,11 @@ function mergeSlotFragment(record, slot, fragment, fileMeta) {
     gene_test_report: 'gene_test_report',
     fee_list: 'fee_list',
     discharge_summary: 'discharge_summary',
+    // 稽核优先通路一等槽位（v2 真实场景增强）：此前分类器认识但合并不进案卷
+    settlement_list: 'settlement_list',
+    drg_grouping: 'drg_grouping',
+    trace_code: 'trace_code',
+    inpatient_metrics: 'inpatient_metrics',
   };
   const key = keyMap[slot];
   if (!key) return record;
@@ -95,10 +100,15 @@ function mergeSlotFragment(record, slot, fragment, fileMeta) {
     if (fl.settle_date) record.fee_list.settle_date = fl.settle_date;
     return record;
   }
-  if (isPlainObject(fragment[key])) {
-    mergeDeep(record[key], fragment[key]);
-  } else if (isPlainObject(fragment)) {
-    mergeDeep(record[key], fragment);
+  {
+    // 通用槽位合并：emptyRecord 未预置的槽位（麻醉/重症/结算清单/DRG/追溯码等）先初始化再合并
+    const payload = fragment[key] !== undefined ? fragment[key] : fragment;
+    if (record[key] == null) record[key] = Array.isArray(payload) ? [] : {};
+    if (Array.isArray(payload)) {
+      record[key] = (Array.isArray(record[key]) ? record[key] : []).concat(payload);
+    } else if (isPlainObject(payload)) {
+      mergeDeep(record[key], payload);
+    }
   }
 
   if (fileMeta) {
@@ -148,6 +158,10 @@ function slotFillStatus(record) {
   check('pharmacy_info', '药店', 'pharm', !!record.pharmacy_info);
   check('pathology_report', '病理', 'path', !!(record.pathology_report?.diagnosis));
   check('gene_test_report', '基因', 'path', !!(record.gene_test_report && record.gene_test_report.status !== '缺失'));
+  check('settlement_list', '医保结算清单', 'fee', !!(record.settlement_list && Object.keys(record.settlement_list).length));
+  check('drg_grouping', 'DRG/DIP分组', 'front', !!(record.drg_grouping && Object.keys(record.drg_grouping).length));
+  check('trace_code', '药品追溯码', 'pharm', !!(record.trace_code && (Array.isArray(record.trace_code) ? record.trace_code.length : Object.keys(record.trace_code).length)));
+  check('inpatient_metrics', '住院运行指标', 'front', !!(record.inpatient_metrics && Object.keys(record.inpatient_metrics).length));
   return filled;
 }
 

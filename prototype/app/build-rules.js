@@ -36,6 +36,13 @@ try {
   const withCatalog = enriched.rules.filter(r => r.catalog?.display_title).length;
   console.log(`   规则目录 catalog：${withCatalog}/${enriched.rules.length} 条已命名`);
   if (coreMerged) console.log(`   核心 test_cases 合并：${coreMerged} 条规则`);
+  // 口径校验：meta.total_rules 必须与 rules 数组实际条数一致（防文档/运行时口径漂移）
+  const declared = doc.meta?.total_rules;
+  if (declared != null && declared !== doc.rules.length) {
+    console.warn(`⚠ 口径不一致：meta.total_rules=${declared}，实际 rules=${doc.rules.length} —— 请修正 rules.yaml 的 meta.total_rules`);
+  } else if (declared != null) {
+    console.log(`✅ 口径一致：meta.total_rules = 实际条数 = ${doc.rules.length}`);
+  }
   // 校验关键字段完整性
   const missing = doc.rules.filter(r => !r.rule_id || !r.rule_name || !r.layer || !r.violation_type);
   if (missing.length) {

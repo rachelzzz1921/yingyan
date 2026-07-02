@@ -1,7 +1,7 @@
 {
   "meta": {
     "schema_version": "3.2",
-    "rules_version": "v0.2",
+    "rules_version": "v0.3",
     "generated_date": "2026-06-12",
     "total_rules": 58,
     "three_element_gate": [

@@ -196,7 +196,9 @@
       "scope": "BENCH",
       "domain": "VIOLATION_LI",
       "bench_tier": "violation",
-      "bench_tags": ["shadow_demo"],
+      "bench_tags": [
+        "shadow_demo"
+      ],
       "internal_id": "YY-BENCH-VIOLATIO-004",
       "pii_token": "P-741b",
       "created_at": "2026-06-18T01:14:08.362Z"
@@ -230,6 +232,276 @@
       "internal_id": "YY-BENCH-BOUNDARY-007",
       "pii_token": "P-8369",
       "created_at": "2026-06-18T01:14:12.872Z"
+    },
+    {
+      "internal_id": "YY-INT-UNK-001",
+      "folder": null,
+      "api_id": "uploaded",
+      "scope": "INT",
+      "domain": "UNK",
+      "bench_tier": null,
+      "pii_token": "P-045f",
+      "created_at": "2026-06-25T04:56:22.598Z"
+    },
+    {
+      "internal_id": "YY-INT-UNK-002",
+      "folder": null,
+      "api_id": "uploaded",
+      "scope": "INT",
+      "domain": "UNK",
+      "bench_tier": null,
+      "pii_token": "P-27de",
+      "created_at": "2026-06-25T04:56:46.091Z"
+    },
+    {
+      "internal_id": "YY-INT-UNK-003",
+      "folder": null,
+      "api_id": "uploaded",
+      "scope": "INT",
+      "domain": "UNK",
+      "bench_tier": null,
+      "pii_token": "P-6df1",
+      "created_at": "2026-06-27T02:08:36.788Z"
+    },
+    {
+      "internal_id": "YY-INT-UNK-004",
+      "folder": null,
+      "api_id": "uploaded",
+      "scope": "INT",
+      "domain": "UNK",
+      "bench_tier": null,
+      "pii_token": "P-13de",
+      "created_at": "2026-06-27T02:12:58.350Z"
+    },
+    {
+      "internal_id": "YY-INT-UNK-005",
+      "folder": null,
+      "api_id": "uploaded",
+      "scope": "INT",
+      "domain": "UNK",
+      "bench_tier": null,
+      "pii_token": "P-d72f",
+      "created_at": "2026-06-27T02:33:06.976Z"
+    },
+    {
+      "internal_id": "YY-INT-UNK-006",
+      "folder": null,
+      "api_id": "uploaded",
+      "scope": "INT",
+      "domain": "UNK",
+      "bench_tier": null,
+      "pii_token": "P-4bbe",
+      "created_at": "2026-06-27T02:57:53.623Z"
+    },
+    {
+      "internal_id": "YY-INT-UNK-007",
+      "folder": null,
+      "api_id": "uploaded",
+      "scope": "INT",
+      "domain": "UNK",
+      "bench_tier": null,
+      "pii_token": "P-5dd7",
+      "created_at": "2026-06-27T02:58:37.862Z"
+    },
+    {
+      "internal_id": "YY-INT-UNK-008",
+      "folder": null,
+      "api_id": "uploaded",
+      "scope": "INT",
+      "domain": "UNK",
+      "bench_tier": null,
+      "pii_token": "P-5c9c",
+      "created_at": "2026-06-27T02:59:53.261Z"
+    },
+    {
+      "internal_id": "YY-INT-UNK-009",
+      "folder": null,
+      "api_id": "uploaded",
+      "scope": "INT",
+      "domain": "UNK",
+      "bench_tier": null,
+      "pii_token": "P-7eb5",
+      "created_at": "2026-06-27T03:01:18.549Z"
+    },
+    {
+      "internal_id": "YY-INT-UNK-010",
+      "folder": null,
+      "api_id": "uploaded",
+      "scope": "INT",
+      "domain": "UNK",
+      "bench_tier": null,
+      "pii_token": "P-3bcf",
+      "created_at": "2026-06-27T03:01:18.620Z"
+    },
+    {
+      "internal_id": "YY-INT-UNK-011",
+      "folder": null,
+      "api_id": "uploaded",
+      "scope": "INT",
+      "domain": "UNK",
+      "bench_tier": null,
+      "pii_token": "P-059a",
+      "created_at": "2026-06-27T03:01:18.669Z"
+    },
+    {
+      "internal_id": "YY-INT-UNK-012",
+      "folder": null,
+      "api_id": "uploaded",
+      "scope": "INT",
+      "domain": "UNK",
+      "bench_tier": null,
+      "pii_token": "P-be17",
+      "created_at": "2026-06-27T03:01:53.386Z"
+    },
+    {
+      "internal_id": "YY-INT-UNK-013",
+      "folder": null,
+      "api_id": "uploaded",
+      "scope": "INT",
+      "domain": "UNK",
+      "bench_tier": null,
+      "pii_token": "P-ccbf",
+      "created_at": "2026-06-27T03:18:37.001Z"
+    },
+    {
+      "internal_id": "YY-INT-UNK-014",
+      "folder": null,
+      "api_id": "uploaded",
+      "scope": "INT",
+      "domain": "UNK",
+      "bench_tier": null,
+      "pii_token": "P-9c2a",
+      "created_at": "2026-06-27T03:19:04.554Z"
+    },
+    {
+      "internal_id": "YY-INT-UNK-015",
+      "folder": null,
+      "api_id": "uploaded",
+      "scope": "INT",
+      "domain": "UNK",
+      "bench_tier": null,
+      "pii_token": "P-9160",
+      "created_at": "2026-06-27T03:21:31.782Z"
+    },
+    {
+      "internal_id": "YY-INT-UNK-016",
+      "folder": null,
+      "api_id": "uploaded",
+      "scope": "INT",
+      "domain": "UNK",
+      "bench_tier": null,
+      "pii_token": "P-41d4",
+      "created_at": "2026-06-27T03:22:06.194Z"
+    },
+    {
+      "internal_id": "YY-INT-UNK-017",
+      "folder": null,
+      "api_id": "uploaded",
+      "scope": "INT",
+      "domain": "UNK",
+      "bench_tier": null,
+      "pii_token": "P-38b1",
+      "created_at": "2026-06-27T03:30:05.882Z"
+    },
+    {
+      "internal_id": "YY-INT-UNK-018",
+      "folder": null,
+      "api_id": "uploaded",
+      "scope": "INT",
+      "domain": "UNK",
+      "bench_tier": null,
+      "pii_token": "P-f7b5",
+      "created_at": "2026-06-30T04:13:43.390Z"
+    },
+    {
+      "internal_id": "YY-INT-UNK-019",
+      "folder": null,
+      "api_id": "uploaded",
+      "scope": "INT",
+      "domain": "UNK",
+      "bench_tier": null,
+      "pii_token": "P-5b38",
+      "created_at": "2026-07-02T04:01:43.385Z"
+    },
+    {
+      "internal_id": "YY-INT-UNK-020",
+      "folder": null,
+      "api_id": "uploaded",
+      "scope": "INT",
+      "domain": "UNK",
+      "bench_tier": null,
+      "pii_token": "P-3b17",
+      "created_at": "2026-07-02T04:04:39.358Z"
+    },
+    {
+      "internal_id": "YY-INT-UNK-021",
+      "folder": null,
+      "api_id": "uploaded",
+      "scope": "INT",
+      "domain": "UNK",
+      "bench_tier": null,
+      "pii_token": "P-a7ba",
+      "created_at": "2026-07-02T04:07:54.363Z"
+    },
+    {
+      "internal_id": "YY-INT-UNK-022",
+      "folder": null,
+      "api_id": "uploaded",
+      "scope": "INT",
+      "domain": "UNK",
+      "bench_tier": null,
+      "pii_token": "P-842c",
+      "created_at": "2026-07-02T04:07:54.622Z"
+    },
+    {
+      "internal_id": "YY-INT-UNK-023",
+      "folder": null,
+      "api_id": "uploaded",
+      "scope": "INT",
+      "domain": "UNK",
+      "bench_tier": null,
+      "pii_token": "P-a14f",
+      "created_at": "2026-07-02T04:10:36.144Z"
+    },
+    {
+      "internal_id": "YY-INT-UNK-024",
+      "folder": null,
+      "api_id": "uploaded",
+      "scope": "INT",
+      "domain": "UNK",
+      "bench_tier": null,
+      "pii_token": "P-7424",
+      "created_at": "2026-07-02T04:10:36.354Z"
+    },
+    {
+      "internal_id": "YY-INT-UNK-025",
+      "folder": null,
+      "api_id": "uploaded",
+      "scope": "INT",
+      "domain": "UNK",
+      "bench_tier": null,
+      "pii_token": "P-daa0",
+      "created_at": "2026-07-02T04:11:03.399Z"
+    },
+    {
+      "internal_id": "YY-INT-UNK-026",
+      "folder": null,
+      "api_id": "uploaded",
+      "scope": "INT",
+      "domain": "UNK",
+      "bench_tier": null,
+      "pii_token": "P-9f20",
+      "created_at": "2026-07-02T04:12:52.941Z"
+    },
+    {
+      "internal_id": "YY-INT-UNK-027",
+      "folder": null,
+      "api_id": "uploaded",
+      "scope": "INT",
+      "domain": "UNK",
+      "bench_tier": null,
+      "pii_token": "P-381b",
+      "created_at": "2026-07-02T04:12:53.154Z"
     }
   ],
   "meta": {

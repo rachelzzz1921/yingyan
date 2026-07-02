@@ -12,6 +12,8 @@ const FEE_HEADER_ALIASES = {
   amount: ['金额', 'amount', '合计', '总金额'],
   category: ['类别', 'category', '费用类别'],
   date: ['日期', 'fee_date', '收费日期'],
+  code: ['项目编码', '项目代码', '收费编码', 'item_code'],
+  insurance_code: ['医保编码', '国家医保代码', '医保代码', '贯标码', 'insurance_code'],
 };
 
 function colIndex(headers, aliases) {
@@ -167,6 +169,8 @@ function extractFeeListFromLayout(layout, filename) {
       const iAmt = colIndex(headerCells, FEE_HEADER_ALIASES.amount);
       const iCat = colIndex(headerCells, FEE_HEADER_ALIASES.category);
       const iDate = colIndex(headerCells, FEE_HEADER_ALIASES.date);
+      const iCode = colIndex(headerCells, FEE_HEADER_ALIASES.code);
+      const iInsCode = colIndex(headerCells, FEE_HEADER_ALIASES.insurance_code);
       const hasHeader = iName >= 0 || iAmt >= 0;
       const start = hasHeader ? 1 : 0;
       for (let ri = start; ri < rows.length; ri++) {
@@ -176,7 +180,7 @@ function extractFeeListFromLayout(layout, filename) {
         const score = rows[ri].cells?.[0]?.score || table.score || 0.9;
         lineNo += 1;
         const amount = parseNum(cells[iAmt >= 0 ? iAmt : (cells.length > 4 ? 4 : cells.length - 1)]);
-        items.push({
+        const item = {
           line_no: lineNo,
           fee_date: iDate >= 0 ? cells[iDate] : '',
           category: iCat >= 0 ? cells[iCat] : '未分类',
@@ -188,7 +192,10 @@ function extractFeeListFromLayout(layout, filename) {
           amount,
           insurance_class: '医保',
           anchor: anchorOf(doc, page.page || rows[ri].page, rowBbox, score, `第${lineNo}行`),
-        });
+        };
+        if (iCode >= 0 && cells[iCode]) item.item_code = String(cells[iCode]).trim();
+        if (iInsCode >= 0 && cells[iInsCode]) item.insurance_code = String(cells[iInsCode]).trim();
+        items.push(item);
       }
     }
   }

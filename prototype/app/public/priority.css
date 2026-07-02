@@ -116,9 +116,14 @@
 .pri-profile-col ul{margin:0;padding-left:16px}
 .pri-profile-col li{margin:4px 0}
 .pri-report-toolbar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:10px 0}
-.pri-checklist{display:flex;flex-direction:column;gap:8px;max-height:50vh;overflow-y:auto;margin:10px 0}
+.pri-checklist{display:flex;flex-direction:column;gap:8px;max-height:60vh;overflow-y:auto;margin:10px 0}
 .pri-check-item{padding:10px;border:1px solid var(--line);border-radius:8px;font-size:12px}
 .pri-check-item.hit{border-left:4px solid var(--red);background:#fff5f5}
+.pri-check-domain{border:1px solid var(--line);border-radius:8px;padding:6px 10px}
+.pri-check-domain summary{cursor:pointer;padding:4px 0;font-size:13px}
+.pri-check-domain .pri-check-item{margin:6px 0;border-left-width:3px}
+.pri-check-line{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
+.pri-check-status{flex:0 0 auto;font-size:12px;padding:2px 4px;border:1px solid var(--line);border-radius:6px;background:#fff}
 .risk-tag{display:inline-block;padding:1px 6px;border-radius:4px;font-size:10px;background:#ecfdf5;color:#047857;margin-right:4px}
 .disposition{font-size:11px;color:var(--ink2);max-width:120px}
 .pri-finding .btn-pkg-f{margin-top:8px}

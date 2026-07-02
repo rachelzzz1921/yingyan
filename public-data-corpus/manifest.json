@@ -1,12 +1,12 @@
 {
-  "generated_at": "2026-06-19",
+  "generated_at": "2026-07-02",
   "summary": {
     "total_kb_entries": 31,
     "total_problem_list_items": 74,
-    "total_grand": 1703,
+    "total_grand": 1531,
     "unique_official_documents": 18,
     "unique_source_urls": 17,
-    "kb1_policy_entries": 1467,
+    "kb1_policy_entries": 1295,
     "kb2_clinical_entries": 9,
     "problem_list_domains": 15,
     "problem_list_items": 236,
@@ -326,7 +326,7 @@
     "2026版口腔/内分泌/精神医学仅框架+行业认知占位，官方Excel尚未上网",
     "两库1.0版79条规则框架未逐条入库",
     "临床路径224病种未建库，仅NSCLC/结直肠癌病种包",
-    "曝光台案例(P1)已抓取58条",
+    "曝光台案例(P1)已抓取58条"
   ],
   "crawl_runs": [
     {
@@ -560,6 +560,13 @@
         "problem_items": 236,
         "total_grand": 1703
       }
+    },
+    {
+      "at": "2026-07-02T05:51:21.120Z",
+      "phase": "clean-badrows",
+      "removed": 172,
+      "kb1_after": 1295,
+      "note": "质量门清洗：移除表头错位产出的纯序号/合计/无连续汉字爬虫条目"
     }
   ]
 }

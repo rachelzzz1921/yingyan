@@ -1,6 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import { KB_DIR, CORPUS_KB_DIR, CONFIG, ROOT } from '../config.mjs';
+import { isJunkPolicyText } from './quality.mjs';
 
 function loadJson(p) {
   return JSON.parse(fs.readFileSync(p, 'utf8'));
@@ -27,7 +28,13 @@ function upsertPolicies(kb, incoming, force) {
   let added = 0;
   let updated = 0;
   let skipped = 0;
+  let rejected = 0;
   for (const row of incoming) {
+    // 入库质量门（第二道防线，覆盖所有 parser）：解析垃圾不入库
+    if (isJunkPolicyText(row.text)) {
+      rejected++;
+      continue;
+    }
     const prev = byRef.get(row.ref_id);
     if (!shouldReplace(prev, row, force)) {
       skipped++;
@@ -38,7 +45,7 @@ function upsertPolicies(kb, incoming, force) {
     byRef.set(row.ref_id, { ...prev, ...row });
   }
   kb.entries = [...byRef.values()];
-  return { added, updated, skipped, total: kb.entries.length };
+  return { added, updated, skipped, rejected, total: kb.entries.length };
 }
 
 function mergeProblemDomains(kb, domains, force) {

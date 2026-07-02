@@ -45,7 +45,8 @@ class MockHISConnector extends HospitalConnector {
         temporary_orders: { items: [] },
         nursing_records: { nursing_level_executed: '二级护理', entries: [] },
         lab_reports: [], pathology_report: {}, gene_test_report: { status: '不适用' },
-        fee_list: { items: [{ line_no: 1, fee_date: '2026-05-01~05-06', category: '护理费', item_name: '二级护理', qty: 5, unit: '日', unit_price: 30, amount: 150, insurance_class: '医保', linked_order: 'L01' }], total_amount: 150 },
+        // item_code=HIS收费项目编码 / insurance_code=国家医保贯标码 —— 医院收费数据最标准化的部分，稽核比对优先走编码
+        fee_list: { items: [{ line_no: 1, fee_date: '2026-05-01~05-06', category: '护理费', item_name: '二级护理', item_code: 'HL0002', insurance_code: '120100002', qty: 5, unit: '日', unit_price: 30, amount: 150, insurance_class: '医保', linked_order: 'L01' }], total_amount: 150 },
         discharge_summary: { discharge_date: '2026-05-06', discharge_diagnosis: ['社区获得性肺炎'] },
       },
       pull_log: [`MockHIS: 按就诊号 ${id} 拉取病案首页/医嘱/收费/检验/病程并映射为 medical_record`],
@@ -72,7 +73,7 @@ class FHIRConnector extends HospitalConnector {
       'MedicationRequest → long_term_orders/temporary_orders': 'dosage+timing → content/start/stop',
       'Observation → lab_reports': 'code+value+unit+referenceRange',
       'Procedure → operation_note': 'code+performedDateTime+用耗材(device)',
-      'ChargeItem/Invoice → fee_list': 'code+quantity+priceComponent → item_name/qty/amount',
+      'ChargeItem/Invoice → fee_list': 'code(院内收费码→item_code, 医保贯标码→insurance_code)+quantity+priceComponent → item_name/qty/amount',
     };
   }
 }

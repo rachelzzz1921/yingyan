@@ -132,6 +132,10 @@ async function exportApiSnapshot() {
     await saveGet('audit-batch.json', '/api/audit/batch');
     await saveGet('connectors.json', '/api/connectors');
     await saveGet('intake-slots.json', '/api/intake/slots');
+    await saveGet('priority-rank.json', '/api/priority/rank');
+    await saveGet('priority-config.json', '/api/priority/config');
+    await saveGet('history.json', '/api/history');
+    await saveGet('violation-summary.json', '/api/report/violation-summary');
 
     const docs = await saveGet('docs/index.json', '/api/docs');
     for (const doc of docs.docs || []) {
@@ -147,6 +151,14 @@ async function exportApiSnapshot() {
     for (const id of caseIds) {
       const rec = await getJson(`/api/case?id=${encodeURIComponent(id)}`);
       writeJson(path.join(API_OUT, 'cases', `${id}.json`), rec);
+      try {
+        const detail = await getJson(`/api/cases/${encodeURIComponent(id)}`);
+        writeJson(path.join(API_OUT, 'case-details', `${id}.json`), detail);
+        const imports = await getJson(`/api/cases/${encodeURIComponent(id)}/imports`);
+        writeJson(path.join(API_OUT, 'case-details', `${id}-imports.json`), imports);
+        const checklist = await getJson(`/api/checklist/national-2026-self/map?case_id=${encodeURIComponent(id)}`);
+        writeJson(path.join(API_OUT, 'checklist', `national-2026-self-map-${id}.json`), checklist);
+      } catch (_) {}
       try {
         const rect = await getJson(`/api/rectification?case_id=${encodeURIComponent(id)}`);
         writeJson(path.join(API_OUT, 'rectification', `${id}.json`), rect);
@@ -215,7 +227,7 @@ async function main() {
   mkdirp(API_OUT);
   await exportApiSnapshot();
 
-  for (const name of ['index.html', 'dashboard.html', 'intake.html']) {
+  for (const name of ['index.html', 'home.html', 'dashboard.html', 'intake.html', 'priority.html']) {
     const fp = path.join(OUT, name);
     if (fs.existsSync(fp)) patchHtml(fp);
   }

@@ -14,6 +14,17 @@ const DOMAIN_ALIAS = {
   肿瘤: '肿瘤', 心血管内科: '心血管', 血液净化: '血净', 康复: '康复', 临床检验: '检验',
 };
 
+// 仅「人工核实」算 verified；「✅爬虫入库(待人工抽检)」不算——
+// 修复历史 bug：曾用 startsWith('✅') 把 1400+ 条待抽检爬虫条目当作已核验展示。
+function isHumanVerified(status) {
+  const s = String(status || '');
+  return s.startsWith('✅') && !s.includes('爬虫入库');
+}
+
+function isCrawlerPending(status) {
+  return String(status || '').includes('爬虫入库');
+}
+
 function loadJsonKB(dataDir) {
   const kb1 = JSON.parse(fs.readFileSync(path.join(dataDir, 'kb/kb1_policies.json'), 'utf8'));
   let kb2 = { entries: [] };
@@ -26,23 +37,28 @@ function loadJsonKB(dataDir) {
 function buildPolicyMaps(kb1, kb2, pl) {
   const policyTexts = {};
   const policyVerified = {};
+  const policyPending = {}; // 爬虫入库、待人工抽检的条目
   for (const e of kb1.entries || []) {
     policyTexts[e.ref_id] = e.text;
-    policyVerified[e.ref_id] = (e.verify_status || '').startsWith('✅');
+    policyVerified[e.ref_id] = isHumanVerified(e.verify_status);
+    if (isCrawlerPending(e.verify_status)) policyPending[e.ref_id] = true;
   }
   for (const e of kb2.entries || []) {
     policyTexts[e.kb2_id] = e.text;
-    policyVerified[e.kb2_id] = (e.verify_status || '').startsWith('✅');
+    policyVerified[e.kb2_id] = isHumanVerified(e.verify_status);
+    if (isCrawlerPending(e.verify_status)) policyPending[e.kb2_id] = true;
   }
   for (const d of pl.domains || []) {
     const alias = DOMAIN_ALIAS[d.domain] || d.domain;
     const ver = (d.version || '').includes('2025') ? '2025' : '';
-    const dverified = (d.verify_status || '').startsWith('✅');
+    const dverified = isHumanVerified(d.verify_status);
+    const dpending = isCrawlerPending(d.verify_status);
     for (const it of d.items || []) {
       if (it.no != null) {
         for (const k of [`KB1-问题清单${ver}-${alias}-${it.no}`, `KB1-问题清单${alias}-${it.no}`]) {
           policyTexts[k] = `[${d.domain}清单序号${it.no}·${it.type}] ${it.text}`;
           policyVerified[k] = dverified && (it.verify ? it.verify.startsWith('✅') || it.verify.includes('已核实') : true);
+          if (dpending) policyPending[k] = true;
         }
       }
     }
@@ -54,6 +70,7 @@ function buildPolicyMaps(kb1, kb2, pl) {
   return {
     policyTexts,
     policyVerified,
+    policyPending,
     policyMeta: buildPolicyMetaFromKb(kb1, kb2),
     source: 'json',
   };
@@ -64,11 +81,13 @@ async function loadFromSupabase() {
   if (!rows.length) return null;
   const policyTexts = {};
   const policyVerified = {};
+  const policyPending = {};
   for (const e of rows) {
     policyTexts[e.ref_id] = e.text;
-    policyVerified[e.ref_id] = (e.verify_status || '').startsWith('✅');
+    policyVerified[e.ref_id] = isHumanVerified(e.verify_status);
+    if (isCrawlerPending(e.verify_status)) policyPending[e.ref_id] = true;
   }
-  return { policyTexts, policyVerified, source: 'supabase', entry_count: rows.length };
+  return { policyTexts, policyVerified, policyPending, source: 'supabase', entry_count: rows.length };
 }
 
 /** 启动时加载：Supabase 有数据则 Live，否则 JSON Oracle */

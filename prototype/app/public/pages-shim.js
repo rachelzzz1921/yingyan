@@ -51,6 +51,14 @@
     if (p === '/api/audit/batch') return API + '/audit-batch.json';
     if (p === '/api/connectors') return API + '/connectors.json';
     if (p === '/api/intake/slots') return API + '/intake-slots.json';
+    if (p === '/api/priority/rank') return API + '/priority-rank.json';
+    if (p === '/api/priority/config') return API + '/priority-config.json';
+    if (p === '/api/history') return API + '/history.json';
+    if (p === '/api/report/violation-summary') return API + '/violation-summary.json';
+    if (p === '/api/checklist/national-2026-self/map') {
+      const id = u.searchParams.get('case_id') || 'main';
+      return API + '/checklist/national-2026-self-map-' + encodeURIComponent(id) + '.json';
+    }
 
     if (p === '/api/case') {
       const id = u.searchParams.get('id') || 'main';
@@ -69,6 +77,11 @@
       const rest = p.slice('/api/audit/batch/'.length);
       if (rest.includes('/export')) return null;
       return API + '/audit-batch/' + encodeURIComponent(rest) + '.json';
+    }
+    if (p.startsWith('/api/cases/')) {
+      const id = decodeURIComponent(p.slice('/api/cases/'.length).replace(/\/imports$/, ''));
+      const imports = p.endsWith('/imports') ? '-imports' : '';
+      return API + '/case-details/' + encodeURIComponent(id) + imports + '.json';
     }
     return null;
   }
