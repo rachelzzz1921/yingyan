@@ -93,7 +93,26 @@ a{color:var(--iris2);text-decoration:none}
 .step.open .step-b{display:block}
 .pitch{font-size:13px;color:#8F6210;background:#FFFAEF;border:1px dashed rgba(232,168,56,.5);border-radius:11px;padding:9px 14px;margin-bottom:13px}
 .pitch::before{content:"🎤 口播 · ";font-weight:700}
+.ask{font-size:12.5px;color:#0E6F66;background:#F0FBF9;border:1px dashed rgba(20,184,166,.5);border-radius:11px;padding:8px 14px;margin-bottom:13px;line-height:1.72}
+.ask::before{content:"🔎 追问储备 · ";font-weight:700;color:var(--iris2)}
+.ask a{color:var(--iris2);font-weight:600;border-bottom:1px solid rgba(20,184,166,.4)}
 .res{font-size:13.5px}
+
+/* ---------- vs 套壳对比 ---------- */
+.vs{margin-top:28px;border:1px solid var(--line);border-radius:18px;background:var(--surface);overflow:hidden;box-shadow:0 4px 18px rgba(11,42,74,.06)}
+.vs-h{padding:15px 22px;border-bottom:1px solid var(--line);background:linear-gradient(180deg,#FDFEFF,#F8FAFC)}
+.vs-h b{font-size:16px;font-weight:800;color:var(--ink)}
+.vs-h span{display:block;font-size:12px;color:var(--muted);margin-top:2px}
+.vs-row{display:grid;grid-template-columns:.82fr 1.1fr 1.28fr;border-bottom:1px solid var(--line)}
+.vs-row:last-child{border-bottom:none}
+.vs-row>div{padding:11px 16px;font-size:12.5px;line-height:1.55}
+.vs-row .dim{color:var(--ink);font-weight:700;background:var(--panel)}
+.vs-row .them{color:var(--muted);border-left:1px solid var(--line)}
+.vs-row .us{color:#3D5A76;border-left:1px solid var(--line);background:#FBFDFF}
+.vs-row .us b{color:var(--ok);font-weight:700}
+.vs-row.vs-head>div{font-weight:800;font-size:11.5px;letter-spacing:.06em}
+.vs-head .dim{color:var(--dim)} .vs-head .them{color:var(--danger)} .vs-head .us{color:var(--ok)}
+@media(max-width:720px){.vs-row{grid-template-columns:1fr}.vs-row .them,.vs-row .us{border-left:none;border-top:1px solid var(--line)}}
 
 /* ---------- kpi ---------- */
 .kpis{display:flex;flex-wrap:wrap;gap:10px;margin:6px 0 10px}
@@ -198,6 +217,16 @@ table.mini td.num{font-family:var(--mono);text-align:right;font-variant-numeric:
     <p style="margin-top:8px;font-size:12.5px;color:var(--muted)">纵深追问 → <a href="/home.html">全面平台</a> · 关口前移 → <a href="/plugins.html">插件产品线（三角色事前提醒）</a> · 口径出处 → docs/GOLDEN-PATH.md</p>
   </div>
 
+  <div class="vs">
+    <div class="vs-h"><b>为什么套壳大模型队做不出这套</b><span>同样接大模型，差距在工程纵深——判「像不像」容易，「算得对 · 说得清 · 不乱报 · 扛得住申辩」难。</span></div>
+    <div class="vs-row vs-head"><div class="dim">维度</div><div class="them">套壳大模型队</div><div class="us">鹰眼工程纵深</div></div>
+    <div class="vs-row"><div class="dim">稳定 / 可回归</div><div class="them">每次结果漂移，改一版 prompt 无法回归验证</div><div class="us"><b>确定性引擎先出候选（可复现）</b> + G0–G5 五层门禁把关回归</div></div>
+    <div class="vs-row"><div class="dim">不乱报</div><div class="them">幻觉 + 过度报，无据也报，罚过头</div><div class="us"><b>取证三件套</b>（合议去重 · 覆盖度声明 · 置信度传播）+ 引不出原文即不输出</div></div>
+    <div class="vs-row"><div class="dim">抗申辩</div><div class="them">无，疑点经不起院方一问就撤</div><div class="us"><b>控辩裁申诉预演</b>，进人工评定的都已扛过一轮模拟申诉</div></div>
+    <div class="vs-row"><div class="dim">可信底座</div><div class="them">自说自话，规则自己编</div><div class="us"><b>79 条挂国家 GZ/ZB 框架</b>、每条溯官方原文、覆盖深度诚实标注</div></div>
+    <div class="vs-row"><div class="dim">质量证据</div><div class="them">靠感觉，demo 一次好不代表稳</div><div class="us"><b>P4 辩方认账 eval 8/8</b>（真跑千问）+ 金标准去自评化（G0b 双独立真值源）</div></div>
+  </div>
+
   <p class="hint">演示案卷为团队构造的虚构数据（预埋违规点）；引擎、门禁、治理留痕全部真实运行 · 替人扛量 · 报得准 · 证得实 · 扛得住申辩</p>
 </div>
 
@@ -210,19 +239,26 @@ const fmtY = n => '¥' + (Math.round((Number(n)||0)*100)/100).toLocaleString('zh
 
 const STEPS = [
   { id:'audit',  title:'① 体检稽核（秒级初筛）',  sub:'POST /api/audit?mode=exam · 确定性引擎，可复现',
-    pitch:'人工翻一本案卷 40 分钟；鹰眼秒级出初筛——不是抽查，是全量。', btn:'跑稽核' },
+    pitch:'人工翻一本案卷 40 分钟；鹰眼秒级出初筛——不是抽查，是全量。', btn:'跑稽核',
+    ask:'被追问“秒级/全量怎么做到” → 确定性规则引擎 + 触发路由（与本案无关的规则零成本跳过），不是纯 LLM 逐条问。点 <a href="/agent-chain.html" target="_blank">七环节 Agent 编排</a> 看白盒。' },
   { id:'triad',  title:'② 三要素证据链',          sub:'每条疑点 = 证据定位 + 政策原文 + 推理链',
-    pitch:'铁律：引不出原文的疑点，不输出。每个政策引用可溯源到官方文件。', btn:'展开证据链' },
+    pitch:'铁律：引不出原文的疑点，不输出。每个政策引用可溯源到官方文件。', btn:'展开证据链',
+    ask:'被追问“凭什么可对质/不乱报” → 三要素门禁（证据+条款原文+推理），引不出条目 ID 即转人工。点 <a href="/agent-chain.html" target="_blank">调用链留痕</a> + 三人格对抗合议（控/辩/裁信息不对称、数据层物理切分）。' },
   { id:'review', title:'③ 人工复核（人是闸门）',    sub:'POST /api/review · 采纳/驳回落库留痕',
-    pitch:'AI 不做最终认定。复核动作全部持久化，是治理的原料。', btn:'加载复核台' },
+    pitch:'AI 不做最终认定。复核动作全部持久化，是治理的原料。', btn:'加载复核台',
+    ask:'被追问“AI 会不会越权定性” → AI 只建议、人是闸门；控辩裁 = 申诉机制预演，进人工评定的都已扛过一轮模拟申诉。' },
   { id:'govern', title:'④ 治理沉淀（误报有状态）',  sub:'GET /api/review · 驳回≥3 自动标高误报 → shadow',
-    pitch:'误报不是修 bug 修掉的，是被治理掉的：驳回攒够阈值，规则自动转影子观察。', btn:'看治理台账' },
+    pitch:'误报不是修 bug 修掉的，是被治理掉的：驳回攒够阈值，规则自动转影子观察。', btn:'看治理台账',
+    ask:'被追问“误报怎么不反复” → 驳回≥3 自动转 shadow 影子观察、三审三验才转正。点 <a href="/dashboard.html" target="_blank">规则治理看板</a>。' },
   { id:'diff',   title:'⑤ 整改复跑 diff',          sub:'再稽核一次 → GET /api/exam/diff · 已消除/仍存在/新增',
-    pitch:'自查 → 整改 → 再自查，整改效果不靠汇报，靠两次快照的 diff。', btn:'复跑并对比' },
+    pitch:'自查 → 整改 → 再自查，整改效果不靠汇报，靠两次快照的 diff。', btn:'复跑并对比',
+    ask:'被追问“整改效果怎么信” → 两次快照 diff（已消除/仍存在/新增），不靠院方口头汇报。' },
   { id:'refund', title:'⑥ 主动退回测算（院端 ROI）', sub:'GET /api/exam/refund-estimate · 按条例 38/40 条分档',
-    pitch:'自查从宽：主动退回 vs 被飞检查实的暴露区间，一张表算清楚为什么现在要自查。', btn:'算 ROI' },
+    pitch:'自查从宽：主动退回 vs 被飞检查实的暴露区间，一张表算清楚为什么现在要自查。', btn:'算 ROI',
+    ask:'被追问“院端凭什么买单” → 自查从宽 vs 被查实暴露的 ROI 区间；双前台单引擎（院端自查↔监管飞检）形成数据飞轮。点 <a href="/plugins.html" target="_blank">插件产品线</a>。' },
   { id:'yhf',    title:'⑦ 门禁验收（G0 红线）',     sub:'GET /api/yhf · 干净件零误报一票否决',
-    pitch:'每次改规则/prompt 都要过这道门。G0 = 干净案卷零误报，是不可破的红线。', btn:'跑门禁（约 1 分钟）' },
+    pitch:'每次改规则/prompt 都要过这道门。G0 = 干净案卷零误报，是不可破的红线。', btn:'跑门禁（约 1 分钟）',
+    ask:'被追问“质量/会不会退化” → 五层门禁 G0–G5 + P4 辩方认账 eval 8/8（真跑千问 72B/32B）+ 金标准去自评化（G0b 双独立真值源）。见 <a href="/materials/yingyan-rule-architecture-flyer.html" target="_blank">规则能力说明册 P5</a>。' },
 ];
 
 const stepsEl = document.getElementById('steps');
@@ -234,7 +270,7 @@ STEPS.forEach((st, i) => {
       '<div class="step-h"><div class="num">' + (i+1) + '</div>' +
       '<div class="tt"><h2>' + esc(st.title) + '</h2><p>' + esc(st.sub) + '</p></div>' +
       '<button id="btn-' + st.id + '" disabled>' + esc(st.btn) + '</button></div>' +
-      '<div class="step-b"><div class="pitch">' + esc(st.pitch) + '</div><div class="res" id="res-' + st.id + '"></div></div>' +
+      '<div class="step-b"><div class="pitch">' + esc(st.pitch) + '</div>' + (st.ask ? '<div class="ask">' + st.ask + '</div>' : '') + '<div class="res" id="res-' + st.id + '"></div></div>' +
     '</section>');
   document.getElementById('btn-' + st.id).addEventListener('click', () => run(st.id));
 });
