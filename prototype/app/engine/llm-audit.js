@@ -14,7 +14,8 @@
  */
 'use strict';
 
-const { piiRedact } = require('./pii-redact');
+const { piiRedact, prepareForLlm } = require('./pii-redact');
+const { sanitizeLlmPrompt } = require('./llm-privacy-gate');
 const { applyContextBudget } = require('./context-budget');
 
 const MODEL = process.env.YINGYAN_MODEL || 'claude-sonnet-4-6';
@@ -63,18 +64,19 @@ async function llmAudit(record, rules, opts = {}) {
   if (!key) throw new Error('未配置 ANTHROPIC_API_KEY');
   if (typeof fetch !== 'function') throw new Error('当前 Node 不支持全局 fetch（需 Node18+）');
 
+  const piiPrep = prepareForLlm(record);
   const userPrompt = buildUserPrompt(record, rules, opts.kb);
-  const contextMatch = userPrompt.match(/```json\n(\{"budget"[\s\S]*?"sections"[\s\S]*?\})\n```/);
   let context_manifest = null;
   try {
     const budgeted = applyContextBudget({
       rules,
       policyKB: Object.fromEntries((opts.kb?.entries || []).map(e => [e.ref_id, e.text])),
-      record: piiRedact(record),
+      record: piiPrep.record,
     });
     context_manifest = budgeted.context_manifest;
   } catch (_) {}
 
+  const gated = sanitizeLlmPrompt({ system: buildSystemPrompt(), user: userPrompt });
   const resp = await fetch(API_URL, {
     method: 'POST',
     headers: {
@@ -85,8 +87,8 @@ async function llmAudit(record, rules, opts = {}) {
     body: JSON.stringify({
       model: MODEL,
       max_tokens: 8000,
-      system: buildSystemPrompt(),
-      messages: [{ role: 'user', content: userPrompt }],
+      system: gated.system,
+      messages: [{ role: 'user', content: gated.user }],
     }),
   });
   if (!resp.ok) {
@@ -116,6 +118,7 @@ async function llmAudit(record, rules, opts = {}) {
       patient: `${record.front_page.patient_name} ${record.front_page.sex} ${record.front_page.age}岁`,
       audit_engine: `鹰眼·医保基金稽核智能体（LLM语义路径 · ${MODEL}）`,
       context_manifest,
+      pii_redaction: piiPrep.meta,
       human_baseline_minutes: 40, agent_seconds: 90,
       summary: {
         total_findings: findings.length,

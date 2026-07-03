@@ -4,6 +4,7 @@
  * PP-Structure layout JSON → medical_record 片段（含 anchor.bbox）
  */
 const { callLLM, isReady: llmReady } = require('./llm-provider');
+const { redactOcrPlainText } = require('./pii-redact');
 
 const FEE_HEADER_ALIASES = {
   name: ['项目名称', '名称', '收费项目', '药品', 'item', '项目'],
@@ -259,10 +260,11 @@ async function structureTextWithLLM(text, slot, filename) {
     discharge_summary: '抽出院：{"discharge_summary":{...}}',
   };
   const hint = prompts[slot] || prompts.admission_note;
+  const safeText = redactOcrPlainText(text.slice(0, 12000));
   try {
     const raw = await callLLM({
       system: '你是医保病历结构化抽取器，只输出 JSON。',
-      user: `文件：${filename}\n${hint}\n\n---\n${text.slice(0, 12000)}`,
+      user: `文件：${filename}\n${hint}\n\n---\n${safeText}`,
       maxTokens: 6000,
     });
     let s = String(raw || '').trim();

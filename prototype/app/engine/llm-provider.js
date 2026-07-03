@@ -12,6 +12,8 @@
  */
 'use strict';
 
+const { sanitizeLlmPrompt } = require('./llm-privacy-gate');
+
 // ---- 端点与模型配置 ----
 const MINIMAX_BASE = process.env.MINIMAX_BASE || 'https://api.minimaxi.com/v1/text/chatcompletion_v2';
 const MINIMAX_MODEL = process.env.YINGYAN_LLM_MODEL || 'MiniMax-Text-01';
@@ -138,6 +140,7 @@ async function callOpenAICompatible({ base, key, model, system, user, maxTokens,
 
 // jsonMode=true → 请求方保证 prompt 里出现 "JSON" 字样且请求的是 JSON 对象（response_format:json_object 要求对象根）
 async function callLLM({ system, user, maxTokens = 4000, temperature = 0.2, timeoutMs = DEFAULT_TIMEOUT, jsonMode = false }) {
+  ({ system, user } = sanitizeLlmPrompt({ system, user, vision: false }));
   const p = provider();
   if (!p) { const e = new Error('真·语义分析需配置 SILICONFLOW_API_KEY / MINIMAX_API_KEY / ANTHROPIC_API_KEY'); e.needsKey = true; throw e; }
 
@@ -165,6 +168,7 @@ async function callLLM({ system, user, maxTokens = 4000, temperature = 0.2, time
 
 // 多模态：text + images(base64)。视觉提供方独立选择（默认 MiniMax-VL）
 async function callVision({ system, user, images = [], mime = 'image/png', maxTokens = 6000, timeoutMs = DEFAULT_TIMEOUT }) {
+  ({ system, user } = sanitizeLlmPrompt({ system, user, vision: true }));
   const p = visionProvider();
   if (!p) { const e = new Error('多模态解析需配置 MINIMAX_API_KEY（视觉）'); e.needsKey = true; throw e; }
 

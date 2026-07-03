@@ -10,6 +10,7 @@ const { loadIndex } = require('./kb-operational-index');
 const DRUG_FORM_SUFFIXES = ['分散片', '缓释片', '肠溶片', '咀嚼片', '泡腾片', '片', '胶囊', '颗粒', '口服液', '口服溶液', '注射液', '注射用', '干混悬剂'];
 const { isReady } = require('./llm-provider');
 const { structuredCall } = require('./structured-output');
+const { redactFreeText, collectKnownPII } = require('./pii-redact');
 
 const SKIP_DRUGS = /人血白蛋白|白蛋白注射液/;
 const MAX_SYNC = 4;
@@ -159,8 +160,14 @@ function evaluateIndicationSync(ctx, mkFinding) {
 /** LLM 语义层（super 模式，可升疑点） */
 async function evaluateIndicationLlm(record, ctx, mkFinding) {
   if (!isReady() || !loadIndex()) return [];
+  const { clinical, candidates } = collectIndicationCandidates(record);
   if (!candidates.length) return [];
 
+  const safeClinical = redactFreeText(
+    clinical,
+    collectKnownPII(record),
+    record?.case_meta?.pii_token || 'P-REDACT',
+  );
   const batch = candidates.slice(0, MAX_LLM);
   const system = [
     '你是医保限定支付适应症判定助手。只依据给定病历摘要与药品限定支付原文，判断该次用药是否符合医保支付适应症。',
@@ -168,7 +175,7 @@ async function evaluateIndicationLlm(record, ctx, mkFinding) {
     '原则：证据不足→线索；明确不符→疑点；明确符合→合规。',
   ].join('\n');
   const user = [
-    '## 病历摘要', clinical.slice(0, 2000),
+    '## 病历摘要（已脱敏）', safeClinical.slice(0, 2000),
     '## 待判定药品', JSON.stringify(batch.map(b => ({
       line_no: b.line.line_no,
       drug: b.line.item_name,
