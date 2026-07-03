@@ -1,0 +1,35 @@
+# 鹰眼 · 医保内网 ARM64 离线部署（Docker 25 + Compose v2.27）
+# 用法：cd team-app && docker compose up -d
+
+services:
+  db:
+    image: postgres:16-bookworm
+    pull_policy: never
+    environment:
+      POSTGRES_DB: app
+      POSTGRES_USER: app
+      POSTGRES_PASSWORD: demo-password
+    ports:
+      - "5432:5432"
+    volumes:
+      - db-data:/var/lib/postgresql/data
+      - ./db/init:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U app -d app"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  app:
+    image: team-app:arm64
+    pull_policy: never
+    env_file:
+      - app.env
+    ports:
+      - "8080:8080"
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  db-data:

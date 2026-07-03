@@ -1,0 +1,412 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>鹰眼 EAGLEEYE · 产品白皮书</title>
+  <style>
+    :root{
+      --ink:#0b1f35;--navy:#0b2a4a;--blue:#002fa7;--teal:#14b8a6;--amber:#e8a838;--red:#dc4a3d;--green:#0d9b6a;
+      --paper:#fbfcf8;--soft:#f2f6fa;--line:#d8dee5;--muted:#5f7082;--card:#fff;
+      --sans:"Inter","Helvetica Neue","PingFang SC","Noto Sans SC","Microsoft YaHei",Arial,sans-serif;
+      --mono:"SF Mono","JetBrains Mono","Cascadia Code",Menlo,Consolas,monospace;
+    }
+    *{box-sizing:border-box;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+    body{margin:0;padding:22px;background:#e5e7eb;color:var(--ink);font-family:var(--sans)}
+    .pack{display:grid;gap:22px;justify-items:center}
+    .page{width:794px;height:1123px;position:relative;overflow:hidden;padding:36px 46px 30px;background:linear-gradient(180deg,#fbfcf8 0%,#f7fbff 100%);box-shadow:0 16px 44px rgba(15,23,42,.14);page-break-after:always}
+    .page:before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 94% 6%,rgba(45,212,191,.14),transparent 22%),radial-gradient(circle at 4% 98%,rgba(0,47,167,.06),transparent 26%),radial-gradient(rgba(11,42,74,.05) .6px,transparent .6px);background-size:auto,auto,20px 20px;pointer-events:none;opacity:1}
+    .page:after{content:"";position:absolute;left:0;top:0;bottom:0;width:6px;background:linear-gradient(180deg,var(--blue),var(--teal) 55%,var(--amber));opacity:.9}
+    .content{position:relative;z-index:1;height:100%;display:flex;flex-direction:column}
+    header{display:flex;justify-content:space-between;align-items:center;gap:16px;margin-bottom:14px;color:var(--muted);font:11px var(--mono);letter-spacing:.08em;text-transform:uppercase}
+    .brand{display:flex;align-items:center;gap:10px;font-family:var(--sans);letter-spacing:0;text-transform:none;color:var(--ink);font-weight:850}
+    .brand img{width:34px;height:34px;border-radius:9px}.brand b{font-size:17px}
+    .brand em{font-style:normal;font:800 10px var(--mono);letter-spacing:.14em;color:var(--blue);margin-left:2px}
+    .eyebrow{font:800 11px var(--mono);letter-spacing:.16em;text-transform:uppercase;color:var(--blue);margin-bottom:8px}
+    h1,h2,h3,p{margin:0}
+    h1{font-size:46px;line-height:1.0;letter-spacing:-.045em;font-weight:900}
+    h2{font-size:38px;line-height:1.05;letter-spacing:-.04em;font-weight:900}
+    h3{font-size:17px;line-height:1.18;letter-spacing:-.02em;font-weight:850}
+    .lead{margin-top:9px;font-size:15px;line-height:1.5;color:#33475b;font-weight:560;max-width:690px}
+    .rule{height:1px;background:var(--line);margin:11px 0}
+    .accent{color:var(--blue)}.teal{color:var(--teal)}.red{color:var(--red)}.amber{color:var(--amber)}
+    .grid2{display:grid;grid-template-columns:1fr 1fr;gap:11px}.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.grid4{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+    .card{background:rgba(255,255,255,.95);border:1px solid var(--line);border-radius:12px;padding:11px 13px;box-shadow:0 2px 8px rgba(11,42,74,.04)}
+    .card.hot{background:#eef7ff;border-color:#bfd7ff}.card.warn{background:#fff8e8;border-color:#ecd69a}.card.green{background:#e8f7f0;border-color:#bfe8d3}
+    .label{font-size:14px;font-weight:850;margin-bottom:4px}.desc{font-size:11.6px;line-height:1.46;color:var(--muted)}
+    .num{font:900 30px/1 var(--mono);letter-spacing:-.06em;color:var(--blue);margin-bottom:4px}
+    .tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:11px}.tag{border:1px solid #bdd0e6;background:#fff;color:#134e72;border-radius:999px;padding:5px 9px;font:800 9px var(--mono);letter-spacing:.06em}
+    .quote{padding:14px 18px;border-left:6px solid var(--blue);background:#eef4ff;font-size:20px;line-height:1.3;font-weight:900;letter-spacing:-.02em}
+    .bullets{display:grid;gap:6px;margin-top:9px}.bullet{display:grid;grid-template-columns:16px 1fr;gap:7px;font-size:12.2px;line-height:1.44;color:#33475b}.bullet i{font-style:normal;color:var(--blue);font-weight:900}
+    .timeline{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.step{background:#fff;border:1px solid var(--line);border-radius:10px;padding:10px;min-height:88px}.step b{display:block;font:850 13px var(--mono);color:var(--blue);margin-bottom:5px}.step span{display:block;font-size:11.5px;font-weight:850;line-height:1.26}.step small{display:block;margin-top:5px;font-size:10.5px;color:var(--muted);line-height:1.34}
+    table{width:100%;border-collapse:collapse;font-size:11px;background:#fff;border:1px solid var(--line);border-radius:10px;overflow:hidden}th,td{border-bottom:1px solid var(--line);padding:6px 8px;text-align:left;vertical-align:top}th{background:#f3f7fb;color:#42566b;font:800 10px var(--mono);letter-spacing:.05em}tr:last-child td{border-bottom:none}
+    .mini-ui{background:#eef2f7;border:1px solid var(--line);border-radius:13px;overflow:hidden;box-shadow:0 10px 22px rgba(11,42,74,.1);font-size:10.5px;color:#33475b}
+    .ui-top{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:8px 11px;background:linear-gradient(125deg,#061829,#0b2a4a 52%,#134e72);color:#fff;font:10px var(--mono)}
+    .ui-top .uibrand{display:flex;align-items:center;gap:8px;font-family:var(--sans);font-weight:850}.ui-top img{width:22px;height:22px;border-radius:6px;background:#fff}
+    .ui-flow{display:flex;gap:5px;padding:7px 9px;background:#fff;border-bottom:1px solid var(--line);flex-wrap:wrap}.ui-flow span{padding:4px 7px;border:1px solid var(--line);border-radius:8px;background:#fbfcfe;font-size:9.5px;font-weight:800}.ui-flow .on{background:#ecfdf5;border-color:#99eadf;color:#0b2a4a}
+    .ui-grid{display:grid;grid-template-columns:180px 1fr 148px;gap:8px;padding:9px}.ui-grid.two{grid-template-columns:1.25fr .75fr}
+    .ui-pane{background:#fff;border:1px solid var(--line);border-radius:10px;overflow:hidden}.ui-head{display:flex;justify-content:space-between;padding:7px 9px;background:#f8fafc;border-bottom:1px solid var(--line);font-weight:850;color:#0b2a4a}
+    .ui-body{padding:8px}.ui-line{padding:4px 0;border-bottom:1px dashed #e8edf3}.ui-hi{background:#fff8e8;border-left:3px solid var(--amber);padding:5px 7px;border-radius:0 6px 6px 0;margin:5px 0;color:#7a4d00}
+    .ui-kpi{display:grid;grid-template-columns:repeat(4,1fr);gap:5px;margin-bottom:7px}.ui-k{border:1px solid var(--line);border-radius:8px;background:#fbfcfe;padding:6px}.ui-k b{display:block;font:900 15px var(--mono);color:var(--blue)}.ui-k span{font-size:9px;color:var(--muted)}
+    .finding{border:1px solid var(--line);border-left:4px solid var(--red);border-radius:9px;background:#fff;overflow:hidden;margin-bottom:6px}.finding.clue{border-left-color:var(--amber)}.finding.ok{border-left-color:var(--green)}
+    .fhead{display:flex;align-items:center;gap:6px;padding:6px 7px;border-bottom:1px solid #eef2f6}.badge{font:800 9px var(--sans);padding:2px 6px;border-radius:999px;background:#fef0ee;color:var(--red);white-space:nowrap}.badge.clue{background:#fff6e6;color:#9a6700}.badge.ok{background:#e8f7f0;color:var(--green)}.fhead b{font-size:10.5px;color:var(--ink)}
+    .ec{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;padding:6px;background:#fbfcfe}.ev{border:1px solid var(--line);border-radius:7px;background:#fff;padding:5px;font-size:9.2px}.ev i{display:block;font-style:normal;color:#134e72;font:800 8.5px var(--mono);margin-bottom:2px}
+    .matrix{display:grid;grid-template-columns:92px repeat(3,1fr);gap:6px}.cell{background:#fff;border:1px solid var(--line);border-radius:9px;padding:8px;min-height:60px}.cell.head{display:grid;place-items:center;background:#0b2a4a;color:#fff;font-weight:850;text-align:center}.cell b{font-size:12px}.cell p{font-size:10.5px;color:var(--muted);line-height:1.35;margin-top:3px}
+    .arch-board{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    .arch-stack{display:grid;gap:6px}.arch-row{display:grid;grid-template-columns:66px 1fr;gap:7px;align-items:stretch}.arch-row b{display:grid;place-items:center;border-radius:9px;background:#0b2a4a;color:#fff;font:850 12px var(--sans);text-align:center;line-height:1.1;padding:2px}.arch-row div{border:1px solid var(--line);background:#fff;border-radius:9px;padding:7px 8px}.arch-row strong{display:block;font-size:12px;color:#0b2a4a}.arch-row span{display:block;font-size:10.4px;line-height:1.36;color:var(--muted);margin-top:2px}
+    .data-contract{display:grid;gap:8px;align-content:start}.contract{border:1px solid var(--line);background:#fff;border-radius:10px;padding:9px}.contract b{font-size:12px;color:#0b2a4a}.contract .flowline{display:grid;gap:4px;margin-top:6px}.contract .flowline span{display:block;padding:5px 7px;background:#f6f8fb;border:1px solid #e1e8f0;border-radius:7px;font-size:10.4px;line-height:1.3;color:#33475b}
+    .callout{border:1px solid #c7d8ff;background:#f1f6ff;border-radius:10px;padding:10px 12px}.callout b{display:block;font-size:12.5px;color:#002fa7;margin-bottom:4px}.callout p{font-size:11.4px;line-height:1.5;color:#304458;margin:0}
+    .swimlane{display:grid;grid-template-columns:84px repeat(4,1fr);gap:6px;margin-bottom:2px}.lane{border:1px solid var(--line);background:#fff;border-radius:9px;padding:7px;min-height:56px}.lane.role{background:#0b2a4a;color:#fff;display:grid;place-items:center;text-align:center;font-weight:850}.lane b{display:block;font-size:11px;color:#0b2a4a;margin-bottom:3px}.lane p{font-size:10px;line-height:1.32;color:var(--muted);margin:0}
+    .flow-card{background:#0d1e2f;color:#eaf2f7;border-radius:12px;padding:10px 12px;box-shadow:inset 0 0 0 1px rgba(255,255,255,.08)}.flow-card b{display:block;font-size:12.5px;margin-bottom:6px}.flow-card span{display:block;border-top:1px solid rgba(255,255,255,.12);padding:6px 0;font-size:10.8px;line-height:1.36}
+    .mini-ledger{display:grid;gap:6px}.ledger-item{display:grid;grid-template-columns:70px 1fr 60px;gap:8px;align-items:center;border:1px solid var(--line);background:#fff;border-radius:9px;padding:7px}.ledger-item b{font:850 11px var(--mono);color:#0b2a4a}.ledger-item span{font-size:10.4px;color:#41566c}.ledger-item i{font-style:normal;text-align:center;border-radius:999px;padding:3px 5px;font-size:9.5px;font-weight:850;background:#eef7ff;color:#134e72}
+    .footer{margin-top:auto;border-top:1px solid var(--line);padding-top:10px;display:flex;justify-content:space-between;align-items:flex-end;gap:12px;color:var(--muted);font:10.5px var(--mono);letter-spacing:.05em}
+    .qr{display:flex;align-items:center;gap:8px}.qr img{width:52px;height:52px;background:#fff;padding:5px;border:1px solid var(--line);border-radius:8px}
+    .folio{margin-left:auto;text-align:right}
+    .story-rail{margin:11px 0 12px;display:grid;grid-template-columns:repeat(10,1fr);gap:3px;color:#94a2b2}
+    .story-rail span{border-top:2px solid currentColor;padding-top:4px;font:800 8px/1.15 var(--mono);letter-spacing:.02em;opacity:.4;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .story-rail span.on{color:var(--blue);opacity:1}
+    .dense{display:flex;flex-direction:column}
+    .article{columns:2;column-gap:26px;column-rule:1px solid #e3e9ef;margin-top:11px}
+    .article p{break-inside:avoid;font-size:12px;line-height:1.74;color:#22384e;text-align:justify;margin:0 0 9px}
+    .article p .k{color:var(--blue);font-weight:800}
+    /* 填充件：图标要点行 / 小图表 / 结论带 */
+    .hl-row{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:12px}
+    .hl{display:flex;flex-direction:column;gap:6px;border:1px solid var(--line);border-top:3px solid var(--blue);background:rgba(255,255,255,.94);border-radius:12px;padding:11px 12px 12px;box-shadow:0 2px 8px rgba(11,42,74,.04)}
+    .hl img{width:24px;height:24px}
+    .hl b{font-size:13px;color:var(--navy);font-weight:850}
+    .hl span{font-size:10.8px;line-height:1.46;color:var(--muted)}
+    .hl:nth-child(2){border-top-color:var(--teal)}.hl:nth-child(3){border-top-color:var(--amber)}.hl:nth-child(4){border-top-color:var(--red)}
+    .meter{margin-top:12px;display:grid;gap:9px;border:1px solid var(--line);background:rgba(255,255,255,.94);border-radius:12px;padding:13px 16px}
+    .meter .mrow{display:grid;grid-template-columns:88px 1fr 96px;gap:12px;align-items:center;font-size:12px;color:#33475b;font-weight:600}
+    .meter .bar{height:11px;border-radius:999px;background:#e8edf3;overflow:hidden}
+    .meter .bar i{display:block;height:100%;border-radius:999px;background:linear-gradient(90deg,var(--teal),var(--blue))}
+    .meter .mrow b{text-align:right;font:800 13px var(--mono);color:var(--navy)}
+    .insight{margin-top:12px;display:flex;align-items:center;gap:14px;padding:14px 18px;border-radius:12px;background:linear-gradient(120deg,#0b2a4a,#134e72);color:#fff;box-shadow:0 10px 24px rgba(11,42,74,.2)}
+    .insight i{font-style:normal;font:800 10px var(--mono);letter-spacing:.16em;color:#7fe9db;white-space:nowrap;border-right:1px solid rgba(255,255,255,.28);padding-right:14px}
+    .insight b{font-size:16px;font-weight:850;letter-spacing:-.01em;line-height:1.32}
+    /* 封面 / 封底 */
+    .cover .content{padding-top:6px}
+    .cover-top{display:flex;justify-content:space-between;align-items:center;font:11px var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+    .cover-hero{margin-top:60px}
+    .cover-kicker{font:800 13px var(--mono);letter-spacing:.34em;text-transform:uppercase;color:var(--blue);margin-bottom:22px}
+    .cover-title{font-size:118px;line-height:.9;letter-spacing:-.06em;font-weight:950;color:var(--navy)}
+    .cover-title em{font-style:normal;display:block;font:900 44px/1 var(--mono);letter-spacing:.02em;color:var(--teal);margin-top:14px}
+    .cover-band{display:inline-flex;align-items:center;gap:10px;margin-top:30px;padding:10px 18px;border-radius:999px;background:var(--navy);color:#fff;font-size:19px;font-weight:850;letter-spacing:.02em;box-shadow:0 10px 26px rgba(11,42,74,.24)}
+    .cover-band em{font-style:normal;color:var(--amber)}
+    .cover-sub{margin-top:26px;font-size:18px;line-height:1.62;color:#33475b;font-weight:560;max-width:600px}
+    .cover-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:34px}
+    .cover-stat{border:1px solid var(--line);border-top:3px solid var(--blue);background:rgba(255,255,255,.9);border-radius:12px;padding:14px}
+    .cover-stat b{display:block;font:900 30px/1 var(--mono);letter-spacing:-.04em;color:var(--navy)}
+    .cover-stat span{display:block;margin-top:6px;font-size:12px;color:var(--muted);font-weight:600}
+    .cover-stat:nth-child(2){border-top-color:var(--teal)}.cover-stat:nth-child(3){border-top-color:var(--amber)}.cover-stat:nth-child(4){border-top-color:var(--red)}
+    .cover-foot{margin-top:auto;display:flex;justify-content:space-between;align-items:flex-end;border-top:1px solid var(--line);padding-top:16px}
+    .cover-foot .meta{font:11px var(--mono);letter-spacing:.08em;color:var(--muted);line-height:1.7}
+    .cover-qr{display:flex;align-items:center;gap:12px}.cover-qr img{width:82px;height:82px;background:#fff;padding:6px;border:1px solid var(--line);border-radius:10px}
+    .cover-qr div{font-size:12px;color:#33475b;font-weight:700;line-height:1.5}
+    .back-hero{margin-top:40px}
+    .back-quote{font-size:52px;line-height:1.12;letter-spacing:-.05em;font-weight:950;color:var(--navy)}
+    .back-quote em{font-style:normal;color:var(--red)}
+    .back-sub{margin-top:22px;font-size:16px;line-height:1.66;color:#33475b;font-weight:560;max-width:600px}
+    .back-index{margin-top:34px;border:1px solid var(--line);border-radius:14px;background:rgba(255,255,255,.9);padding:18px 20px}
+    .back-index h4{font:800 11px var(--mono);letter-spacing:.16em;text-transform:uppercase;color:var(--blue);margin:0 0 12px}
+    .back-index ol{margin:0;padding:0;list-style:none;display:grid;grid-template-columns:repeat(2,1fr);gap:8px 26px}
+    .back-index li{display:flex;gap:10px;align-items:baseline;font-size:13px;color:#28405a;border-bottom:1px dashed #e3e9ef;padding-bottom:7px}
+    .back-index li b{font:800 12px var(--mono);color:var(--teal)}
+    .back-foot{margin-top:auto;border-top:1px solid var(--line);padding-top:18px;display:flex;justify-content:space-between;align-items:flex-end}
+    .back-foot .qr{gap:12px}.back-foot .qr img{width:78px;height:78px}
+    .back-foot .sign{text-align:right}.back-foot .sign b{font-size:20px;color:var(--navy)}.back-foot .sign span{display:block;margin-top:6px;font:11px var(--mono);color:var(--muted);letter-spacing:.06em}
+    @media print{ @page{size:A4 portrait;margin:0} body{padding:0;background:#fff}.pack{display:block;gap:0}.page{width:210mm;height:297mm;box-shadow:none} }
+  </style>
+</head>
+<body>
+<main class="pack" id="pack"></main>
+<script>
+const isPack = location.pathname.includes('yingyan-print-pack');
+const brandBase = isPack ? 'assets/' : '../brand/';
+const logo = brandBase + 'logo-mark.svg';
+const qr = isPack ? 'assets/qr-yingyan.png' : 'qr-yingyan.png';
+const iconBase = isPack ? 'assets/icons' : '../brand/icons';
+const storySteps = ['总览','问题','结构','证据','飞检','监管','院端','插件','前中后','可信','体验'];
+
+const pages = [
+  {kind:'cover', body:'cover'},
+  {n:1, story:1, title:['为什么需要','语义取证层'], kicker:'问题：不是没有规则，而是案卷太重', lead:'国家结算筛查已经覆盖海量流水，但一笔费用是否真的违规，仍要回到整本非结构化就诊材料里核对。', folio:'案卷太重，人扛不动 —— 让机器先读懂', body:'problem'},
+  {n:2, story:1, title:['产品定位','站在规则之上'], kicker:'不替代国家系统，也不做自动处罚', lead:'鹰眼是监管稽核与院端合规共同使用的语义取证层，把官方规则落到具体费用行、病历原文与政策条款。', folio:'站在国家规则之上，不与国家系统争位', body:'position'},
+  {n:3, story:2, title:['六层架构','确定性取证流水线'], kicker:'从材料摄取到文书输出，每层只做一件事', lead:'材料统一为案卷对象，再由规则路由、知识底座、可信门禁与导出层协同，得出可追溯的结论。', folio:'从材料到结论，每一步都可追溯', body:'architecture'},
+  {n:4, story:3, title:['三要素','证据链'], kicker:'原文有位置 · 政策有出处 · 推理有链路', lead:'每一条对外疑点都必须同时具备原文定位、政策依据与完整推理；任一缺失即降级为线索或不予输出。', folio:'引不出原文的疑点，不输出', body:'evidence'},
+  {n:5, story:2, title:['智能体设计','确定性 + 语义增强'], kicker:'默认可复现，需要时再增强', lead:'确定性规则引擎作为主干保证稳定与可回归，语义模型在争议判断上做申诉预演与取证自检。', folio:'读得更懂，但绝不报得更松', body:'agent'},
+  {n:6, story:2, title:['规则与知识库','官方可溯源'], kicker:'对齐国家两库全量框架 · 逐条可追溯', lead:'每条规则绑定官方来源、条款与生效日期，待核验内容明确标注，绝不让模型自行编造政策。', folio:'不造规则、不编条款，只落到案卷', body:'rules'},
+  {n:7, story:4, title:['监管侧工作台','事后飞检取证'], kicker:'材料、疑点、操作同屏，围绕证据展开', lead:'左侧材料、中间报告、右侧操作三栏协同，让稽核人员从疑点直达费用行、病历原文与政策依据。', folio:'飞检不再从头翻，围绕疑点核证据', body:'audit-ui'},
+  {n:8, story:6, title:['院端驾驶舱','自查前移整改'], kicker:'事前事中主动发现，飞检前把问题处理干净', lead:'优先队列、风险点、补材料建议、整改台账与复跑留痕，让医院把合规变成可管理的日常工作。', folio:'把可整改的问题，挡在飞检之前', body:'hospital-ui'},
+  {n:9, story:7, title:['插件产品线','关口前移 · 零对接'], kicker:'浏览器扩展 + 三角色靶站 · 同一事前闭环', lead:'政策原文要求"将不合规行为消除在萌芽阶段"。鹰眼以 Chrome 扩展套在老 HIS 上，开单/编码/结算三时点提醒，未遵从写入台账供监管重点审核。', folio:'违规消灭在萌芽，未遵从转监管重点审核', body:'plugin'},
+  {n:10, story:8, title:['前中后链条','医院前移 · 监管兜底'], kicker:'两类用户，一套证据链', lead:'医院侧重在事前事中主动发现，监管侧重在事后核查取证，同一套规则与证据把两端连成闭环。', folio:'医院前移发现，监管事后兜底', body:'stages'},
+  {n:11, story:8, title:['黄金闭环','10 分钟一案到底'], kicker:'主演示路径 · 七步真 API · 每步有产物', lead:'从体检稽核到复核治理、整改 diff、主动退回测算与 YHF 门禁——`/golden.html` 上逐步点绿，Definition of Done 可当场验收。', folio:'稽核→举证→复核→治理→复跑→测算→门禁', body:'golden'},
+  {n:12, story:9, title:['可信机制','取证三件套'], kicker:'合议去重 · 覆盖声明 · 置信传播', lead:'可信不是承诺，而是工程约束：防重复计罚、把漏查变成可审计声明、让不可靠证据自动降权。', folio:'可信不是承诺，是可检验的约束', body:'trust'},
+  {n:13, story:9, title:['质量门禁','可回归的工程纪律'], kicker:'干净件零误报是不可逾越的红线', lead:'从引擎、规则到模型行为分层设卡，每一次改动都要先过门禁，才能进入交付。', folio:'干净件零误报，是不可逾越的红线', body:'harness'},
+  {n:14, story:9, title:['交付物','能带走的稽核成果'], kicker:'核查清单 · 举证包 · 整改台账 · 溯源报告', lead:'鹰眼的价值不停留在屏幕上，而是沉淀为可复核、可留档、可进入工作流的材料。', folio:'稽核成果，要带得走、留得下', body:'deliverables'},
+  {n:15, story:9, title:['落地路线','从单点到规模'], kicker:'轻集成 · 可私有化 · 逐步扩展', lead:'先以院端自查、监管飞检辅助与插件事前提醒切入，不改造既有系统，再逐步扩展专科规则、地方适配与机构画像。', folio:'先把单点做扎实，再让能力生长', body:'roadmap'},
+  {n:16, story:10, title:['在线体验','三入口任选路径'], kicker:'home 分流 → golden / 平台 / 插件', lead:'`/home.html` 三卡片入口：黄金闭环七步、全面平台纵深、插件靶站事前提醒——同一引擎、同一 KB、同一条 G0 红线。', folio:'选路径 · 跑演示 · 点证据 · 看不报 · 导出', body:'demo'},
+  {kind:'backcover', body:'backcover'}
+];
+
+function header(p){return `<header><div class="brand"><img src="${logo}" alt=""><b>鹰眼 EAGLEEYE</b><em>WHITE PAPER</em></div><div>产品白皮书 · ${String(p.n).padStart(2,'0')} / 16</div></header>`}
+function footer(p){return `<div class="footer"><div class="qr"><img src="${qr}" alt=""><span>扫码进入<br>在线 Demo 体验</span></div><span class="folio">${(p&&p.folio)||'引不出原文的疑点，不输出'}</span></div>`}
+function title(p){return `<div class="eyebrow">${p.kicker}</div><h1>${p.title.map((x,i)=>i?`<span class="accent">${x}</span>`:x).join('<br>')}</h1><p class="lead">${p.lead}</p>`}
+function storyRail(active){return `<div class="story-rail">${storySteps.map((s,i)=>`<span class="${i===active?'on':''}">${String(i+1).padStart(2,'0')} ${s}</span>`).join('')}</div>`}
+function cards(items){return `<div class="grid2">${items.map(x=>`<div class="card ${x[2]||''}"><div class="label">${x[0]}</div><div class="desc">${x[1]}</div></div>`).join('')}</div>`}
+function stats(items){return `<div class="grid4">${items.map(x=>`<div class="card"><div class="num">${x[0]}</div><div class="desc">${x[1]}</div></div>`).join('')}</div>`}
+function bullets(items){return `<div class="bullets">${items.map(x=>`<div class="bullet"><i>▸</i><span>${x}</span></div>`).join('')}</div>`}
+function miniUi(type){
+  if(type==='hospital') return `<div class="mini-ui"><div class="ui-top"><div class="uibrand"><img src="${logo}" alt="">院端合规自查驾驶舱</div><span>医保办视图 · 今日 128 份</span></div><div class="ui-flow"><span class="on">风险队列</span><span class="on">自查体检</span><span class="on">整改台账</span><span>复跑留痕</span></div><div class="ui-grid two"><div class="ui-pane"><div class="ui-head"><span>优先队列</span><span>综合优先分</span></div><table><tr><th>#</th><th>就诊主题</th><th>科室</th><th>分值</th></tr><tr><td>1</td><td>肺癌住院化疗</td><td>肿瘤</td><td>196.2</td></tr><tr><td>2</td><td>腹腔镜胆囊切除</td><td>肝胆</td><td>178.5</td></tr><tr><td>3</td><td>椎体成形术</td><td>骨科</td><td>160.2</td></tr></table></div><div class="ui-pane"><div class="ui-head"><span>当前输出</span><span>自查口径</span></div><div class="ui-body"><div class="finding"><div class="fhead"><span class="badge">风险点</span><b>T-201 缺分子病理</b></div></div><div class="finding clue"><div class="fhead"><span class="badge clue">线索</span><b>T-205 补血常规</b></div></div><div class="finding ok"><div class="fhead"><span class="badge ok">不报</span><b>贝伐珠单抗合理</b></div></div></div></div></div></div>`;
+  return `<div class="mini-ui"><div class="ui-top"><div class="uibrand"><img src="${logo}" alt="">监管侧飞检工作台</div><span>确定性引擎 · 一键稽核</span></div><div class="ui-flow"><span class="on">选择就诊</span><span class="on">一键稽核</span><span class="on">疑点报告</span><span>导出文书</span></div><div class="ui-grid"><div class="ui-pane"><div class="ui-head"><span>材料</span><span>锚点</span></div><div class="ui-body"><div class="ui-line">费用清单第 6 行 · 贝伐珠单抗</div><div class="ui-hi">费用清单第 7 行 · 奥希替尼 ¥4,704</div><div class="ui-line">病理：右肺腺癌</div><div class="ui-hi">未见 EGFR / ALK 结果</div></div></div><div class="ui-pane"><div class="ui-head"><span>疑点报告</span><span>5 + 2</span></div><div class="ui-body"><div class="ui-kpi"><div class="ui-k"><b>5</b><span>疑点</span></div><div class="ui-k"><b>2</b><span>线索</span></div><div class="ui-k"><b>2</b><span>不报</span></div><div class="ui-k"><b>¥12.8k</b><span>金额</span></div></div><div class="finding"><div class="fhead"><span class="badge">疑点</span><b>T-201 靶向药无基因检测</b></div><div class="ec"><div class="ev"><i>证据</i>费用行第 7 行</div><div class="ev"><i>政策</i>限定支付条款</div><div class="ev"><i>推理</i>病理无基因结果</div></div></div></div></div><div class="ui-pane"><div class="ui-head"><span>操作</span><span>飞检组</span></div><div class="ui-body"><div class="ui-line">源文档跳转</div><div class="ui-line">正确不报解释</div><div class="ui-line">核查清单导出</div><div class="ui-line">举证包导出</div></div></div></div></div>`;
+}
+function body(name){
+  const map={
+    problem:`${stats([['8600','全国医保监管力量'],['13亿','参保人群'],['28.99万','定点机构'],['40min','单份材料人工初筛']])}<div class="rule"></div>${cards([['结构化筛查的边界','费用流水能发现异常，却难判断异常是否真的成立。','hot'],['非结构化的难点','病程、医嘱、检验、费用需要跨文档反复勾稽。','warn'],['人工翻阅的代价','逐页核对耗时，且口径与经验差异影响一致性。',''],['鹰眼补的环节','把存疑就诊读成可复核、可对质的证据链。','green']])}`,
+    position:`<div class="matrix"><div></div><div class="cell head">事前</div><div class="cell head">事中</div><div class="cell head">事后</div><div class="cell head">医院侧</div><div class="cell"><b>开单提醒</b><p>规则提示与风险预筛。</p></div><div class="cell"><b>结算自查</b><p>提交前补材料、退回。</p></div><div class="cell"><b>整改复跑</b><p>飞检前留痕备查。</p></div><div class="cell head">监管侧</div><div class="cell"><b>风险画像</b><p>高危机构/科室提示。</p></div><div class="cell"><b>存疑复核</b><p>经办审核需核病历。</p></div><div class="cell"><b>飞检取证</b><p>事后核查与举证导出。</p></div></div><div class="rule"></div>${bullets(['不替代国家系统：全量结构化筛查仍由国家平台承担。','不做自动处罚：系统只给线索、证据与文书草稿，由人裁量。','不编造政策：每条规则必须绑定官方来源或标注待核验。'])}`,
+    architecture:`<div class="arch-board"><div class="arch-stack">${[['第一层','材料摄取','接收 PDF、图片、表格与结构化数据，按病案、病程、医嘱、检验、病理、费用清单归类。'],['第二层','案卷对象','把每条费用、医嘱、诊断、检验统一结构化，并保留在原文中的位置与锚点。'],['第三层','知识底座','汇集官方政策、目录限制、临床条件与地方价目，作为判断依据。'],['第四层','规则判定','触发器先筛出相关规则，再交给对应检查逻辑执行，跳过无关规则。'],['第五层','可信门禁','证据、金额、覆盖、置信在此裁定，决定疑点、线索或不予输出。'],['第六层','文书输出','整理为核查清单、举证包、整改台账与溯源报告，进入现场工作流。']].map(x=>`<div class="arch-row"><b>${x[0]}</b><div><strong>${x[1]}</strong><span>${x[2]}</span></div></div>`).join('')}</div><div class="data-contract"><div class="contract"><b>统一案卷对象</b><div class="flowline"><span>费用、医嘱、诊断、检验、病理统一入库</span><span>每条事实保留来源文档、行号与原文锚点</span><span>识别置信度继续传递到最终结论</span></div></div><div class="contract"><b>结论输出契约</b><div class="flowline"><span>状态：疑点 / 线索 / 正确不报</span><span>证据：原文定位 + 政策条款 + 推理过程</span><span>交付：核查清单、举证包、整改台账</span></div></div><div class="callout"><b>核心原则</b><p>事实层与判定层分离，语义模型只增强理解，不能绕过三要素门禁。</p></div></div></div>`,
+    evidence:`<div class="grid3"><div class="card hot"><div class="label">① 原文定位</div><div class="desc">精确到费用清单第几行、病历哪一段、病理哪一份，点击回到原件。</div></div><div class="card warn"><div class="label">② 政策依据</div><div class="desc">引用官方文号、条款原文、核验状态与生效日期，不由模型代笔。</div></div><div class="card green"><div class="label">③ 完整推理</div><div class="desc">触发条件、需核事实、除外情形与结论逐步串联，便于复核。</div></div></div><div class="rule"></div>${miniUi('audit')}`,
+    agent:`<div class="swimlane"><div class="lane role">材料</div><div class="lane"><b>费用清单</b><p>金额、数量、日期、类别。</p></div><div class="lane"><b>医嘱 / 病程</b><p>用药依据、周期、禁忌。</p></div><div class="lane"><b>检验 / 病理</b><p>阈值、分子检测、诊断。</p></div><div class="lane"><b>政策底座</b><p>条款、目录、生效日。</p></div><div class="lane role">智能体</div><div class="lane"><b>稽核角色</b><p>提出候选疑点与证据。</p></div><div class="lane"><b>取证自检</b><p>逐条核对证据闭环。</p></div><div class="lane"><b>申辩角色</b><p>模拟医院补材料理由。</p></div><div class="lane"><b>裁判角色</b><p>维持、降级或补材料。</p></div></div><div class="flow-card"><b>工作顺序</b><span>确定性规则先产生候选疑点，保证稳定与可回归。</span><span>语义角色再阅读自由文本，补充病程、医嘱与检验中的上下文。</span><span>申诉预演最后裁定：维持疑点、降级线索，或要求补材料。</span></div>`,
+    rules:`${stats([['全库','对齐国家两库框架'],['全域','覆盖医保规则体系'],['13+','重点专科场景'],['可溯源','规则绑定官方来源']])}<div class="rule"></div><div class="grid2"><div>${bullets(['政策库按法规、清单、规则、目录、案例分层，保留来源与生效日。','围绕肿瘤、影像、重症、麻醉、骨科、检验、药店等专科建检查逻辑。','待核验内容明确标注，不把未核验条款包装成事实。','地方适配层接入省级价目、DRG/DIP、护理收费与目录限定。'])}</div><div class="mini-ledger"><div class="ledger-item"><b>T-201</b><span>靶向药缺分子病理证据</span><i>肿瘤</i></div><div class="ledger-item"><b>B-201</b><span>超目录限定支付范围</span><i>目录</i></div><div class="ledger-item"><b>A-109</b><span>结算数量超医嘱记录</span><i>通用</i></div><div class="ledger-item"><b>ICU-302</b><span>设备计费时长与记录不符</span><i>重症</i></div></div></div>`,
+    'audit-ui':`${miniUi('audit')}<div class="rule"></div>${cards([['左侧 · 材料区','以文档标签组织病案、病程、医嘱、检验、病理与费用清单。'],['中间 · 报告区','总览、疑点、正确不报、覆盖度分页；疑点可展开三要素。'],['右侧 · 操作区','源文档跳转、正确不报解释、核查清单与举证包导出。'],['同屏协作','围绕疑点逐条核证据，减少多系统之间的来回切换。']])}`,
+    'hospital-ui':`${miniUi('hospital')}<div class="rule"></div>${cards([['优先队列','按风险分、科室、金额与状态排序，先处理高价值就诊。'],['自查输出','风险点、线索、正确不报，均以整改口径表达。'],['整改台账','补材料、主动退回、责任科室与复跑状态形成闭环。'],['价值前移','把可整改的问题在飞检之前处理干净。']])}`,
+    plugin:`${cards([['浏览器扩展','Chrome MV3 · 本地引擎 :3700 · 演示靶站 mockhis.html 即装即演。','green'],['三角色触点','医生开单 · 编码员 DRG · 结算员上传——同一浮层与处置范式。','hot'],['事前规则子集','AGE-101 年龄分层 · F-001 性别冲突 · T-201 靶向缺检测 · B-201 超限定支付。','warn'],['院端↔监管闭环','采纳整改 / 坚持提交+理由 → 台账 → 未遵从进 priority · 监管回执。','']])}<div class="rule"></div>${bullets(['政策出处：两库可置于机构智能提醒，"将不合规行为消除在萌芽阶段"。','不触碰医保部门统一 APP 边界：医院自装自用，医生保留最终决定权。','内嵌演示通道：未装扩展时 MockHIS「鹰眼审方(内嵌)」等价走同一 API。','运营看板 plugin-dashboard.html：遵从率、萌芽拦截、未遵从待监管一览。'])}`,
+    golden:`${cards([['① 体检稽核','POST /api/audit?mode=exam · 秒级报告 + 自查快照。','hot'],['② 三要素','证据定位 + 政策原文 + 推理链，引不出原文不输出。',''],['③ 人工复核','采纳/驳回落库 · AI 不做最终认定。','warn'],['④ 治理沉淀','驳回≥3 → shadow · 误报是有状态的治理。','']])}<div class="rule"></div>${cards([['⑤ 整改 diff','复跑对比：已消除 / 仍存在 / 新增。','green'],['⑥ 主动退回 ROI','自查从宽 vs 飞检暴露区间测算。',''],['⑦ YHF 门禁','G0 零误报红线 · bash yhf/run.sh --strict。','hot']])}`,
+    stages:`<div class="matrix"><div></div><div class="cell head">事前</div><div class="cell head">事中</div><div class="cell head">事后</div><div class="cell head">医院侧</div><div class="cell"><b>插件审方</b><p>扩展/内嵌通道开单前提醒。</p></div><div class="cell"><b>结算自查</b><p>提交前补材料、退回。</p></div><div class="cell"><b>整改复跑</b><p>飞检前留痕备查。</p></div><div class="cell head">监管侧</div><div class="cell"><b>风险画像</b><p>高危机构/科室预警。</p></div><div class="cell"><b>存疑复核</b><p>经办审核中核对病历。</p></div><div class="cell"><b>飞检取证</b><p>事后核查与举证导出。</p></div></div><div class="rule"></div>${bullets(['飞检属于事后监管核查，不同于事中的结算审核。','医院自查越干净，流到事后飞检的问题就越少。','插件未遵从单与飞检疑点共用引擎，监管在 priority 重点盯防。','三入口（golden / 平台 / 插件）共用同一 KB 与 G0 红线。'])}`,
+    trust:`${cards([['合议去重','同一笔费用被多规则命中时，自动选主疑点，金额只计一次。'],['覆盖声明','明示查了哪些维度，未触发是因无相关项目，而非漏查。'],['置信传播','识别置信低、材料缺失时降低置信，必要时降级为线索。'],['安全边界','病历文本视为不可信输入，内部提示不能改变判定。']])}<div class="rule"></div><table><tr><th>风险</th><th>工程约束</th><th>对外价值</th></tr><tr><td>重复计罚</td><td>合议去重</td><td>金额不虚高</td></tr><tr><td>漏查说不清</td><td>覆盖声明</td><td>查了什么可审计</td></tr><tr><td>模型臆测</td><td>政策溯源 + 门禁</td><td>条款可核验</td></tr><tr><td>提示注入</td><td>输入隔离</td><td>判定不被材料操纵</td></tr></table>`,
+    harness:`${cards([['分层门禁','对引擎、规则与模型行为逐层设卡，改动先过门禁。'],['干净件红线','对合规材料保持零误报，宁可少报也不错报。'],['金标稳定','改规则时，标准案卷的疑点与金额必须保持稳定。'],['回归召回','长期演进中，关键疑点不会在改动里悄悄丢失。']])}<div class="rule"></div><table><tr><th>层级</th><th>检查什么</th><th>红线</th></tr><tr><td>引擎层</td><td>干净件误报</td><td>零误报</td></tr><tr><td>规则层</td><td>命中与金额</td><td>不破坏金标</td></tr><tr><td>模型层</td><td>输出与裁判</td><td>格式规范·判断一致</td></tr><tr><td>回归层</td><td>关键召回</td><td>疑点不丢</td></tr></table>`,
+    deliverables:`${cards([['核查清单','按疑点输出费用行、证据摘录、政策条款与处置建议。'],['举证包','把三要素证据、正确不报解释与覆盖声明整理成成稿。'],['整改台账','风险点、责任科室、补材料项、退回建议与复跑结果。'],['溯源报告','把每条规则映射回官方文件与条款，支撑合规地基。']])}<div class="rule"></div>${bullets(['监管侧：减少现场翻阅时间，把人力留给真正的争议。','医院侧：让自查结果进入整改台账，而非停留在口头提醒。','管理者：导出物可沉淀为机构画像与整改前后对比。'])}`,
+    roadmap:`<div class="timeline">${[['近期','轻服务切入','院端历史自查 + 监管飞检辅助，不改造既有系统。'],['中期','规则扩展','补齐更多专科逻辑与省级价目、分组配置。'],['长期','协同扩展','私有化部署，院端自查与监管飞检口径打通。']].map(x=>`<div class="step"><b>${x[0]}</b><span>${x[1]}</span><small>${x[2]}</small></div>`).join('')}</div><div class="rule"></div>${bullets(['坚持轻集成：先证明单点价值，再扩大覆盖。','守住边界：不替代国家系统，不做自动处罚。','规则资产与机构画像随使用不断沉淀，形成长期壁垒。'])}`,
+    demo:`<div class="timeline">${[['入口','/home.html','三卡片：黄金闭环 · 全面平台 · 插件。'],['闭环','/golden.html','7 步点绿 · main 案卷 · exam 模式。'],['插件','/mockhis.html','装扩展 → 提交医嘱 → 浮层提醒 → 台账。']].map(x=>`<div class="step"><b>${x[0]}</b><span>${x[1]}</span><small>${x[2]}</small></div>`).join('')}</div><div class="rule"></div>${miniUi('audit')}`
+  };
+  return map[name]||'';
+}
+const articles = {
+  problem:[
+    '医保基金的监管压力，来自"人少、事多、材料重"。有限的监管力量要面对十亿级参保人群与近三十万家定点机构，而每年真正进入现场飞检的机构，只是其中很小的一部分。',
+    '国家医保智能监管体系已经把结构化结算数据的筛查做得很成熟，能在海量流水里快速定位异常。但一笔费用"是否真的违规"，往往要回到一份完整的就诊材料里逐项核对。',
+    '一份住院材料通常包含病案首页、病程记录、长期与临时医嘱、检验与病理报告、费用清单等多类文档。判断合规与否，需要在这些文档之间反复比对、彼此印证。',
+    '这类跨文档的语义核对，目前主要依赖资深人员逐页翻阅。单份材料的初筛往往要花上约四十分钟，而不同人的口径与经验差异，又会直接影响结论的一致性。',
+    '更棘手的是漏看风险。材料动辄上百页，遗漏关键的一页，就可能错过真正的问题；反过来，对材料理解不足，也可能误伤本属合理的诊疗。',
+    '鹰眼要补的，正是"结构化筛查之后、人工逐页翻阅之前"的这一段——把非结构化就诊材料读懂，并沉淀为可以复核、可以对质的证据。',
+    '它不追求"报得更多"，而追求"报得更准、说得更清"：让稀缺的专业人力，从翻材料转向核证据、判断真正的争议。'
+  ],
+  position:[
+    '鹰眼是一层"语义取证层"，工作在国家医保监管体系之上，而不是与之竞争。国家平台负责全量结构化筛查，鹰眼负责把筛出的存疑就诊读成完整、可对质的证据链。',
+    '它不是实时拒付引擎，也不是自动处罚系统。系统输出的是疑点、线索、证据与文书草稿，最终的定性与处理，仍由具备资质的人员裁量。',
+    '产品服务两类用户。监管侧主要用于事后飞检与专项稽核，帮助稽核人员在有限时间内快速取证、优先排序、生成举证材料。',
+    '院端主要用于飞检前的历史自查、结算前的一致性校验，以及整改后的复跑留痕，帮助医院把可整改的问题在飞检之前处理干净。',
+    '两侧并不是割裂的两套系统，而是围绕同一套规则与同一条证据链的不同工作口径：监管看到的是"疑点与举证"，医院看到的是"风险点与整改"。',
+    '这样的边界让产品更易被接受。医院可以先以轻量的自查体检形式使用，监管可以把它作为飞检取证的辅助，而不需要一次性替换任何既有系统。',
+    '鹰眼始终守住三条边界：不替代国家系统的全量筛查、不做自动处罚、不自行编造政策条款。所有判断，都要落在具体的费用行、病历原文与官方政策之上。'
+  ],
+  architecture:[
+    '鹰眼的处理流程被组织成清晰的六层，从材料进入到文书产出，每一层只解决一个明确的问题，也让每一个结论都能向上追溯到它的来源。',
+    '材料摄取层负责接收 PDF、图片、表格与结构化数据，按病案首页、病程、医嘱、检验、病理、费用清单等槽位归类，并记录每一段的识别置信度。',
+    '案卷对象层把这些材料统一成一个可计算的整体。每一条费用、医嘱、诊断、检验结果都被结构化，同时保留它在原文中的位置与锚点，方便随时回链。',
+    '知识底座层汇集官方政策、目录限制、临床用药条件以及地方价目等配置，为后续判断提供可靠依据，而不是让模型凭印象作答。',
+    '规则判定层先由触发器根据本次就诊的诊断、项目与科室筛出相关规则，再交给对应的检查逻辑执行，避免无关规则空跑而产生噪声。',
+    '可信门禁层是结论的把关处：证据是否齐全、金额是否重复、覆盖是否说明、置信是否足够，都在这里裁定，决定一条发现最终是疑点、线索，还是不予输出。',
+    '文书输出层把结论整理成核查清单、举证材料、整改台账与政策溯源报告，让结果能够直接进入现场工作流，而不是停留在一屏结果里。',
+    '贯穿六层的核心，是"事实层与判定层分离"：语义模型可以帮助理解自由文本，但不能绕过门禁，任何结论都必须由证据与规则共同支撑。'
+  ],
+  evidence:[
+    '鹰眼最重要的产品约束，是"三要素证据链"。任何一条对外输出的疑点，都必须同时具备原文定位、政策依据与完整推理，缺一不可。',
+    '原文定位回答"证据在哪里"：精确到费用清单的第几行、病历的哪一段、病理报告的哪一份，点击即可回到原始材料。',
+    '政策依据回答"依据是什么"：引用官方文号、条款原文、核验状态与生效日期，而不是让模型自行补上一段看似合理的规定。',
+    '完整推理回答"为什么成立"：把触发条件、需要核对的事实、可能的除外情形与最终结论清晰串联，让人能够跟着一步步复核。',
+    '当三要素无法同时满足时，系统不会强行定性，而是自动降级为线索，并提示需要补充哪些材料后再作判断。',
+    '"正确不报"同样是证据链的一部分。对看似可疑、实则合理的项目，系统会说明为什么不报，例如某类药物并不需要伴随检测，或某次再入院命中了治疗周期豁免。',
+    '这套结构直接服务真实的稽核工作：监管需要向医院说明为什么核查，医院需要知道补什么材料，双方都能围绕同一份证据对话，而不是各执一词。',
+    '能报出问题并不难，难的是"能解释清楚、扛得住申辩"。三要素证据链，正是把结论从"像有问题"变成"可对质"的关键一步。'
+  ],
+  agent:[
+    '鹰眼采用"确定性为主、语义增强为辅"的双路径设计，兼顾结论的稳定与对材料的理解力。',
+    '默认路径是确定性规则引擎。它可复现、低延迟、便于回归测试，保证同一份材料每次得到一致的结论，是日常使用与现场演示的主干。',
+    '增强路径在需要时接入语义模型，用于阅读病程、医嘱、检验里的自由文本，补充确定性规则难以覆盖的上下文理解。',
+    '在争议判断上，鹰眼把医保的申诉机制提前做了一次预演。系统由多个角色协作：一方从规则与证据出发提出疑点，一方模拟医院可能的补充材料与申辩理由，再由裁判判断这条疑点是否站得住。',
+    '这个过程不是替代专家裁定，而是提前过滤掉证据不足的弱疑点，让真正进入人工复核的，都是"已经扛过一轮申辩"的发现。',
+    '系统还内置逐条取证自检：对每一条结论回头核对它引用的证据是否真实、是否闭环，尽量降低模型臆测带来的风险。',
+    '无论走哪条路径，最终结论都要经过同一道三要素门禁。语义模型可以让系统"读得更懂"，但不会让它"报得更松"。'
+  ],
+  rules:[
+    '在医保场景里，规则不是越多越好，而是越可核验越好。鹰眼的每一条在库规则，都必须绑定到官方来源，或明确标注为待核验，绝不让模型自行发明条款。',
+    '知识底座按法规、清单、规则、目录、案例分层管理，保留来源、条款与生效日期，形成一份可以逐条溯源的合规地基。',
+    '规则以对齐国家医保两库的全量框架为目标，覆盖医保规则体系；在此之上，围绕肿瘤、影像、重症、麻醉、骨科、康复、检验、药店等重点专科建设可演示的检查逻辑。',
+    '每一次判断都先经过触发器：系统根据本次就诊的诊断、项目与科室激活相关规则，跳过无关规则，既减少误报，也让稽核人员清楚本次覆盖了哪些维度。',
+    '规则之上还有一层地方适配。省级价目、分组标准、护理收费、目录限定等都可以作为配置接入，让同一套引擎适应不同地区的口径。',
+    '待入库或尚未核验的内容会被明确标注，而不是包装成既定事实。这种诚实标注是合规产品的底线，也是长期信任的基础。',
+    '规则资产会随着使用不断沉淀。每新增一个专科、一份地方价目、一条官方问题清单，都能同时服务监管飞检与院端自查，形成越用越厚的能力壁垒。'
+  ],
+  'audit-ui':[
+    '监管侧工作台围绕"一次飞检取证"来组织，把材料、结论与操作放在同一屏，让稽核人员的注意力始终停留在证据上。',
+    '左侧是材料区，以文档标签组织病案、病程、医嘱、检验、病理与费用清单，点开任意一条证据都能高亮到对应原文。',
+    '中间是报告区，按总览、疑点、正确不报、覆盖度分页呈现。每一条疑点都可以展开，看到完整的三要素证据链。',
+    '右侧是操作区，承接源文档跳转、正确不报的解释，以及核查清单与举证包的导出。',
+    '这种三栏结构最大的价值，是减少来回切换：稽核人员不必在多个系统之间跳转，就能同时看到费用行、病理结论、政策条款和处置建议。',
+    '"正确不报"被特意放在显眼位置。它让使用者直观感受到系统的克制——既能报出真正的问题，也能解释为什么某些看似可疑的项目不应上报。',
+    '整个界面的目标，是把资深稽核人员从"逐页翻材料"里解放出来，转向"围绕疑点逐条核证据"，把有限的时间用在真正的争议上。'
+  ],
+  'hospital-ui':[
+    '院端自查驾驶舱面向医保办、医务科与病案质控团队，用的是"整改口径"而不是"处罚口径"。',
+    '它的入口是一条优先队列。系统按综合风险分、科室、金额与状态排序，让医院清楚地知道应该先处理哪一份就诊材料。',
+    '每一份材料的自查输出，都会区分风险点、线索与正确不报，并给出可执行的建议：需要补什么材料、是否建议主动退回、由哪个科室负责。',
+    '这些结论会沉淀为一份整改台账，记录责任科室、处理状态与建议，让自查从"翻几份材料"变成一项可管理、可追踪的常规工作。',
+    '整改完成后，医院可以对同一份材料复跑，形成整改前后的对比与留痕，作为飞检时的备查依据。',
+    '院端价值的核心在于"前移"：把可以整改的问题，在飞检真正到来之前处理干净，从而把被动的检查压力，转化为主动的合规管理。',
+    '对医院而言，这样的工具成本，相对于一次拒付、追回或公开通报的代价而言很低，因此更容易成为长期使用的日常抓手。'
+  ],
+  plugin:[
+    '插件产品线回答的是"能不能在违规发生之前就拦住"——这是政策原文明确鼓励的方向，也是院端最容易独立采购、独立部署的形态。',
+    '鹰眼以 Chrome 浏览器扩展实现：医院在本地启动引擎服务后，扩展读取开单页表单（年龄、性别、诊断、医嘱行），调用同一套事前规则子集，在提交前弹出两库依据浮层。',
+    '演示靶站 mockhis.html 刻意做成"老 HIS"观感，证明无需接口改造；未安装扩展时，页面内嵌「鹰眼审方(内嵌演示)」通道走同一 API 与浮层逻辑。',
+    '三个角色触点共用一套处置范式：医生开单（mockhis）、编码员 DRG 高套（coder-station）、结算员上传前校验（settle-station）。有命中时，经办人可选择采纳整改或坚持提交并填写理由。',
+    '每一次提醒与处置都写入事前台账（/api/precheck/ledger）。院端运营看板展示遵从率、萌芽拦截量与未遵从清单；监管侧 priority 工作台读取"事前已提醒·未遵从"单，作为重点审核对象。',
+    '监管员还可对未遵从单登记回执（核实违规 / 驳回误报 / 已联系院端），形成院端↔监管双向闭环——这不是单独的提醒工具，而是与飞检取证共用引擎的关口前移层。',
+    '诚实边界：扩展当前为演示级最小可用，适配真实 HIS 需按 DOM 配置选择器与域名白名单；除性别硬互斥等明确违规外，事前层多数诚实降级为"可疑"软提醒，完整定性仍依赖事后证据链。'
+  ],
+  golden:[
+    '黄金闭环（Golden Path）是黑客松现场的唯一主演示路径：一个案卷、十分钟、七步点绿，每步对应真实 API 与可展示产物。',
+    '第一步体检稽核：对 main 案卷（NSCLC 住院化疗包）以 exam 模式跑引擎，秒级出报告并自动落自查快照，口播重点是 40 分钟→秒级初筛。',
+    '第二步读三要素：展开疑点卡片，展示费用行锚点、政策条款原文与推理链，强调"引不出原文的疑点不输出"。',
+    '第三步人工复核：对一条 finding 执行采纳或驳回，写入 review_feedback，说明 AI 不做最终认定。',
+    '第四步治理沉淀：查看驳回累计如何触发 shadow，误报是有状态的治理而非修 bug。',
+    '第五步整改复跑 diff：再次稽核后对比已消除 / 仍存在 / 新增，量化整改效果。',
+    '第六步主动退回测算：展示自查从宽 vs 飞检暴露区间，给院端 ROI 一张表。第七步 YHF 门禁：G0 零误报灯必须全绿，作为 Definition of Done。'
+  ],
+  stages:[
+    '医保监管天然分为事前、事中、事后三个阶段，但它们对应的不是三个功能，而是两类用户的不同分工。',
+    '医院侧的重心在事前与事中：开单与上传之前的规则提醒、结算与提交之前的一致性自查，目标是把问题挡在发生之前。',
+    '监管侧的重心在事后：对已经发生并归档的就诊材料进行飞检与专项稽核，完成证据核查与举证。',
+    '这也澄清了一个常见的混淆：飞检属于事后监管核查，而不是事中的结算审核，二者面对的材料状态与工作目标完全不同。',
+    '鹰眼的价值，在于用同一套规则与同一条证据链把这两端连起来，而不是把两类用户割裂成两套互不相通的系统。',
+    '医院自查得越干净、主动退回得越及时，流到事后飞检的问题就越少。院端把关口前移，客观上也在为监管侧减负。',
+    '从任何一个阶段进入，使用者看到的都是同一套可对质的证据；变化的只是表达口径与工作侧重，底层的事实、政策与推理始终一致。'
+  ],
+  trust:[
+    '稽核结论要拿去和医院对质，因此"可信"不能只是一句承诺，而必须落成可以检验的工程约束。鹰眼把它拆成三件套。',
+    '第一件是合议去重。当同一笔费用被多条规则从不同角度命中时，系统自动选出主疑点，其余转为佐证，金额只计算一次，避免重复计罚。',
+    '第二件是覆盖度声明。系统会明确说明本次核查覆盖了哪些维度、哪些维度因为本例没有相关项目而未触发，把"有没有漏查"从口头承诺变成可审计的声明。',
+    '第三件是置信度传播。当证据来自低置信的识别结果、或材料存在缺失时，系统会相应降低置信，必要时把疑点降级为线索，而不是硬报。',
+    '在这三件套之外，还有一层安全边界：病历文本被视为不可信输入，材料内部即便夹带"写给系统的提示"，也不能改变规则的判定结果。',
+    '所有这些机制共同支撑一句话——结论不是模型自由生成的，而是由数据结构、政策来源与工程门禁共同约束的。',
+    '对使用者而言，这意味着可以逐条查看证据、条款、状态与门禁结果，而不需要盲目相信一句"我们很准"。'
+  ],
+  harness:[
+    '医保稽核的容错率很低，改动一条规则可能牵动很多份材料。因此鹰眼把"持续回归"当作与功能同等重要的工程纪律。',
+    '系统内置一套分层门禁：从引擎、规则到模型行为，逐层设置检查，任何改动都要先过门禁，才能进入交付。',
+    '最硬的一条红线是"干净件零误报"：对本身合规的材料，系统不允许产生任何误报，这是宁可少报也不错报的底线。',
+    '规则层的门禁确保关键疑点与金额不被破坏，改动规则时，标准案卷的结论必须保持稳定。',
+    '模型层的门禁约束语义路径的行为，保证输出格式规范、裁判判断一致，避免增强能力带来不可控的波动。',
+    '回归召回则保证长期演进中，关键疑点不会在一次次改动里悄悄丢失。',
+    '这套机制的意义，不在于让指标好看，而在于让产品可以持续迭代：每一次新增专科、接入模型、调整口径，都能立刻知道有没有触碰红线。'
+  ],
+  deliverables:[
+    '一个稽核产品的真正价值，不在于它在屏幕上停留了多久，而在于它能交付什么可以带走、可以留档、可以进入工作流的材料。',
+    '面向监管，鹰眼输出核查清单与举证包：把每一条疑点的费用行、证据摘录、政策条款与处置建议，整理成可复核的成稿。',
+    '面向医院，鹰眼输出自查台账与整改材料：风险点、责任科室、补材料项、主动退回建议与复跑结果，形成可跟踪的闭环。',
+    '面向合规审查，鹰眼输出政策溯源报告：把每一条规则映射回它所依据的官方文件与条款，支撑"站在官方规则之上"的合规地基。',
+    '这些材料都可以导出，既能被人工逐条复核，也能进入科室整改、内部会议与飞检留档等真实环节。',
+    '交付物的存在，让产品从"一次性演示"变成"可沉淀的工作成果"：每一次稽核，都会留下可追溯、可复用的记录。',
+    '随着使用深入，交付物还能进一步扩展为机构画像、专科风险报告与整改前后对比，帮助管理者从单份材料走向全局视角。'
+  ],
+  roadmap:[
+    '鹰眼的落地路线，坚持"轻集成、可验证、逐步扩展"的原则，先证明单点价值，再谈更大的覆盖。',
+    '近期以两个低摩擦场景切入：院端的历史自查体检，以及监管侧的飞检取证辅助。二者都不需要改造医院既有系统，也不替代国家监管平台。',
+    '中期扩展规则资产与地方适配，补齐更多专科的检查逻辑与省级价目、分组配置，让引擎适应更多地区与场景。',
+    '在数据合规上，支持病历不出院的私有化部署，与院内系统以导出对接的方式协作，降低数据顾虑。',
+    '更长期，随着规则资产与机构画像的沉淀，院端自查与监管飞检的口径将进一步打通，让两侧共享同一套证据与画像。',
+    '整个过程始终守住既有边界：不承诺替代国家系统，不做自动处罚，不牺牲证据可靠性去换取智能化程度。',
+    '这条路线更契合医疗数据的现实：先把单点做扎实、把证据做可靠，再让能力自然地向外生长。'
+  ],
+  demo:[
+    '在线体验从 `/home.html` 三入口分流开始，而不是直接进入某个工作台——这本身就是在讲"同一引擎、三种场景"。',
+    '① 黄金闭环：打开 `/golden.html`，选 main 案卷，按七步引导逐步点绿，适合 10 分钟主演示。',
+    '② 全面平台：从 home 进入飞检工作台（?role=audit）或院端驾驶舱（?role=hospital），按需展示优先队列、看板与合规地基。',
+    '③ 插件产品线：打开 `/mockhis.html`，加载浏览器扩展后提交医嘱，或点内嵌演示按钮，看 AGE-101 等事前浮层与台账写入。',
+    '三路径共用 localhost:3700 本地引擎、同一 KB 与 G0 红线；演示前建议 `bash yhf/run.sh --strict` 全绿。'
+  ]
+};
+function articleFor(name){const arr=articles[name];return arr?`<div class="article">${arr.map(p=>`<p>${p}</p>`).join('')}</div>`:''}
+function highlights(items){return `<div class="hl-row">${items.map(x=>`<div class="hl"><img src="${iconBase}/${x[0]}.svg" alt=""><b>${x[1]}</b><span>${x[2]}</span></div>`).join('')}</div>`}
+function meter(items){return `<div class="meter">${items.map(x=>`<div class="mrow"><span>${x[0]}</span><span class="bar"><i style="width:${x[2]}"></i></span><b>${x[1]}</b></div>`).join('')}</div>`}
+function insight(label,text){return `<div class="insight"><i>${label}</i><b>${text}</b></div>`}
+const extras={
+  problem:`${meter([['人工初筛','约 40 分钟','100%'],['鹰眼初筛','约 90 秒','5%']])}${insight('CORE','把"看不完的案卷"，先变成"看得清的证据"。')}`,
+  position:`${highlights([['ok','不替代','国家全量结构化筛查仍由国家平台承担'],['doubt','不处罚','只给线索与证据，定性由人裁量'],['policy','不造规则','条款绑定官方来源，未核验即标注'],['evidence','只落案卷','判断锚定费用行与病历原文']])}${insight('BOUNDARY','站在国家规则之上，不与国家系统争位。')}`,
+  rules:`${highlights([['policy','法规·清单','官方文件与目录分层入库'],['rules','规则','绑定条款与生效日期'],['report','案例','沉淀可复用的判例'],['evidence','可溯源','每条疑点回链官方原文']])}${insight('FOUNDATION','不造规则、不编条款，只把官方规则落到案卷。')}`,
+  agent:`${highlights([['audit','稽核角色','提出候选疑点与证据'],['ok','取证自检','逐条核对证据是否闭环'],['clue','申辩角色','模拟医院补材料与申辩'],['doubt','裁判角色','维持、降级或要求补材料']])}${insight('DISCIPLINE','让系统读得更懂，但绝不报得更松。')}`,
+  stages:`${highlights([['policy','事前 · 插件','浏览器扩展开单审方'],['clue','事中 · 医院','结算提交前一致性自查'],['audit','事后 · 监管','飞检与专项稽核取证'],['evidence','同一证据链','三入口共用规则与 KB']])}${insight('CLOSED-LOOP','医院前移发现，监管事后兜底。')}`,
+  plugin:`${highlights([['policy','零对接','扩展套老 HIS · 本地引擎'],['audit','三角色','开单 · 编码 · 结算同一范式'],['clue','台账','未遵从 → 监管 priority'],['ok','双向闭环','监管回执写回院端']])}${insight('BUDDING','将不合规行为消除在萌芽阶段。')}`,
+  golden:`${highlights([['audit','7 步闭环','稽核→复核→治理→diff'],['evidence','三要素','每步真 API 有产物'],['ok','G0 红线','yhf strict 当场验收'],['report','main 案卷','NSCLC · exam 模式']])}${insight('GOLDEN','10 分钟走完，Definition of Done 可验。')}`,
+  trust:`${highlights([['report','合议去重','同一笔费用金额只计一次'],['ok','覆盖声明','查了什么、没查什么可审计'],['doubt','置信传播','低置信与缺材料自动降级'],['rules','输入隔离','判定不被病历文本操纵']])}${insight('VERIFIABLE','可信不是承诺，而是可检验的工程约束。')}`,
+  deliverables:`${highlights([['report','核查清单','逐条疑点与处置建议'],['evidence','举证包','三要素证据整理成稿'],['audit','整改台账','责任科室与复跑状态'],['policy','溯源报告','规则回链官方条款']])}${insight('OUTCOME','稽核成果，要带得走、留得下。')}`,
+  roadmap:`${highlights([['ok','轻集成','不改造医院既有系统'],['rules','可私有化','病历不出院也能用'],['evidence','可扩展','专科与地方逐步铺开'],['doubt','守边界','不替代、不做自动处罚']])}${insight('PATH','先把单点做扎实，再让能力生长。')}`
+};
+function extraFor(name){return extras[name]||''}
+
+function renderCover(){
+  return `<section class="page cover"><div class="content">
+    <div class="cover-top"><div class="brand"><img src="${logo}" alt=""><b>鹰眼 EAGLEEYE</b></div><div>医保基金稽核智能体</div></div>
+    <div class="cover-hero">
+      <div class="cover-kicker">PRODUCT WHITE PAPER · 产品白皮书</div>
+      <div class="cover-title">鹰眼<em>EAGLEEYE</em></div>
+      <div class="cover-band">90 秒，把案卷读成<em>可对质的证据链</em></div>
+      <div class="cover-sub">面向医保监管飞检、医院合规自查与插件事前提醒的语义取证层：home 三入口分流，同一引擎把病程、医嘱、检验与费用清单读成可对质的三要素证据。</div>
+      <div class="cover-stats">
+        <div class="cover-stat"><b>三入口</b><span>闭环 · 平台 · 插件</span></div>
+        <div class="cover-stat"><b>90秒</b><span>单份就诊取证</span></div>
+        <div class="cover-stat"><b>三要素</b><span>可对质证据链</span></div>
+        <div class="cover-stat"><b>零误报</b><span>干净件 G0 红线</span></div>
+      </div>
+    </div>
+    <div class="cover-foot">
+      <div class="meta">医保基金稽核智能体<br>读懂案卷 · 锚定证据<br>可对质 · 可导出 · 可申诉</div>
+      <div class="cover-qr"><img src="${qr}" alt=""><div>扫码进入<br>在线 Demo 体验</div></div>
+    </div>
+  </div></section>`;
+}
+function renderBack(){
+  return `<section class="page backcover"><div class="content">
+    <div class="cover-top"><div class="brand"><img src="${logo}" alt=""><b>鹰眼 EAGLEEYE</b></div><div>医保基金稽核智能体</div></div>
+    <div class="back-hero">
+      <div class="cover-kicker">CLOSING · 结语</div>
+      <div class="back-quote">让每一分救命钱，<br><em>都查得有据、可对质。</em></div>
+      <div class="back-sub">鹰眼不替代人的判断，而是替人扛量：把海量非结构化案卷读成证据，让监管把时间用在真正的争议上，让医院把问题挡在飞检之前。</div>
+    </div>
+    <div class="back-index">
+      <h4>阅读地图 · READING MAP</h4>
+      <ol>
+        <li><b>01</b>问题与语义取证层</li>
+        <li><b>02</b>产品定位与边界</li>
+        <li><b>03</b>六层确定性架构</li>
+        <li><b>04</b>三要素证据链</li>
+        <li><b>05</b>智能体与申诉预演</li>
+        <li><b>06</b>规则与官方溯源</li>
+        <li><b>07</b>监管侧工作台</li>
+        <li><b>08</b>院端自查驾驶舱</li>
+        <li><b>09</b>插件产品线 · 三角色</li>
+        <li><b>10</b>事前中后闭环</li>
+        <li><b>11</b>黄金闭环七步</li>
+        <li><b>12</b>取证三件套</li>
+        <li><b>13</b>质量回归门禁</li>
+        <li><b>14</b>可带走的交付物</li>
+        <li><b>15</b>落地路线图</li>
+        <li><b>16</b>三入口在线体验</li>
+      </ol>
+    </div>
+    <div class="back-foot">
+      <div class="qr"><img src="${qr}" alt=""><span>扫码进入在线 Demo<br>选就诊 → 稽核 → 看证据 → 导出</span></div>
+      <div class="sign"><b>引不出原文的疑点，不输出</b><span>鹰眼 EAGLEEYE · 医保基金稽核智能体</span></div>
+    </div>
+  </div></section>`;
+}
+function renderPage(p){
+  if(p.body==='cover') return renderCover();
+  if(p.body==='backcover') return renderBack();
+  return `<section class="page"><div class="content">${header(p)}${title(p)}${storyRail(p.story)}<div class="dense">${body(p.body)}${articleFor(p.body)}${extraFor(p.body)}</div>${footer(p)}</div></section>`;
+}
+document.getElementById('pack').innerHTML = pages.map(renderPage).join('');
+</script>
+</body>
+</html>

@@ -24,6 +24,9 @@ pnpm-debug.log*
 .cursor/debug-*.log
 .git.local-backup/
 **/.git.local-backup/
+.~*.docx
+**/__pycache__/
+*.pyc
 
 # Build/cache output
 dist/
@@ -46,12 +49,15 @@ yhf/results/gate_latest.md
 # Runtime review/governance state
 prototype/data/review_feedback.json
 prototype/data/rule_states.json
+prototype/data/_runtime_backup/
 
 # Local exports and generated packages
 export/
 *.zip
+*.tar
 *.tar.gz
 .vercel
+team-app-demo-delivery/
 
 # KB crawler artifacts (raw downloads + incremental state)
 public-data-corpus/raw/

@@ -1,0 +1,105 @@
+{
+  "_meta": {
+    "doc": "证据期望矩阵 — 完整度的分母（实现规格 §5）。这是沉淀 Agent 未来的可写对象，也是三档权重调优的唯一合法落点（§10 反模式#10：权重改动只允许发生在本文件并留 git 记录）。",
+    "weights": { "explicit": 1.0, "inferred": 0.85, "contextual": 0.6, "none": 0 },
+    "optional_factor": 0.3,
+    "tiers": { "complete": 0.85, "partial": 0.5 },
+    "layers_note": "material_type → 层：order/dispense=1(枢纽) · surgery_record/anesthesia_record/nursing_record/icu_record/progress_note=2(执行) · lab_report/pathology_gene_report/imaging_record=3(客观) · admission_record/discharge_summary/case_front_page=context(就诊上下文)"
+  },
+
+  "category_map": {
+    "西药费": "drug_western",
+    "中成药费": "drug_tcm",
+    "中药饮片": "drug_tcm",
+    "护理费": "nursing_fee",
+    "检验费": "lab_exam_fee",
+    "化验费": "lab_exam_fee",
+    "检查费": "exam_fee",
+    "床位费": "bed_fee",
+    "治疗费": "treatment_fee",
+    "诊疗费": "treatment_fee",
+    "手术费": "surgery_fee",
+    "麻醉费": "anesthesia_fee",
+    "耗材费": "material_fee",
+    "材料费": "material_fee",
+    "监护费": "icu_fee",
+    "诊查费": "consult_fee",
+    "综合费": "unclassified"
+  },
+
+  "keyword_override": [
+    { "when": "监护|呼吸机|CRRT|血液净化|ICU", "key": "icu_fee" },
+    { "when": "麻醉|椎管内|全身麻醉|复合麻醉", "key": "anesthesia_fee" },
+    { "when": "CT|磁共振|MRI|X线|摄影|胶片|超声|造影|彩超|DR", "key": "exam_fee" }
+  ],
+
+  "codesets": {
+    "targeted_therapy": ["奥希替尼", "吉非替尼", "厄洛替尼", "阿法替尼", "克唑替尼", "阿来替尼", "曲妥珠单抗", "帕妥珠单抗", "维莫非尼", "达拉非尼", "奥拉帕利", "伊马替尼"]
+  },
+
+  "expectations": {
+    "drug_western": {
+      "required": ["order", "dispense"],
+      "optional": ["trace_code"],
+      "escalations": [
+        { "when": "codeset:targeted_therapy", "add_required": ["gene_report"], "reason": "靶向药需基因检测（EGFR/ALK等）指征（两库·药品限定支付范围）" }
+      ]
+    },
+    "drug_tcm": {
+      "required": ["order", "dispense"],
+      "optional": ["trace_code"]
+    },
+    "surgery_fee": {
+      "required": ["order", "surgery_record"],
+      "optional": ["progress_note"],
+      "escalations": [
+        { "when": "general_anesthesia", "add_required": ["anesthesia_record"], "reason": "全麻手术必有麻醉记录" }
+      ]
+    },
+    "anesthesia_fee": {
+      "required": ["order", "anesthesia_record", "surgery_record"],
+      "optional": []
+    },
+    "nursing_fee": {
+      "required": ["order", "nursing_record"],
+      "optional": [],
+      "cross_check": "护理等级与天数须医嘱-记录-收费三方吻合（不吻合→触发规则，非扣分）"
+    },
+    "lab_exam_fee": {
+      "required": ["order", "lab_report"],
+      "optional": ["pathology_gene_report"]
+    },
+    "exam_fee": {
+      "required": ["order"],
+      "optional": ["imaging_record", "progress_note"]
+    },
+    "bed_fee": {
+      "required": ["admission_record", "discharge_summary"],
+      "optional": ["case_front_page"],
+      "note": "L3 contextual 即视为召集，床位费不苛求行级链接"
+    },
+    "icu_fee": {
+      "required": ["icu_record", "order"],
+      "optional": ["progress_note"]
+    },
+    "treatment_fee": {
+      "required": ["order"],
+      "optional": ["progress_note", "nursing_record"]
+    },
+    "material_fee": {
+      "required": ["surgery_record"],
+      "optional": ["order"],
+      "note": "耗材以术中耗材实际使用（手术记录）为真实性锚，非单独医嘱（§3.1）"
+    },
+    "consult_fee": {
+      "required": [],
+      "optional": ["admission_record"],
+      "note": "诊查/挂号类，就诊上下文即可，不设行级必需证据"
+    },
+    "unclassified": {
+      "required": ["order"],
+      "optional": [],
+      "note": "类别未识别（诚实原则：打「类别未识别」标记）"
+    }
+  }
+}

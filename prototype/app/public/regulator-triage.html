@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#F0F4F8">
+<title>疑点分诊器 · 鹰眼监管小工具箱</title>
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<style>
+:root{--ink:#0B2A4A;--ink2:#134E72;--muted:#5C7185;--dim:#8296A9;--teal:#14B8A6;--amber:#E8A838;--red:#DC4A3D;--bg:#F0F4F8;--surface:#fff;--line:#E2E9F0;--hair:#D3DDE7;--sans:"PingFang SC","Hiragino Sans GB","Noto Sans SC","Microsoft YaHei",-apple-system,sans-serif;--mono:"SF Mono","DM Mono","Roboto Mono",Menlo,monospace}
+*{box-sizing:border-box;margin:0}body{font-family:var(--sans);background:var(--bg);color:var(--ink);line-height:1.65;min-height:100vh}body::before{content:"";position:fixed;inset:0;background-image:radial-gradient(rgba(11,42,74,.055) 1.5px,transparent 1.5px);background-size:26px 26px;pointer-events:none}.wrap{max-width:1120px;margin:0 auto;padding:34px 24px 48px;position:relative}.top{display:flex;justify-content:space-between;gap:16px;align-items:flex-start;margin-bottom:24px}.back{color:var(--ink2);text-decoration:none;border:1px solid var(--line);background:var(--surface);border-radius:10px;padding:9px 14px;font-weight:800;font-size:13px}.eyebrow{font-family:var(--mono);font-size:12px;color:var(--dim);letter-spacing:.12em}.hero{border:1px solid var(--line);border-radius:18px;background:var(--surface);padding:26px 28px;box-shadow:0 4px 18px rgba(11,42,74,.06)}h1{font-size:clamp(28px,4vw,42px);line-height:1.25}h2{font-size:18px;margin-bottom:10px}.lead{color:var(--muted);max-width:780px;margin-top:8px}.grid{display:grid;grid-template-columns:1.05fr .95fr;gap:18px;margin-top:20px}@media(max-width:820px){.grid{grid-template-columns:1fr}.top{flex-direction:column}}.panel{border:1px solid var(--line);border-radius:14px;background:var(--surface);padding:20px;box-shadow:0 3px 14px rgba(11,42,74,.05)}.actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:18px}.btn{border:1px solid var(--line);border-radius:10px;background:#F8FAFC;color:var(--ink2);font-weight:800;padding:11px 14px;text-decoration:none;cursor:pointer;font-size:14px}.btn.primary{background:linear-gradient(90deg,var(--teal),#0E9384);border-color:transparent;color:#fff}.btn[aria-disabled="true"]{cursor:default;opacity:.8}.tiers{display:grid;gap:10px}.tier{border:1px solid var(--line);border-left-width:5px;border-radius:11px;padding:12px;background:#F8FAFC}.tier.a{border-left-color:var(--red)}.tier.b{border-left-color:var(--amber)}.tier.c{border-left-color:var(--teal)}.tier b{display:block}.list{display:grid;gap:8px;color:var(--muted);font-size:14px}.placeholder{margin-top:14px;border:1px dashed var(--hair);border-radius:12px;padding:14px;color:var(--muted);background:rgba(255,255,255,.75);font-size:13px}.mock-table{width:100%;border-collapse:collapse;font-size:13px;margin-top:10px}.mock-table th,.mock-table td{border-bottom:1px solid var(--line);padding:9px;text-align:left}.mock-table th{color:var(--dim);font-size:12px}
+</style>
+</head>
+<body>
+<main class="wrap">
+  <header class="top">
+    <div>
+      <div class="eyebrow">REGULATOR TOOLKIT · ① TRIAGE</div>
+      <h1>疑点分诊器</h1>
+      <p class="lead">面向监管处、线索核查员和经办审核负责人，把 Excel 疑点清单先分成三档，辅助第一遍粗筛。</p>
+    </div>
+    <a class="back" href="/regulator-plugins.html">返回工具箱</a>
+  </header>
+
+  <section class="hero">
+    <h2>输入什么</h2>
+    <p class="lead">Excel / CSV 疑点清单，或演示固定集 <code>prototype/data/screening/settlements_1000.json</code>。</p>
+    <div class="actions">
+      <button class="btn" type="button" aria-disabled="true">粘贴 Excel 演示 · Phase B 接入</button>
+      <button class="btn primary" type="button" aria-disabled="true">跑 1000 条演示 · Phase B 接 /api/screening/run</button>
+      <a class="btn" href="/regulator-fieldkit.html?from=triage&case_id=main">打开 Top1 飞检行装包</a>
+    </div>
+  </section>
+
+  <section class="grid">
+    <div class="panel">
+      <h2>输出三档</h2>
+      <div class="tiers">
+        <div class="tier a"><b>A · 建议重点核查</b><span>金额或严重度高，证据较完整。</span></div>
+        <div class="tier b"><b>B · 建议补材料后核查</b><span>有风险但证据缺口明显。</span></div>
+        <div class="tier c"><b>C · 建议暂缓 / 观察</b><span>弱线索、低金额、高误报风险。</span></div>
+      </div>
+      <div class="placeholder">每条结果将展示命中规则、金额、分档依据、可能抗辩点和建议动作。</div>
+    </div>
+
+    <div class="panel">
+      <h2>Top 10 占位</h2>
+      <table class="mock-table" aria-label="疑点分诊占位表">
+        <thead><tr><th>档位</th><th>规则</th><th>金额</th><th>建议动作</th></tr></thead>
+        <tbody>
+          <tr><td>A</td><td>TRACE-101</td><td>待接入</td><td>优先核查</td></tr>
+          <tr><td>B</td><td>QTY-901</td><td>待接入</td><td>调阅医嘱</td></tr>
+          <tr><td>C</td><td>AGE-101</td><td>待接入</td><td>观察复核</td></tr>
+        </tbody>
+      </table>
+      <div class="placeholder">Phase B 复用现有 <code>/api/screening/rows</code>，剪贴板 TSV 与 1000 条演示走同一行级筛查引擎。</div>
+    </div>
+  </section>
+</main>
+</body>
+</html>

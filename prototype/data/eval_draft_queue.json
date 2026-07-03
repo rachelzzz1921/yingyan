@@ -31,6 +31,20 @@
       "source": "p5_debate",
       "status": "pending",
       "created_at": "2026-06-27T03:29:31.294Z"
+    },
+    {
+      "id": "ED-mr4oazc1-ceae",
+      "case_id": "main",
+      "rule_id": "SUR-401",
+      "finding_id": "GP_TEST",
+      "reject_reason": "golden path probe",
+      "gold_draft": {
+        "expected_status": "不输出",
+        "note": "golden path probe"
+      },
+      "source": "audit_review",
+      "status": "pending",
+      "created_at": "2026-07-03T08:30:21.025Z"
     }
   ]
 }

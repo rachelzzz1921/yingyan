@@ -1,0 +1,96 @@
+{
+  "case_meta": {
+    "case_id": "YY-DEMO-EVCHAIN-001",
+    "case_title": "证据链完整度演示 · 混合场景（缺失即疑点 / 冲销 / 多候选）",
+    "disclaimer": "虚构演示数据。本卷专为演示『数据关联模型与证据链完整度』模块：以费用明细行为锚建四层证据链，缺失必需证据→自动补位管理类可疑（一线规则未覆盖时），并覆盖冲销对/孤儿负数/多候选歧义等边界。material_manifest 显式声明 intake 提交了哪些材料槽——据此区分『材料未提供(不计缺失)』与『提供但对不上(触发疑点)』。",
+    "embedded_violation_count": 3,
+    "distractor_count": 0,
+    "scene": "住院·外科",
+    "demo_evchain_showcase": true,
+    "settlement_summary": { "total_amount": 8330.0, "insurance_paid_amount": 6664.0, "currency": "CNY", "settle_type": "住院" }
+  },
+  "material_manifest": [
+    "order", "surgery_record", "anesthesia_record", "nursing_record",
+    "lab_report", "gene_report", "case_front_page", "admission_record", "discharge_summary"
+  ],
+  "front_page": {
+    "doc_type": "病案首页", "hospital": "示范三甲医院", "hospital_level": "三级甲等",
+    "patient_name": "示例患者", "patient_id": "PSN-EVCHAIN-001", "sex": "男", "age": 58,
+    "insurance_type": "职工医保", "admission_no": "ZY-EVCHAIN-001",
+    "admit_time": "2026-05-16 09:00", "discharge_time": "2026-05-20 10:00", "actual_inpatient_days": 4,
+    "admit_dept": "肝胆外科", "discharge_dept": "肝胆外科", "bed_no": "18-3",
+    "principal_diagnosis": { "name": "胆囊结石伴慢性胆囊炎", "icd10": "K80.1", "tnm_stage": "", "note": "" },
+    "other_diagnosis": [{ "name": "肺腺癌（既往）", "icd10": "C34.9" }],
+    "attending_physician": "周医生", "chief_physician": "吴主任", "previous_admissions": []
+  },
+  "admission_note": {
+    "doc_type": "入院记录", "record_time": "2026-05-16 10:00",
+    "chief_complaint": "反复右上腹痛 3 月。", "present_illness": "查体胆囊区压痛，超声示胆囊结石。",
+    "past_history": "2 年前诊断肺腺癌，EGFR 19del 阳性，规律靶向治疗。",
+    "physical_exam": "腹软，Murphy 征阳性。", "preliminary_diagnosis": ["胆囊结石伴慢性胆囊炎", "肺腺癌（EGFR阳性）"],
+    "treatment_plan": "拟行腹腔镜胆囊切除术；继续奥希替尼靶向治疗。"
+  },
+  "progress_notes": [
+    { "date": "2026-05-16", "type": "首次病程", "author": "周医生", "text": "入院完善检查，拟手术。继续靶向药。" },
+    { "date": "2026-05-18", "type": "术后病程", "author": "周医生", "text": "全麻下行腹腔镜胆囊切除，过程顺利，安返病房。" }
+  ],
+  "long_term_orders": {
+    "doc_type": "长期医嘱单",
+    "items": [
+      { "order_id": "L01", "start": "2026-05-16 10:00", "stop": "2026-05-20 10:00", "content": "二级护理", "doctor": "周医生" },
+      { "order_id": "L05", "start": "2026-05-16 11:00", "stop": "2026-05-20 10:00", "content": "奥希替尼片 80mg po qd（靶向治疗）", "doctor": "周医生" }
+    ]
+  },
+  "temporary_orders": {
+    "doc_type": "临时医嘱单",
+    "items": [
+      { "order_id": "T03", "time": "2026-05-18 09:00", "content": "全身麻醉（气管插管）行腹腔镜胆囊切除术", "doctor": "麻醉科" },
+      { "order_id": "T04", "time": "2026-05-17 10:00", "content": "静脉输液 0.9%氯化钠 250ml ivgtt", "doctor": "周医生" },
+      { "order_id": "T05", "time": "2026-05-17 14:00", "content": "静脉输液 补液维持 ivgtt", "doctor": "周医生" },
+      { "order_id": "T07", "time": "2026-05-17 08:00", "content": "血常规、生化全套", "doctor": "周医生" }
+    ]
+  },
+  "nursing_records": {
+    "doc_type": "护理记录单", "nursing_level_executed": "二级护理", "note": "巡视频次符合二级护理。",
+    "entries": [
+      { "date": "2026-05-16", "round_interval_h": 2, "vitals_count": 4, "text": "生命体征平稳。" },
+      { "date": "2026-05-18", "round_interval_h": 1, "vitals_count": 6, "text": "术后监护，生命体征平稳。" }
+    ]
+  },
+  "lab_reports": [
+    { "doc_type": "检验报告", "report_id": "LAB-EV-0517", "report_time": "2026-05-17 11:00", "category": "血常规+生化",
+      "results": [ { "item": "WBC", "value": "7.2", "unit": "10^9/L", "ref": "3.5-9.5", "flag": "" } ] }
+  ],
+  "pathology_report": {
+    "doc_type": "病理报告", "report_id": "PATH-EV-0225", "report_time": "2024-02-25",
+    "specimen": "左肺穿刺", "microscopic": "腺癌", "immunohistochemistry": "TTF-1(+)",
+    "diagnosis": "（左肺穿刺）腺癌。", "note": "既往肺腺癌病理。"
+  },
+  "gene_test_report": {
+    "doc_type": "基因检测报告", "status": "已归档", "report_id": "GENE-EV-0226", "report_time": "2024-02-26",
+    "result": "EGFR 外显子19缺失（19del）阳性；ALK阴性；ROS1阴性。",
+    "note": "EGFR 19del 阳性——奥希替尼有明确靶点检测依据（合规）。"
+  },
+  "fee_list": {
+    "doc_type": "费用清单", "settle_date": "2026-05-20",
+    "columns": ["line_no", "fee_date", "category", "item_name", "spec", "qty", "unit", "unit_price", "amount", "insurance_class", "linked_order", "flag"],
+    "items": [
+      { "line_no": 1, "fee_date": "2026-05-16~05-20", "category": "床位费", "item_name": "床位费（三人间）", "spec": "-", "qty": 4, "unit": "日", "unit_price": 50.0, "amount": 200.0, "insurance_class": "医保", "linked_order": "—", "flag": "正常" },
+      { "line_no": 2, "fee_date": "2026-05-16~05-20", "category": "护理费", "item_name": "二级护理", "spec": "-", "qty": 4, "unit": "日", "unit_price": 25.0, "amount": 100.0, "insurance_class": "医保", "linked_order": "L01", "flag": "正常" },
+      { "line_no": 3, "fee_date": "2026-05-18", "category": "麻醉费", "item_name": "全身麻醉（气管插管）", "spec": "按时长", "qty": 1, "unit": "次", "unit_price": 1200.0, "amount": 1200.0, "insurance_class": "医保", "linked_order": "T03", "flag": "演示T2：有医嘱有收费，但材料包未随附手术记录/麻醉记录（intake 声明应有）→ 完整度补位「收费项目与诊疗行为不符」" },
+      { "line_no": 4, "fee_date": "2026-05-17", "category": "西药费", "item_name": "奥希替尼片", "spec": "80mg", "qty": 28, "unit": "片", "unit_price": 168.0, "amount": 4704.0, "insurance_class": "医保乙", "linked_order": "L05", "flag": "演示T1：靶向药有 EGFR 19del 阳性基因报告→指征齐全，完整档、基因节点实线" },
+      { "line_no": 5, "fee_date": "2026-05-17", "category": "治疗费", "item_name": "静脉输液", "spec": "-", "qty": 1, "unit": "次", "unit_price": 8.0, "amount": 8.0, "insurance_class": "医保", "linked_order": "—", "flag": "演示T7：同码同窗两条医嘱(T04/T05)→取最近者建链，存在多候选、保持虚线折扣" },
+      { "line_no": 6, "fee_date": "2026-05-17", "category": "治疗费", "item_name": "雾化吸入治疗", "spec": "-", "qty": 1, "unit": "次", "unit_price": 380.0, "amount": 380.0, "insurance_class": "医保", "linked_order": "T04", "flag": "演示T4：原始行（将被冲销）" },
+      { "line_no": 7, "fee_date": "2026-05-18", "category": "治疗费", "item_name": "雾化吸入治疗（冲销）", "spec": "-", "qty": -1, "unit": "次", "unit_price": 380.0, "amount": -380.0, "insurance_class": "医保", "linked_order": "T04", "flag": "演示T4：负数冲销行，与第6行配对折叠，净额0不计疑点" },
+      { "line_no": 8, "fee_date": "2026-05-19", "category": "检查费", "item_name": "退费（无对应原始收费）", "spec": "-", "qty": -1, "unit": "次", "unit_price": 120.0, "amount": -120.0, "insurance_class": "医保", "linked_order": "—", "flag": "演示T5：孤儿负数行，找不到配对原始行→结算数据异常" },
+      { "line_no": 9, "fee_date": "2026-05-17", "category": "检验费", "item_name": "血常规+生化", "spec": "-", "qty": 1, "unit": "次", "unit_price": 60.0, "amount": 60.0, "insurance_class": "医保", "linked_order": "T07", "flag": "正常：医嘱+检验报告齐全" }
+    ],
+    "total_amount": 6152.0
+  },
+  "discharge_summary": {
+    "doc_type": "出院小结", "admit_date": "2026-05-16", "discharge_date": "2026-05-20",
+    "discharge_diagnosis": ["胆囊结石伴慢性胆囊炎（已手术）", "肺腺癌（EGFR阳性，靶向治疗中）"],
+    "hospital_course": "全麻下腹腔镜胆囊切除，恢复顺利。", "discharge_orders": ["继续奥希替尼", "门诊随访"],
+    "discharge_meds": [{ "name": "奥希替尼片", "note": "80mg qd" }]
+  }
+}

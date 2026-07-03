@@ -1,0 +1,13 @@
+.git
+node_modules
+**/node_modules
+**/.env
+prototype/data/_runtime_backup
+prototype/ppstructure/__pycache__
+eval/.env
+assets/posters
+*.tar
+*.tar.gz
+team-app-demo-delivery
+team-app-demo-delivery.tar
+team-app_bundle_arm64.tar

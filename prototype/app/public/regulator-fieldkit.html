@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#F0F4F8">
+<title>飞检行装包生成器 · 鹰眼监管小工具箱</title>
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<style>
+:root{--ink:#0B2A4A;--ink2:#134E72;--muted:#5C7185;--dim:#8296A9;--teal:#14B8A6;--amber:#E8A838;--red:#DC4A3D;--bg:#F0F4F8;--surface:#fff;--line:#E2E9F0;--hair:#D3DDE7;--sans:"PingFang SC","Hiragino Sans GB","Noto Sans SC","Microsoft YaHei",-apple-system,sans-serif;--mono:"SF Mono","DM Mono","Roboto Mono",Menlo,monospace}
+*{box-sizing:border-box;margin:0}body{font-family:var(--sans);background:var(--bg);color:var(--ink);line-height:1.65;min-height:100vh}body::before{content:"";position:fixed;inset:0;background-image:radial-gradient(rgba(11,42,74,.055) 1.5px,transparent 1.5px);background-size:26px 26px;pointer-events:none}.wrap{max-width:1160px;margin:0 auto;padding:34px 24px 48px;position:relative}.top{display:flex;justify-content:space-between;gap:16px;align-items:flex-start;margin-bottom:24px}.back{color:var(--ink2);text-decoration:none;border:1px solid var(--line);background:var(--surface);border-radius:10px;padding:9px 14px;font-weight:800;font-size:13px}.eyebrow{font-family:var(--mono);font-size:12px;color:var(--dim);letter-spacing:.12em}h1{font-size:clamp(28px,4vw,42px);line-height:1.25}h2{font-size:18px;margin-bottom:10px}.lead{color:var(--muted);max-width:840px;margin-top:8px}.grid{display:grid;grid-template-columns:340px 1fr;gap:18px;margin-top:20px}@media(max-width:880px){.grid{grid-template-columns:1fr}.top{flex-direction:column}}.panel{border:1px solid var(--line);border-radius:14px;background:var(--surface);padding:20px;box-shadow:0 3px 14px rgba(11,42,74,.05)}label{display:block;color:var(--muted);font-size:13px;font-weight:800;margin:14px 0 6px}.select,.input{width:100%;border:1px solid var(--line);border-radius:10px;padding:10px 12px;background:#F8FAFC;color:var(--ink);font-weight:700}.actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:16px}.btn{border:1px solid var(--line);border-radius:10px;background:#F8FAFC;color:var(--ink2);font-weight:800;padding:10px 13px;text-decoration:none;cursor:pointer;font-size:14px}.btn.primary{background:linear-gradient(90deg,var(--teal),#0E9384);border-color:transparent;color:#fff}.btn[aria-disabled="true"]{cursor:default;opacity:.8}.kit{display:grid;gap:12px}.block{border:1px solid var(--line);border-radius:12px;background:#F8FAFC;padding:14px}.block h3{font-size:16px;margin-bottom:6px}.block p,.block li{color:var(--muted);font-size:13px}.block ul{padding-left:18px}.placeholder{margin-top:14px;border:1px dashed var(--hair);border-radius:12px;padding:14px;color:var(--muted);background:rgba(255,255,255,.75);font-size:13px}
+</style>
+</head>
+<body>
+<main class="wrap">
+  <header class="top">
+    <div>
+      <div class="eyebrow">REGULATOR TOOLKIT · ③ FIELD KIT</div>
+      <h1>飞检行装包生成器</h1>
+      <p class="lead">面向飞检组长和现场检查员，把疑点清单、证据索引、核查任务单和缺失材料清单整理成一份进场材料。</p>
+    </div>
+    <a class="back" href="/regulator-plugins.html">返回工具箱</a>
+  </header>
+
+  <section class="grid">
+    <aside class="panel">
+      <h2>选案卷</h2>
+      <label for="case">案卷</label>
+      <select class="select" id="case">
+        <option value="main">main · NSCLC 演示主案</option>
+        <option value="uploaded">uploaded · 导入件</option>
+      </select>
+      <label for="org">机构名</label>
+      <input class="input" id="org" value="演示机构">
+      <label for="period">期间</label>
+      <input class="input" id="period" value="2026-06">
+      <div class="actions">
+        <button class="btn primary" type="button" aria-disabled="true">生成行装包 · Phase B 接 API</button>
+        <a class="btn" href="/golden.html">打开黄金闭环案卷快读</a>
+      </div>
+      <div class="placeholder">Phase B 新增 <code>/api/regulator/field-kit</code>，聚合单案稽核、举证包和现场任务单模板。</div>
+    </aside>
+
+    <section class="panel">
+      <h2>行装包预览占位</h2>
+      <div class="kit">
+        <article class="block">
+          <h3>1. 疑点清单</h3>
+          <p>规则、金额、三档性质和建议动作。</p>
+        </article>
+        <article class="block">
+          <h3>2. 证据索引</h3>
+          <ul><li>费用行锚点</li><li>病历锚点</li><li>政策 ref_id</li></ul>
+        </article>
+        <article class="block">
+          <h3>3. 现场核查任务单</h3>
+          <p>查什么、问什么、调阅什么。</p>
+        </article>
+        <article class="block">
+          <h3>4. 缺失材料清单</h3>
+          <p>按证据链缺口列出需补材料。</p>
+        </article>
+        <article class="block">
+          <h3>5. 询问笔录要点</h3>
+          <p>只列建议问题，不生成最终笔录。</p>
+        </article>
+      </div>
+      <div class="actions">
+        <button class="btn" type="button" aria-disabled="true">下载 Markdown · Phase B</button>
+        <button class="btn" type="button" aria-disabled="true">打印 · Phase B</button>
+        <a class="btn" href="/agent-chain.html?case_id=main">对争议项进入复核</a>
+      </div>
+    </section>
+  </section>
+</main>
+</body>
+</html>
