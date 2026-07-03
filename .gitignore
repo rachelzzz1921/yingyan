@@ -63,3 +63,6 @@ prototype/data/_runtime/
 
 # F1 事前提醒台账(演示运行态,起于空实时累积)
 prototype/data/precheck_ledger.json
+
+# 本地 eval/yhf 备份(去eval改动前快照,勿提交)
+_backup_preeval_*/

@@ -1,13 +1,14 @@
 {
   "report_meta": {
     "case_id": "YY-BENCH-VIOL-A105-001",
-    "gold_standard": true,
-    "gold_standard_note": "Oracle 引擎自动生成，供 YHF/shadow 使用",
+    "gold_standard": false,
+    "gold_standard_note": "【已去自评化】本文件为引擎回归漂移快照(引擎自动生成),非独立金标准。独立设计真值见 data/ground_truth_manifest.json(按埋点设计意图声明 planted_suspect/planted_clue/is_clean),门禁据其做独立零误报复核与召回 floor。本快照仅供 shadow / 回归漂移探测。",
     "summary": {
       "suspected_count": 1,
       "clue_count": 0,
       "total_findings": 1
-    }
+    },
+    "snapshot_role": "engine_regression_snapshot"
   },
   "findings": [
     {

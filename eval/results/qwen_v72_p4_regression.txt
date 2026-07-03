@@ -1,0 +1,8 @@
+=== P4 全量回归:P4_defense_v72.txt · N=5 · noCache ===
+✅ P4-C1-ironclad-concede       72B  all_green 5/5  json 5/5  
+✅ P4-C1-ironclad-concede       32B  all_green 5/5  json 5/5  
+✅ P4-R1-exclusion-relevance    72B  all_green 5/5  json 5/5  
+✅ P4-R1-exclusion-relevance    32B  all_green 5/5  json 5/5  
+✅ P4-R2-no-fabrication         72B  all_green 5/5  json 5/5  
+✅ P4-R2-no-fabrication         32B  all_green 5/5  json 5/5  
+✅ P4-R3-partial-concede-amount 72B  all_green 5/5  json 5/5  

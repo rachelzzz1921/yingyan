@@ -1,0 +1,22 @@
+{
+  "report_meta": {
+    "case_id": "YY-BENCH-VIOL-F006-001",
+    "gold_standard": false,
+    "summary": {
+      "suspected_count": 1,
+      "clue_count": 0,
+      "total_findings": 1
+    },
+    "snapshot_role": "engine_regression_snapshot",
+    "gold_standard_note": "【已去自评化】本文件为引擎回归漂移快照(引擎自动生成),非独立金标准。独立设计真值见 data/ground_truth_manifest.json(按埋点设计意图声明 planted_suspect/planted_clue/is_clean),门禁据其做独立零误报复核与召回 floor。本快照仅供 shadow / 回归漂移探测。",
+    "drift_note": "【已知漂移·待规则线重对齐】本案埋点为「银杏二萜内酯超疗程」(原 F-006 语义)。规则库更新把 F-006 重定义为「限频项目超频次」,其 checker 依赖 kb_operational_index 的 usage_limit(maxDays);银杏二萜内酯在操作索引中暂无 maxDays 约束→当前不命中。见 ground_truth_manifest.json 的 violation_light_f006.pending_realignment。重对齐路径:①给银杏在操作索引补 maxDays 约束(规则线)②或改案匹配新F-006限频场景③或另立药品超疗程规则号。"
+  },
+  "findings": [
+    {
+      "rule_id": "F-006",
+      "rule_name": "限频项目超频次",
+      "status": "疑点",
+      "amount_involved": 688
+    }
+  ]
+}

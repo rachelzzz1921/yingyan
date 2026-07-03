@@ -1,0 +1,30 @@
+{
+  "report_meta": {
+    "case_id": "YY-BENCH-BOUNDARY-B201IND-001",
+    "gold_standard": false,
+    "gold_standard_note": "【已去自评化】本文件为引擎回归漂移快照(引擎自动生成),非独立金标准。独立设计真值见 data/ground_truth_manifest.json(按埋点设计意图声明 planted_suspect/planted_clue/is_clean),门禁据其做独立零误报复核与召回 floor。本快照仅供 shadow / 回归漂移探测。",
+    "summary": {
+      "suspected_count": 0,
+      "clue_count": 1,
+      "total_findings": 1
+    },
+    "snapshot_role": "engine_regression_snapshot"
+  },
+  "findings": [
+    {
+      "rule_id": "B-201-IND",
+      "rule_name": "药品限适应症（L3语义层）",
+      "status": "线索",
+      "amount_involved": 68,
+      "violation_type": "超标准收费/限定支付"
+    }
+  ],
+  "correctly_not_flagged": [
+    {
+      "item": "二甲双胍片（第1行，90元）",
+      "tempting_rule": "B-201-IND 限适应症",
+      "why_not_flagged": "主诊断2型糖尿病与二甲双胍适应症一致 → 正确不报。",
+      "demo_value": "★同一张处方：降糖药不报、非那雄胺（限前列腺增生）出线索——B-201-IND 走 L3 索引而非硬编码 checker。"
+    }
+  ]
+}

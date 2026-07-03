@@ -1,0 +1,19 @@
+{
+  "report_meta": {
+    "case_id": "YY-BENCH-BOUNDARY-TEMPORAL-001",
+    "gold_standard": false,
+    "summary": {
+      "suspected_count": 0,
+      "temporal_veto_count": 1,
+      "note": "M-301 在 2024 结算日尚未生效，应出现时效否决、无可追回疑点"
+    }
+  },
+  "findings": [
+    {
+      "rule_id": "M-301",
+      "status": "不认定",
+      "temporal_veto": true,
+      "violation_type": "时效否决"
+    }
+  ]
+}

@@ -50,6 +50,17 @@ function renderMarkdown(report, cfg) {
     }
     lines.push('');
   }
+  if (report.manifest && report.manifest.gates) {
+    const m = report.manifest;
+    lines.push('## 独立地面真值(金标准去自评化 · 与引擎快照解耦)', '');
+    lines.push(`- source: \`ground_truth_manifest.json\`(按埋点设计意图声明,非引擎输出)`);
+    lines.push(`- **G0b clean zero FP(独立复核·阻塞)**: ${m.gates.G0b_clean_zero_fp ? '✅ PASS' : '❌ FAIL'}(声明干净案 ${m.meta.clean_cases} 个)`);
+    lines.push(`- **recall floor(报告态·非阻塞)**: ${m.recall_floor_pass ? '✅ 全召回' : '🟡 有漂移'}(floor 规则 ${m.meta.floor_rules} 条)`);
+    if (m.meta.pending_realignment?.length) lines.push(`- ⏸ 待重对齐(规则库更新在飞): ${m.meta.pending_realignment.join(', ')}`);
+    for (const c of (m.cases || []).filter(x => !x.hard_pass).slice(0, 5)) lines.push(`- ❌ \`${c.case_id}\` ${c.hard_failures.join('; ')}`);
+    for (const c of (m.cases || []).filter(x => x.hard_pass && x.soft_failures.length).slice(0, 5)) lines.push(`- 🟡 \`${c.case_id}\` ${c.soft_failures.join('; ')}`);
+    lines.push('');
+  }
   if (report.shadow) {
     const s = report.shadow;
     lines.push('## L4 Shadow (G1)', '');
