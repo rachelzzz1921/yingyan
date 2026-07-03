@@ -119,7 +119,7 @@ flowchart TB
           <tr><td>第一层 · 输入</td><td><span class="badge-partial">◑</span></td><td>接收 PDF/图片/JSON，分类到材料槽位</td><td><code>intake-classifier</code>、<code>POST /api/ingest</code>、PP-Structure 解析 sidecar</td></tr>
           <tr><td>第二层 · 事实层</td><td><span class="badge-partial">◑</span></td><td>把材料编译为可复现的类型化事实，每条带出处</td><td><code>case-object.js</code>；bbox 坐标待真 OCR 填满</td></tr>
           <tr><td>第三层 · 知识</td><td><span class="badge-partial">◑</span></td><td>政策条款、目录备注、临床原则 RAG 引证</td><td><code>kb1_policies.json</code>、<code>kb2_clinical.json</code></td></tr>
-          <tr><td>第四层 · 规则</td><td><span class="badge-partial">◑⚠</span></td><td>58 条规则在库；约 14 条有 checker 会真 fire</td><td><code>audit-engine.js</code>、触发器路由、<code>rules.yaml</code></td></tr>
+          <tr><td>第四层 · 规则</td><td><span class="badge-partial">◑⚠</span></td><td>79 条规则在库；47 个确定性 checker 按需 fire</td><td><code>audit-engine.js</code>、触发器路由、<code>rules.yaml</code></td></tr>
           <tr><td>第五层 · 验证</td><td><span class="badge-partial">◑</span></td><td>三要素门禁、控辩裁降级、可选 LLM 语义路径</td><td><code>compliance-gate.js</code>、<code>review-debate.js</code></td></tr>
           <tr><td>第六层 · 输出</td><td><span class="badge-ok">✅</span></td><td>疑点卡、证据高亮、文书导出、举证包</td><td>工作台 UI、<code>/api/export/checklist</code></td></tr>
           <tr><td>横向能力</td><td><span class="badge-ok">✅/◑</span></td><td>评测回归、零误报红线、飞检排序、规则生命周期</td><td>AuditBench、YHF、Priority v2、Governance</td></tr>

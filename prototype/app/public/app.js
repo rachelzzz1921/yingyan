@@ -2226,8 +2226,8 @@ function showAgentRuntime() {
     <td class="rt-stat">${stat}</td>
     <td class="muted" style="font-size:11.5px">${esc(knob)}</td></tr>`;
   const detRows = [
-    stage('路由激活 Routing', '抽案件特征 → 只激活适用规则', `<b>${r.activated_count ?? '—'}/${r.total ?? 58}</b> 激活 · <span class="muted">${esc(sc.saved || '')}</span>`, 'trigger_logic / 覆盖维度'),
-    stage('规则引擎 · 26 checker', 'L1 时间/数量/互斥 + L2 结构', `命中 <b>${s.raw_findings_before_merge ?? '—'}</b> 条原始发现`, '阈值 / 除外清单'),
+    stage('路由激活 Routing', '抽案件特征 → 只激活适用规则', `<b>${r.activated_count ?? '—'}/${r.total ?? 79}</b> 激活 · <span class="muted">${esc(sc.saved || '')}</span>`, 'trigger_logic / 覆盖维度'),
+    stage('规则引擎 · 47 checker', 'L1 时间/数量/互斥 + L2 结构', `命中 <b>${s.raw_findings_before_merge ?? '—'}</b> 条原始发现`, '阈值 / 除外清单'),
     stage('合议去重 Reconcile', '同一笔钱多规则命中 → 只算一次', `<b>${s.raw_findings_before_merge ?? '—'} → ${s.total_findings ?? '—'}</b>（合并 ${s.merged_count ?? 0} 条）`, 'primaryScore 权重'),
     stage('治理·分层 Governance', '观察期降权 · 疑点/线索/影子', `疑点 <b class="rt-red">${s.suspected_count ?? '—'}</b> · 线索 <b class="rt-amb">${s.clue_count ?? '—'}</b> · 影子 ${s.shadow_count ?? 0}`, 'shadow/retired 规则集'),
   ].join('');
@@ -2289,7 +2289,7 @@ async function showGovernance() {
       : `<button class="act adopt" onclick="governanceAction('${esc(e.rule_id)}','restore')">✓ 复审恢复·重新在役</button>`;
     return `<div class="gv-card"><div class="gv-head"><span class="gv-badge ${sm.cls}">${sm.label}</span>${ruleLink(e.rule_id)}</div>
       <div class="gv-reason">${esc(e.reason || '')}</div><div class="gv-flow">${hist}</div><div class="actions">${btns}<span class="act-tip muted"></span></div></div>`;
-  }).join('') : '<div class="cov-statement" style="color:var(--green)">全部 58 条规则均在役（active）。某规则被复核驳回 ≥3 次会自动转入 shadow 观察期、在此复审——目前无规则进观察期/下线。</div>';
+  }).join('') : '<div class="cov-statement" style="color:var(--green)">全部 79 条规则均在役（active）。某规则被复核驳回 ≥3 次会自动转入 shadow 观察期、在此复审——目前无规则进观察期/下线。</div>';
   const restoreHints = (d.restore_hints || []).map(h =>
     `<div class="exam-banner">✓ ${ruleLink(h.rule_id, { compact: true })} 巩固链建议恢复在役：${esc((h.rationale || '').slice(0, 100))}… <button type="button" class="rect-btn accent" onclick="governanceAction('${esc(h.rule_id)}','restore')">人工 restore</button></div>`
   ).join('');

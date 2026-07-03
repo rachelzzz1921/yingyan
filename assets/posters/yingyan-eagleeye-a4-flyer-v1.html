@@ -1,0 +1,292 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>鹰眼 EAGLEEYE · A4 双面传单 v2 白底版</title>
+  <style>
+    :root{
+      --bg:#FFFFFF;
+      --paper:#FFFFFF;
+      --panel:#FFFFFF;
+      --panel2:#F1F5F9;
+      --line:#D8E0EA;
+      --muted:#5B6B7C;
+      --text:#0B1220;
+      --soft:#26384D;
+      --red:#F15B52;
+      --red2:#DC4A3D;
+      --teal:#0F766E;
+      --teal2:#14B8A6;
+      --amber:#C77700;
+      --navy:#0B2A4A;
+      --green:#0E3B34;
+      --sans:"PingFang SC","Hiragino Sans GB","Noto Sans SC","Microsoft YaHei","Helvetica Neue",Arial,sans-serif;
+      --mono:"SF Mono","DM Mono","Roboto Mono",Menlo,Consolas,monospace;
+    }
+    *{box-sizing:border-box}
+    body{margin:0;padding:24px;background:#E5E7EB;font-family:var(--sans);color:var(--text)}
+    .pack{display:grid;gap:24px;justify-items:center}
+    .page{
+      width:210mm;height:297mm;position:relative;overflow:hidden;
+      padding:12mm 12mm 10mm;background:#FFFFFF;
+      box-shadow:0 18px 48px rgba(15,23,42,.16);
+      page-break-after:always;
+    }
+    .page:before{
+      content:"";position:absolute;inset:0;pointer-events:none;
+      background:
+        radial-gradient(430px 310px at 88% 8%,rgba(241,91,82,.24),rgba(241,91,82,.08) 42%,transparent 72%),
+        radial-gradient(360px 260px at 6% 82%,rgba(20,184,166,.20),rgba(20,184,166,.07) 44%,transparent 74%),
+        radial-gradient(260px 210px at 18% 50%,rgba(19,78,114,.10),transparent 70%);
+      opacity:1;
+    }
+    .content{position:relative;z-index:1;height:100%;display:flex;flex-direction:column;gap:0;min-height:0}
+    header{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:7mm;flex-shrink:0}
+    .brand{display:flex;align-items:center;gap:10px}
+    .brand img{width:34px;height:34px;border-radius:10px}
+    .brand b{font-size:21px;line-height:1;font-weight:900}
+    .brand span{display:block;color:var(--muted);font-size:9.5px;margin-top:3px}
+    .topline{color:var(--muted);font:700 8.5px var(--mono);letter-spacing:.09em;text-align:right}
+    .topline em{display:block;margin-top:5px;color:var(--red);font-style:normal}
+    .rule{height:1px;background:var(--line);margin:10px 0}
+    .eyebrow{color:var(--red);font:800 10.5px var(--mono);letter-spacing:.16em;text-transform:uppercase;margin-bottom:9px}
+    h1,h2,h3,p{margin:0}
+    h1{font-size:42px;line-height:1.04;letter-spacing:-.055em;font-weight:900}
+    h2{font-size:26px;line-height:1.1;letter-spacing:-.038em;font-weight:900}
+    h3{font-size:16px;line-height:1.18;font-weight:850}
+    .red{color:var(--red)}.teal{color:var(--teal)}.amber{color:var(--amber)}.mut{color:var(--muted)}
+    .lead{margin-top:10px;color:var(--soft);font-size:13.5px;line-height:1.5;font-weight:620;max-width:650px}
+    .hero-card{border:1px solid #F0B8B2;border-radius:16px;background:rgba(255,255,255,.92);padding:18px 20px 16px;box-shadow:0 10px 26px rgba(220,74,61,.09),inset 0 1px rgba(255,255,255,.95);flex-shrink:0}
+    .speed{display:grid;grid-template-columns:1fr 40px 1fr 40px 1fr;align-items:end;gap:7px;margin-top:14px;padding-top:11px;border-top:1px solid #E7D1CE}
+    .speed .num{font:900 42px/1 var(--mono);letter-spacing:-.08em}
+    .speed small{display:block;color:var(--muted);font-size:10.8px;margin-top:6px;font-weight:700;letter-spacing:0}
+    .op{color:#9AA8B8;font:900 42px/1 var(--sans);text-align:center;padding-bottom:12px}
+    .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:8px;flex-shrink:0}
+    .stat{display:flex;flex-direction:column;justify-content:center;background:#FFFFFF;border:1px solid var(--line);border-radius:10px;padding:7px 8px;min-height:54px;box-shadow:0 3px 10px rgba(15,23,42,.04)}
+    .stat.hot{background:#FFF1F0;border-color:rgba(220,74,61,.45)}
+    .stat b{display:block;font:900 24px/1 var(--mono);letter-spacing:-.06em}
+    .stat span{display:block;color:var(--muted);font-size:9px;line-height:1.28;margin-top:5px;font-weight:700}
+    .source{color:var(--muted);font-size:7.5px;line-height:1.35;margin-top:6px;opacity:.9;flex-shrink:0}
+    .grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}
+    .card{display:flex;flex-direction:column;justify-content:center;background:#FFFFFF;border:1px solid var(--line);border-radius:12px;padding:12px 13px;box-shadow:0 4px 14px rgba(15,23,42,.05)}
+    .card.blue{background:#EEF5FF;border-color:#BFD7FF}.card.green{background:#E8F7F0;border-color:#BFE8D3}.card.redline{border-color:rgba(220,74,61,.45);background:#FFF1F0}
+    .card h3{margin-bottom:7px}.card p{color:var(--muted);font-size:11.2px;line-height:1.48}
+    .chiprow{display:flex;flex-wrap:wrap;gap:5px;margin-top:9px}
+    .chip{background:#F8FAFC;border:1px solid #DFE7F1;border-radius:6px;padding:4px 7px;color:#134E72;font-size:9px;font-weight:800}
+    .section-title{display:flex;align-items:center;gap:8px;margin:9px 0 6px;flex-shrink:0}
+    .section-title:before{content:"";width:4px;height:20px;background:linear-gradient(180deg,var(--red),var(--red2));border-radius:2px}
+    .section-title b{font-size:15.5px;font-weight:900}
+    .matrix{display:grid;grid-template-columns:76px repeat(3,minmax(0,1fr));gap:5px;flex-shrink:0}
+    .cell{display:flex;flex-direction:column;justify-content:center;background:#FFFFFF;border:1px solid var(--line);border-radius:9px;padding:6px 8px;min-height:58px;box-shadow:0 2px 8px rgba(15,23,42,.035)}
+    .cell.head{display:grid;place-items:center;text-align:center;background:#F1F5F9;color:#213047;font-size:10.5px;font-weight:850}
+    .cell.role{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;font-weight:900;color:#fff;padding:8px 6px}
+    .cell.role.blue{background:#12294A}.cell.role.green{background:#0E3B34}
+    .cell.role span{color:#BFFCF2!important}
+    .role-main{font-size:17px;line-height:1.05}
+    .role-sub{margin-top:5px;font-size:9.6px;line-height:1.2;font-weight:850;letter-spacing:.02em}
+    .role-note{margin-top:3px;font-size:8.2px;line-height:1.15;font-weight:800;opacity:.92}
+    .cell b{display:block;font-size:11px;line-height:1.16}.cell p{margin-top:3px;color:var(--muted);font-size:8.8px;line-height:1.26}
+    .entries{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;flex-shrink:0}
+    .entry{border:1px solid var(--line);border-radius:10px;padding:8px 9px;background:#FFFFFF;min-height:0}
+    .entry.gold{border-color:rgba(220,74,61,.4);background:#FFF8F7}
+    .entry.blue{border-color:#BFD7FF;background:#F8FBFF}
+    .entry.green{border-color:#BFE8D3;background:#F4FBF8}
+    .entry b{display:block;font-size:11px;font-weight:900;margin-bottom:3px}
+    .entry p{font-size:8.8px;line-height:1.32;color:var(--muted);margin:0}
+    .pillrow{display:flex;flex-wrap:wrap;gap:4px;margin-top:5px}
+    .pill{font-size:7.5px;font-weight:800;padding:2px 6px;border-radius:5px;background:#F8FAFC;border:1px solid #DFE7F1;color:#134E72}
+    .flow{display:grid;grid-template-columns:repeat(6,1fr);gap:4px;flex-shrink:0}
+    .step{display:flex;flex-direction:column;justify-content:center;background:#FFFFFF;border:1px solid var(--line);border-radius:9px;padding:6px 7px;min-height:58px;box-shadow:0 2px 8px rgba(15,23,42,.035)}
+    .step b{display:block;color:var(--soft);font-size:10px;line-height:1.16;margin-bottom:3px}
+    .step span{color:var(--muted);font-size:8.2px;line-height:1.28}
+    .bullets{display:grid;gap:7px}
+    .bullet{display:grid;grid-template-columns:14px 1fr;gap:7px;color:var(--soft);font-size:11.3px;line-height:1.42}
+    .bullet i{font-style:normal;color:var(--teal);font-weight:900}
+    .evidence-right{display:flex;flex-direction:column;gap:8px}
+    .principle{margin-top:auto;border:1px solid rgba(20,184,166,.32);background:linear-gradient(135deg,#E8F7F0,#FFFFFF);border-radius:12px;padding:11px 12px;box-shadow:0 4px 14px rgba(15,23,42,.04)}
+    .principle b{display:block;color:var(--teal);font-size:13.8px;margin-bottom:6px}
+    .principle p{color:var(--soft);font-size:10.2px;line-height:1.45}
+    .principle .mini{display:grid;grid-template-columns:repeat(3,1fr);gap:5px;margin-top:8px}
+    .principle .mini span{display:block;text-align:center;border-radius:6px;background:#FFFFFF;border:1px solid #D5ECE7;padding:5px 4px;color:var(--teal);font-size:8.5px;font-weight:800}
+    .quote{margin-top:auto;flex-shrink:0;position:relative;display:flex;align-items:center;justify-content:space-between;gap:16px;padding-top:10px;min-height:58px}
+    .quote:before{content:"";position:absolute;left:0;right:0;top:0;height:1px;background:linear-gradient(90deg,var(--line),rgba(42,50,62,.25))}
+    .qr{display:flex;align-items:center;gap:9px}
+    .qr img{width:58px;height:58px;background:#fff;padding:5px;border-radius:6px}
+    .qr span{font-size:9.8px;line-height:1.42;color:var(--soft);font-weight:750}
+    .slogan{text-align:right;font-size:17px;line-height:1.26;font-weight:900;font-style:italic}
+    .back-layout{display:grid;grid-template-columns:1.03fr .97fr;gap:10px;align-items:stretch;flex-shrink:0}
+    .mini-board{background:#FFFFFF;border:1px solid var(--line);border-radius:14px;overflow:hidden;box-shadow:0 4px 14px rgba(15,23,42,.05)}
+    .mini-top{display:flex;justify-content:space-between;align-items:center;padding:8px 10px;background:linear-gradient(90deg,#0B2A4A,#134E72);font-size:9px;font-weight:850;color:#fff}
+    .mini-body{padding:10px;display:grid;gap:7px}
+    .finding{display:flex;flex-direction:column;justify-content:center;border:1px solid var(--line);border-left:4px solid var(--red);border-radius:8px;background:#FFFFFF;padding:6px 7px;min-height:48px}
+    .finding.ok{border-left-color:var(--teal)}.finding.warn{border-left-color:var(--amber)}
+    .finding b{font-size:11px}.finding p{color:var(--muted);font-size:9.2px;line-height:1.34;margin-top:4px}
+    .deliver{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+    .back-page header{margin-bottom:7mm}
+    .back-page .section-title{margin:8px 0 5px}
+    .back-page .grid2 .card{padding:9px 11px}
+    .back-page .grid2 h2{font-size:20px}
+    .back-page .grid2 p{font-size:10.5px;line-height:1.42}
+    .back-page .deliver .card{padding:8px 10px}
+    .trust-inline{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;flex-shrink:0}
+    .trust-inline .card{padding:8px 9px;min-height:0}
+    .trust-inline h3{font-size:12px;margin-bottom:4px}
+    .trust-inline p{font-size:8.8px;line-height:1.3}
+    .back-page .quote{min-height:62px;padding-top:12px}
+    .footer-note{margin-top:9px;color:var(--muted);font-size:7.5px;line-height:1.45}
+    @media print{
+      @page{size:A4 portrait;margin:0}
+      body{padding:0;background:#fff}
+      .pack{display:block;gap:0}
+      .page{box-shadow:none}
+    }
+  </style>
+</head>
+<body>
+  <main class="pack">
+    <section class="page">
+      <div class="content">
+        <header>
+          <div class="brand">
+            <img src="../brand/logo-mark.svg" alt="">
+            <div><b>鹰眼 <span class="teal">EAGLEEYE</span></b><span>医保基金稽核智能体 · 飞检取证放大镜</span></div>
+          </div>
+          <div class="topline">MEDICAL INSURANCE AUDIT · AI AGENT<em>A4 FLYER · FRONT · WHITE</em></div>
+        </header>
+
+        <div class="hero-card">
+          <div class="eyebrow">EVIDENCE-CHAIN FORENSICS · 证据取证</div>
+          <h1>看得懂病历的稽核 AI，<br>把线索变成<span class="red">能对质的证据</span>。</h1>
+          <p class="lead">读懂病程、医嘱、检验与费用清单，做费用-诊断-医嘱三方交叉验证；每条疑点回链原文与政策条款。</p>
+          <div class="speed">
+            <div><div class="num red">40<span style="font-size:18px">分钟</span></div><small>人工单案初筛</small></div>
+            <div class="op">→</div>
+            <div><div class="num teal">90<span style="font-size:18px">秒</span></div><small>鹰眼三要素证据链</small></div>
+            <div class="op">≈</div>
+            <div><div class="num amber">27×</div><small>人力倍增（端到端）</small></div>
+          </div>
+        </div>
+
+        <div class="stats">
+          <div class="stat"><b class="red">8600</b><span>名医保监管员</span></div>
+          <div class="stat"><b>13 亿</b><span>参保人 · 监管对象基数</span></div>
+          <div class="stat"><b>28.99 万</b><span>定点医药机构</span></div>
+          <div class="stat hot"><b>500</b><span>飞检年查机构数</span></div>
+        </div>
+        <div class="source">数据来源：8600 名医保监管人员为公开行业报道；13.27 亿参保人、28.99 万定点机构来自国家医保局《2024年全国医疗保障事业发展统计公报》；500 家来自《2024年医保基金违法违规问题专项整治工作方案》。按监管人员/覆盖对象折算，人均监管对象约为美国 4 倍，具体口径以官方最新发布为准。</div>
+
+        <div class="section-title"><b>2 受众 × 3 阶段：监管取证与院端自查各有工作流</b></div>
+        <div class="matrix">
+          <div></div>
+          <div class="cell head">事前 · 提醒</div>
+          <div class="cell head">事中 · 结算审核</div>
+          <div class="cell head">事后 · 监管（飞检）</div>
+          <div class="cell role blue"><span class="role-main">监管侧</span><span class="role-sub">飞检 / 结算</span><span class="role-note">取证复核</span></div>
+          <div class="cell"><b>高发规则前移</b><p>机构画像与抽样指导，<br>让有限人力聚焦关键样本。</p></div>
+          <div class="cell"><b>存疑单语义复核</b><p>对照原文复核存疑单，<br>降低误报与复核成本。</p></div>
+          <div class="cell redline"><b class="red">飞检取证放大镜</b><p>40 分钟到 90 秒，<br>生成可复核证据链。</p></div>
+          <div class="cell role green"><span class="role-main">院端</span><span class="role-sub">自查 / 合规</span><span class="role-note">前置整改</span></div>
+          <div class="cell"><b class="teal">浏览器插件审方</b><p>扩展套在老 HIS 上，<br>开单前零对接 · 两库依据浮层。</p></div>
+          <div class="cell"><b class="teal">结算前自查</b><p>上传前校验费用、医嘱、诊断，<br>降低退回与拒付风险。</p></div>
+          <div class="cell"><b class="teal">历史体检 + 申诉副驾</b><p>飞检前批量自查，<br>形成整改台账与申诉材料。</p></div>
+        </div>
+
+        <div class="section-title"><b>演示三入口 · 同一引擎 · G0 零误报红线</b></div>
+        <div class="entries">
+          <div class="entry gold"><b>① 黄金闭环</b><p>7 步一案到底 · 稽核→复核→治理→复跑→ROI→门禁</p><div class="pillrow"><span class="pill">10 分钟</span><span class="pill">FP=0</span></div></div>
+          <div class="entry blue"><b>② 全面平台</b><p>飞检工作台 · 院端自查 · 优先队列 · 工程看板</p><div class="pillrow"><span class="pill">纵深备问</span><span class="pill">三要素</span></div></div>
+          <div class="entry green"><b>③ 插件产品线</b><p>浏览器扩展 · 三角色靶站 · 事前台账→监管重点审核</p><div class="pillrow"><span class="pill">零对接</span><span class="pill">萌芽拦截</span></div></div>
+        </div>
+
+        <div class="quote">
+          <div class="qr"><img src="yingyan-experience-qr.png" alt=""><span>扫码进入在线 Pitch<br>yingyan.47-237-68-213.sslip.io</span></div>
+          <div class="slogan">让每一分救命钱<br><span class="red">都查得有据可对质</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="page back-page">
+      <div class="content">
+        <header>
+          <div class="brand">
+            <img src="../brand/logo-mark.svg" alt="">
+            <div><b>鹰眼 <span class="teal">EAGLEEYE</span></b><span>从证据到交付 · 双侧价值总览</span></div>
+          </div>
+          <div class="topline">WORKFLOW · EVIDENCE · DELIVERY<em>A4 FLYER · BACK · WHITE</em></div>
+        </header>
+
+        <div class="section-title" style="margin-top:0"><b>面向两类用户，分别设计两套工作流</b></div>
+        <div class="grid2">
+          <div class="card blue">
+            <h2>监管侧</h2>
+            <p>事后飞检与结算复核。目标不是替代人工裁量，<br>而是把候选疑点、原文位置、政策依据和举证包提前整理好。</p>
+            <div class="chiprow"><span class="chip">飞检取证</span><span class="chip">疑点排序</span><span class="chip">机构画像</span><span class="chip">覆盖声明</span><span class="chip">黄金闭环</span></div>
+          </div>
+          <div class="card green">
+            <h2>院端</h2>
+            <p>开单、结算、自查、申诉四个关口。<br>目标是把可整改问题前移处理，形成自查清单、整改台账与申诉材料。</p>
+            <div class="chiprow"><span class="chip">浏览器插件</span><span class="chip">三角色靶站</span><span class="chip">事前台账</span><span class="chip">未遵从→监管</span></div>
+          </div>
+        </div>
+
+        <div class="section-title"><b>工程链路：材料进来，证据出去</b></div>
+        <div class="flow">
+          <div class="step"><b>L1 材料摄取</b><span>PDF / 清单 / OCR</span></div>
+          <div class="step"><b>L2 案卷对象</b><span>事实 + 源锚点</span></div>
+          <div class="step"><b>KB 政策两库</b><span>规则 / 条款 / 生效日</span></div>
+          <div class="step"><b>L4 规则引擎</b><span>79 规则 · 触发路由</span></div>
+          <div class="step"><b>L5 三要素门禁</b><span>原文 · 政策 · 逻辑</span></div>
+          <div class="step"><b>L6 输出</b><span>疑点 / 举证包</span></div>
+        </div>
+
+        <div class="section-title"><b>三要素证据链</b></div>
+        <div class="back-layout">
+          <div class="mini-board">
+            <div class="mini-top"><span>监管侧飞检工作台</span><span>5 疑点 + 2 线索</span></div>
+            <div class="mini-body">
+              <div class="finding"><b>T-201 靶向药无基因检测</b><p>证据：费用清单第 7 行；政策：限定支付条款；<br>推理：病理记录未见分子检测结果。</p></div>
+              <div class="finding warn"><b>存疑转线索</b><p>材料不足时不强行输出违规结论，转为补材料线索。</p></div>
+              <div class="finding ok"><b>正确不报</b><p>符合豁免或证据不足的项目，明确展示不报理由。</p></div>
+            </div>
+          </div>
+          <div class="evidence-right">
+          <div class="bullets">
+            <div class="bullet"><i>1</i><span><b>源文档定位：</b>费用行、病程、医嘱、检验、病理都能回链原文。</span></div>
+            <div class="bullet"><i>2</i><span><b>政策条款：</b>规则绑定官方文号、条款、生效日与核验状态。</span></div>
+            <div class="bullet"><i>3</i><span><b>推理过程：</b>触发条件、排除项和结论路径透明展示。</span></div>
+            <div class="bullet"><i>4</i><span><b>低误报红线：</b>引不出原文的疑点，不输出；证据不足降级为线索。</span></div>
+          </div>
+          <div class="principle">
+            <b>输出原则：先可信，再自动化</b>
+            <p>疑点必须同时满足“原文可定位、政策可核验、推理可复述”。<br>任一环节不足，系统优先降级为线索或要求补材料。</p>
+            <div class="mini"><span>可定位</span><span>可核验</span><span>可复述</span></div>
+          </div>
+          </div>
+        </div>
+
+        <div class="section-title"><b>可交付材料</b></div>
+        <div class="deliver">
+          <div class="card"><h3>核查清单</h3><p>按疑点列出费用行、证据摘录、<br>政策条款与处置建议。</p></div>
+          <div class="card"><h3>举证包</h3><p>把三要素证据链、正确不报解释、<br>覆盖声明整理为可复核材料。</p></div>
+          <div class="card"><h3>整改台账</h3><p>风险点、责任科室、补材料项、<br>主动退回建议与复跑结果。</p></div>
+          <div class="card"><h3>溯源报告</h3><p>展示规则到官方政策原文的映射，<br>支撑合规地基。</p></div>
+        </div>
+
+        <div class="section-title"><b>可信机制 · 插件三角色</b></div>
+        <div class="trust-inline">
+          <div class="card"><h3>合议去重</h3><p>同一笔钱多规则命中，只算一次。</p></div>
+          <div class="card"><h3>覆盖度声明</h3><p>查了哪些维度，可签字审计。</p></div>
+          <div class="card green"><h3>事前闭环</h3><p>开单/编码/结算提醒 · 未遵从→监管回执。</p></div>
+        </div>
+
+        <div class="quote">
+          <div class="qr"><img src="yingyan-experience-qr.png" alt=""><span>在线 Pitch + Demo<br>yingyan.47-237-68-213.sslip.io</span></div>
+          <div class="slogan">不替代人工裁量<br><span class="red">把证据链先立住</span></div>
+        </div>
+      </div>
+    </section>
+  </main>
+</body>
+</html>

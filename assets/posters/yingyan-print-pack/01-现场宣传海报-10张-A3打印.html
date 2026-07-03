@@ -1,0 +1,654 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>鹰眼 EAGLEEYE · 现场宣传海报 10 张</title>
+  <style>
+    :root{
+      --ink:#07111f;--navy:#0b2a4a;--blue:#002fa7;--teal:#2dd4bf;--amber:#e8a838;--red:#dc4a3d;--green:#0d9b6a;
+      --c1:#002fa7;--c2:#0d8b7e;--c3:#c77700;--c4:#dc4a3d;--c5:#0d9b6a;
+      --paper:#f7f8f6;--muted:#65758a;--line:#d8dee5;--dark:#0d1117;
+      --sans:"Inter","Helvetica Neue","PingFang SC","Noto Sans SC","Microsoft YaHei",Arial,sans-serif;
+      --mono:"SF Mono","JetBrains Mono","Cascadia Code",Menlo,Consolas,monospace;
+    }
+    *{box-sizing:border-box}
+    body{margin:0;padding:28px;background:#e5e7eb;color:var(--ink);font-family:var(--sans)}
+    #book{display:grid;gap:28px;justify-items:center}
+    .poster{
+      --accent:var(--blue);
+      --wash-a:rgba(0,47,167,.09);--wash-b:rgba(45,212,191,.11);--wash-c:rgba(232,168,56,.07);
+      --orb-a:rgba(0,47,167,.20);--orb-b:rgba(45,212,191,.20);--orb-c:rgba(232,168,56,.14);
+      position:relative;width:1080px;height:1528px;overflow:hidden;color:var(--ink);
+      background:
+        radial-gradient(78% 58% at 92% -2%,var(--wash-a),transparent 72%),
+        radial-gradient(70% 56% at 2% 102%,var(--wash-b),transparent 74%),
+        radial-gradient(56% 44% at 50% -12%,var(--wash-c),transparent 74%),
+        #ffffff;
+      box-shadow:0 22px 60px rgba(15,23,42,.16);padding:44px 54px 38px;page-break-after:always;
+    }
+    /* 细网点底纹 */
+    .poster:before{content:"";position:absolute;inset:0;z-index:0;background-image:radial-gradient(currentColor .7px,transparent .7px);background-size:22px 22px;opacity:.04;pointer-events:none}
+    /* 右上角羽化柔光球（大面积模糊，边缘融进白底） */
+    .poster:after{content:"";position:absolute;z-index:0;pointer-events:none;top:-340px;right:-300px;width:820px;height:820px;border-radius:50%;background:radial-gradient(circle at 50% 50%,var(--orb-a) 0%,transparent 62%);filter:blur(60px);opacity:.95}
+    /* 左下角 + 中部两枚柔光球，层层叠晕 */
+    .poster .halo{position:absolute;z-index:0;pointer-events:none;left:-260px;bottom:-280px;width:720px;height:720px;border-radius:50%;background:radial-gradient(circle at 50% 50%,var(--orb-b) 0%,transparent 60%);filter:blur(72px)}
+    .poster .halo:after{content:"";position:absolute;right:-520px;top:-40px;width:360px;height:360px;border-radius:50%;background:radial-gradient(circle at 50% 50%,var(--orb-c) 0%,transparent 64%);filter:blur(64px);opacity:.85}
+    .poster.tone-indigo{--accent:#002fa7;--wash-a:rgba(0,47,167,.10);--wash-b:rgba(45,212,191,.11);--wash-c:rgba(20,120,190,.08);--orb-a:rgba(0,47,167,.24);--orb-b:rgba(45,212,191,.22);--orb-c:rgba(20,120,190,.16)}
+    .poster.tone-graphite{--accent:#0d8b7e;--wash-a:rgba(220,74,61,.08);--wash-b:rgba(45,212,191,.11);--wash-c:rgba(11,42,74,.06);--orb-a:rgba(45,212,191,.24);--orb-b:rgba(220,74,61,.18);--orb-c:rgba(13,139,126,.18)}
+    .poster.tone-mist{--accent:#002fa7;--wash-a:rgba(0,47,167,.08);--wash-b:rgba(232,168,56,.10);--wash-c:rgba(45,212,191,.08);--orb-a:rgba(0,47,167,.18);--orb-b:rgba(232,168,56,.22);--orb-c:rgba(45,212,191,.16)}
+    /* 左侧品牌渐变色脊 */
+    .poster .spine{position:absolute;left:0;top:0;bottom:0;width:9px;z-index:2;background:linear-gradient(180deg,var(--c1),var(--c2) 42%,var(--c3) 72%,var(--c4));opacity:.95}
+    /* 每页柔光球调色板按页序轮换，避免 10 页雷同 */
+    .poster:nth-child(1){--orb-a:rgba(0,47,167,.22);--orb-b:rgba(45,212,191,.22);--orb-c:rgba(232,168,56,.14)}
+    .poster:nth-child(2){--orb-a:rgba(232,168,56,.20);--orb-b:rgba(0,47,167,.18);--orb-c:rgba(45,212,191,.16)}
+    .poster:nth-child(3){--orb-a:rgba(45,212,191,.24);--orb-b:rgba(220,74,61,.16);--orb-c:rgba(11,42,74,.10)}
+    .poster:nth-child(4){--orb-a:rgba(13,155,106,.20);--orb-b:rgba(0,47,167,.18);--orb-c:rgba(45,212,191,.16)}
+    .poster:nth-child(5){--orb-a:rgba(220,74,61,.18);--orb-b:rgba(45,212,191,.20);--orb-c:rgba(232,168,56,.14)}
+    .poster:nth-child(6){--orb-a:rgba(0,47,167,.20);--orb-b:rgba(232,168,56,.20);--orb-c:rgba(13,155,106,.16)}
+    .poster:nth-child(7){--orb-a:rgba(45,212,191,.22);--orb-b:rgba(13,155,106,.18);--orb-c:rgba(0,47,167,.14)}
+    .poster:nth-child(8){--orb-a:rgba(232,168,56,.20);--orb-b:rgba(220,74,61,.16);--orb-c:rgba(45,212,191,.16)}
+    .poster:nth-child(9){--orb-a:rgba(0,47,167,.20);--orb-b:rgba(45,212,191,.20);--orb-c:rgba(220,74,61,.14)}
+    .poster:nth-child(10){--orb-a:rgba(0,47,167,.22);--orb-b:rgba(45,212,191,.22);--orb-c:rgba(232,168,56,.16)}
+    .content{position:relative;z-index:1;height:100%;display:flex;flex-direction:column}
+    header{display:flex;justify-content:space-between;gap:24px;margin-bottom:14px;font:14px var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+    .dark header,.blue header{color:rgba(255,255,255,.66)}
+    .brand{display:flex;align-items:center;gap:12px;font-family:var(--sans);letter-spacing:0;text-transform:none;color:inherit}
+    .brand img{width:48px;height:48px}.brand b{font-size:25px}
+    .storyline{display:grid;grid-template-columns:repeat(10,1fr);gap:5px;margin:0 0 18px;color:var(--muted)}
+    .story-step{border-top:3px solid currentColor;padding-top:6px;font:700 10px/1.2 var(--mono);letter-spacing:.06em;text-transform:uppercase;opacity:.34;min-width:0}
+    .story-step.on{color:var(--accent);opacity:1}
+    .dark .storyline,.blue .storyline{color:rgba(255,255,255,.45)}
+    .eyebrow{font:700 16px var(--mono);letter-spacing:.16em;text-transform:uppercase;color:var(--accent);margin-bottom:14px}
+    .dark .eyebrow,.blue .eyebrow{color:var(--teal)}
+    h1,h2,h3,p{margin:0}
+    h1{font-size:78px;line-height:1.01;letter-spacing:-.05em;font-weight:850}
+    h1.lg{font-size:84px;line-height:.98}
+    h1.sm{font-size:66px;line-height:1.03}
+    .sublead{margin-top:10px;font-size:20px;line-height:1.36;color:var(--muted);font-weight:600}
+    .dark .sublead,.blue .sublead{color:rgba(255,255,255,.68)}
+    .lead{margin-top:13px;font-size:22px;line-height:1.46;color:#344256;font-weight:530}
+    .dark .lead,.blue .lead{color:rgba(255,255,255,.82)}
+    .accent{color:var(--accent)}.red{color:var(--red)}.teal{color:var(--teal)}.amber{color:var(--amber)}
+    .rule{height:2px;background:currentColor;opacity:.15;margin:14px 0}
+    .grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+    .grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+    .card{--cc:var(--accent);background:#fff;border:1px solid var(--line);border-top:3px solid var(--cc);border-radius:13px;padding:13px 14px;min-height:104px;box-shadow:0 3px 14px rgba(11,42,74,.06)}
+    .dark .card,.blue .card{background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.18)}
+    .card.hot{background:var(--blue);color:#fff;border-color:var(--blue)}
+    .card.tealhot{background:#073d3b;color:#fff;border-color:#105d58}
+    .card.redhot{background:#351219;color:#fff;border-color:#61222b}
+    .num{font:850 46px/1 var(--mono);letter-spacing:-.06em;color:var(--cc);margin-bottom:6px}
+    /* 卡片多彩强调色轮换：蓝/青/琥珀/红/绿 */
+    .grid4>*:nth-child(5n+1),.pipeline>*:nth-child(5n+1),.detail-grid>*:nth-child(5n+1),.phase-strip>*:nth-child(5n+1),.mini-ledger>*:nth-child(5n+1){--cc:var(--c1)}
+    .grid4>*:nth-child(5n+2),.pipeline>*:nth-child(5n+2),.detail-grid>*:nth-child(5n+2),.phase-strip>*:nth-child(5n+2),.mini-ledger>*:nth-child(5n+2){--cc:var(--c2)}
+    .grid4>*:nth-child(5n+3),.pipeline>*:nth-child(5n+3),.detail-grid>*:nth-child(5n+3),.phase-strip>*:nth-child(5n+3),.mini-ledger>*:nth-child(5n+3){--cc:var(--c3)}
+    .grid4>*:nth-child(5n+4),.pipeline>*:nth-child(5n+4),.detail-grid>*:nth-child(5n+4),.phase-strip>*:nth-child(5n+4),.mini-ledger>*:nth-child(5n+4){--cc:var(--c4)}
+    .grid4>*:nth-child(5n),.pipeline>*:nth-child(5n),.detail-grid>*:nth-child(5n),.phase-strip>*:nth-child(5n),.mini-ledger>*:nth-child(5n){--cc:var(--c5)}
+    /* 统计卡：上下左右居中，突出大数字 */
+    .card:has(.num){display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center}
+    .dark .num,.blue .num{color:var(--teal)}
+    .label{font-size:19px;font-weight:830;margin-bottom:5px;line-height:1.22}
+    .desc{font-size:15.5px;line-height:1.44;color:var(--muted);font-weight:540}
+    .dark .desc,.blue .desc{color:rgba(255,255,255,.65)}
+    .tags{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+    .tag{border:1px solid currentColor;padding:7px 10px;font:13px var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--accent);background:rgba(255,255,255,.55)}
+    .dark .tag,.blue .tag{color:var(--teal);background:rgba(255,255,255,.06)}
+    .bottom{margin-top:auto;display:flex;justify-content:space-between;align-items:flex-end;gap:20px;border-top:1px solid rgba(127,127,127,.28);padding-top:12px;font:12.5px var(--mono);letter-spacing:.08em;color:var(--muted)}
+    .dark .bottom,.blue .bottom{color:rgba(255,255,255,.62);border-color:rgba(255,255,255,.18)}
+    .bottom .slogan{text-align:right;font-weight:800;max-width:52%;line-height:1.38;letter-spacing:.02em;font-family:var(--sans);font-size:13.5px;text-transform:none;color:var(--navy)}
+    .quote{font-size:36px;line-height:1.16;letter-spacing:-.035em;font-weight:850;padding:18px;border-left:8px solid var(--blue);background:rgba(0,47,167,.06)}
+    .dark .quote{border-color:var(--red);background:rgba(220,74,61,.08)}
+    .pipeline{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;margin-top:14px}
+    .step{--cc:var(--accent);min-height:118px;border:1px solid var(--line);border-top:3px solid var(--cc);border-radius:12px;background:#fff;padding:11px 10px;box-shadow:0 3px 12px rgba(11,42,74,.05)}
+    .dark .step{background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.16)}
+    .step b{display:block;font:820 22px var(--mono);color:var(--cc);margin-bottom:8px}
+    .dark .step b{color:var(--teal)}
+    .step span{display:block;font-size:15.5px;line-height:1.3;font-weight:790}
+    .step small{display:block;margin-top:6px;font-size:13.5px;line-height:1.34;color:var(--muted)}
+    .dark .step small{color:rgba(255,255,255,.58)}
+    .matrix{display:grid;grid-template-columns:124px repeat(3,1fr);gap:8px;margin-top:14px}
+    .cell{min-height:112px;border:1px solid var(--line);border-radius:11px;padding:12px 13px;background:#fff;display:flex;flex-direction:column;justify-content:center}
+    .cell.head{display:grid;place-items:center;background:var(--navy);color:#fff;text-align:center;font-size:19px;font-weight:850;padding:10px}
+    .cell.hot{background:var(--blue);color:#fff;border-color:var(--blue)}
+    .cell.soft{background:#e8f7f5}.cell b{font-size:18.5px;display:block;line-height:1.22}
+    .cell p{font-size:14.5px;line-height:1.4;margin-top:6px;color:inherit;opacity:.86}
+    .screen{background:#0d1117;border:1px solid #253141;padding:12px;box-shadow:0 18px 40px rgba(7,17,31,.2)}
+    .screen img{display:block;width:100%;border:1px solid #2b3849}
+    .caption{margin-top:10px;font-size:14px;line-height:1.4;color:var(--muted)}
+    .product-showcase{background:#eef2f7;border:1px solid #d8dee5;box-shadow:0 18px 40px rgba(7,17,31,.22);color:#0b2a4a;font-size:11.6px;line-height:1.38;overflow:hidden}
+    .product-showcase .ui-topbar{display:flex;justify-content:space-between;align-items:center;padding:9px 14px;background:linear-gradient(125deg,#061829 0%,#0b2a4a 48%,#134e72 100%);border-bottom:2px solid rgba(232,168,56,.42);font:10px var(--mono);letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.82)}
+    .product-showcase .ui-brand{display:flex;align-items:center;gap:9px;font-family:var(--sans);letter-spacing:0;text-transform:none;font-weight:800;font-size:13px;color:#fff}
+    .product-showcase .ui-brand img{width:30px;height:30px;border-radius:8px;box-shadow:0 4px 12px rgba(0,0,0,.26);background:#fff}
+    .product-showcase .ui-actions{display:flex;gap:6px;align-items:center}.product-showcase .ui-actions span{border:1px solid rgba(255,255,255,.18);background:rgba(0,0,0,.18);border-radius:8px;padding:4px 7px}
+    .product-showcase .ui-wf{display:flex;justify-content:center;gap:6px;padding:8px 10px;background:#fff;border-bottom:1px solid #d8dee5;flex-wrap:wrap}
+    .product-showcase .ui-wf span{display:flex;align-items:center;gap:5px;padding:5px 9px;border:1px solid #d8dee5;border-radius:9px;background:#fafcfe;font-size:10px;font-weight:700;color:#65758a}
+    .product-showcase .ui-wf span.on{border-color:rgba(45,212,191,.5);background:#ecfdf5;color:#0b2a4a;box-shadow:0 2px 8px rgba(45,212,191,.12)}
+    .product-showcase .ui-casebar{display:flex;justify-content:space-between;gap:8px;align-items:center;padding:7px 12px;background:linear-gradient(90deg,#f8fafc,#fff);border-bottom:1px solid #d8dee5;color:#33475b;font-size:10px}
+    .product-showcase .ui-casebar b{color:#0b2a4a}.product-showcase .case-tag{font:800 9px var(--mono);padding:2px 7px;border-radius:6px;background:#fef0ee;color:#dc4a3d}
+    .product-showcase .ui-body{display:grid;grid-template-columns:minmax(220px,.88fr) minmax(330px,1.18fr);gap:10px;padding:10px;min-height:330px}
+    .product-showcase.hospital .ui-body{display:block;min-height:280px}
+    .product-showcase .ui-pane{background:#fff;border:1px solid #d8dee5;border-radius:12px;box-shadow:0 2px 8px rgba(11,42,74,.06);overflow:hidden;min-height:0}
+    .product-showcase .ui-panel-head{display:flex;justify-content:space-between;align-items:center;padding:8px 10px;background:linear-gradient(180deg,#fafcfe,#f5f8fc);border-bottom:1px solid #d8dee5;font-weight:800;font-size:11px;color:#0b2a4a}
+    .product-showcase .ui-doc-tabs{display:flex;gap:4px;flex-wrap:wrap;padding:7px;background:#fbfcfe;border-bottom:1px solid #d8dee5}
+    .product-showcase .ui-doc-tabs span{padding:4px 7px;border:1px solid #d8dee5;border-radius:7px;background:#fff;font-size:9.5px;color:#33475b}.product-showcase .ui-doc-tabs span.on{background:#134e72;color:#fff;border-color:#134e72}
+    .product-showcase .ui-doc{padding:9px 10px;color:#33475b}.product-showcase .ui-doc h4{font-size:10.5px;color:#134e72;border-bottom:1px solid #d8dee5;margin:7px 0 5px;padding-bottom:3px}.product-showcase .ui-line{padding:4px 0;border-bottom:1px dashed #e8edf3}.product-showcase .ui-highlight{background:#fff8e8;border-left:3px solid #e8a838;padding:5px 7px;border-radius:0 6px 6px 0;color:#7a4d00;margin-top:6px}
+    .product-showcase .ui-report{padding:9px 10px}.product-showcase .ui-tabs{display:flex;gap:5px;margin-bottom:8px;flex-wrap:wrap}
+    .product-showcase .ui-tabs span{padding:4px 8px;border:1px solid #d8dee5;border-radius:8px;background:#fff;font-size:10px;color:#65758a}.product-showcase .ui-tabs span.on{background:#0b2a4a;color:#fff;border-color:#0b2a4a}
+    .product-showcase .ui-kpi{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:8px}
+    .product-showcase .ui-kpi .k{display:flex;align-items:flex-start;gap:6px;background:#fbfcfe;border:1px solid #d8dee5;border-radius:9px;padding:7px 5px}
+    .product-showcase .ui-icon{width:17px;height:17px;flex:0 0 auto;opacity:.95}.product-showcase .ui-kpi .k b{display:block;font:850 19px/1 var(--mono);letter-spacing:-.04em}.product-showcase .ui-kpi .k span{display:block;font-size:10.2px;color:#65758a;margin-top:2px}.product-showcase .ui-kpi .k.red b{color:#dc4a3d}.product-showcase .ui-kpi .k.amber b{color:#c77700}.product-showcase .ui-kpi .k.teal b{color:#0d9b6a}.product-showcase .ui-kpi .k.blue b{color:#134e72}
+    .product-showcase .ui-finding{background:#fff;border:1px solid #d8dee5;border-left:4px solid #dc4a3d;border-radius:10px;margin-bottom:7px;overflow:hidden}
+    .product-showcase .ui-finding.clue{border-left-color:#c77700}.product-showcase .ui-finding.ok{border-left-color:#0d9b6a;background:#f8fffb}
+    .product-showcase .ui-finding b{display:block;font-size:12.8px;color:#0b2a4a}.product-showcase .ui-finding .meta{font-size:10.4px;color:#65758a;margin-top:2px}
+    .product-showcase .ui-fhead{display:flex;gap:6px;align-items:center;padding:7px 8px;border-bottom:1px solid #eef2f6}.product-showcase .badge{font:800 9.8px var(--sans);border-radius:999px;padding:2px 7px;background:#fef0ee;color:#dc4a3d;white-space:nowrap}.product-showcase .badge.clue{background:#fff6e6;color:#c77700}.product-showcase .badge.ok{background:#e8f7f0;color:#0d9b6a}
+    .product-showcase .ui-ec{display:grid;grid-template-columns:1fr 1fr 1fr;gap:5px;padding:7px;background:#fbfcfe}.product-showcase .ui-ev{background:#fff;border:1px solid #d8dee5;border-radius:7px;padding:6px;font-size:10.4px;color:#33475b}.product-showcase .ui-ev i{display:flex;align-items:center;gap:4px;font-style:normal;color:#134e72;font:800 9.6px var(--mono);letter-spacing:.04em;margin-bottom:2px}.product-showcase .ui-ev i img{width:12px;height:12px}
+    .product-showcase .ui-mini{display:grid;grid-template-columns:1fr 1fr;gap:5px}.product-showcase .ui-mini .ui-finding{margin:0}.product-showcase .ui-mini .ui-fhead{padding:6px}.product-showcase .ui-mini .ui-finding b{font-size:11.2px}
+    .product-showcase .ui-queue{width:100%;border-collapse:collapse;font-size:11.3px;background:#fff}.product-showcase .ui-queue th,.product-showcase .ui-queue td{border-bottom:1px solid #d8dee5;padding:7px 6px;text-align:left;color:#33475b}.product-showcase .ui-queue th{background:#f8fafc;color:#65758a;font:800 9.6px var(--mono);letter-spacing:.06em;text-transform:uppercase}.product-showcase .ui-queue tr:hover td,.product-showcase .ui-queue tr.hot td{background:#f0fdfa}.product-showcase .ui-queue .rank{font:850 12px var(--mono);color:#14b8a6;width:28px;text-align:center}.product-showcase .ui-queue .score{font:850 13px var(--mono);color:#134e72;white-space:nowrap}.product-showcase .ui-queue .tier{display:inline-block;padding:1px 7px;border-radius:999px;background:#fef0ee;border:1px solid #fecaca;color:#dc4a3d;font-size:9px;font-weight:800}
+    .product-showcase .showcase-foot{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;padding:8px 10px;background:#fff;border-top:1px solid #d8dee5}.product-showcase .showcase-foot span{font-size:10px;color:#65758a;text-align:center}.product-showcase .showcase-foot b{display:block;color:#0b2a4a;font-size:11px;margin-bottom:2px}
+    .product-showcase.audit .ui-body{grid-template-columns:210px 1fr 188px;min-height:370px}
+    .product-showcase.hospital .ui-body{display:grid;grid-template-columns:1.24fr .76fr;gap:10px;min-height:360px}
+    .product-showcase .ui-toolbar{display:flex;gap:6px;align-items:center;flex-wrap:wrap;padding:7px 10px;background:#fbfcfe;border-bottom:1px solid #d8dee5;font-size:9.5px;color:#65758a}
+    .product-showcase .ui-chip{display:inline-flex;align-items:center;gap:4px;padding:3px 7px;border:1px solid #d8dee5;border-radius:999px;background:#fff;font-weight:700;color:#33475b}
+    .product-showcase .ui-chip.hot{background:#fef0ee;border-color:#fecaca;color:#dc4a3d}.product-showcase .ui-chip.ok{background:#e8f7f0;border-color:#bbf7d0;color:#0d9b6a}
+    .product-showcase .ui-drawer{padding:9px 10px;display:grid;gap:7px}.product-showcase .ui-drawer-card{border:1px solid #d8dee5;border-radius:9px;background:#fff;padding:7px 8px;color:#33475b;font-size:9.8px}.product-showcase .ui-drawer-card b{display:block;color:#0b2a4a;font-size:10.5px;margin-bottom:3px}
+    .product-showcase .ui-action-row{display:flex;gap:5px;flex-wrap:wrap;margin-top:5px}.product-showcase .ui-btn{padding:4px 7px;border-radius:7px;border:1px solid #d8dee5;background:#f8fafc;color:#0b2a4a;font-size:9.5px;font-weight:800}.product-showcase .ui-btn.primary{background:#2dd4bf;border-color:#14b8a6;color:#061829}
+    .product-showcase .ui-subgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}.product-showcase .ui-stat-list{display:grid;gap:5px;padding:8px}.product-showcase .ui-stat{display:flex;justify-content:space-between;gap:8px;border-bottom:1px dashed #e8edf3;padding-bottom:4px;color:#33475b;font-size:10px}.product-showcase .ui-stat b{color:#0b2a4a}
+    .product-showcase .ui-progress{display:grid;gap:6px;padding:8px}.product-showcase .ui-progress div{display:grid;grid-template-columns:56px 1fr 38px;gap:6px;align-items:center;font-size:9.5px;color:#33475b}.product-showcase .bar{height:6px;border-radius:999px;background:#e8edf3;overflow:hidden}.product-showcase .bar i{display:block;height:100%;background:linear-gradient(90deg,#2dd4bf,#e8a838)}
+    .showcase-caption{margin-top:10px;font-size:14px;line-height:1.45;color:var(--muted);font-weight:600}
+    .dark .showcase-caption{color:rgba(255,255,255,.62)}
+    .demo{border:1px solid #263241;background:#0b111b;color:#e5edf7;padding:12px;display:grid;grid-template-columns:190px 1fr 230px;gap:10px}
+    .demo.hospital{grid-template-columns:220px 1fr 220px;background:#0b1817}
+    .pane{background:#111a26;border:1px solid #263241;padding:11px}
+    .hospital .pane{background:#10211f;border-color:#214340}
+    .pt{font:12px var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--teal);margin-bottom:8px}
+    .li{padding:7px 0;border-bottom:1px solid rgba(255,255,255,.08);font-size:12.5px;line-height:1.28;color:#b8c4d4}
+    .finding{background:#172334;border-left:5px solid var(--red);padding:10px;margin-bottom:8px}
+    .finding.clue{border-left-color:var(--amber)}.finding.ok{border-left-color:var(--teal)}
+    .finding b{display:block;font-size:14.5px;margin-bottom:5px}.finding span{font-size:12px;color:#aab6c6;line-height:1.32}
+    .ev{background:#07111f;border:1px solid #34465b;padding:9px;margin-top:7px;color:#d7e4f0;font-size:11.5px;line-height:1.38}
+    .hl{background:rgba(232,168,56,.16);border:1px solid rgba(232,168,56,.45);padding:7px;margin-top:7px;font-size:11.5px;line-height:1.32}
+    .ledger{margin-top:12px;border-top:1px solid var(--line)}
+    .ledger-row{display:grid;grid-template-columns:178px 1fr 120px;gap:10px;border-bottom:1px solid var(--line);padding:9px 0;align-items:center}
+    .dark .ledger,.dark .ledger-row{border-color:rgba(255,255,255,.16)}
+    .ledger-row b{font-size:19px}.ledger-row p{font-size:15px;line-height:1.36;color:var(--muted)}
+    .dark .ledger-row p{color:rgba(255,255,255,.64)}
+    .mini-ledger{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-top:12px}
+    .mini-item{--cc:var(--accent);display:grid;grid-template-columns:72px 1fr;gap:9px;align-items:center;border:1px solid var(--line);border-top:3px solid var(--cc);background:#fff;padding:11px;border-radius:11px;box-shadow:0 3px 12px rgba(11,42,74,.05)}
+    .dark .mini-item,.blue .mini-item{background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.16)}
+    .mini-item b{font:850 15px/1.1 var(--mono);color:var(--cc)}
+    .mini-item span{font-size:14px;line-height:1.4;color:var(--muted);font-weight:560}.dark .mini-item span,.blue .mini-item span{color:rgba(255,255,255,.68)}
+    .phase-strip{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px}
+    .phase{--cc:var(--accent);display:flex;flex-direction:column;justify-content:center;border:1px solid var(--line);border-top:3px solid var(--cc);background:#fff;border-radius:11px;padding:13px;min-height:92px;box-shadow:0 3px 12px rgba(11,42,74,.05)}.dark .phase,.blue .phase{background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.16)}
+    .phase b{display:block;font-size:18.5px;margin-bottom:5px;color:var(--cc)}.phase span{font-size:13.5px;line-height:1.4;color:var(--muted)}.dark .phase span,.blue .phase span{color:rgba(255,255,255,.65)}
+    .metric-note{margin-top:12px;padding:12px 14px;border:1px solid rgba(232,168,56,.35);background:rgba(232,168,56,.09);border-radius:10px;font-size:14px;line-height:1.42;color:#344256;font-weight:650}
+    .dark .metric-note,.blue .metric-note{color:rgba(255,255,255,.82);background:rgba(232,168,56,.12);border-color:rgba(232,168,56,.28)}
+    .detail-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px}
+    .detail{--cc:var(--accent);border:1px solid var(--line);border-top:3px solid var(--cc);background:#fff;border-radius:11px;padding:10px 11px;min-height:86px;box-shadow:0 3px 12px rgba(11,42,74,.05)}.dark .detail,.blue .detail{background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.16)}
+    .detail b{display:block;font-size:15.5px;margin-bottom:5px;color:var(--cc)}
+    .detail span{font-size:13.5px;line-height:1.4;color:var(--muted)}.dark .detail span,.blue .detail span{color:rgba(255,255,255,.66)}
+    .poster.compact .detail-grid{grid-template-columns:repeat(3,1fr);gap:6px}.poster.compact .detail{padding:9px 10px;min-height:74px}.poster.compact .detail b{font-size:14px}.poster.compact .detail span{font-size:12.2px;line-height:1.36}
+    .bullets{display:grid;gap:6px;margin-top:10px}
+    .bullet{display:grid;grid-template-columns:20px 1fr;gap:9px;align-items:start;font-size:15px;line-height:1.42;color:#344256}
+    .dark .bullet,.blue .bullet{color:rgba(255,255,255,.78)}
+    .bullet i{font-style:normal;font:800 13px var(--mono);color:var(--accent);margin-top:2px}
+    .dark .bullet i,.blue .bullet i{color:var(--teal)}
+    .section-title{font:800 15px var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--accent);margin:14px 0 8px}
+    .dark .section-title{color:var(--teal)}
+    .takeaway{margin-top:14px;display:flex;align-items:center;gap:16px;padding:16px 22px;border-radius:14px;background:linear-gradient(120deg,#0b2a4a,#134e72);color:#fff;font-size:21px;line-height:1.3;font-weight:820;letter-spacing:-.01em;box-shadow:0 12px 28px rgba(11,42,74,.22)}
+    .takeaway:before{content:"结论";flex:0 0 auto;align-self:stretch;display:flex;align-items:center;font:800 12px var(--mono);letter-spacing:.18em;color:#7fe9db;border-right:1px solid rgba(255,255,255,.30);padding-right:16px}
+    .poster.compact h1{font-size:62px}.poster.compact h1.sm{font-size:58px}.poster.compact .lead{font-size:19.5px;line-height:1.38}.poster.compact .sublead{font-size:17px}
+    .poster.compact .card{padding:11px 12px;min-height:90px}.poster.compact .label{font-size:17px}.poster.compact .desc{font-size:14px;line-height:1.4}
+    .poster.compact .bullet{font-size:14.5px;line-height:1.4}.poster.compact .section-title{margin-top:14px}
+    .poster.sparse .lead{font-size:24px}.poster.sparse .card{min-height:124px}.poster.sparse .takeaway{font-size:25px}
+    .poster.compact .product-showcase.audit .ui-body{min-height:285px}
+    .poster.compact .product-showcase.hospital .ui-body{min-height:275px}
+    .poster.compact .showcase-foot{display:none}
+    .poster.compact .showcase-caption{font-size:12px;margin-top:6px}
+    .poster.compact .mini-ledger{grid-template-columns:repeat(4,1fr);gap:6px}
+    .poster.compact .mini-item{grid-template-columns:1fr;padding:8px;gap:4px}
+    .poster.compact .mini-item b{font-size:13.5px}.poster.compact .mini-item span{font-size:12.5px;line-height:1.32}
+    .poster.compact .phase{padding:10px;min-height:78px}.poster.compact .phase b{font-size:16px}.poster.compact .phase span{font-size:12.5px;line-height:1.34}
+    .qr{display:flex;gap:14px;align-items:center}.qr img{width:100px;height:100px;background:#fff;padding:7px;border:1px solid var(--line);border-radius:8px}
+    @media print{ @page{size:A3 portrait;margin:0} body{padding:0;background:#fff} #book{display:block;gap:0}.poster{width:297mm;height:420mm;box-shadow:none} }
+  </style>
+</head>
+<body>
+<main id="book"></main>
+<script>
+const logo = 'assets/logo-mark.svg';
+const iconBase = 'assets/icons';
+const qr = 'assets/qr-yingyan.png';
+const expQr = 'assets/yingyan-experience-qr.svg';
+const storySteps = ['总览','问题','结构','证据','飞检','监管','院端','前中后','可信','体验'];
+
+const posters = [
+  {
+    theme:'blue', section:'PRODUCT', kicker:'SOURCE-ANCHORED AUDIT', titleClass:'lg', density:'compact', stage:['before','during','after'],
+    title:['鹰眼','EAGLEEYE'],
+    sublead:'医保基金稽核智能体\n案卷语义取证引擎',
+    lead:'读取病程、医嘱、检验与费用清单\n90 秒生成带原文锚点的三要素证据链\n辅助稽核初筛，结论可复核、可导出、可申诉',
+    quote:'引不出原文的疑点\n不输出',
+    stats:[['40min','人工单案\n初筛'],['90sec','引擎输出\n证据链'],['79','在库规则\n覆盖多专科'],['FP=0','合规案卷\n零误报']],
+    cards:[
+      ['飞检取证','深读整本案卷\n输出核查清单与举证包'],
+      ['院端自查','批量扫描历史案卷\n生成整改台账'],
+      ['优先队列','按风险分值排序\n先处理高价值案卷'],
+      ['政策回链','每条规则关联\n官方文号、条款与生效日']
+    ],
+    bullets:['输入：PDF / 图片 / CSV\n结构化就诊材料','输出：疑点、线索\n核查清单、举证包','原则：低误报优先\n证据不足降级为线索'],
+    mini:[
+      ['监管侧','事后飞检 · 专项稽核\n核查清单 · 举证包'],
+      ['院端','飞检前自查 · 整改复跑\n主动退回 · 申诉草稿'],
+      ['证据链','源文档定位 · 政策条款\n推理过程 · 可导出'],
+      ['可信门禁','合议去重 · 覆盖声明\n置信传播 · FP=0']
+    ],
+    tags:['语义交叉验证','源文档锚点','确定性引擎','可导出文书'],
+    takeaway:'主线：把“看不完的案卷”\n变成可复核、可对质、可导出的证据链。',
+    slogan:'引不出原文的疑点，不输出'
+  },
+  {
+    theme:'light', section:'SCALE', kicker:'CASELOAD PRESSURE', titleClass:'lg', stage:['before'],
+    title:['8600 人','28 万机构'],
+    sublead:'监管人力\nvs 案卷复杂度',
+    lead:'结构化结算筛查\n已覆盖海量流水\n但飞检与自查仍要逐份核对\n病历、医嘱与费用\n人工翻案卷慢\n漏看一页就可能漏掉关键证据',
+    stats:[['8600','全国医保\n监管员'],['13亿','参保\n人口'],['28.99万','定点\n机构'],['500','飞检年\n覆盖机构']],
+    cards:[
+      ['人力瓶颈','专家时间有限\n必须先排序再深读'],
+      ['材料复杂','病案 + 病程 + 医嘱\n+ 检验 + 费用多源交叉'],
+      ['系统分工','结算流水筛查\n解决不了病历语义取证'],
+      ['取证耗时','单次就诊材料\n人工初筛约 40 分钟']
+    ],
+    bullets:['国家两库已公开\n88 类 / 24.7 万条规则知识点','难点不在“有没有规则”\n在“能不能读懂案卷并定位证据”'],
+    mini:[
+      ['结构化筛查','适合处理海量流水\n不等于已读懂病历'],
+      ['非结构化案卷','病程、医嘱、费用、检验\n需要跨文档勾稽'],
+      ['飞检现场','人工翻页核证据\n耗时且口径难统一'],
+      ['院端自查','飞检前批量扫描历史就诊\n补材料、建台账']
+    ],
+    takeaway:'海量案卷需要更稳定的证据定位能力：\n让专家从翻材料，转向核证据、判争议。',
+    slogan:'专家的时间，应该花在判争议上'
+  },
+  {
+    theme:'dark', section:'ARCHITECTURE', kicker:'SIX-LAYER PIPELINE', titleClass:'sm', density:'compact', stage:['before','during','after'],
+    title:['六层流水线','确定性取证'],
+    sublead:'SIX-LAYER\nFORENSICS PIPELINE',
+    lead:'自材料摄取到文书输出\n全链路结构化运行\n规则引擎消费统一案卷对象\n每条结论可追溯到\n源文档坐标与政策条款',
+    pipeline:[
+      ['L1','Intake','PDF/图片/CSV\n槽位分类\nOCR 置信度'],
+      ['L2','Case Object','费用/医嘱/诊断\n每条绑定 anchor'],
+      ['L3','Knowledge','政策库 + 目录\n临床指南 RAG'],
+      ['L4','Rules','79 规则\n触发器路由\n47 checker'],
+      ['L5','Gate','三要素校验\n申诉复核\n降级策略'],
+      ['L6','Output','疑点/线索\n核查清单\n举证包']
+    ],
+    cards:[
+      ['确定性引擎','毫秒级可复现判定\n不依赖模型幻觉'],
+      ['触发器路由','按案卷特征激活规则子集\n跳过无关检查'],
+      ['回归测试','20 案卷基准集\n合规案卷误报为零'],
+      ['地方覆盖','全国基线 KB\n+ 省级价目/DRG 配置层']
+    ],
+    mini:[
+      ['事实层','费用、诊断、医嘱、检验\n统一为 case object'],
+      ['规则层','规则触发器先路由\nchecker 再判定'],
+      ['门禁层','原文、政策、推理\n缺一项即降级'],
+      ['交付层','清单、举证包、台账\n可进入工作流']
+    ],
+    details:[
+      ['输入契约','PDF/图片/CSV/JSON\n按材料槽位归档'],
+      ['事实锚点','doc + locator + OCR\n保留到输出层'],
+      ['规则路由','按诊断、项目、科室\n激活相关规则'],
+      ['知识底座','政策条款、目录限制\n地方价目配置'],
+      ['申诉预演','辩方补材料路径\n裁判决定降级/维持'],
+      ['导出闭环','核查清单、举证包\n整改台账、溯源报告']
+    ],
+    takeaway:'统一案卷对象、统一规则入口、统一输出口径，\n让每一次稽核都可复现、可追溯。',
+    slogan:'同一案卷跑两次，结论仍然一致'
+  },
+  {
+    theme:'light', section:'EVIDENCE', kicker:'THREE-PART EVIDENCE', titleClass:'lg', density:'compact', stage:['during'],
+    title:['三要素','证据链'],
+    sublead:'SOURCE-ANCHORED\nPOLICY-BACKED\nTRACEABLE',
+    lead:'每条 active finding\n必须同时满足三项\n源文档定位\n政策条款引用\n完整推理过程\n缺任一项，系统自动降级或抑制输出',
+    cards:[
+      ['证据定位','费用行 + 病历原文\n页码/行号/bbox 坐标'],
+      ['政策条款','KB 引用 · 文号\n原文摘录 · 核验状态'],
+      ['推理链路','触发条件 → 核对\n除外 → 结论'],
+      ['申诉复核','模拟医理争议\n过滤证据不足项']
+    ],
+    ledger:[
+      ['T-201','奥希替尼 ¥4,704\n全案卷未见分子病理证据','疑点'],
+      ['T-205','升白针指征材料不全\n维持线索','线索'],
+      ['贝伐珠单抗','非伴随检测类\n符合适应 · 抑制输出','不报'],
+      ['再入院 15d','放化疗周期豁免\n抑制输出','不报']
+    ],
+    mini:[
+      ['证据不足','先标线索\n不轻易定性违规'],
+      ['合理治疗','命中除外情形\n正确不报也展示理由'],
+      ['申诉预演','模拟医院补材料路径\n过滤弱疑点'],
+      ['人工复核','AI 给线索与证据\n不替代最终裁量']
+    ],
+    details:[
+      ['原文定位','费用清单第 7 行\n奥希替尼 ¥4,704'],
+      ['病理缺口','右肺腺癌报告\n未见 EGFR/ALK 结果'],
+      ['政策约束','限定支付需伴随诊断\n条款可展开核验'],
+      ['线索降级','升白针材料不全\n先补血常规'],
+      ['正确不报','贝伐珠单抗\n非伴随检测类'],
+      ['周期豁免','再入院 15 天\n命中放化疗周期']
+    ],
+    takeaway:'疑点必须站得住：原文有位置、政策有出处、推理有链路，\n证据不足不轻易定性。',
+    slogan:'三要素不齐，系统自动降级'
+  },
+  {
+    theme:'dark', section:'REGULATOR', kicker:'POST-EVENT INSPECTION', titleClass:'sm', density:'compact', stage:['during'],
+    title:['飞检工作台','案卷深读'],
+    sublead:'事后：监管飞检\n对已发生案卷做核查',
+    lead:'飞检属于事后监管核查\n重点不是提醒医生开单\n而是在案卷已经形成后\n把费用、病历、医嘱与政策证据一次性对齐',
+    showcase:'audit',
+    takeaway:'事后飞检不再从头翻案卷：\n点开疑点，即可核对原文、费用行与政策依据。',
+    slogan:'飞检不靠翻页，靠证据链对质'
+  },
+  {
+    theme:'light', section:'REGULATOR', kicker:'REGULATORY WORKFLOW', titleClass:'lg', stage:['before','during','after'],
+    title:['监管侧','四大能力'],
+    sublead:'监管侧：前中后\n三种介入方式',
+    lead:'监管不只等到飞检才开始\n事前看规则与风险，事中做经办审核与存疑复核\n事后进入飞检、专项稽核和举证导出',
+    phase:[
+      ['事前','规则画像 · 高危机构/科室\n抽样计划更聚焦'],
+      ['事中','经办审核存疑单\n需核病历时深读案卷'],
+      ['事后','飞检/专项稽核\n证据链 + 举证导出']
+    ],
+    cards:[
+      ['事前预警','规则与风险分层\n提前看到高危机构/科室'],
+      ['事中审核','经办审核存疑单\n深读病历与费用材料'],
+      ['事后飞检','对已发生案卷\n形成证据链与核查清单'],
+      ['举证导出','专项稽核后\n输出可复核证据包']
+    ],
+    bullets:['定位：稽核初筛与取证辅助\n不做自动处罚','衔接国家智能监管\n接收结构化筛疑后的深读任务'],
+    mini:[
+      ['优先队列','api_score 排序\n高价值案卷先查'],
+      ['机构画像','规则/科室/金额\n指导现场抽样'],
+      ['误报过滤','正确不报 + 申诉预演\n减少无效复核'],
+      ['文书导出','核查清单、举证包\n机构汇总']
+    ],
+    takeaway:'监管能力前移并分层：\n事前识别风险，事中复核存疑，事后完成飞检取证。',
+    slogan:'事前预警 · 事中复核 · 事后取证'
+  },
+  {
+    theme:'dark', section:'HOSPITAL', kicker:'HOSPITAL SELF-CHECK', titleClass:'sm', density:'compact', stage:['after'],
+    title:['院端工作台','合规自查'],
+    sublead:'事前 / 事中：医院自己发现\n把问题挡在飞检前',
+    lead:'院端自查不是事后飞检\n而是医院在开单、结算、提交前主动发现风险\n按分值排序并输出补材料、整改与主动退回建议',
+    showcase:'hospital',
+    mini:[
+      ['优先队列','按分值、科室、状态\n先处理高风险就诊'],
+      ['补材料','病理、检验、外院报告\n缺什么列清楚'],
+      ['整改台账','责任科室、状态、建议\n飞检前可留痕'],
+      ['复跑验证','整改后再次稽核\n形成前后对比']
+    ],
+    takeaway:'医院把风险发现前移：\n在开单、结算、提交前完成自查，把可整改问题挡在飞检前。',
+    slogan:'飞检前发现，比飞检后解释更重要'
+  },
+  {
+    theme:'light', section:'HOSPITAL', kicker:'BEFORE · DURING · AFTER', titleClass:'lg', density:'compact', stage:['before','during','after'],
+    title:['院端合规','全周期覆盖'],
+    sublead:'前中后链条\n医院前移 · 监管兜底',
+    lead:'医院侧重点在事前、事中主动发现\n监管飞检重点在事后核查\n鹰眼把两端放在同一套证据链里，形成闭环',
+    matrix:true,
+    phase:[
+      ['事前 · 医院','开单/上传前提示\n把新风险挡在源头'],
+      ['事中 · 医院','结算/提交前自查\n补材料、主动退回'],
+      ['事后 · 监管','飞检/专项稽核\n核证据、出举证包']
+    ],
+    cards:[
+      ['事前 · 医院','开单/上传前\n规则提醒与风险预筛'],
+      ['事中 · 医院','结算/提交前\n自查发现与补材料'],
+      ['事后 · 监管','飞检/专项稽核\n证据核查与举证导出'],
+      ['共同证据链','同一规则口径\n同一原文锚点']
+    ],
+    bullets:['主动退回：期限前完成\n可从轻处理','与监管侧共用同一取证引擎\n口径可切换'],
+    takeaway:'医院前移发现，监管事后核查；\n同一套证据链贯通自查、整改、飞检与举证。',
+    slogan:'院端前移自查，监管事后核查，口径一致'
+  },
+  {
+    theme:'dark', section:'TRUST', kicker:'VERIFIABLE BY DESIGN', titleClass:'sm', stage:['before','during','after'],
+    title:['四层可信','保障机制'],
+    sublead:'TRUST · VERIFICATION\nROBUSTNESS',
+    lead:'结论不是模型自由生成\n而是经过四层工程约束\n数据结构 · 政策溯源\n回归测试 · 对抗防护',
+    stats:[['1467','官方政策\n条目入库'],['79/79','规则绑定\n政策来源'],['88%','条款引用\n可解析原文'],['20','案卷回归\n测试集']],
+    cards:[
+      ['合议去重','多规则同笔命中\n金额只计一次'],
+      ['覆盖声明','明示核查维度\n未触发 ≠ 漏查'],
+      ['置信传播','OCR 低置信证据\n自动降权'],
+      ['注入防护','伪造提示注入检测\n架构层隔离']
+    ],
+    bullets:['合规地基：点开任意规则\n查看对应官方文件与条款','回归门禁：合规案卷误报为零\n改规则必过测试'],
+    mini:[
+      ['合议去重','多规则同笔命中\n金额只计一次'],
+      ['覆盖声明','本次查了什么\n未触发 ≠ 漏查'],
+      ['置信传播','OCR 低置信降权\n证据弱则降级'],
+      ['安全边界','病历内提示注入\n不能改变规则判定']
+    ],
+    takeaway:'可信来自工程约束：\n政策可溯源、证据可点击、规则可回归、结论可复核。',
+    slogan:'低误报不是口号，是回归门禁'
+  },
+  {
+    theme:'blue', section:'TRY NOW', kicker:'90-SECOND LIVE DEMO', titleClass:'lg', density:'compact', stage:['before','during','after'],
+    title:['90 秒','上手体验'],
+    sublead:'SCAN · AUDIT\nVERIFY',
+    lead:'扫码进入在线 Demo\n选择演示案卷 · 一键稽核\n点击证据锚点查看原文回链\n体验三要素证据链与优先队列排序',
+    steps:[
+      ['Step 1','扫码进入','选择监管侧\n或院端工作台'],
+      ['Step 2','导入材料','加载肿瘤科\n住院化疗材料'],
+      ['Step 3','开始稽核','查看疑点\n线索与抑制项'],
+      ['Step 4','点击证据','源文档\n同步高亮定位'],
+      ['Step 5','导出报告','核查清单\n与举证包预览']
+    ],
+    mini:[
+      ['看排序','优先队列解释\n为什么先查这份'],
+      ['跑稽核','90 秒生成\n疑点、线索、不报'],
+      ['点证据','费用行、病理、政策\n同步回链'],
+      ['带走材料','核查清单、举证包\n整改台账']
+    ],
+    details:[
+      ['演示 1','监管侧入口\n选择肺癌住院化疗'],
+      ['演示 2','运行稽核\n展示 5 疑点 + 2 线索'],
+      ['演示 3','展开 T-201\n三要素证据链'],
+      ['演示 4','切换不报页\n解释贝伐珠单抗'],
+      ['演示 5','院端视角\n优先队列 + 整改台账'],
+      ['演示 6','导出材料\n清单、举证包、台账']
+    ],
+    cards:[
+      ['在线体验','yingyan\n.vercel.app'],
+      ['监管工作台','单案深读\n+ 证据回链'],
+      ['优先队列','批量案卷\n风险排序'],
+      ['院端自查','整改台账\n+ 退回建议']
+    ],
+    qr:true,
+    tags:['低误报','源锚点','政策回链','可导出'],
+    takeaway:'90 秒完成一次完整演示：\n选案卷、跑稽核、点证据、看不报、导出材料。',
+    slogan:'扫码 90 秒，亲眼看到证据回链'
+  }
+];
+
+function lines(text){
+  if(text == null || text === '') return '';
+  if(Array.isArray(text)) return text.join('<br>');
+  return String(text).split('\n').join('<br>');
+}
+function titleHtml(linesArr, cls=''){
+  const tag = cls ? ` class="${cls}"` : '';
+  return `<h1${tag}>${linesArr.map((l,i)=> i===0?l:`<span class="accent">${l}</span>`).join('<br>')}</h1>`;
+}
+function header(i,p){
+  return `<header><div class="brand"><img src="${logo}" alt=""><b>鹰眼 EAGLEEYE</b></div><div>${String(i+1).padStart(2,'0')} / 10 · ${p.kicker || p.section}</div></header>`;
+}
+function storyline(active){
+  return `<div class="storyline">${storySteps.map((s,i)=>`<div class="story-step ${i===active?'on':''}">${String(i+1).padStart(2,'0')}<br>${s}</div>`).join('')}</div>`;
+}
+function footer(p){
+  const qrBlock = p.qr ? `<div class="qr"><img src="${qr}" alt=""><img src="${expQr}" alt=""><span>扫码体验<br>在线 Demo</span></div>` : `<span>MEDICAL INSURANCE AUDIT · AI AGENT</span>`;
+  const slogan = p.slogan || '引不出原文的疑点，不输出';
+  return `<div class="bottom">${qrBlock}<span class="slogan">${lines(slogan)}</span></div>`;
+}
+function statGrid(stats){ return `<div class="grid4">${stats.map(s=>`<div class="card"><div class="num">${s[0]}</div><div class="desc">${lines(s[1])}</div></div>`).join('')}</div>`; }
+function cards(items){
+  const rows = items.length <= 4 ? [items] : [items.slice(0,4), items.slice(4)];
+  return rows.map(row=>`<div class="grid4">${row.map((c,i)=>`<div class="card ${i===0&&!rows[1]?'hot':''}"><div class="label">${lines(c[0])}</div><div class="desc">${lines(c[1])}</div></div>`).join('')}</div>`).join('');
+}
+function bullets(items){ return `<div class="bullets">${items.map(b=>`<div class="bullet"><i>▸</i><span>${lines(b)}</span></div>`).join('')}</div>`; }
+function pipeline(items){ return `<div class="pipeline">${items.map(s=>`<div class="step"><b>${s[0]}</b><span>${lines(s[1])}</span><small>${lines(s[2])}</small></div>`).join('')}</div>`; }
+function ledger(items){ return `<div class="ledger">${items.map(r=>`<div class="ledger-row"><b>${r[0]}</b><p>${lines(r[1])}</p><span class="tag">${r[2]}</span></div>`).join('')}</div>`; }
+function miniLedger(items){ return `<div class="mini-ledger">${items.map(r=>`<div class="mini-item"><b>${lines(r[0])}</b><span>${lines(r[1])}</span></div>`).join('')}</div>`; }
+function phaseStrip(items){ return `<div class="phase-strip">${items.map(r=>`<div class="phase"><b>${lines(r[0])}</b><span>${lines(r[1])}</span></div>`).join('')}</div>`; }
+function detailGrid(items){ return `<div class="detail-grid">${items.map(r=>`<div class="detail"><b>${lines(r[0])}</b><span>${lines(r[1])}</span></div>`).join('')}</div>`; }
+function matrix(){
+  const rows = [
+    ['医院侧','开单提醒 · 风险预筛','结算校验 · 自查发现','整改复跑 · 飞检前留痕'],
+    ['监管侧','规则画像 · 高危提示','经办审核 · 存疑复核','飞检核查 · 举证导出']
+  ];
+  return `<div class="matrix"><div></div><div class="cell head">事前</div><div class="cell head">事中</div><div class="cell head">事后</div>${rows.map(r=>`<div class="cell head">${r[0]}</div>${r.slice(1).map((x,i)=>`<div class="cell ${i===2?'hot':'soft'}"><b>${x.split(' · ')[0]}</b><p>${x.split(' · ')[1]||''}</p></div>`).join('')}`).join('')}</div>`;
+}
+function productShowcase(kind){
+  if(kind==='hospital'){
+    const queue = [
+      [1,'196.2','NSCLC 住院化疗','肿瘤内科','待补材料'],
+      [2,'178.5','腹腔镜胆囊切除术','肝胆外科','待复核'],
+      [3,'160.2','PKP 椎体后凸成形术','骨科','整改中'],
+      [4,'146.7','ICU 急性呼吸窘迫综合征','重症医学科','待补材料'],
+      [5,'141.1','DRG 高套分组','呼吸内科','待退回'],
+      [6,'134.2','胸部 CT 增强','放射科','已复跑']
+    ];
+    return `<div class="product-showcase hospital">
+      <div class="ui-topbar"><div class="ui-brand"><img src="${logo}" alt="">鹰眼 · 院端合规自查驾驶舱</div><div class="ui-actions"><span>医保办视图</span><span>今日 128 份</span><span>规则 79</span></div></div>
+      <div class="ui-wf"><span class="on">1 风险队列</span><span class="on">2 自查体检</span><span class="on">3 整改台账</span><span>4 复跑留痕</span></div>
+      <div class="ui-toolbar"><span class="ui-chip hot">高风险优先</span><span class="ui-chip">科室：全部</span><span class="ui-chip">状态：待处理</span><span class="ui-chip ok">隐藏已复跑</span><span>更新时间 14:32</span></div>
+      <div class="ui-body">
+        <div class="ui-pane">
+          <div class="ui-panel-head"><span>自查优先队列</span><span class="muted">api_score ↑ 越高越先处理</span></div>
+          <table class="ui-queue"><thead><tr><th>#</th><th>api_score</th><th>就诊主题</th><th>科室</th><th>状态</th></tr></thead><tbody>
+            ${queue.map((r,i)=>`<tr class="${i===0?'hot':''}"><td class="rank">${r[0]}</td><td class="score">${r[1]}</td><td>${r[2]}</td><td>${r[3]}</td><td><span class="tier">${r[4]}</span></td></tr>`).join('')}
+          </tbody></table>
+          <div class="ui-subgrid">
+            <div class="ui-pane"><div class="ui-panel-head"><span>科室风险画像</span><span class="muted">近 30 日</span></div><div class="ui-progress"><div><span>肿瘤</span><span class="bar"><i style="width:86%"></i></span><b>86</b></div><div><span>骨科</span><span class="bar"><i style="width:62%"></i></span><b>62</b></div><div><span>ICU</span><span class="bar"><i style="width:48%"></i></span><b>48</b></div></div></div>
+            <div class="ui-pane"><div class="ui-panel-head"><span>整改状态</span><span class="muted">台账</span></div><div class="ui-stat-list"><div class="ui-stat"><span>待补材料</span><b>17</b></div><div class="ui-stat"><span>主动退回建议</span><b>6</b></div><div class="ui-stat"><span>已复跑留痕</span><b>23</b></div></div></div>
+          </div>
+        </div>
+        <div class="ui-pane">
+          <div class="ui-panel-head"><span>当前就诊 · 自查输出</span><span class="muted">风险点 / 线索 / 不报</span></div>
+          <div class="ui-report">
+            <div class="ui-kpi">
+              <div class="k red"><img class="ui-icon" src="${iconBase}/doubt.svg" alt=""><div><b>5</b><span>风险点</span></div></div>
+              <div class="k amber"><img class="ui-icon" src="${iconBase}/clue.svg" alt=""><div><b>2</b><span>线索</span></div></div>
+              <div class="k teal"><img class="ui-icon" src="${iconBase}/ok.svg" alt=""><div><b>2</b><span>正确不报</span></div></div>
+              <div class="k blue"><img class="ui-icon" src="${iconBase}/rules.svg" alt=""><div><b>79</b><span>规则子集</span></div></div>
+            </div>
+            <div class="ui-finding"><div class="ui-fhead"><span class="badge">风险点</span><b>T-201 · 靶向药无基因检测</b></div><div class="ui-ec"><div class="ui-ev"><i><img src="${iconBase}/evidence.svg" alt="">补材料</i>分子病理 / NGS 报告</div><div class="ui-ev"><i><img src="${iconBase}/policy.svg" alt="">处置建议</i>无法补齐则主动退回</div><div class="ui-ev"><i><img src="${iconBase}/report.svg" alt="">台账状态</i>肿瘤内科 · 待确认</div></div></div>
+            <div class="ui-finding clue"><div class="ui-fhead"><span class="badge clue">线索</span><b>T-205 · 升白针指征材料不全</b></div></div>
+            <div class="ui-finding ok"><div class="ui-fhead"><span class="badge ok">不报</span><b>贝伐珠单抗 · 适应证与禁忌已核对</b></div></div>
+            <div class="ui-action-row"><span class="ui-btn primary">生成整改项</span><span class="ui-btn">补材料清单</span><span class="ui-btn">复跑</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="showcase-foot">
+        <span><b>自查前移</b>飞检前主动发现</span>
+        <span><b>风险排序</b>先处理高分值就诊</span>
+        <span><b>整改台账</b>科室责任与状态</span>
+        <span><b>复跑留痕</b>整改后可验证</span>
+      </div>
+    </div>
+    <div class="showcase-caption">院端界面：像日常质控一样查看队列、补材料、建台账，把风险发现前移到提交前</div>`;
+  }
+  return `<div class="product-showcase audit">
+    <div class="ui-topbar"><div class="ui-brand"><img src="${logo}" alt="">鹰眼 · 监管侧飞检工作台</div><div class="ui-actions"><span>规则 79 · 就诊 12</span><span>确定性引擎</span><span>飞检视图</span></div></div>
+    <div class="ui-wf"><span class="on">1 选择就诊</span><span class="on">2 一键稽核</span><span class="on">3 疑点报告</span><span>4 导出文书</span></div>
+    <div class="ui-casebar"><span><span class="case-tag">违规件</span> <b>非小细胞肺癌住院化疗</b> · 男 67 岁 · 肿瘤内科 · 2026-03</span><span>事后飞检 · 案卷深读</span></div>
+    <div class="ui-toolbar"><span class="ui-chip hot">疑点 5</span><span class="ui-chip">线索 2</span><span class="ui-chip ok">正确不报 2</span><span class="ui-chip">金额去重 ¥12,842</span><span>当前页：T-201 靶向药</span></div>
+    <div class="ui-body">
+      <div class="ui-pane">
+        <div class="ui-panel-head"><span>案卷材料</span><span class="muted">源文档锚点</span></div>
+        <div class="ui-doc-tabs"><span>病案首页</span><span>病程</span><span>医嘱</span><span>检验</span><span class="on">费用清单</span></div>
+        <div class="ui-doc">
+          <h4>费用清单</h4>
+          <div class="ui-line">第 6 行 · 贝伐珠单抗注射液 · ¥1,998</div>
+          <div class="ui-highlight">第 7 行 · 奥希替尼片 80mg×28片 · ¥4,704</div>
+          <div class="ui-line">第 8 行 · 注射用头孢呋辛钠 · ¥360</div>
+          <h4>病理 / 医嘱</h4>
+          <div class="ui-line">右肺穿刺：腺癌</div>
+          <div class="ui-highlight">未见 EGFR / ALK 等驱动基因检测结果</div>
+          <div class="ui-line">贝伐珠单抗使用前禁忌已核对</div>
+        </div>
+      </div>
+      <div class="ui-pane">
+        <div class="ui-panel-head"><span>报告结论</span><span class="muted">分页报告 · 可展开</span></div>
+        <div class="ui-report">
+          <div class="ui-kpi">
+            <div class="k red"><img class="ui-icon" src="${iconBase}/doubt.svg" alt=""><div><b>5</b><span>疑点</span></div></div>
+            <div class="k amber"><img class="ui-icon" src="${iconBase}/clue.svg" alt=""><div><b>2</b><span>线索</span></div></div>
+            <div class="k teal"><img class="ui-icon" src="${iconBase}/ok.svg" alt=""><div><b>2</b><span>正确不报</span></div></div>
+            <div class="k blue"><img class="ui-icon" src="${iconBase}/audit.svg" alt=""><div><b>¥12.8k</b><span>涉及金额</span></div></div>
+          </div>
+          <div class="ui-tabs"><span>总览</span><span class="on">疑点</span><span>不报</span><span>覆盖度</span></div>
+          <div class="ui-finding">
+            <div class="ui-fhead"><span class="badge">疑点</span><b>T-201 · 靶向药无基因检测证据使用</b><span class="meta">¥4,704</span></div>
+            <div class="ui-ec">
+              <div class="ui-ev"><i><img src="${iconBase}/evidence.svg" alt="">1 原始证据定位</i>费用清单第 7 行 · 奥希替尼片 80mg×28</div>
+              <div class="ui-ev"><i><img src="${iconBase}/policy.svg" alt="">2 政策条款</i>限定支付需伴随诊断检测 · KB 条款可展开</div>
+              <div class="ui-ev"><i><img src="${iconBase}/report.svg" alt="">3 推理过程</i>病理报告未见 EGFR / ALK 结果 · 证据闭环</div>
+            </div>
+          </div>
+          <div class="ui-mini">
+            <div class="ui-finding clue"><div class="ui-fhead"><span class="badge clue">线索</span><b>B-201 · 白蛋白超范围</b></div></div>
+            <div class="ui-finding ok"><div class="ui-fhead"><span class="badge ok">不报</span><b>贝伐珠单抗 · 正确抑制</b></div></div>
+          </div>
+        </div>
+      </div>
+      <div class="ui-pane">
+        <div class="ui-panel-head"><span>证据操作</span><span class="muted">飞检组</span></div>
+        <div class="ui-drawer">
+          <div class="ui-drawer-card"><b>源文档跳转</b>费用清单第 7 行已高亮<br>病理报告未见分子检测</div>
+          <div class="ui-drawer-card"><b>正确不报</b>贝伐珠单抗非伴随检测类<br>再入院 15 天命中放化疗周期豁免</div>
+          <div class="ui-drawer-card"><b>导出动作</b><div class="ui-action-row"><span class="ui-btn primary">核查清单</span><span class="ui-btn">举证包</span><span class="ui-btn">CSV</span></div></div>
+        </div>
+      </div>
+    </div>
+    <div class="showcase-foot">
+      <span><b>材料联动</b>点击疑点跳原文</span>
+      <span><b>证据链</b>定位 + 条款 + 推理</span>
+      <span><b>误报控制</b>正确不报可解释</span>
+      <span><b>导出</b>核查清单与举证包</span>
+    </div>
+  </div>
+  <div class="showcase-caption">监管侧界面：像飞检现场正在核查一样，材料、疑点、证据操作同时在屏</div>`;
+}
+function steps(items){ return `<div class="pipeline" style="grid-template-columns:repeat(5,1fr)">${items.map(s=>`<div class="step"><b>${s[0]}</b><span>${lines(s[1])}</span><small>${lines(s[2])}</small></div>`).join('')}</div>`; }
+function tags(items){ return `<div class="tags">${items.map(t=>`<span class="tag">${t}</span>`).join('')}</div>`; }
+function takeaway(text){ return `<div class="takeaway">${lines(text)}</div>`; }
+
+function renderPoster(p,i){
+  let body = `<div class="eyebrow">${p.section}</div>${titleHtml(p.title, p.titleClass||'')}`;
+  if(p.sublead) body += `<p class="sublead">${lines(p.sublead)}</p>`;
+  body += `<p class="lead">${lines(p.lead)}</p>`;
+  if(p.quote){ body += `<div class="rule"></div><div class="quote">${lines(p.quote)}</div>`; }
+  if(p.stats){ body += `<div class="rule"></div>${statGrid(p.stats)}`; }
+  if(p.pipeline){ body += `<div class="section-title">PIPELINE</div>${pipeline(p.pipeline)}`; }
+  if(p.phase){ body += `<div class="section-title">WORKFLOW</div>${phaseStrip(p.phase)}`; }
+  if(p.cards){ body += `<div class="rule"></div><div class="section-title">CAPABILITIES</div>${cards(p.cards)}`; }
+  if(p.ledger){ body += `<div class="section-title">OUTPUT STATES</div>${ledger(p.ledger)}`; }
+  if(p.matrix){ body += `<div class="section-title">COVERAGE</div>${matrix()}`; }
+  if(p.showcase){ body += `<div class="rule"></div>${productShowcase(p.showcase)}`; }
+  if(p.steps){ body += `<div class="section-title">QUICK START</div>${steps(p.steps)}`; }
+  if(p.bullets){ body += `<div class="rule"></div>${bullets(p.bullets)}`; }
+  if(p.mini){ body += miniLedger(p.mini); }
+  if(p.details){ body += detailGrid(p.details); }
+  if(p.takeaway){ body += takeaway(p.takeaway); }
+  if(p.tags) body += tags(p.tags);
+  const toneMap = { blue:'tone-indigo', dark:'tone-graphite', light:'tone-mist' };
+  const cls = [toneMap[p.theme] || 'tone-mist', p.density||''].filter(Boolean).join(' ');
+  return `<section class="poster ${cls}"><div class="spine"></div><div class="halo"></div><div class="content">${header(i,p)}${storyline(i)}${body}${footer(p)}</div></section>`;
+}
+
+document.getElementById('book').innerHTML = posters.map(renderPoster).join('');
+</script>
+</body>
+</html>

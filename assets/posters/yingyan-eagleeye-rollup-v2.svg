@@ -1,0 +1,203 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="80cm" height="200cm" viewBox="0 0 2400 6000" fill="none" role="img" aria-labelledby="poster-title poster-desc">
+  <title id="poster-title">鹰眼 EAGLEEYE 医保基金稽核智能体易拉宝海报 v2（人少事多 · AI 人力倍增器）</title>
+  <desc id="poster-desc">80cm by 200cm rollup poster for EagleEye medical insurance audit AI agent. New positioning: manpower-shortage AI leverage, 2 audiences x 3 stages matrix, regulator-side value, moat.</desc>
+  <defs>
+    <pattern id="dot-grid" width="80" height="80" patternUnits="userSpaceOnUse">
+      <circle cx="8" cy="8" r="1.8" fill="#002FA7" opacity="0.08"/>
+    </pattern>
+    <pattern id="fine-grid" width="120" height="120" patternUnits="userSpaceOnUse">
+      <path d="M120 0H0V120" stroke="#002FA7" stroke-width="1" opacity="0.04"/>
+    </pattern>
+    <linearGradient id="logo-bg" x1="0" y1="0" x2="128" y2="128" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#061829"/><stop offset="1" stop-color="#002FA7"/>
+    </linearGradient>
+    <linearGradient id="hero-bg" x1="0" y1="0" x2="2040" y2="720" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#061829"/><stop offset="0.55" stop-color="#0A2A6B"/><stop offset="1" stop-color="#002FA7"/>
+    </linearGradient>
+    <linearGradient id="amber-bar" x1="0" y1="0" x2="1" y2="0">
+      <stop stop-color="#E8A838"/><stop offset="1" stop-color="#F2C36B"/>
+    </linearGradient>
+    <style>
+      .font { font-family: "PingFang SC", "Hiragino Sans GB", "Noto Sans CJK SC", "Noto Sans SC", "Microsoft YaHei", "Helvetica Neue", Arial, sans-serif; }
+      .latin { font-family: Inter, "Helvetica Neue", Arial, sans-serif; }
+      .mono { font-family: "SF Mono", "DM Mono", "Roboto Mono", Menlo, Consolas, monospace; }
+      .ink { fill: #0A0A0A; } .muted { fill: #4A4A4A; } .blue { fill: #002FA7; } .paper { fill: #FAFAF8; }
+      .rule { stroke: #002FA7; stroke-width: 3; opacity: 0.92; }
+      .hair { stroke: #002FA7; stroke-width: 2; opacity: 0.16; }
+      .icon { stroke: #002FA7; stroke-width: 7; stroke-linecap: round; stroke-linejoin: round; }
+      .icon-thin { stroke: #002FA7; stroke-width: 5; stroke-linecap: round; stroke-linejoin: round; }
+      .iconw { stroke: #FFFFFF; stroke-width: 7; stroke-linecap: round; stroke-linejoin: round; }
+    </style>
+  </defs>
+
+  <rect width="2400" height="6000" fill="#FAFAF8"/>
+  <rect width="2400" height="6000" fill="url(#dot-grid)"/>
+
+  <!-- ① Brand header -->
+  <g class="font" transform="translate(180 150)">
+    <rect x="0" y="0" width="128" height="128" rx="8" fill="url(#logo-bg)"/>
+    <circle cx="64" cy="64" r="52" stroke="#E8A838" stroke-width="3.2" stroke-opacity="0.58"/>
+    <path d="M64 20 A44 44 0 0 1 108 64" stroke="#E8A838" stroke-width="7" stroke-linecap="round"/>
+    <path d="M24 64 C34 40 94 40 104 64 C94 88 34 88 24 64 Z" stroke="#FFFFFF" stroke-width="5" stroke-linejoin="round" opacity="0.94"/>
+    <circle cx="64" cy="64" r="22" fill="#2DD4BF"/><circle cx="64" cy="64" r="10" fill="#061829"/>
+    <circle cx="70" cy="58" r="4" fill="#FFFFFF" opacity="0.95"/>
+    <line x1="64" y1="12" x2="64" y2="27" stroke="#E8A838" stroke-width="4" stroke-linecap="round" opacity="0.68"/>
+    <line x1="12" y1="64" x2="27" y2="64" stroke="#E8A838" stroke-width="4" stroke-linecap="round" opacity="0.42"/>
+    <line x1="101" y1="64" x2="116" y2="64" stroke="#E8A838" stroke-width="4" stroke-linecap="round" opacity="0.42"/>
+    <text x="164" y="52" class="ink" font-size="48" font-weight="700">鹰眼</text>
+    <text x="164" y="112" class="blue latin" font-size="64" font-weight="800">EAGLEEYE</text>
+    <text x="164" y="166" class="muted" font-size="33" font-weight="500">医保基金稽核智能体 · 飞检取证放大镜</text>
+    <text x="2040" y="40" class="muted latin" font-size="25" font-weight="600" text-anchor="end">MEDICAL INSURANCE AUDIT AI AGENT</text>
+    <text x="2040" y="86" class="blue mono" font-size="27" font-weight="700" text-anchor="end">模法黑客松 S4 · 2026</text>
+    <line x1="0" y1="220" x2="2040" y2="220" class="rule"/>
+  </g>
+
+  <!-- ② Hero · 核心论题：人少事多 → AI 人力倍增器 -->
+  <g class="font" transform="translate(180 560)">
+    <rect x="0" y="0" width="2040" height="880" rx="14" fill="url(#hero-bg)"/>
+    <text x="64" y="96" class="mono" fill="#7FA9FF" font-size="32" font-weight="700">00 / 人少事多，谁解决谁赢</text>
+    <text x="64" y="248" fill="#FFFFFF" font-size="132" font-weight="800">8600 人，盯 13 亿参保人</text>
+    <text x="64" y="392" fill="#FFFFFF" font-size="96" font-weight="800">鹰眼 = 医保监管的 <tspan fill="#E8A838">AI 人力倍增器</tspan></text>
+    <text x="64" y="470" fill="#C9D8FF" font-size="38" font-weight="500">全国医保专职监管员仅 8600 人 · 定点机构 28.99 万家 · 人均监管量是美国的 4 倍；</text>
+    <text x="64" y="524" fill="#C9D8FF" font-size="38" font-weight="500">飞检一年只查得过来 500 家。稽核员单案人工初筛 40 分钟——鹰眼压到 90 秒内。</text>
+
+    <!-- leverage stat strip -->
+    <g transform="translate(64 592)">
+      <rect x="0" y="0" width="620" height="196" rx="12" fill="#FFFFFF" fill-opacity="0.08" stroke="#7FA9FF" stroke-opacity="0.35" stroke-width="2"/>
+      <text x="40" y="86" fill="#FFFFFF" font-size="104" font-weight="800">40<tspan font-size="46">分钟</tspan></text>
+      <text x="40" y="150" fill="#9FB8FF" font-size="34" font-weight="600">人工单案逐页审阅</text>
+      <text x="700" y="120" fill="#7FA9FF" font-size="80" font-weight="800" text-anchor="middle" transform="translate(-40 0)">→</text>
+    </g>
+    <g transform="translate(724 592)">
+      <rect x="0" y="0" width="620" height="196" rx="12" fill="#FFFFFF" fill-opacity="0.08" stroke="#2DD4BF" stroke-opacity="0.45" stroke-width="2"/>
+      <text x="40" y="86" fill="#2DD4BF" font-size="104" font-weight="800">90<tspan font-size="46">秒内</tspan></text>
+      <text x="40" y="150" fill="#9FE9DF" font-size="34" font-weight="600">鹰眼三要素证据链初筛</text>
+    </g>
+    <g transform="translate(1384 592)">
+      <rect x="0" y="0" width="592" height="196" rx="12" fill="url(#amber-bar)"/>
+      <text x="296" y="104" fill="#061829" font-size="120" font-weight="800" text-anchor="middle">≈ 27×</text>
+      <text x="296" y="158" fill="#061829" font-size="34" font-weight="700" text-anchor="middle">端到端 · 人力倍增</text>
+    </g>
+  </g>
+
+  <!-- ③ 2 受众 × 3 阶段 = 6 格闭环 -->
+  <g class="font" transform="translate(180 1560)">
+    <text x="0" y="42" class="blue mono" font-size="32" font-weight="700">01 / VALUE MATRIX</text>
+    <text x="0" y="118" class="ink" font-size="64" font-weight="800">2 受众 × 3 阶段 = 6 格价值闭环</text>
+    <text x="0" y="176" class="muted" font-size="32" font-weight="500">飞检 = 事后监管的一部分；结算审核 = 事中（两拨人、两场景，勿混）。主次分明：院端自查是商业首楔子，飞检取证是信誉锚。</text>
+
+    <!-- column headers -->
+    <g transform="translate(0 226)">
+      <g transform="translate(300 0)"><rect x="0" y="0" width="556" height="66" rx="8" fill="#EAF0FF"/><text x="278" y="44" class="blue" font-size="32" font-weight="800" text-anchor="middle">事前 · 提醒</text></g>
+      <g transform="translate(876 0)"><rect x="0" y="0" width="556" height="66" rx="8" fill="#EAF0FF"/><text x="278" y="44" class="blue" font-size="32" font-weight="800" text-anchor="middle">事中 · 结算审核</text></g>
+      <g transform="translate(1452 0)"><rect x="0" y="0" width="588" height="66" rx="8" fill="#002FA7"/><text x="294" y="44" fill="#FFFFFF" font-size="32" font-weight="800" text-anchor="middle">事后 · 监管（飞检）</text></g>
+    </g>
+
+    <!-- row 监管侧 -->
+    <g transform="translate(0 316)">
+      <g transform="translate(0 60)"><rect x="0" y="0" width="280" height="300" rx="8" fill="#002FA7"/><text x="140" y="150" fill="#FFFFFF" font-size="40" font-weight="800" text-anchor="middle">监管侧</text><text x="140" y="200" fill="#9FB8FF" font-size="26" font-weight="600" text-anchor="middle">评委主视角</text></g>
+      <g transform="translate(300 0)"><rect x="0" y="0" width="556" height="360" rx="10" fill="#FFFFFF" stroke="#002FA7" stroke-opacity="0.22" stroke-width="2"/><text x="34" y="70" class="blue" font-size="36" font-weight="800">高发规则前移</text><text x="34" y="132" class="ink" font-size="30" font-weight="600">机构画像 → 抽样指导</text><text x="34" y="188" class="muted" font-size="27" font-weight="500">按金额/科室锁定高风险，</text><text x="34" y="228" class="muted" font-size="27" font-weight="500">把有限人力压到刀刃上。</text></g>
+      <g transform="translate(876 0)"><rect x="0" y="0" width="556" height="360" rx="10" fill="#FFFFFF" stroke="#002FA7" stroke-opacity="0.22" stroke-width="2"/><text x="34" y="70" class="blue" font-size="36" font-weight="800">存疑单语义复核</text><text x="34" y="132" class="ink" font-size="30" font-weight="600">误报前置过滤</text><text x="34" y="188" class="muted" font-size="27" font-weight="500">结算审核里筛出来的存疑单，</text><text x="34" y="228" class="muted" font-size="27" font-weight="500">读原文复核、砍掉误报噪声。</text></g>
+      <g transform="translate(1452 0)"><rect x="0" y="0" width="588" height="360" rx="10" fill="#061829"/><text x="34" y="70" fill="#2DD4BF" font-size="36" font-weight="800">飞检取证放大镜</text><text x="34" y="132" fill="#FFFFFF" font-size="30" font-weight="700">主战场 · 40分钟→90秒</text><text x="34" y="188" fill="#C9D8FF" font-size="27" font-weight="500">深读非结构化案卷，出</text><text x="34" y="228" fill="#C9D8FF" font-size="27" font-weight="500">能写进检查结论、经得起</text><text x="34" y="268" fill="#C9D8FF" font-size="27" font-weight="500">申诉复查的三要素证据链。</text></g>
+    </g>
+
+    <!-- row 院端 -->
+    <g transform="translate(0 706)">
+      <g transform="translate(0 60)"><rect x="0" y="0" width="280" height="300" rx="8" fill="#0D7A4E"/><text x="140" y="150" fill="#FFFFFF" font-size="40" font-weight="800" text-anchor="middle">院端</text><text x="140" y="200" fill="#A7E8C8" font-size="26" font-weight="600" text-anchor="middle">商业首楔子</text></g>
+      <g transform="translate(300 0)"><rect x="0" y="0" width="556" height="360" rx="10" fill="#FFFFFF" stroke="#0D7A4E" stroke-opacity="0.28" stroke-width="2"/><text x="34" y="70" fill="#0D7A4E" font-size="36" font-weight="800">开单合规提示</text><text x="34" y="132" class="ink" font-size="30" font-weight="600">关口前移 · 源头防</text><text x="34" y="188" class="muted" font-size="27" font-weight="500">开单/上传前用两库规则提醒，</text><text x="34" y="228" class="muted" font-size="27" font-weight="500">把新违规拦在发生之前。</text></g>
+      <g transform="translate(876 0)"><rect x="0" y="0" width="556" height="360" rx="10" fill="#FFFFFF" stroke="#0D7A4E" stroke-opacity="0.28" stroke-width="2"/><text x="34" y="70" fill="#0D7A4E" font-size="36" font-weight="800">结算前自查拦截</text><text x="34" y="132" class="ink" font-size="30" font-weight="600">避免被退回/拒付</text><text x="34" y="188" class="muted" font-size="27" font-weight="500">上传结算前跑一遍费用-医嘱-</text><text x="34" y="228" class="muted" font-size="27" font-weight="500">诊断一致性，减少返工。</text></g>
+      <g transform="translate(1452 0)"><rect x="0" y="0" width="588" height="360" rx="10" fill="#F0FBF6" stroke="#0D7A4E" stroke-opacity="0.28" stroke-width="2"/><text x="34" y="70" fill="#0D7A4E" font-size="36" font-weight="800">历史体检 + 申诉副驾</text><text x="34" y="132" class="ink" font-size="30" font-weight="700">自查从宽，被查从严</text><text x="34" y="188" class="muted" font-size="27" font-weight="500">飞检前自查整改、主动退回；</text><text x="34" y="228" class="muted" font-size="27" font-weight="500">疑点一键出申诉书草稿 +</text><text x="34" y="268" class="muted" font-size="27" font-weight="500">举证清单（10 工作日死线）。</text></g>
+    </g>
+    <g transform="translate(0 1128)">
+      <rect x="0" y="0" width="2040" height="70" rx="8" fill="#002FA7"/>
+      <text x="1020" y="46" fill="#FAFAF8" font-size="32" font-weight="700" text-anchor="middle">院端自查干净 = 从源头替监管侧减负 · 政策鼓励（2026 扩 12 领域 / 源头治本 / 关口前移）</text>
+    </g>
+  </g>
+
+  <!-- ④ 监管侧价值 -->
+  <g class="font" transform="translate(180 2920)">
+    <line x1="0" y1="0" x2="2040" y2="0" class="rule"/>
+    <text x="0" y="80" class="blue mono" font-size="32" font-weight="700">02 / REGULATOR-SIDE VALUE</text>
+    <text x="0" y="156" class="ink" font-size="60" font-weight="800">8600 人扛不动的活，AI 来扛</text>
+    <g transform="translate(0 226)">
+      <g transform="translate(0 0)"><rect x="0" y="0" width="660" height="150" rx="10" fill="#FFFFFF" stroke="#002FA7" stroke-opacity="0.24" stroke-width="2"/><text x="34" y="62" class="blue" font-size="34" font-weight="800">飞检取证放大镜</text><text x="34" y="112" class="muted" font-size="28" font-weight="500">40 分钟 → 90 秒 · 举证包一键出</text></g>
+      <g transform="translate(690 0)"><rect x="0" y="0" width="660" height="150" rx="10" fill="#FFFFFF" stroke="#002FA7" stroke-opacity="0.24" stroke-width="2"/><text x="34" y="62" class="blue" font-size="34" font-weight="800">疑点优先排序</text><text x="34" y="112" class="muted" font-size="28" font-weight="500">金额 × 置信，先查高价值疑点</text></g>
+      <g transform="translate(1380 0)"><rect x="0" y="0" width="660" height="150" rx="10" fill="#FFFFFF" stroke="#002FA7" stroke-opacity="0.24" stroke-width="2"/><text x="34" y="62" class="blue" font-size="34" font-weight="800">机构画像抽样</text><text x="34" y="112" class="muted" font-size="28" font-weight="500">高发规则/科室 → 指导抽样</text></g>
+      <g transform="translate(0 172)"><rect x="0" y="0" width="660" height="150" rx="10" fill="#FFFFFF" stroke="#002FA7" stroke-opacity="0.24" stroke-width="2"/><text x="34" y="62" class="blue" font-size="34" font-weight="800">误报前置过滤</text><text x="34" y="112" class="muted" font-size="28" font-weight="500">第一痛点是误报，不是漏判</text></g>
+      <g transform="translate(690 172)"><rect x="0" y="0" width="660" height="150" rx="10" fill="#FFFFFF" stroke="#002FA7" stroke-opacity="0.24" stroke-width="2"/><text x="34" y="62" class="blue" font-size="34" font-weight="800">覆盖度声明</text><text x="34" y="112" class="muted" font-size="28" font-weight="500">把"查全了吗"变可审计声明</text></g>
+      <g transform="translate(1380 172)"><rect x="0" y="0" width="660" height="150" rx="10" fill="#061829"/><text x="34" y="62" fill="#2DD4BF" font-size="34" font-weight="800">源头减负</text><text x="34" y="112" fill="#C9D8FF" font-size="28" font-weight="500">院端自查干净 = 监管少查</text></g>
+    </g>
+  </g>
+
+  <!-- ⑤ 护城河 -->
+  <g class="font" transform="translate(180 3620)">
+    <line x1="0" y1="0" x2="2040" y2="0" class="hair"/>
+    <text x="0" y="76" class="blue mono" font-size="32" font-weight="700">03 / MOAT</text>
+    <text x="0" y="150" class="ink" font-size="60" font-weight="800">抄不走的工程纵深 — 四方评审认定的第一护城河</text>
+
+    <g transform="translate(0 210)">
+      <rect x="0" y="0" width="1005" height="410" rx="12" fill="#FFFFFF" stroke="#002FA7" stroke-opacity="0.26" stroke-width="2"/>
+      <text x="40" y="76" class="blue" font-size="42" font-weight="800">取证可信度三件套</text>
+      <g transform="translate(40 116)"><circle cx="12" cy="12" r="12" fill="#2DD4BF"/><text x="44" y="22" class="ink" font-size="32" font-weight="700">合议去重 · 防过罚</text><text x="44" y="66" class="muted" font-size="27">同一笔钱多规则命中 → 金额只算一次</text></g>
+      <g transform="translate(40 220)"><circle cx="12" cy="12" r="12" fill="#E8A838"/><text x="44" y="22" class="ink" font-size="32" font-weight="700">覆盖度声明 · 答"查全了吗"</text><text x="44" y="66" class="muted" font-size="27">把漏检率变成可审计声明</text></g>
+      <g transform="translate(40 324)"><circle cx="12" cy="12" r="12" fill="#002FA7"/><text x="44" y="22" class="ink" font-size="32" font-weight="700">置信度传播 · 反幻觉</text><text x="44" y="66" class="muted" font-size="27">OCR 低置信降权 · 排序=金额×置信</text></g>
+    </g>
+
+    <g transform="translate(1035 210)">
+      <rect x="0" y="0" width="1005" height="410" rx="12" fill="#061829"/>
+      <text x="40" y="76" fill="#2DD4BF" font-size="42" font-weight="800">合规地基 · 站在国家两库肩上</text>
+      <text x="40" y="150" fill="#FFFFFF" font-size="34" font-weight="700">规则 ↔ 官方政策 可溯源</text>
+      <text x="40" y="206" fill="#C9D8FF" font-size="28" font-weight="500">官方《2025 年版》两库 = 88 类规则 / 24.7 万知识点，</text>
+      <text x="40" y="246" fill="#C9D8FF" font-size="28" font-weight="500">已按主题向社会公开约 16 批。鹰眼本地规则对齐母本，</text>
+      <text x="40" y="286" fill="#C9D8FF" font-size="28" font-weight="500">每条疑点回链官方文号·条款·生效日·核验状态。</text>
+      <g transform="translate(40 320)">
+        <rect x="0" y="0" width="290" height="60" rx="8" fill="#FFFFFF" fill-opacity="0.1"/><text x="145" y="40" fill="#FFFFFF" font-size="30" font-weight="800" text-anchor="middle">88% 可溯源</text>
+        <rect x="316" y="0" width="290" height="60" rx="8" fill="#FFFFFF" fill-opacity="0.1"/><text x="461" y="40" fill="#FFFFFF" font-size="30" font-weight="800" text-anchor="middle">不造规则</text>
+        <rect x="632" y="0" width="333" height="60" rx="8" fill="#FFFFFF" fill-opacity="0.1"/><text x="798" y="40" fill="#FFFFFF" font-size="30" font-weight="800" text-anchor="middle">未核实即标注</text>
+      </g>
+    </g>
+  </g>
+
+  <!-- ⑥ 硬指标 + 铁律 -->
+  <g class="font" transform="translate(180 4420)">
+    <line x1="0" y1="0" x2="2040" y2="0" class="hair"/>
+    <text x="0" y="72" class="blue" font-size="52" font-weight="800">硬指标</text>
+    <text x="2040" y="72" class="muted" font-size="30" font-weight="500" text-anchor="end">守住低误报红线 · 引不出原文不输出</text>
+    <g transform="translate(0 120)">
+      <g transform="translate(0 0)"><text x="0" y="80" class="blue mono" font-size="86" font-weight="800">FP = 0</text><text x="0" y="132" class="muted" font-size="28">干净件零误报门禁</text></g>
+      <g transform="translate(560 0)"><text x="0" y="80" class="blue" font-size="86" font-weight="800">20 案</text><text x="0" y="132" class="muted" font-size="28">AuditBench 回归基准</text></g>
+      <g transform="translate(1080 0)"><text x="0" y="80" class="blue" font-size="86" font-weight="800">79 规则</text><text x="0" y="132" class="muted" font-size="28">47 checker · 覆盖多专科</text></g>
+      <g transform="translate(1620 0)"><text x="0" y="80" class="blue" font-size="86" font-weight="800">3 层</text><text x="0" y="132" class="muted" font-size="28">规则 + 语义 + 对抗复核</text></g>
+    </g>
+    <g transform="translate(0 300)">
+      <g transform="translate(0 0)"><rect x="0" y="0" width="495" height="86" rx="8" fill="#FFFFFF" stroke="#002FA7" stroke-opacity="0.22" stroke-width="2"/><text x="30" y="54" class="ink" font-size="30" font-weight="700">引不出原文，不输出</text></g>
+      <g transform="translate(515 0)"><rect x="0" y="0" width="495" height="86" rx="8" fill="#FFFFFF" stroke="#002FA7" stroke-opacity="0.22" stroke-width="2"/><text x="30" y="54" class="ink" font-size="30" font-weight="700">宁漏报，不误报</text></g>
+      <g transform="translate(1030 0)"><rect x="0" y="0" width="495" height="86" rx="8" fill="#FFFFFF" stroke="#002FA7" stroke-opacity="0.22" stroke-width="2"/><text x="30" y="54" class="ink" font-size="30" font-weight="700">申诉机制预演（非灰区）</text></g>
+      <g transform="translate(1545 0)"><rect x="0" y="0" width="495" height="86" rx="8" fill="#FFFFFF" stroke="#002FA7" stroke-opacity="0.22" stroke-width="2"/><text x="30" y="54" class="ink" font-size="30" font-weight="700">全链路可追溯</text></g>
+    </g>
+  </g>
+
+  <!-- ⑦ Positioning statement -->
+  <g class="font" transform="translate(180 5020)">
+    <line x1="0" y1="0" x2="2040" y2="0" class="rule"/>
+    <text x="1020" y="120" class="blue" font-size="72" font-weight="800" text-anchor="middle">站在国家两库肩上的语义取证层</text>
+    <text x="1020" y="192" class="ink" font-size="40" font-weight="600" text-anchor="middle">不替代，做放大镜 · 官方"AI 提供线索支持"与鹰眼初筛层同构</text>
+  </g>
+
+  <!-- ⑧ Footer -->
+  <g class="font" transform="translate(180 5480)">
+    <rect x="0" y="0" width="2040" height="340" rx="12" fill="#0A0A0A"/>
+    <rect x="30" y="30" width="280" height="280" rx="8" fill="#FAFAF8"/>
+    <g transform="translate(48 48) scale(6.54)" shape-rendering="crispEdges">
+      <path fill="#ffffff" d="M0 0h37v37H0z"/>
+      <path stroke="#000000" d="M4 4.5h7m4 0h2m2 0h5m2 0h7M4 5.5h1m5 0h1m2 0h1m1 0h1m5 0h1m4 0h1m5 0h1M4 6.5h1m1 0h3m1 0h1m1 0h1m2 0h1m2 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h3m1 0h1M4 7.5h1m1 0h3m1 0h1m1 0h3m5 0h2m1 0h1m2 0h1m1 0h3m1 0h1M4 8.5h1m1 0h3m1 0h1m1 0h8m2 0h3m1 0h1m1 0h3m1 0h1M4 9.5h1m5 0h1m1 0h1m1 0h2m1 0h4m1 0h1m1 0h1m1 0h1m5 0h1M4 10.5h7m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h7M12 11.5h3m1 0h2m1 0h1m4 0h1M4 12.5h1m1 0h5m2 0h2m1 0h1m1 0h2m1 0h1m4 0h5M4 13.5h2m1 0h2m6 0h2m2 0h2m2 0h2m1 0h3m3 0h1M4 14.5h1m1 0h3m1 0h1m2 0h4m5 0h1m1 0h4M4 15.5h1m4 0h1m1 0h1m2 0h3m1 0h1m1 0h1m1 0h2m3 0h3m1 0h1M9 16.5h2m4 0h2m3 0h2m7 0h2M5 17.5h1m3 0h1m3 0h1m1 0h1m1 0h3m3 0h6m3 0h1M5 18.5h1m3 0h4m3 0h5m1 0h1m2 0h1m3 0h2M5 19.5h1m1 0h3m2 0h2m3 0h1m1 0h1m2 0h2m3 0h1m3 0h1M5 20.5h1m1 0h1m1 0h3m1 0h1m1 0h2m1 0h2m1 0h2m1 0h1m4 0h2M4 21.5h1m2 0h3m1 0h1m2 0h1m4 0h10m1 0h1m1 0h1M4 22.5h1m2 0h4m1 0h3m1 0h1m4 0h1m2 0h1m1 0h3m1 0h1M4 23.5h1m2 0h1m1 0h1m2 0h3m3 0h1m1 0h1m3 0h3m4 0h1M4 24.5h1m1 0h1m2 0h3m8 0h1m1 0h1m1 0h5m1 0h3M12 25.5h3m1 0h4m1 0h2m1 0h1m3 0h5M4 26.5h7m4 0h7m1 0h2m1 0h1m1 0h3M4 27.5h1m5 0h1m1 0h2m2 0h2m1 0h1m1 0h4m3 0h1m3 0h1M4 28.5h1m1 0h3m1 0h1m1 0h1m1 0h2m2 0h2m4 0h5m1 0h3M4 29.5h1m1 0h3m1 0h1m1 0h3m1 0h2m1 0h2m1 0h1m1 0h2m3 0h2M4 30.5h1m1 0h3m1 0h1m1 0h1m1 0h1m2 0h2m3 0h2m1 0h7M4 31.5h1m5 0h1m4 0h1m1 0h1m2 0h1m2 0h2m1 0h4m1 0h1M4 32.5h7m1 0h2m1 0h4m1 0h1m1 0h2m1 0h2m2 0h2"/>
+    </g>
+    <text x="356" y="96" fill="#FAFAF8" font-size="38" font-weight="700">扫码体验原型</text>
+    <text x="356" y="150" fill="#D8D8D4" font-size="28" font-weight="500">yingyan.vercel.app</text>
+    <text x="356" y="222" fill="#FAFAF8" font-size="46" font-weight="800">鹰眼 EAGLEEYE</text>
+    <text x="356" y="278" fill="#D8D8D4" font-size="28" font-weight="500">医保基金稽核智能体 · 模法黑客松 S4</text>
+    <text x="2000" y="150" fill="#FAFAF8" font-size="52" font-weight="700" text-anchor="end" font-style="italic">让每一分救命钱，</text>
+    <text x="2000" y="220" fill="#E8A838" font-size="52" font-weight="800" text-anchor="end" font-style="italic">都查得有据可对质</text>
+    <line x1="1470" y1="262" x2="2000" y2="262" stroke="#E8A838" stroke-width="8"/>
+  </g>
+</svg>

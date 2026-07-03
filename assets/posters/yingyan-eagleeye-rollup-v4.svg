@@ -147,7 +147,7 @@
     <g transform="translate(0 116)">
       <g transform="translate(0 0)"><text x="0" y="84" class="m red" font-size="92" font-weight="800">FP=0</text><text x="0" y="136" class="mut" font-size="30">干净件零误报门禁</text></g>
       <g transform="translate(580 0)"><text x="0" y="84" class="w" font-size="92" font-weight="800">20 案</text><text x="0" y="136" class="mut" font-size="30">AuditBench 回归</text></g>
-      <g transform="translate(1120 0)"><text x="0" y="84" class="w" font-size="92" font-weight="800">58 规则</text><text x="0" y="136" class="mut" font-size="30">26 checker · 13 专科</text></g>
+      <g transform="translate(1120 0)"><text x="0" y="84" class="w" font-size="92" font-weight="800">79 规则</text><text x="0" y="136" class="mut" font-size="30">47 checker · 覆盖多专科</text></g>
       <g transform="translate(1680 0)"><text x="0" y="84" class="w" font-size="92" font-weight="800">3 层</text><text x="0" y="136" class="mut" font-size="30">规则+语义+对抗复核</text></g>
     </g>
     <g transform="translate(0 292)">

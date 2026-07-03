@@ -28,7 +28,7 @@ have eval "eval 用例与 v7 prompts" copy
 have scripts "脚本" copy
 
 echo "== 数据与语料 =="
-have prototype/data "案卷/规则/KB(含 61 条规则+判例库+1000条筛查数据)" copy
+have prototype/data "案卷/规则/KB(含 79 条规则+判例库+1000条筛查数据)" copy
 have public-data-corpus "公开语料包" copy
 
 echo "== 模型与 OCR =="
