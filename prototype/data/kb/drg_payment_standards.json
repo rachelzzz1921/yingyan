@@ -1,16 +1,40 @@
 {
   "version": "CHS-DRG 2.0(演示子集)",
-  "rate_note": "示范市统筹区 2026 年度 DRG 基准费率(虚构脱敏演示值);分组与权重层级结构取自公开 CHS-DRG 2.0 分组方案。",
-  "grouper_note": "生产形态接入 OpenDRG 开源分组器(JS版,vendor/opendrg 到位后 drg-grouper.js 自动切换全量分组);当前为演示病种子集的透明数据表,界面如实标注。",
+  "rate_note": "示范市统筹区 2026 年度 DRG 基准费率(虚构脱敏演示值);组编码采用公开 CHS-DRG 2.0 的 ADRG 命名层级(如 ES/IB/FM/BR/HC/GW),细分码与权重为演示值,非官方公布权重。",
+  "grouper_note": "生产形态接入 OpenDRG 开源分组器(JS版,vendor/opendrg 到位后 drg-grouper.js 自动切换全量分组);当前为演示病种子集的透明数据表,覆盖 6 类常见病种(呼吸/骨科关节置换/冠脉介入/脑梗死/胆囊/消化道出血),界面如实标注为演示子集。",
   "base_rate": 8500,
   "groups": {
-    "ES31": { "name": "呼吸系统感染/炎症,伴严重并发症或合并症(重症)", "weight": 1.28 },
-    "ES33": { "name": "呼吸系统感染/炎症,伴并发症或合并症", "weight": 0.97 },
-    "ES35": { "name": "呼吸系统感染/炎症,不伴并发症或合并症", "weight": 0.76 },
-    "ER15": { "name": "呼吸系统其他感染性疾患,不伴并发症或合并症", "weight": 0.68 }
+    "ES31": { "name": "呼吸系统感染/炎症,伴严重并发症或合并症(重症)", "weight": 1.28, "mdc": "MDCE 呼吸系统" },
+    "ES33": { "name": "呼吸系统感染/炎症,伴并发症或合并症", "weight": 0.97, "mdc": "MDCE 呼吸系统" },
+    "ES35": { "name": "呼吸系统感染/炎症,不伴并发症或合并症", "weight": 0.76, "mdc": "MDCE 呼吸系统" },
+    "ER15": { "name": "呼吸系统其他感染性疾患,不伴并发症或合并症", "weight": 0.68, "mdc": "MDCE 呼吸系统" },
+
+    "IB29": { "name": "髋、膝关节置换术,伴严重并发症或合并症", "weight": 3.60, "mdc": "MDCI 骨骼肌肉" },
+    "IB25": { "name": "髋、膝关节置换术,伴并发症或合并症", "weight": 2.85, "mdc": "MDCI 骨骼肌肉" },
+    "IB21": { "name": "髋、膝关节置换术,不伴并发症或合并症", "weight": 2.40, "mdc": "MDCI 骨骼肌肉" },
+
+    "FM19": { "name": "经皮冠状动脉支架植入,伴严重并发症或合并症", "weight": 3.40, "mdc": "MDCF 循环系统" },
+    "FM15": { "name": "经皮冠状动脉支架植入,伴并发症或合并症", "weight": 2.70, "mdc": "MDCF 循环系统" },
+    "FM13": { "name": "经皮冠状动脉支架植入,不伴并发症或合并症", "weight": 2.30, "mdc": "MDCF 循环系统" },
+
+    "BR23": { "name": "脑缺血性疾患,伴严重并发症或合并症", "weight": 1.65, "mdc": "MDCB 神经系统" },
+    "BR25": { "name": "脑缺血性疾患,伴并发症或合并症", "weight": 1.15, "mdc": "MDCB 神经系统" },
+    "BR29": { "name": "脑缺血性疾患,不伴并发症或合并症", "weight": 0.92, "mdc": "MDCB 神经系统" },
+
+    "HC39": { "name": "腹腔镜胆囊切除术,伴并发症或合并症", "weight": 1.55, "mdc": "MDCH 肝胆胰" },
+    "HC35": { "name": "腹腔镜胆囊切除术,不伴并发症或合并症", "weight": 1.20, "mdc": "MDCH 肝胆胰" },
+
+    "GW29": { "name": "消化道出血,伴严重并发症或合并症", "weight": 1.35, "mdc": "MDCG 消化系统" },
+    "GW25": { "name": "消化道出血,伴并发症或合并症", "weight": 0.98, "mdc": "MDCG 消化系统" },
+    "GW21": { "name": "消化道出血,不伴并发症或合并症", "weight": 0.78, "mdc": "MDCG 消化系统" }
   },
   "adrg_demo_mapping": [
-    { "note": "肺炎类:主诊断 J12-J18;是否伴重症并发症决定 ES31/ES35 分层", "icd_prefix": ["J12", "J13", "J14", "J15", "J16", "J18"], "severe_group": "ES31", "cc_group": "ES33", "plain_group": "ES35" }
+    { "note": "肺炎类:主诊断 J12-J18;是否伴重症并发症决定 ES31/ES33/ES35 分层", "icd_prefix": ["J12", "J13", "J14", "J15", "J16", "J18"], "severe_group": "ES31", "cc_group": "ES33", "plain_group": "ES35" },
+    { "note": "髋/膝关节置换:主诊断 M16(髋OA)/M17(膝OA)/S72(股骨)或假体 Z96.6", "icd_prefix": ["M16", "M17", "S72", "Z96.6"], "severe_group": "IB29", "cc_group": "IB25", "plain_group": "IB21" },
+    { "note": "冠脉支架植入:主诊断 I20-I25(冠心病/心梗)", "icd_prefix": ["I20", "I21", "I24", "I25"], "severe_group": "FM19", "cc_group": "FM15", "plain_group": "FM13" },
+    { "note": "脑梗死/缺血:主诊断 I63/G45(TIA)", "icd_prefix": ["I63", "G45"], "severe_group": "BR23", "cc_group": "BR25", "plain_group": "BR29" },
+    { "note": "腹腔镜胆囊切除:主诊断 K80(胆石)/K81(胆囊炎);两档(severe归入伴CC档)", "icd_prefix": ["K80", "K81"], "severe_group": "HC39", "cc_group": "HC39", "plain_group": "HC35" },
+    { "note": "消化道出血:主诊断 K25-K29(溃疡)/K92(消化道出血)", "icd_prefix": ["K25", "K26", "K27", "K28", "K29", "K92"], "severe_group": "GW29", "cc_group": "GW25", "plain_group": "GW21" }
   ],
   "legal_basis": {
     "article35_ref": "KB1-实施细则7号令-第35条",
