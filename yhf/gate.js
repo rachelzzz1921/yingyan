@@ -137,6 +137,18 @@ function renderMarkdown(report, cfg) {
     }
     lines.push('');
   }
+  if (report.gz_production) {
+    const g = report.gz_production;
+    lines.push('## G5 79条生产就绪', '');
+    if (g.status === 'skip') lines.push(`- **G5**: ⏸ ${g.message}`, '');
+    else if (g.status === 'error') lines.push(`- **G5**: ❌ ${g.message}`, '');
+    else {
+      const s = g.summary || {};
+      lines.push(`- **G5 production ready**: ${g.pass ? '✅ PASS' : '❌ FAIL'} (implemented ${s.implemented}/${s.total}, workflow ${s.workflow}, test_anchor ${s.test_anchor})`);
+      if (g.gaps?.length) for (const x of g.gaps.slice(0, 5)) lines.push(`- ⚠ ${x}`);
+      lines.push('');
+    }
+  }
   lines.push('---', `**overall**: ${report.overall_pass ? '✅ PASS' : '❌ FAIL'}`);
   return lines.join('\n');
 }
@@ -162,6 +174,7 @@ function main() {
     if (report.prompt?.pass === false && cfg?.gates?.G2_prompt_pass?.enabled === true) {
       report.overall_pass = false;
     }
+    if (report.gz_production?.pass === false) report.overall_pass = false;
 
     const outDir = path.join(YHF_ROOT, 'results');
     fs.mkdirSync(outDir, { recursive: true });

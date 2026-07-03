@@ -1,0 +1,28 @@
+{
+  "meta": {
+    "description": "编码集合与规则解耦；目录更新时只换版本，不动规则定义",
+    "version_scheme": "name_vYYYY"
+  },
+  "sets": [
+    {
+      "id": "child_drugs_v2024",
+      "label": "限儿童药品集（2024版）",
+      "effective_from": "2024-01-01",
+      "effective_to": "2024-12-31",
+      "source": "国家医保局药品目录备注 + 两库批次",
+      "item_count": 316,
+      "linked_rules": ["F-002"],
+      "file": "child_drugs_v2024.json"
+    },
+    {
+      "id": "gender_services_v2024",
+      "label": "区分性别使用项目集（2024版）",
+      "effective_from": "2024-01-01",
+      "effective_to": null,
+      "source": "两库医疗服务项目区分性别使用清单",
+      "item_count": 1836,
+      "linked_rules": ["F-001"],
+      "file": "gender_services_v2024.json"
+    }
+  ]
+}

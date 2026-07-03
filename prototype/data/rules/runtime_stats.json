@@ -1,0 +1,6 @@
+{
+  "GZ10000101007000": { "trigger_count": 1284, "adoption_rate": 0.91, "appeal_overturn_rate": 0.04 },
+  "GZ10000102012000": { "trigger_count": 892, "adoption_rate": 0.87, "appeal_overturn_rate": 0.06 },
+  "GZ10000302004000": { "trigger_count": 2103, "adoption_rate": 0.93, "appeal_overturn_rate": 0.03 },
+  "ZB10000205001000": { "trigger_count": 0, "adoption_rate": null, "appeal_overturn_rate": null, "note": "路线图·统计指标监测" }
+}

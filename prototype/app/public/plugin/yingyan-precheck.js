@@ -50,7 +50,10 @@
   }
 
   function hitCard(h) {
-    const border = h.nature === '明确违规' ? '#b91c1c' : '#f59e0b';
+    const isBlock = h.interaction === 'block' || (h.interaction !== 'suggest' && h.nature === '明确违规');
+    const border = isBlock ? '#b91c1c' : '#f59e0b';
+    const modeLabel = isBlock ? '阻断' : '建议';
+    const modeBg = isBlock ? '#fef2f2' : '#fffbeb';
     const pols = (h.policy || []).slice(0, 3);
     const polRow = (p) => {
       const vcolor = String(p.verify_status || '').indexOf('已核') >= 0 ? '#0a7a4b' : '#a97a00';
@@ -61,8 +64,9 @@
     const polBlock = pols.length
       ? `<details style="margin-top:5px"><summary style="font-size:11.5px;color:#4a7fb5;cursor:pointer;list-style:none">📖 依据 ${pols.length} 条 ›</summary>${pols.map(polRow).join('')}</details>`
       : '';
-    return `<div style="padding:10px 14px;border-bottom:1px solid #f2f5f9;border-left:4px solid ${border}">
-        <div style="margin-bottom:4px">${badge(h.nature)} <b>${esc(h.rule_id)} ${esc(h.rule_name)}</b></div>
+    return `<div style="padding:10px 14px;border-bottom:1px solid #f2f5f9;border-left:4px solid ${border};background:${modeBg}">
+        <div style="margin-bottom:4px">${badge(h.nature)} <span style="font-size:10px;font-weight:800;color:${border};margin-left:4px">${modeLabel}</span> <b>${esc(h.rule_id)} ${esc(h.precheck_title || h.rule_name)}</b></div>
+        ${h.precheck_body ? `<div style="font-size:12px;color:#5b6d82;margin-bottom:4px">${esc(h.precheck_body)}</div>` : ''}
         <div style="color:#3c4d61;line-height:1.55">${esc(h.reasoning)}</div>
         ${polBlock}
         ${h.disposal_suggestion ? `<div style="margin-top:5px;font-size:12px;color:#0a7a4b">✎ ${esc(h.disposal_suggestion)}</div>` : ''}
@@ -75,8 +79,8 @@
     box.id = 'yy-precheck-overlay';
     box.style.cssText = 'position:fixed;right:18px;bottom:18px;width:412px;max-height:74vh;overflow:auto;background:#fff;border:1px solid #d3dce6;border-radius:12px;box-shadow:0 12px 40px rgba(10,30,60,.28);z-index:2147483647;font-family:"PingFang SC","Microsoft YaHei",sans-serif;font-size:13px;color:#1a2b3c';
     const hits = result.hits || [];
-    const hard = hits.filter(h => h.nature === '明确违规');
-    const susp = hits.filter(h => h.nature !== '明确违规');
+    const hard = hits.filter(h => h.interaction === 'block' || (h.interaction !== 'suggest' && h.nature === '明确违规'));
+    const susp = hits.filter(h => !hard.includes(h));
     const countChip = (n, txt, bg) => n ? `<span style="background:${bg};color:#fff;font-size:11px;font-weight:800;padding:1px 8px;border-radius:20px">${txt} ${n}</span>` : '';
     const head = `<div style="padding:10px 14px;border-bottom:1px solid #edf1f6;display:flex;align-items:center;gap:8px">
       <b style="font-size:14px">🦅 鹰眼 · 开单事前提醒</b>
@@ -93,8 +97,8 @@
       const section = (title, arr, color) => arr.length
         ? `<div style="padding:6px 14px;background:#f8fafc;font-size:12px;font-weight:700;color:${color};border-bottom:1px solid #edf1f6">${title} · ${arr.length}</div>` + arr.map(hitCard).join('')
         : '';
-      body = section('🟥 明确违规(硬性交叉核验,可直接拦截)', hard, '#b91c1c')
-           + section('🟨 可疑(需临床合理性合议,软提醒)', susp, '#a15c00');
+      body = section('🟥 阻断（政策限定类，请核对后再开立）', hard, '#b91c1c')
+           + section('🟨 建议（医疗合理类，可继续开立但请确认）', susp, '#a15c00');
     }
     // 闭环:有命中时给医生处置动作(采纳整改 / 坚持提交+理由),写入事前台账
     const actions = hits.length ? `<div id="yy-actions" style="padding:10px 14px;border-top:1px solid #edf1f6;display:flex;gap:8px;align-items:center">

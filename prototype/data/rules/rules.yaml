@@ -1,7 +1,8 @@
 ####################################################################
 # 鹰眼 · 医保基金稽核规则库（全量机读版）rules.yaml
 # 版本：v0.3  生成日期：2026-06-12（口径修订 2026-07-02）
-# 规则总数：61（通用33: F6/A10/B8/C4/D3/E3 + 肿瘤T8 + 专科扩展17: M4/ICU3/P3/IMG3/CV2/BP1 + 赛前A3埋点3: TRACE1/NUR1/AGE1）
+# 规则总数：66（通用38: F6/A10/B12/C4/D3/E3 + 肿瘤T8 + 专科扩展17: M4/ICU3/SUR1/P3/IMG3/CV2/BP1 + 赛前埋点3: TRACE1/NUR1/AGE1）
+#   相对 61 基线新增5：B-201-IND 适应症索引 + B-209/B-210/B-211 + SUR-401 手术折价
 # Schema：见主文档 3.2 节
 # 法规基准：《医疗保障基金使用监督管理条例》(国务院令735号)
 #          +《实施细则》(国家医保局令第7号, 2026-04-01施行)
@@ -15,10 +16,10 @@
 ####################################################################
 
 meta:
-  schema_version: "3.2"
+  schema_version: "3.3"
   rules_version: "v0.3"
   generated_date: "2026-06-12"
-  total_rules: 63  # 含 B-201-IND 适应症索引语义层 + SUR-401 手术折价
+  total_rules: 79  # 66基线 + L3族5 + ZB批量8
   three_element_gate: ["原始证据定位", "违反的政策条款原文", "完整推理过程"]
   output_states: ["疑点", "线索", "不输出"]
   execution_order:
@@ -488,6 +489,64 @@ rules:
     kb2_refs: []
     params: {index: "kb_operational_index.json·indication_limited"}
     demo_seed: "索引药品×诊断不符→线索"
+
+  - rule_id: B-209
+    rule_name: 药品限二线使用（两库索引）
+    category: B诊疗合理
+    violation_type: 将不属于医保基金支付范围的费用纳入医保结算
+    layer: L2语义
+    risk_level: 中
+    applies_to: [住院, 门诊]
+    specialty_tags: [通用, 皮肤科]
+    trigger_logic: |
+      L3 second_line 索引 → 费用行药品命中二线限定；
+      病历检索一线无效/不耐受/规范治疗无效等前置证据；
+      无证据 → 线索。
+    evidence_min_set: ["费用行", "两库限定支付原文", "一线用药史检索"]
+    output_modes: {线索: "未见二线前置证据", 不输出: "病程载明一线无效或不耐受"}
+    exclusions: "病程明确记载一线治疗无效、不耐受或规范治疗无效的"
+    policy_basis: ["KB1-条例-第38条(六)", "KB1-两库2025-药品限二线使用"]
+    kb2_refs: []
+    params: {index: "kb_operational_index.json·second_line"}
+    demo_seed: "吡美莫司乳膏×特应性皮炎但无一线失败记录→线索"
+
+  - rule_id: B-210
+    rule_name: 药品限医疗机构级别（两库索引）
+    category: B诊疗合理
+    violation_type: 将不属于医保基金支付范围的费用纳入医保结算
+    layer: L1+L2
+    risk_level: 中
+    applies_to: [住院, 门诊]
+    specialty_tags: [通用]
+    trigger_logic: |
+      L3 facility_level 索引 → 比对病案首页机构级别 vs 限定最低级别；
+      机构级别不足 → 线索。
+    evidence_min_set: ["费用行", "机构级别", "两库限定支付原文"]
+    output_modes: {线索: "机构级别可能不符", 不输出: "三级/二级医院使用二级及以上限定药"}
+    exclusions: "首次处方在符合级别机构、本次仅延续用药的复杂情形需人工复核"
+    policy_basis: ["KB1-条例-第38条(六)", "KB1-两库2025-药品限医疗机构"]
+    kb2_refs: []
+    params: {index: "kb_operational_index.json·facility_level"}
+    demo_seed: "一级医院使用限二级及以上药品→线索"
+
+  - rule_id: B-211
+    rule_name: 药品限险种（两库索引）
+    category: B诊疗合理
+    violation_type: 将不属于医保基金支付范围的费用纳入医保结算
+    layer: L1确定性
+    risk_level: 高
+    applies_to: [住院, 门诊]
+    specialty_tags: [通用, 产科]
+    trigger_logic: |
+      L3 insurance_type 索引 → 比对参保险种 vs 限定险种（工伤/生育）；
+      不符 → 疑点。
+    evidence_min_set: ["费用行", "参保险种", "两库限定支付原文"]
+    output_modes: {疑点: "险种与限定支付范围不符"}
+    exclusions: "无"
+    policy_basis: ["KB1-条例-第38条(六)", "KB1-两库2025-药品限生育保险/工伤保险"]
+    kb2_refs: []
+    params: {index: "kb_operational_index.json·insurance_type"}
+    demo_seed: "职工医保结算限生育保险药品→疑点"
 
   - rule_id: B-202
     rule_name: 无指征使用抗菌药物
@@ -1392,3 +1451,138 @@ rules:
     kb2_refs: ["KB2-喹诺酮说明书禁忌"]
     params: {quinolone_pattern: "左氧氟沙星|环丙沙星|莫西沙星|氧氟沙星|诺氟沙星|培氟沙星|洛美沙星|司帕沙星|加替沙星", pediatric_pattern: "^小儿|儿童型", minor_age: 18, pediatric_age: 14}
     demo_seed: "16岁肺炎患者使用左氧氟沙星注射液(18岁以下禁用)——答疑现场周夕鸣亲口举例的14/18两档"
+
+  - rule_id: L3-DRX
+    rule_name: 重复开药/药品种类超标
+    category: B诊疗合理
+    violation_type: 重复开药
+    layer: L1确定性
+    risk_level: 中
+    applies_to: [住院, 门诊]
+    specialty_tags: [通用]
+    trigger_logic: "L3 duplicate_rx 族：同通用名/同成分重复开立或药品种类数超阈值"
+    evidence_min_set: ["药品费用行", "医嘱/处方"]
+    policy_basis: ["KB1-两库2025-重复开药"]
+    params: {max_distinct_drugs: 5}
+
+  - rule_id: L3-CDM
+    rule_name: 编码/诊断手术不符
+    category: F基础逻辑
+    violation_type: 编码异常
+    layer: L1确定性
+    risk_level: 中
+    applies_to: [住院]
+    specialty_tags: [通用]
+    trigger_logic: "L3 coding_mismatch 族：诊断/手术编码与性别年龄或主手术选择矛盾"
+    evidence_min_set: ["病案首页诊断/手术", "费用明细"]
+    policy_basis: ["KB1-两库2025-编码监管"]
+
+  - rule_id: L3-SAF
+    rule_name: 用药安全(禁忌/相互作用/妊娠)
+    category: B诊疗合理
+    violation_type: 用药安全
+    layer: L1确定性
+    risk_level: 中
+    applies_to: [住院, 门诊]
+    specialty_tags: [通用]
+    trigger_logic: "L3 safety_rule 族：禁忌症/相互作用/妊娠期用药"
+    evidence_min_set: ["药品费用行", "诊断/病程"]
+    policy_basis: ["KB2-用药安全"]
+
+  - rule_id: L3-TCM
+    rule_name: 中药饮片用法/配伍
+    category: B诊疗合理
+    violation_type: 中药不合理
+    layer: L1确定性
+    risk_level: 中
+    applies_to: [住院, 门诊]
+    specialty_tags: [中医]
+    trigger_logic: "L3 tcm_usage_rule 族：配伍禁忌或用法不符"
+    evidence_min_set: ["中药费用行", "医嘱"]
+    policy_basis: ["KB1-两库2025-中药饮片"]
+
+  - rule_id: L3-DS
+    rule_name: 结算/明细数据异常
+    category: F基础逻辑
+    violation_type: 数据质量
+    layer: L1确定性
+    risk_level: 中
+    applies_to: [住院]
+    specialty_tags: [通用]
+    trigger_logic: "结算清单字段缺失/明细与诊断编码不一致/计费时点异常"
+    evidence_min_set: ["病案首页", "费用清单"]
+    policy_basis: ["KB1-条例-第38条"]
+
+  - rule_id: ZB-001
+    rule_name: 药费占比统计监测
+    category: F基础逻辑
+    violation_type: 统计指标异常
+    layer: L1确定性
+    risk_level: 中
+    applies_to: [批量]
+    specialty_tags: [监管]
+    trigger_logic: "机构药费/总费用 > 阈值"
+    params: {ratio_max: 0.35}
+
+  - rule_id: ZB-002
+    rule_name: 检验检查占比统计监测
+    category: F基础逻辑
+    violation_type: 统计指标异常
+    layer: L1确定性
+    risk_level: 中
+    applies_to: [批量]
+    params: {ratio_max: 0.40}
+
+  - rule_id: ZB-003
+    rule_name: 耗材占比统计监测
+    category: F基础逻辑
+    violation_type: 统计指标异常
+    layer: L1确定性
+    risk_level: 中
+    applies_to: [批量]
+    params: {ratio_max: 0.25}
+
+  - rule_id: ZB-004
+    rule_name: 治疗占比统计监测
+    category: F基础逻辑
+    violation_type: 统计指标异常
+    layer: L1确定性
+    risk_level: 中
+    applies_to: [批量]
+    params: {ratio_max: 0.45}
+
+  - rule_id: ZB-005
+    rule_name: CT检查占比统计监测
+    category: F基础逻辑
+    violation_type: 统计指标异常
+    layer: L1确定性
+    risk_level: 中
+    applies_to: [批量]
+    params: {ratio_max: 0.08}
+
+  - rule_id: ZB-006
+    rule_name: 核磁检查占比统计监测
+    category: F基础逻辑
+    violation_type: 统计指标异常
+    layer: L1确定性
+    risk_level: 中
+    applies_to: [批量]
+    params: {ratio_max: 0.05}
+
+  - rule_id: ZB-007
+    rule_name: 院内感染发生率统计监测
+    category: F基础逻辑
+    violation_type: 统计指标异常
+    layer: L1确定性
+    risk_level: 中
+    applies_to: [批量]
+    params: {rate_max: 0.05}
+
+  - rule_id: ZB-008
+    rule_name: 非计划再入院率统计监测
+    category: F基础逻辑
+    violation_type: 统计指标异常
+    layer: L1确定性
+    risk_level: 中
+    applies_to: [批量]
+    params: {rate_max: 0.08, readmit_days: 31}

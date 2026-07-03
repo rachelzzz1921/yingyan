@@ -38,6 +38,12 @@ const FAMILY_OF = [
   [/中药饮片.*不予支付/, 'tcm_no_pay'],
   [/限支付疗程|限定频次|周期超频次|限年龄|超互联网医院|限就医方式/, 'usage_limit'],
   [/手术项目未按规定折价/, 'surgery_discount'],
+  [/重复开药/, 'duplicate_rx'],
+  [/诊断编码与手术操作编码不符|诊断与患者性别不符|诊断与患者年龄不符/, 'coding_mismatch'],
+  [/中药饮片超量|中药饮片配伍禁忌|中药饮片超大处方/, 'tcm_usage_rule'],
+  [/医用耗材/, 'consumable_limited'],
+  [/无指征检验|无指征治疗|围手术期抗菌/, 'clinical_indication'],
+  [/超说明书|老年人用药|妊娠期|药品相互作用|药品禁忌症/, 'safety_rule'],
 ];
 const FAMILY_META = {
   gender_limited: { name: '性别限定', shape: '项目/药品 × 患者性别 ≠ 限定性别' },
@@ -50,6 +56,12 @@ const FAMILY_META = {
   tcm_no_pay: { name: '饮片不予支付', shape: '中药饮片 ∈ 不予支付清单' },
   usage_limit: { name: '用量/频次/渠道限定', shape: '疗程/频次/周期/互联网支付范围' },
   surgery_discount: { name: '手术折价收费', shape: '同台多手术未按规定折价' },
+  duplicate_rx: { name: '重复开药', shape: '同组药品分类重复开具' },
+  coding_mismatch: { name: '编码/人口学不符', shape: '诊断×手术/性别/年龄编码不一致' },
+  tcm_usage_rule: { name: '饮片用法规则', shape: '超量/配伍禁忌/超大处方' },
+  consumable_limited: { name: '耗材限疾病', shape: '耗材 × 诊断不符合适应症' },
+  clinical_indication: { name: '无指征服务', shape: '检验/治疗/抗菌药缺乏指征' },
+  safety_rule: { name: '用药安全', shape: '超说明书/老年/妊娠/相互作用/禁忌' },
 };
 
 function familyOf(cat) {
@@ -60,6 +72,24 @@ function familyOf(cat) {
 /** 名称规范化（索引键）：去空白/括号内容保留主体 */
 function normName(s) {
   return String(s || '').replace(/\s+/g, '').trim();
+}
+
+/**
+ * 互斥对侧名截断治理（与 prototype/app/engine/kb-operational-index.js 对齐）
+ * fee_only: 「重症监护」→ 仅匹配 *重症监护费，不含床位费
+ * tier_nursing: 「级护理」→ 仅匹配 *级护理
+ */
+function exclusiveSideMatchHint(side) {
+  const s = normName(side);
+  if (s === '重症监护') return 'fee_only';
+  if (/^级护理$/.test(s)) return 'tier_nursing';
+  return null;
+}
+
+function canonExclusiveSide(side) {
+  const s = normName(side);
+  if (s === '重症监护') return '重症监护费';
+  return s;
 }
 
 /** 从 detect_logic / payment_basis 结构化出可执行条件 */
@@ -154,7 +184,16 @@ function main() {
       refs: it.refs.slice(0, 12),
     };
     if (it.family === 'mutual_exclusive') {
-      if (it.cond.pair) pairs.push({ a: it.cond.pair.a, b: it.cond.pair.b, window: it.cond.window || '单日', refs: rec.refs });
+      if (it.cond.pair) {
+        const a = canonExclusiveSide(it.cond.pair.a);
+        const b = canonExclusiveSide(it.cond.pair.b);
+        const a_match = exclusiveSideMatchHint(it.cond.pair.a);
+        const b_match = exclusiveSideMatchHint(it.cond.pair.b);
+        const row = { a, b, window: it.cond.window || '单日', refs: rec.refs };
+        if (a_match) row.a_match = a_match;
+        if (b_match) row.b_match = b_match;
+        pairs.push(row);
+      }
       continue; // 成对项不进名称索引
     }
     if (it.family === 'tcm_no_pay') {

@@ -9,7 +9,12 @@ const { lookupConstraints, feeLineMatches } = require('./kb-operational-index');
 const DISCOUNT_RATIO = 0.75; // 第二及以后应 ≤75%（各地70~75%，取宽松阈值防漏报）
 
 function surgeryFeeLines(items) {
-  return (items || []).filter(l => /手术费/.test(l.category || ''));
+  return (items || []).filter(l => {
+    const cat = l.category || '';
+    const name = l.item_name || '';
+    if (/手术费/.test(cat)) return true;
+    return /术/.test(name) && indexedSurgeryDiscount(name).length > 0;
+  });
 }
 
 function feeDayKey(feeDate) {

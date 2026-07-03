@@ -1,0 +1,1738 @@
+GZ10000101001000:
+  official:
+    gz_codes:
+      - GZ10000101001000
+    tier1: 政策类
+    tier2: 药品政策限定类
+  effective_interval:
+    from: '2023-05-15'
+    to: null
+  workflow_messages:
+    precheck:
+      tone: block
+      title: 药品限工伤保险
+      body: 系统检测到可能违反「药品限工伤保险」的情形，请核对后再继续。
+      disposal: 请修正后再提交结算/开立。
+    during:
+      basis: 对《国家基本医疗保险、工伤保险和生育保 险药品目录》及《医保药品分类与代码数据 库》对限工伤保险的药品进行监管。
+      action: 拒付或责令退回相应费用
+      denial_text: 违反药品限工伤保险相关医保监管要求。
+    post_audit:
+      lead: 药品限工伤保险
+      evidence_hint: 费用明细 + 病案首页/诊断编码 + 政策依据条目
+GZ10000101002000:
+  official:
+    gz_codes:
+      - GZ10000101002000
+    tier1: 政策类
+    tier2: 药品政策限定类
+  effective_interval:
+    from: '2023-05-15'
+    to: null
+  workflow_messages:
+    precheck:
+      tone: block
+      title: 药品限生育保险
+      body: 系统检测到可能违反「药品限生育保险」的情形，请核对后再继续。
+      disposal: 请修正后再提交结算/开立。
+    during:
+      basis: 对《国家基本医疗保险、工伤保险和生育保 险药品目录》及《医保药品分类与代码数据 库》对限生育保险的药品进行监管。
+      action: 拒付或责令退回相应费用
+      denial_text: 违反药品限生育保险相关医保监管要求。
+    post_audit:
+      lead: 药品限生育保险
+      evidence_hint: 费用明细 + 病案首页/诊断编码 + 政策依据条目
+GZ10000101003000:
+  official:
+    gz_codes:
+      - GZ10000101003000
+    tier1: 政策类
+    tier2: 药品政策限定类
+  effective_interval:
+    from: '2023-05-15'
+    to: null
+  workflow_messages:
+    precheck:
+      tone: block
+      title: 中药饮片单复方均不予支付
+      body: 系统检测到可能违反「中药饮片单复方均不予支付」的情形，请核对后再继续。
+      disposal: 请修正后再提交结算/开立。
+    during:
+      basis: 对《国家基本医疗保险、工伤保险和生育保 险药品目录》及《医保药品分类与代码数据 库》对不得纳入基金支付范围的中药饮片进 行监管。
+      action: 拒付或责令退回相应费用
+      denial_text: 违反中药饮片单复方均不予支付相关医保监管要求。
+    post_audit:
+      lead: 中药饮片单复方均不予支付
+      evidence_hint: 费用明细 + 病案首页/诊断编码 + 政策依据条目
+GZ10000101004000:
+  official:
+    gz_codes:
+      - GZ10000101004000
+    tier1: 政策类
+    tier2: 药品政策限定类
+  effective_interval:
+    from: '2023-05-15'
+    to: null
+  workflow_messages:
+    precheck:
+      tone: block
+      title: 中药饮片单方使用不予支付
+      body: 系统检测到可能违反「中药饮片单方使用不予支付」的情形，请核对后再继续。
+      disposal: 请修正后再提交结算/开立。
+    during:
+      basis: 对《国家基本医疗保险、工伤保险和生育保 险药品目录》及《医保药品分类与代码数据 库》对单独使用且全部由这些饮片组成的处 方也不予支付的中药饮片进行监管。
+      action: 拒付或责令退回相应费用
+      denial_text: 违反中药饮片单方使用不予支付相关医保监管要求。
+    post_audit:
+      lead: 中药饮片单方使用不予支付
+      evidence_hint: 费用明细 + 病案首页/诊断编码 + 政策依据条目
+GZ10000101005000:
+  official:
+    gz_codes:
+      - GZ10000101005000
+    tier1: 政策类
+    tier2: 药品政策限定类
+  effective_interval:
+    from: '2023-05-15'
+    to: null
+  workflow_messages:
+    precheck:
+      tone: block
+      title: 药品限二线使用
+      body: 系统检测到可能违反「药品限二线使用」的情形，请核对后再继续。
+      disposal: 请修正后再提交结算/开立。
+    during:
+      basis: 对《国家基本医疗保险、工伤保险和生育保 险药品目录》及《医保药品分类与代码数据 库》中限二线使用的药品进行监管。
+      action: 拒付或责令退回相应费用
+      denial_text: 违反药品限二线使用相关医保监管要求。
+    post_audit:
+      lead: 药品限二线使用
+      evidence_hint: 费用明细 + 病案首页/诊断编码 + 政策依据条目
+GZ10000101006000:
+  official:
+    gz_codes:
+      - GZ10000101006000
+    tier1: 政策类
+    tier2: 药品政策限定类
+  effective_interval:
+    from: '2023-05-15'
+    to: null
+  workflow_messages:
+    precheck:
+      tone: block
+      title: 药品限新生儿使用
+      body: 系统检测到可能违反「药品限新生儿使用」的情形，请核对后再继续。
+      disposal: 请修正后再提交结算/开立。
+    during:
+      basis: 对《国家基本医疗保险、工伤保险和生育保 险药品目录》及《医保药品分类与代码数据 库》中限新生儿使用的药品进行监管。
+      action: 拒付或责令退回相应费用
+      denial_text: 违反药品限新生儿使用相关医保监管要求。
+    post_audit:
+      lead: 药品限新生儿使用
+      evidence_hint: 费用明细 + 病案首页/诊断编码 + 政策依据条目
+GZ10000101007000:
+  official:
+    gz_codes:
+      - GZ10000101007000
+    tier1: 政策类
+    tier2: 药品政策限定类
+  effective_interval:
+    from: '2023-05-15'
+    to: null
+  workflow_messages:
+    precheck:
+      tone: block
+      title: 药品限儿童使用
+      body: 系统检测到可能违反「药品限儿童使用」的情形，请核对后再继续。
+      disposal: 请修正后再提交结算/开立。
+    during:
+      basis: 对《国家基本医疗保险、工伤保险和生育保 险药品目录》及《医保药品分类与代码数据 库》中限儿童使用的药品进行监管。
+      action: 拒付或责令退回相应费用
+      denial_text: 违反药品限儿童使用相关医保监管要求。
+    post_audit:
+      lead: 药品限儿童使用
+      evidence_hint: 费用明细 + 病案首页/诊断编码 + 政策依据条目
+GZ10000101008000:
+  official:
+    gz_codes:
+      - GZ10000101008000
+    tier1: 政策类
+    tier2: 药品政策限定类
+  effective_interval:
+    from: '2023-05-15'
+    to: null
+  workflow_messages:
+    precheck:
+      tone: block
+      title: 药品限适应症
+      body: 系统检测到可能违反「药品限适应症」的情形，请核对后再继续。
+      disposal: 请修正后再提交结算/开立。
+    during:
+      basis: 对《国家基本医疗保险、工伤保险和生育保 险药品目录》及《医保药品分类与代码数据 库》中有适应症支付限定的药品进行监管。
+      action: 拒付或责令退回相应费用
+      denial_text: 违反药品限适应症相关医保监管要求。
+    post_audit:
+      lead: 药品限适应症
+      evidence_hint: 费用明细 + 病案首页/诊断编码 + 政策依据条目
+GZ10000101009000:
+  official:
+    gz_codes:
+      - GZ10000101009000
+    tier1: 政策类
+    tier2: 药品政策限定类
+  effective_interval:
+    from: '2023-05-15'
+    to: null
+  workflow_messages:
+    precheck:
+      tone: block
+      title: 药品限最大支付天数/开药量
+      body: 系统检测到可能违反「药品限最大支付天数/开药量」的情形，请核对后再继续。
+      disposal: 请修正后再提交结算/开立。
+    during:
+      basis: 对政策中有限定最大支付天数/支付量的药品 进行监管。
+      action: 拒付或责令退回相应费用
+      denial_text: 违反药品限最大支付天数/开药量相关医保监管要求。
+    post_audit:
+      lead: 药品限最大支付天数/开药量
+      evidence_hint: 费用明细 + 病案首页/诊断编码 + 政策依据条目
+GZ10000101010000:
+  official:
+    gz_codes:
+      - GZ10000101010000
+    tier1: 政策类
+    tier2: 药品政策限定类
+  effective_interval:
+    from: '2023-05-15'
+    to: null
+  workflow_messages:
+    precheck:
+      tone: block
+      title: 药品限支付疗程
+      body: 系统检测到可能违反「药品限支付疗程」的情形，请核对后再继续。
+      disposal: 请修正后再提交结算/开立。
+    during:
+      basis: 对《国家基本医疗保险、工伤保险和生育保 险药品目录》及《医保药品分类与代码数据 库》中，有限定使用疗程的药品进行监管。
+      action: 拒付或责令退回相应费用
+      denial_text: 违反药品限支付疗程相关医保监管要求。
+    post_audit:
+      lead: 药品限支付疗程
+      evidence_hint: 费用明细 + 病案首页/诊断编码 + 政策依据条目
+GZ10000101011000:
+  official:
+    gz_codes:
+      - GZ10000101011000
+    tier1: 政策类
+    tier2: 药品政策限定类
+  effective_interval:
+    from: '2023-05-15'
+    to: null
+  workflow_messages:
+    precheck:
+      tone: block
+      title: 药品超限定病种目录范围使用对各级医保政策
+      body: 系统检测到可能违反「药品超限定病种目录范围使用对各级医保政策中有限定」的情形，请核对后再继续。
+      disposal: 请修正后再提交结算/开立。
+    during:
+      basis: 政策类药品政策限定类 药品超限定病种目录范围 使用 对各级医保政策中有限定病种目录范围使用 的药品进行监管。 1 规则编码一级分类二级分类规则名称定义
+      action: 拒付或责令退回相应费用
+      denial_text: 违反药品超限定病种目录范围使用对各级医保政策中有限定相关医保监管要求。
+    post_audit:
+      lead: 药品超限定病种目录范围使用对各级医保政策中有限定
+      evidence_hint: 费用明细 + 病案首页/诊断编码 + 政策依据条目
+GZ10000101012000:
+  official:
+    gz_codes:
+      - GZ10000101012000
+    tier1: 政策类
+    tier2: 药品政策限定类
+  effective_interval:
+    from: '2023-05-15'
+    to: null
+  workflow_messages:
+    precheck:
+      tone: block
+      title: 药品限医疗机构级别
+      body: 系统检测到可能违反「药品限医疗机构级别」的情形，请核对后再继续。
+      disposal: 请修正后再提交结算/开立。
+    during:
+      basis: 对《国家基本医疗保险、工伤保险和生育保 险药品目录》及《医保药品分类与代码数据 库》中有限医疗机构级别使用的药品进行监 管。
+      action: 拒付或责令退回相应费用
+      denial_text: 违反药品限医疗机构级别相关医保监管要求。
+    post_audit:
+      lead: 药品限医疗机构级别
+      evidence_hint: 费用明细 + 病案首页/诊断编码 + 政策依据条目
+GZ10000102001000:
+  official:
+    gz_codes:
+      - GZ10000102001000
+    tier1: 政策类
+    tier2: 医疗服务项目政策限定类
+  effective_interval:
+    from: '2023-05-15'
+    to: null
+  workflow_messages:
+    precheck:
+      tone: block
+      title: 医疗服务项目超限定单价收费
+      body: 系统检测到可能违反「医疗服务项目超限定单价收费」的情形，请核对后再继续。
+      disposal: 请修正后再提交结算/开立。
+    during:
+      basis: 对最新版医疗服务项目分类与代码中限定单 价的医疗服务项目进行监管。
+      action: 拒付或责令退回相应费用
+      denial_text: 违反医疗服务项目超限定单价收费相关医保监管要求。
+    post_audit:
+      lead: 医疗服务项目超限定单价收费
+      evidence_hint: 费用明细 + 病案首页/诊断编码 + 政策依据条目
+GZ10000102002000:
+  official:
+    gz_codes:
+      - GZ10000102002000
+    tier1: 政策类
+    tier2: 医疗服务项目政策限定类
+  effective_interval:
+    from: '2023-05-15'
+    to: null
+  workflow_messages:
+    precheck:
+      tone: block
+      title: 手术项目未按规定折价收费
+      body: 系统检测到可能违反「手术项目未按规定折价收费」的情形，请核对后再继续。
+      disposal: 请修正后再提交结算/开立。
+    during:
+      basis: 对最新版医疗服务项目分类与代码中手术项 目的折价计费情况进行监管。
+      action: 拒付或责令退回相应费用
+      denial_text: 违反手术项目未按规定折价收费相关医保监管要求。
+    post_audit:
+      lead: 手术项目未按规定折价收费
+      evidence_hint: 费用明细 + 病案首页/诊断编码 + 政策依据条目
+GZ10000102003000:
+  official:
+    gz_codes:
+      - GZ10000102003000
+    tier1: 政策类
+    tier2: 医疗服务项目政策限定类
+  effective_interval:
+    from: '2023-05-15'
+    to: null
+  workflow_messages:
+    precheck:
+      tone: block
+      title: 医疗服务项目限工伤保险
+      body: 系统检测到可能违反「医疗服务项目限工伤保险」的情形，请核对后再继续。
+      disposal: 请修正后再提交结算/开立。
+    during:
+      basis: 对最新版医疗服务项目分类与代码对限工伤 保险的医疗服务项目进行监管。
+      action: 拒付或责令退回相应费用
+      denial_text: 违反医疗服务项目限工伤保险相关医保监管要求。
+    post_audit:
+      lead: 医疗服务项目限工伤保险
+      evidence_hint: 费用明细 + 病案首页/诊断编码 + 政策依据条目
+GZ10000102004000:
+  official:
+    gz_codes:
+      - GZ10000102004000
+    tier1: 政策类
+    tier2: 医疗服务项目政策限定类
+  effective_interval:
+    from: '2023-05-15'
+    to: null
+  workflow_messages:
+    precheck:
+      tone: block
+      title: 医疗服务项目限生育保险
+      body: 系统检测到可能违反「医疗服务项目限生育保险」的情形，请核对后再继续。
+      disposal: 请修正后再提交结算/开立。
+    during:
+      basis: 对最新版医疗服务项目分类与代码对限生育 保险的医疗服务项目进行监管。
+      action: 拒付或责令退回相应费用
+      denial_text: 违反医疗服务项目限生育保险相关医保监管要求。
+    post_audit:
+      lead: 医疗服务项目限生育保险
+      evidence_hint: 费用明细 + 病案首页/诊断编码 + 政策依据条目
+GZ10000102005000:
+  official:
+    gz_codes:
+      - GZ10000102005000
+    tier1: 政策类
+    tier2: 医疗服务项目政策限定类
+  effective_interval:
+    from: '2023-05-15'
+    to: null
+  workflow_messages:
+    precheck:
+      tone: block
+      title: 医疗服务项目限新生儿使用
+      body: 系统检测到可能违反「医疗服务项目限新生儿使用」的情形，请核对后再继续。
+      disposal: 请修正后再提交结算/开立。
+    during:
+      basis: 对最新版医疗服务项目分类与代码中限新生 儿使用的医疗服务项目进行监管。
+      action: 拒付或责令退回相应费用
+      denial_text: 违反医疗服务项目限新生儿使用相关医保监管要求。
+    post_audit:
+      lead: 医疗服务项目限新生儿使用
+      evidence_hint: 费用明细 + 病案首页/诊断编码 + 政策依据条目
+GZ10000102006000:
+  official:
+    gz_codes:
+      - GZ10000102006000
+    tier1: 政策类
+    tier2: 医疗服务项目政策限定类
+  effective_interval:
+    from: '2023-05-15'
+    to: null
+  workflow_messages:
+    precheck:
+      tone: block
+      title: 医疗服务项目限儿童使用
+      body: 系统检测到可能违反「医疗服务项目限儿童使用」的情形，请核对后再继续。
+      disposal: 请修正后再提交结算/开立。
+    during:
+      basis: 对最新版医疗服务项目分类与代码中限儿童 使用的医疗服务项目进行监管。
+      action: 拒付或责令退回相应费用
+      denial_text: 违反医疗服务项目限儿童使用相关医保监管要求。
+    post_audit:
+      lead: 医疗服务项目限儿童使用
+      evidence_hint: 费用明细 + 病案首页/诊断编码 + 政策依据条目
+GZ10000102007000:
+  official:
+    gz_codes:
+      - GZ10000102007000
+    tier1: 政策类
+    tier2: 医疗服务项目政策限定类
+  effective_interval:
+    from: '2023-05-15'
+    to: null
+  workflow_messages:
+    precheck:
+      tone: block
+      title: 医疗服务项目限适应症
+      body: 系统检测到可能违反「医疗服务项目限适应症」的情形，请核对后再继续。
+      disposal: 请修正后再提交结算/开立。
+    during:
+      basis: 对最新版医疗服务项目分类与代码中有适应 症支付限定的医疗服务项目进行监管。
+      action: 拒付或责令退回相应费用
+      denial_text: 违反医疗服务项目限适应症相关医保监管要求。
+    post_audit:
+      lead: 医疗服务项目限适应症
+      evidence_hint: 费用明细 + 病案首页/诊断编码 + 政策依据条目
+GZ10000102008000:
+  official:
+    gz_codes:
+      - GZ10000102008000
+    tier1: 政策类
+    tier2: 医疗服务项目政策限定类
+  effective_interval:
+    from: '2023-05-15'
+    to: null
+  workflow_messages:
+    precheck:
+      tone: block
+      title: 医疗服务项目限科室使用
+      body: 系统检测到可能违反「医疗服务项目限科室使用」的情形，请核对后再继续。
+      disposal: 请修正后再提交结算/开立。
+    during:
+      basis: 对最新版医疗服务项目分类与代码中有限科 室使用的医疗服务项目进行监管。
+      action: 拒付或责令退回相应费用
+      denial_text: 违反医疗服务项目限科室使用相关医保监管要求。
+    post_audit:
+      lead: 医疗服务项目限科室使用
+      evidence_hint: 费用明细 + 病案首页/诊断编码 + 政策依据条目
+GZ10000102009000:
+  official:
+    gz_codes:
+      - GZ10000102009000
+    tier1: 政策类
+    tier2: 医疗服务项目政策限定类
+  effective_interval:
+    from: '2023-05-15'
+    to: null
+  workflow_messages:
+    precheck:
+      tone: block
+      title: 医疗服务项目限就医方式
+      body: 系统检测到可能违反「医疗服务项目限就医方式」的情形，请核对后再继续。
+      disposal: 请修正后再提交结算/开立。
+    during:
+      basis: 对最新版医疗服务项目分类与代码中就医方 式支付限定的医疗服务项目进行监管。
+      action: 拒付或责令退回相应费用
+      denial_text: 违反医疗服务项目限就医方式相关医保监管要求。
+    post_audit:
+      lead: 医疗服务项目限就医方式
+      evidence_hint: 费用明细 + 病案首页/诊断编码 + 政策依据条目
+GZ10000102010000:
+  official:
+    gz_codes:
+      - GZ10000102010000
+    tier1: 政策类
+    tier2: 医疗服务项目政策限定类
+  effective_interval:
+    from: '2023-05-15'
+    to: null
+  workflow_messages:
+    precheck:
+      tone: block
+      title: 医疗服务项目限支付疗程
+      body: 系统检测到可能违反「医疗服务项目限支付疗程」的情形，请核对后再继续。
+      disposal: 请修正后再提交结算/开立。
+    during:
+      basis: 对最新版医疗服务项目分类与代码中限定支 付疗程的医疗服务项目进行监管。
+      action: 拒付或责令退回相应费用
+      denial_text: 违反医疗服务项目限支付疗程相关医保监管要求。
+    post_audit:
+      lead: 医疗服务项目限支付疗程
+      evidence_hint: 费用明细 + 病案首页/诊断编码 + 政策依据条目
+GZ10000102011000:
+  official:
+    gz_codes:
+      - GZ10000102011000
+    tier1: 政策类
+    tier2: 医疗服务项目政策限定类
+  effective_interval:
+    from: '2023-05-15'
+    to: null
+  workflow_messages:
+    precheck:
+      tone: block
+      title: 医疗服务项目限医疗机构级别
+      body: 系统检测到可能违反「医疗服务项目限医疗机构级别」的情形，请核对后再继续。
+      disposal: 请修正后再提交结算/开立。
+    during:
+      basis: 对最新版医疗服务项目分类与代码中有限医 疗机构级别使用的医疗服务项目进行监管。 2 规则编码一级分类二级分类规则名称定义
+      action: 拒付或责令退回相应费用
+      denial_text: 违反医疗服务项目限医疗机构级别相关医保监管要求。
+    post_audit:
+      lead: 医疗服务项目限医疗机构级别
+      evidence_hint: 费用明细 + 病案首页/诊断编码 + 政策依据条目
+GZ10000102012000:
+  official:
+    gz_codes:
+      - GZ10000102012000
+    tier1: 政策类
+    tier2: 医疗服务项目政策限定类
+  effective_interval:
+    from: '2023-05-15'
+    to: null
+  workflow_messages:
+    precheck:
+      tone: block
+      title: 医疗服务项目重复收费
+      body: 系统检测到可能违反「医疗服务项目重复收费」的情形，请核对后再继续。
+      disposal: 请修正后再提交结算/开立。
+    during:
+      basis: 对最新版医疗服务项目分类与代码中项目内 涵有包含与被包含关系或计价说明中明确规 定不得另行收费的医疗服务项目进行监管。
+      action: 拒付或责令退回相应费用
+      denial_text: 违反医疗服务项目重复收费相关医保监管要求。
+    post_audit:
+      lead: 医疗服务项目重复收费
+      evidence_hint: 费用明细 + 病案首页/诊断编码 + 政策依据条目
+GZ10000102013000:
+  official:
+    gz_codes:
+      - GZ10000102013000
+    tier1: 政策类
+    tier2: 医疗服务项目政策限定类
+  effective_interval:
+    from: '2023-05-15'
+    to: null
+  workflow_messages:
+    precheck:
+      tone: block
+      title: 医疗服务项目分解收费
+      body: 系统检测到可能违反「医疗服务项目分解收费」的情形，请核对后再继续。
+      disposal: 请修正后再提交结算/开立。
+    during:
+      basis: 对最新版医疗服务项目分类与代码中应合并 收费的医疗服务项目存在拆分为若干收费项 目的情形进行监管。
+      action: 拒付或责令退回相应费用
+      denial_text: 违反医疗服务项目分解收费相关医保监管要求。
+    post_audit:
+      lead: 医疗服务项目分解收费
+      evidence_hint: 费用明细 + 病案首页/诊断编码 + 政策依据条目
+GZ10000102014000:
+  official:
+    gz_codes:
+      - GZ10000102014000
+    tier1: 政策类
+    tier2: 医疗服务项目政策限定类
+  effective_interval:
+    from: '2023-05-15'
+    to: null
+  workflow_messages:
+    precheck:
+      tone: block
+      title: 医疗服务项目限定频次
+      body: 系统检测到可能违反「医疗服务项目限定频次」的情形，请核对后再继续。
+      disposal: 请修正后再提交结算/开立。
+    during:
+      basis: 对最新版医疗服务项目分类与代码中有使用 频次限定的医疗服务项目进行监管。
+      action: 拒付或责令退回相应费用
+      denial_text: 违反医疗服务项目限定频次相关医保监管要求。
+    post_audit:
+      lead: 医疗服务项目限定频次
+      evidence_hint: 费用明细 + 病案首页/诊断编码 + 政策依据条目
+GZ10000102015000:
+  official:
+    gz_codes:
+      - GZ10000102015000
+    tier1: 政策类
+    tier2: 医疗服务项目政策限定类
+  effective_interval:
+    from: '2023-05-15'
+    to: null
+  workflow_messages:
+    precheck:
+      tone: block
+      title: 医疗服务项目超限定报销总额
+      body: 系统检测到可能违反「医疗服务项目超限定报销总额」的情形，请核对后再继续。
+      disposal: 请修正后再提交结算/开立。
+    during:
+      basis: 对最新版医疗服务项目分类与代码中有总额 支付限定的医疗服务项目进行监管。
+      action: 拒付或责令退回相应费用
+      denial_text: 违反医疗服务项目超限定报销总额相关医保监管要求。
+    post_audit:
+      lead: 医疗服务项目超限定报销总额
+      evidence_hint: 费用明细 + 病案首页/诊断编码 + 政策依据条目
+GZ10000103001000:
+  official:
+    gz_codes:
+      - GZ10000103001000
+    tier1: 政策类
+    tier2: 医用耗材政策限定类
+  effective_interval:
+    from: '2023-05-15'
+    to: null
+  workflow_messages:
+    precheck:
+      tone: block
+      title: 耗材限新生儿使用
+      body: 系统检测到可能违反「耗材限新生儿使用」的情形，请核对后再继续。
+      disposal: 请修正后再提交结算/开立。
+    during:
+      basis: 对《医保医用耗材分类与代码数据库》中限 新生儿使用的医用耗材进行监管。
+      action: 拒付或责令退回相应费用
+      denial_text: 违反耗材限新生儿使用相关医保监管要求。
+    post_audit:
+      lead: 耗材限新生儿使用
+      evidence_hint: 费用明细 + 病案首页/诊断编码 + 政策依据条目
+GZ10000103002000:
+  official:
+    gz_codes:
+      - GZ10000103002000
+    tier1: 政策类
+    tier2: 医用耗材政策限定类
+  effective_interval:
+    from: '2023-05-15'
+    to: null
+  workflow_messages:
+    precheck:
+      tone: block
+      title: 耗材限儿童使用
+      body: 系统检测到可能违反「耗材限儿童使用」的情形，请核对后再继续。
+      disposal: 请修正后再提交结算/开立。
+    during:
+      basis: 对《医保医用耗材分类与代码数据库》中限 儿童使用的耗材进行监管。
+      action: 拒付或责令退回相应费用
+      denial_text: 违反耗材限儿童使用相关医保监管要求。
+    post_audit:
+      lead: 耗材限儿童使用
+      evidence_hint: 费用明细 + 病案首页/诊断编码 + 政策依据条目
+GZ10000103003000:
+  official:
+    gz_codes:
+      - GZ10000103003000
+    tier1: 政策类
+    tier2: 医用耗材政策限定类
+  effective_interval:
+    from: '2023-05-15'
+    to: null
+  workflow_messages:
+    precheck:
+      tone: block
+      title: 耗材超限定报销总额
+      body: 系统检测到可能违反「耗材超限定报销总额」的情形，请核对后再继续。
+      disposal: 请修正后再提交结算/开立。
+    during:
+      basis: 对《医保医用耗材分类与代码数据库》中有 限定报销总额的耗材进行监管。
+      action: 拒付或责令退回相应费用
+      denial_text: 违反耗材超限定报销总额相关医保监管要求。
+    post_audit:
+      lead: 耗材超限定报销总额
+      evidence_hint: 费用明细 + 病案首页/诊断编码 + 政策依据条目
+GZ10000201001000:
+  official:
+    gz_codes:
+      - GZ10000201001000
+    tier1: 管理类
+    tier2: 信息数据监管类
+  effective_interval:
+    from: '2023-05-15'
+    to: null
+  workflow_messages:
+    precheck:
+      tone: block
+      title: 医保结算清单信息异常对医保结算清单中数据
+      body: 系统检测到可能违反「医保结算清单信息异常对医保结算清单中数据指标填写」的情形，请核对后再继续。
+      disposal: 请修正后再提交结算/开立。
+    during:
+      basis: 管理类信息数据监管类医保结算清单信息异常 对医保结算清单中数据指标填写的完整性、 合理性和规范性进行审核。
+      action: 拒付或责令退回相应费用
+      denial_text: 违反医保结算清单信息异常对医保结算清单中数据指标填写相关医保监管要求。
+    post_audit:
+      lead: 医保结算清单信息异常对医保结算清单中数据指标填写
+      evidence_hint: 费用明细 + 病案首页/诊断编码 + 政策依据条目
+GZ10000201002000:
+  official:
+    gz_codes:
+      - GZ10000201002000
+    tier1: 管理类
+    tier2: 信息数据监管类
+  effective_interval:
+    from: '2023-05-15'
+    to: null
+  workflow_messages:
+    precheck:
+      tone: block
+      title: 结算明细信息异常对结算明细信息缺失、错误
+      body: 系统检测到可能违反「结算明细信息异常对结算明细信息缺失、错误的情形进」的情形，请核对后再继续。
+      disposal: 请修正后再提交结算/开立。
+    during:
+      basis: 管理类信息数据监管类结算明细信息异常 对结算明细信息缺失、错误的情形进行监管 。
+      action: 拒付或责令退回相应费用
+      denial_text: 违反结算明细信息异常对结算明细信息缺失、错误的情形进相关医保监管要求。
+    post_audit:
+      lead: 结算明细信息异常对结算明细信息缺失、错误的情形进
+      evidence_hint: 费用明细 + 病案首页/诊断编码 + 政策依据条目
+GZ10000201003000:
+  official:
+    gz_codes:
+      - GZ10000201003000
+    tier1: 管理类
+    tier2: 信息数据监管类
+  effective_interval:
+    from: '2023-05-15'
+    to: null
+  workflow_messages:
+    precheck:
+      tone: block
+      title: 疾病诊断编码异常对医保结算清单中填写的诊
+      body: 系统检测到可能违反「疾病诊断编码异常对医保结算清单中填写的诊断编码在」的情形，请核对后再继续。
+      disposal: 请修正后再提交结算/开立。
+    during:
+      basis: 管理类信息数据监管类疾病诊断编码异常 对医保结算清单中填写的诊断编码在结算明 细中无对应医疗服务项目（或药品、医用耗 材）的情形进行监管。
+      action: 拒付或责令退回相应费用
+      denial_text: 违反疾病诊断编码异常对医保结算清单中填写的诊断编码在相关医保监管要求。
+    post_audit:
+      lead: 疾病诊断编码异常对医保结算清单中填写的诊断编码在
+      evidence_hint: 费用明细 + 病案首页/诊断编码 + 政策依据条目
+GZ10000201004000:
+  official:
+    gz_codes:
+      - GZ10000201004000
+    tier1: 管理类
+    tier2: 信息数据监管类
+  effective_interval:
+    from: '2023-05-15'
+    to: null
+  workflow_messages:
+    precheck:
+      tone: block
+      title: 手术操作编码异常对医保结算清单中手术操作
+      body: 系统检测到可能违反「手术操作编码异常对医保结算清单中手术操作编码信息」的情形，请核对后再继续。
+      disposal: 请修正后再提交结算/开立。
+    during:
+      basis: 管理类信息数据监管类手术操作编码异常 对医保结算清单中手术操作编码信息缺失、 错编、主手术选择错误情形进行监管。
+      action: 拒付或责令退回相应费用
+      denial_text: 违反手术操作编码异常对医保结算清单中手术操作编码信息相关医保监管要求。
+    post_audit:
+      lead: 手术操作编码异常对医保结算清单中手术操作编码信息
+      evidence_hint: 费用明细 + 病案首页/诊断编码 + 政策依据条目
+GZ10000201005000:
+  official:
+    gz_codes:
+      - GZ10000201005000
+    tier1: 管理类
+    tier2: 信息数据监管类
+  effective_interval:
+    from: '2023-05-15'
+    to: null
+  workflow_messages:
+    precheck:
+      tone: block
+      title: 手术操作编码与性别不符对医保结算清单中手
+      body: 系统检测到可能违反「手术操作编码与性别不符对医保结算清单中手术操作编」的情形，请核对后再继续。
+      disposal: 请修正后再提交结算/开立。
+    during:
+      basis: 管理类信息数据监管类手术操作编码与性别不符 对医保结算清单中手术操作编码与参保人性 别不符的情形进行监管。 3 规则编码一级分类二级分类规则名称定义
+      action: 拒付或责令退回相应费用
+      denial_text: 违反手术操作编码与性别不符对医保结算清单中手术操作编相关医保监管要求。
+    post_audit:
+      lead: 手术操作编码与性别不符对医保结算清单中手术操作编
+      evidence_hint: 费用明细 + 病案首页/诊断编码 + 政策依据条目
+GZ10000201006000:
+  official:
+    gz_codes:
+      - GZ10000201006000
+    tier1: 管理类
+    tier2: 信息数据监管类
+  effective_interval:
+    from: '2023-05-15'
+    to: null
+  workflow_messages:
+    precheck:
+      tone: block
+      title: 诊断编码与手术操作编码不符对医保结算清单
+      body: 系统检测到可能违反「诊断编码与手术操作编码不符对医保结算清单中主要诊」的情形，请核对后再继续。
+      disposal: 请修正后再提交结算/开立。
+    during:
+      basis: 管理类信息数据监管类 诊断编码与手术操作编码 不符 对医保结算清单中主要诊断编码和主要手术 操作编码的相关性进行监管。
+      action: 拒付或责令退回相应费用
+      denial_text: 违反诊断编码与手术操作编码不符对医保结算清单中主要诊相关医保监管要求。
+    post_audit:
+      lead: 诊断编码与手术操作编码不符对医保结算清单中主要诊
+      evidence_hint: 费用明细 + 病案首页/诊断编码 + 政策依据条目
+GZ10000201007000:
+  official:
+    gz_codes:
+      - GZ10000201007000
+    tier1: 管理类
+    tier2: 信息数据监管类
+  effective_interval:
+    from: '2023-05-15'
+    to: null
+  workflow_messages:
+    precheck:
+      tone: block
+      title: 就诊数据非实时上传监管对就诊数据中费用明
+      body: 系统检测到可能违反「就诊数据非实时上传监管对就诊数据中费用明细开具时」的情形，请核对后再继续。
+      disposal: 请修正后再提交结算/开立。
+    during:
+      basis: 管理类信息数据监管类就诊数据非实时上传监管对就诊数据中费用明细开具时间进行监管。
+      action: 拒付或责令退回相应费用
+      denial_text: 违反就诊数据非实时上传监管对就诊数据中费用明细开具时相关医保监管要求。
+    post_audit:
+      lead: 就诊数据非实时上传监管对就诊数据中费用明细开具时
+      evidence_hint: 费用明细 + 病案首页/诊断编码 + 政策依据条目
+GZ10000201008000:
+  official:
+    gz_codes:
+      - GZ10000201008000
+    tier1: 管理类
+    tier2: 信息数据监管类
+  effective_interval:
+    from: '2023-05-15'
+    to: null
+  workflow_messages:
+    precheck:
+      tone: block
+      title: 计费日期与住院时间不符对收费项计费日期不
+      body: 系统检测到可能违反「计费日期与住院时间不符对收费项计费日期不在住院时」的情形，请核对后再继续。
+      disposal: 请修正后再提交结算/开立。
+    during:
+      basis: 管理类信息数据监管类计费日期与住院时间不符 对收费项计费日期不在住院时间范围内的情 况进行监管。
+      action: 拒付或责令退回相应费用
+      denial_text: 违反计费日期与住院时间不符对收费项计费日期不在住院时相关医保监管要求。
+    post_audit:
+      lead: 计费日期与住院时间不符对收费项计费日期不在住院时
+      evidence_hint: 费用明细 + 病案首页/诊断编码 + 政策依据条目
+GZ10000202001000:
+  official:
+    gz_codes:
+      - GZ10000202001000
+    tier1: 管理类
+    tier2: 药品监管类
+  effective_interval:
+    from: '2023-05-15'
+    to: null
+  workflow_messages:
+    precheck:
+      tone: block
+      title: 药品进销存异常
+      body: 系统检测到可能违反「药品进销存异常」的情形，请核对后再继续。
+      disposal: 请修正后再提交结算/开立。
+    during:
+      basis: 对《国家基本医疗保险、工伤保险和生育保 险药品目录》及《医保药品分类与代码数据 库》中药品的进销存数据进行监管。
+      action: 拒付或责令退回相应费用
+      denial_text: 违反药品进销存异常相关医保监管要求。
+    post_audit:
+      lead: 药品进销存异常
+      evidence_hint: 费用明细 + 病案首页/诊断编码 + 政策依据条目
+GZ10000202002000:
+  official:
+    gz_codes:
+      - GZ10000202002000
+    tier1: 管理类
+    tier2: 药品监管类
+  effective_interval:
+    from: '2023-05-15'
+    to: null
+  workflow_messages:
+    precheck:
+      tone: block
+      title: 围手术期抗菌药物预防性应用监管
+      body: 系统检测到可能违反「围手术期抗菌药物预防性应用监管」的情形，请核对后再继续。
+      disposal: 请修正后再提交结算/开立。
+    during:
+      basis: 对《国家基本医疗保险、工伤保险和生育保 险药品目录》及《医保药品分类与代码数据 库》中抗菌药物的围手术期预防性应用情况 进行监管。
+      action: 拒付或责令退回相应费用
+      denial_text: 违反围手术期抗菌药物预防性应用监管相关医保监管要求。
+    post_audit:
+      lead: 围手术期抗菌药物预防性应用监管
+      evidence_hint: 费用明细 + 病案首页/诊断编码 + 政策依据条目
+GZ10000202003000:
+  official:
+    gz_codes:
+      - GZ10000202003000
+    tier1: 管理类
+    tier2: 药品监管类
+  effective_interval:
+    from: '2023-05-15'
+    to: null
+  workflow_messages:
+    precheck:
+      tone: block
+      title: 抗菌药物分级使用管理
+      body: 系统检测到可能违反「抗菌药物分级使用管理」的情形，请核对后再继续。
+      disposal: 请修正后再提交结算/开立。
+    during:
+      basis: 对《国家基本医疗保险、工伤保险和生育保 险药品目录》及《医保药品分类与代码数据 库》中抗菌药物的分级使用情况进行监管。
+      action: 拒付或责令退回相应费用
+      denial_text: 违反抗菌药物分级使用管理相关医保监管要求。
+    post_audit:
+      lead: 抗菌药物分级使用管理
+      evidence_hint: 费用明细 + 病案首页/诊断编码 + 政策依据条目
+GZ10000202004000:
+  official:
+    gz_codes:
+      - GZ10000202004000
+    tier1: 管理类
+    tier2: 药品监管类
+  effective_interval:
+    from: '2023-05-15'
+    to: null
+  workflow_messages:
+    precheck:
+      tone: block
+      title: 药品种类超标
+      body: 系统检测到可能违反「药品种类超标」的情形，请核对后再继续。
+      disposal: 请修正后再提交结算/开立。
+    during:
+      basis: 对《国家基本医疗保险、工伤保险和生育保 险药品目录》及《医保药品分类与代码数据 库》中的药品进行日常开药种类的监管。
+      action: 拒付或责令退回相应费用
+      denial_text: 违反药品种类超标相关医保监管要求。
+    post_audit:
+      lead: 药品种类超标
+      evidence_hint: 费用明细 + 病案首页/诊断编码 + 政策依据条目
+GZ10000203001000:
+  official:
+    gz_codes:
+      - GZ10000203001000
+    tier1: 管理类
+    tier2: 医用耗材监管类
+  effective_interval:
+    from: '2023-05-15'
+    to: null
+  workflow_messages:
+    precheck:
+      tone: block
+      title: 医用耗材进销存异常
+      body: 系统检测到可能违反「医用耗材进销存异常」的情形，请核对后再继续。
+      disposal: 请修正后再提交结算/开立。
+    during:
+      basis: 对《医保医用耗材分类与代码数据库》中耗 材的进销存数据进行监管。
+      action: 拒付或责令退回相应费用
+      denial_text: 违反医用耗材进销存异常相关医保监管要求。
+    post_audit:
+      lead: 医用耗材进销存异常
+      evidence_hint: 费用明细 + 病案首页/诊断编码 + 政策依据条目
+GZ10000204001000:
+  official:
+    gz_codes:
+      - GZ10000204001000
+    tier1: 管理类
+    tier2: 行为主体监管类
+  effective_interval:
+    from: '2023-05-15'
+    to: null
+  workflow_messages:
+    precheck:
+      tone: block
+      title: 分解住院
+      body: 系统检测到可能违反「分解住院」的情形，请核对后再继续。
+      disposal: 请修正后再提交结算/开立。
+    during:
+      basis: 对参保人在非特殊情况下，在同一家医疗机 构相邻的两次住院间隔异常情形进行监管。
+      action: 拒付或责令退回相应费用
+      denial_text: 违反分解住院相关医保监管要求。
+    post_audit:
+      lead: 分解住院
+      evidence_hint: 费用明细 + 病案首页/诊断编码 + 政策依据条目
+GZ10000204002000:
+  official:
+    gz_codes:
+      - GZ10000204002000
+    tier1: 管理类
+    tier2: 行为主体监管类
+  effective_interval:
+    from: '2023-05-15'
+    to: null
+  workflow_messages:
+    precheck:
+      tone: block
+      title: 频繁门诊对单位时间区内参保人门诊就医次数
+      body: 系统检测到可能违反「频繁门诊对单位时间区内参保人门诊就医次数超出设定」的情形，请核对后再继续。
+      disposal: 请修正后再提交结算/开立。
+    during:
+      basis: 管理类行为主体监管类频繁门诊 对单位时间区内参保人门诊就医次数超出设 定次数的情形进行监管。
+      action: 拒付或责令退回相应费用
+      denial_text: 违反频繁门诊对单位时间区内参保人门诊就医次数超出设定相关医保监管要求。
+    post_audit:
+      lead: 频繁门诊对单位时间区内参保人门诊就医次数超出设定
+      evidence_hint: 费用明细 + 病案首页/诊断编码 + 政策依据条目
+GZ10000204003000:
+  official:
+    gz_codes:
+      - GZ10000204003000
+    tier1: 管理类
+    tier2: 行为主体监管类
+  effective_interval:
+    from: '2023-05-15'
+    to: null
+  workflow_messages:
+    precheck:
+      tone: block
+      title: 频繁购药
+      body: 系统检测到可能违反「频繁购药」的情形，请核对后再继续。
+      disposal: 请修正后再提交结算/开立。
+    during:
+      basis: 对参保人单位时间内购药次数进行监管。
+      action: 拒付或责令退回相应费用
+      denial_text: 违反频繁购药相关医保监管要求。
+    post_audit:
+      lead: 频繁购药
+      evidence_hint: 费用明细 + 病案首页/诊断编码 + 政策依据条目
+GZ10000204004000:
+  official:
+    gz_codes:
+      - GZ10000204004000
+    tier1: 管理类
+    tier2: 行为主体监管类
+  effective_interval:
+    from: '2023-05-15'
+    to: null
+  workflow_messages:
+    precheck:
+      tone: block
+      title: 频繁住院
+      body: 系统检测到可能违反「频繁住院」的情形，请核对后再继续。
+      disposal: 请修正后再提交结算/开立。
+    during:
+      basis: 对参保人单位时间内多次发生住院行为进行 监管。 4 规则编码一级分类二级分类规则名称定义
+      action: 拒付或责令退回相应费用
+      denial_text: 违反频繁住院相关医保监管要求。
+    post_audit:
+      lead: 频繁住院
+      evidence_hint: 费用明细 + 病案首页/诊断编码 + 政策依据条目
+GZ10000204005000:
+  official:
+    gz_codes:
+      - GZ10000204005000
+    tier1: 管理类
+    tier2: 行为主体监管类
+  effective_interval:
+    from: '2023-05-15'
+    to: null
+  workflow_messages:
+    precheck:
+      tone: block
+      title: 无指征住院（低标准入院）
+      body: 系统检测到可能违反「无指征住院（低标准入院）」的情形，请核对后再继续。
+      disposal: 请修正后再提交结算/开立。
+    during:
+      basis: 对参保人不满足住院标准而发生住院行为的 情形进行监管。
+      action: 拒付或责令退回相应费用
+      denial_text: 违反无指征住院（低标准入院）相关医保监管要求。
+    post_audit:
+      lead: 无指征住院（低标准入院）
+      evidence_hint: 费用明细 + 病案首页/诊断编码 + 政策依据条目
+GZ10000204006000:
+  official:
+    gz_codes:
+      - GZ10000204006000
+    tier1: 管理类
+    tier2: 行为主体监管类
+  effective_interval:
+    from: '2023-05-15'
+    to: null
+  workflow_messages:
+    precheck:
+      tone: block
+      title: 诊断与患者性别不符
+      body: 系统检测到可能违反「诊断与患者性别不符」的情形，请核对后再继续。
+      disposal: 请修正后再提交结算/开立。
+    during:
+      basis: 对参保人诊断与性别不符的情形进行监管。
+      action: 拒付或责令退回相应费用
+      denial_text: 违反诊断与患者性别不符相关医保监管要求。
+    post_audit:
+      lead: 诊断与患者性别不符
+      evidence_hint: 费用明细 + 病案首页/诊断编码 + 政策依据条目
+GZ10000204007000:
+  official:
+    gz_codes:
+      - GZ10000204007000
+    tier1: 管理类
+    tier2: 行为主体监管类
+  effective_interval:
+    from: '2023-05-15'
+    to: null
+  workflow_messages:
+    precheck:
+      tone: block
+      title: 诊断与患者年龄不符
+      body: 系统检测到可能违反「诊断与患者年龄不符」的情形，请核对后再继续。
+      disposal: 请修正后再提交结算/开立。
+    during:
+      basis: 对参保人诊断与年龄不符情形进行监管。
+      action: 拒付或责令退回相应费用
+      denial_text: 违反诊断与患者年龄不符相关医保监管要求。
+    post_audit:
+      lead: 诊断与患者年龄不符
+      evidence_hint: 费用明细 + 病案首页/诊断编码 + 政策依据条目
+ZB10000205001000:
+  official:
+    gz_codes:
+      - ZB10000205001000
+    tier1: 管理类
+    tier2: 统计指标监测类
+  effective_interval:
+    from: '2023-05-15'
+    to: null
+  workflow_messages:
+    precheck:
+      tone: block
+      title: 药费占比统计
+      body: 系统检测到可能违反「药费占比统计」的情形，请核对后再继续。
+      disposal: 请修正后再提交结算/开立。
+    during:
+      basis: 对《国家基本医疗保险、工伤保险和生育保 险药品目录》及《医保药品分类与代码数据 库》中的药品费用与总费用比值进行监管。
+      action: 拒付或责令退回相应费用
+      denial_text: 违反药费占比统计相关医保监管要求。
+    post_audit:
+      lead: 药费占比统计
+      evidence_hint: 费用明细 + 病案首页/诊断编码 + 政策依据条目
+ZB10000205002000:
+  official:
+    gz_codes:
+      - ZB10000205002000
+    tier1: 管理类
+    tier2: 统计指标监测类
+  effective_interval:
+    from: '2023-05-15'
+    to: null
+  workflow_messages:
+    precheck:
+      tone: block
+      title: 检验检查占比统计
+      body: 系统检测到可能违反「检验检查占比统计」的情形，请核对后再继续。
+      disposal: 请修正后再提交结算/开立。
+    during:
+      basis: 对最新版医疗服务项目分类与代码中检验检 查费用与总费用比值进行监管。
+      action: 拒付或责令退回相应费用
+      denial_text: 违反检验检查占比统计相关医保监管要求。
+    post_audit:
+      lead: 检验检查占比统计
+      evidence_hint: 费用明细 + 病案首页/诊断编码 + 政策依据条目
+ZB10000205003000:
+  official:
+    gz_codes:
+      - ZB10000205003000
+    tier1: 管理类
+    tier2: 统计指标监测类
+  effective_interval:
+    from: '2023-05-15'
+    to: null
+  workflow_messages:
+    precheck:
+      tone: block
+      title: 耗材占比统计
+      body: 系统检测到可能违反「耗材占比统计」的情形，请核对后再继续。
+      disposal: 请修正后再提交结算/开立。
+    during:
+      basis: 对最新版医疗服务项目分类与代码中耗材费 用与总费用比值进行监管。
+      action: 拒付或责令退回相应费用
+      denial_text: 违反耗材占比统计相关医保监管要求。
+    post_audit:
+      lead: 耗材占比统计
+      evidence_hint: 费用明细 + 病案首页/诊断编码 + 政策依据条目
+ZB10000205004000:
+  official:
+    gz_codes:
+      - ZB10000205004000
+    tier1: 管理类
+    tier2: 统计指标监测类
+  effective_interval:
+    from: '2023-05-15'
+    to: null
+  workflow_messages:
+    precheck:
+      tone: block
+      title: 治疗占比统计
+      body: 系统检测到可能违反「治疗占比统计」的情形，请核对后再继续。
+      disposal: 请修正后再提交结算/开立。
+    during:
+      basis: 对最新版医疗服务项目分类与代码中治疗费 用与总费用比值进行监管。
+      action: 拒付或责令退回相应费用
+      denial_text: 违反治疗占比统计相关医保监管要求。
+    post_audit:
+      lead: 治疗占比统计
+      evidence_hint: 费用明细 + 病案首页/诊断编码 + 政策依据条目
+ZB10000205005000:
+  official:
+    gz_codes:
+      - ZB10000205005000
+    tier1: 管理类
+    tier2: 统计指标监测类
+  effective_interval:
+    from: '2023-05-15'
+    to: null
+  workflow_messages:
+    precheck:
+      tone: block
+      title: CT检查占比统计
+      body: 系统检测到可能违反「CT检查占比统计」的情形，请核对后再继续。
+      disposal: 请修正后再提交结算/开立。
+    during:
+      basis: 对最新版医疗服务项目分类与代码中CT检查 费用与总费用比值进行监管。
+      action: 拒付或责令退回相应费用
+      denial_text: 违反CT检查占比统计相关医保监管要求。
+    post_audit:
+      lead: CT检查占比统计
+      evidence_hint: 费用明细 + 病案首页/诊断编码 + 政策依据条目
+ZB10000205006000:
+  official:
+    gz_codes:
+      - ZB10000205006000
+    tier1: 管理类
+    tier2: 统计指标监测类
+  effective_interval:
+    from: '2023-05-15'
+    to: null
+  workflow_messages:
+    precheck:
+      tone: block
+      title: 核磁检查占比统计
+      body: 系统检测到可能违反「核磁检查占比统计」的情形，请核对后再继续。
+      disposal: 请修正后再提交结算/开立。
+    during:
+      basis: 对最新版医疗服务项目分类与代码中核磁检 查费用与总费用比值进行监管。
+      action: 拒付或责令退回相应费用
+      denial_text: 违反核磁检查占比统计相关医保监管要求。
+    post_audit:
+      lead: 核磁检查占比统计
+      evidence_hint: 费用明细 + 病案首页/诊断编码 + 政策依据条目
+ZB10000205007000:
+  official:
+    gz_codes:
+      - ZB10000205007000
+    tier1: 管理类
+    tier2: 统计指标监测类
+  effective_interval:
+    from: '2023-05-15'
+    to: null
+  workflow_messages:
+    precheck:
+      tone: block
+      title: 院内感染发生率统计对院内感染发生的情况进
+      body: 系统检测到可能违反「院内感染发生率统计对院内感染发生的情况进行监管。」的情形，请核对后再继续。
+      disposal: 请修正后再提交结算/开立。
+    during:
+      basis: 管理类统计指标监测类院内感染发生率统计对院内感染发生的情况进行监管。
+      action: 拒付或责令退回相应费用
+      denial_text: 违反院内感染发生率统计对院内感染发生的情况进行监管。相关医保监管要求。
+    post_audit:
+      lead: 院内感染发生率统计对院内感染发生的情况进行监管。
+      evidence_hint: 费用明细 + 病案首页/诊断编码 + 政策依据条目
+ZB10000205008000:
+  official:
+    gz_codes:
+      - ZB10000205008000
+    tier1: 管理类
+    tier2: 统计指标监测类
+  effective_interval:
+    from: '2023-05-15'
+    to: null
+  workflow_messages:
+    precheck:
+      tone: block
+      title: 非计划再入院率统计对31天内非计划再入院
+      body: 系统检测到可能违反「非计划再入院率统计对31天内非计划再入院发生的情」的情形，请核对后再继续。
+      disposal: 请修正后再提交结算/开立。
+    during:
+      basis: 管理类统计指标监测类非计划再入院率统计 对31天内非计划再入院发生的情况进行监管 。
+      action: 拒付或责令退回相应费用
+      denial_text: 违反非计划再入院率统计对31天内非计划再入院发生的情相关医保监管要求。
+    post_audit:
+      lead: 非计划再入院率统计对31天内非计划再入院发生的情
+      evidence_hint: 费用明细 + 病案首页/诊断编码 + 政策依据条目
+GZ10000301001000:
+  official:
+    gz_codes:
+      - GZ10000301001000
+    tier1: 医疗类
+    tier2: 药品合理使用类
+  effective_interval:
+    from: '2023-05-15'
+    to: null
+  workflow_messages:
+    precheck:
+      tone: suggest
+      title: 药品与医疗服务项目不符
+      body: 系统检测到可能违反「药品与医疗服务项目不符」的情形，请核对后再继续。
+      disposal: 请补充依据或调整方案；不符合限定应自费告知。
+    during:
+      basis: 对《国家基本医疗保险、工伤保险和生育保 险药品目录》及《医保药品分类与代码数据 库》中需与特定医疗服务项目同时使用的药 品进行监管。 5 规则编码一级分类二级分类规则名称定义
+      action: 按疑点线索移交复核
+      denial_text: 违反药品与医疗服务项目不符相关医保监管要求。
+    post_audit:
+      lead: 药品与医疗服务项目不符
+      evidence_hint: 费用明细 + 病案首页/诊断编码 + 政策依据条目
+GZ10000301002000:
+  official:
+    gz_codes:
+      - GZ10000301002000
+    tier1: 医疗类
+    tier2: 药品合理使用类
+  effective_interval:
+    from: '2023-05-15'
+    to: null
+  workflow_messages:
+    precheck:
+      tone: suggest
+      title: 药品儿童专用对仅适用于儿童的药物进行监管
+      body: 系统检测到可能违反「药品儿童专用对仅适用于儿童的药物进行监管。」的情形，请核对后再继续。
+      disposal: 请补充依据或调整方案；不符合限定应自费告知。
+    during:
+      basis: 医疗类药品合理使用类药品儿童专用对仅适用于儿童的药物进行监管。
+      action: 按疑点线索移交复核
+      denial_text: 违反药品儿童专用对仅适用于儿童的药物进行监管。相关医保监管要求。
+    post_audit:
+      lead: 药品儿童专用对仅适用于儿童的药物进行监管。
+      evidence_hint: 费用明细 + 病案首页/诊断编码 + 政策依据条目
+GZ10000301003000:
+  official:
+    gz_codes:
+      - GZ10000301003000
+    tier1: 医疗类
+    tier2: 药品合理使用类
+  effective_interval:
+    from: '2023-05-15'
+    to: null
+  workflow_messages:
+    precheck:
+      tone: suggest
+      title: 药品儿童禁用对儿童禁忌使用的药物进行监管
+      body: 系统检测到可能违反「药品儿童禁用对儿童禁忌使用的药物进行监管。」的情形，请核对后再继续。
+      disposal: 请补充依据或调整方案；不符合限定应自费告知。
+    during:
+      basis: 医疗类药品合理使用类药品儿童禁用对儿童禁忌使用的药物进行监管。
+      action: 按疑点线索移交复核
+      denial_text: 违反药品儿童禁用对儿童禁忌使用的药物进行监管。相关医保监管要求。
+    post_audit:
+      lead: 药品儿童禁用对儿童禁忌使用的药物进行监管。
+      evidence_hint: 费用明细 + 病案首页/诊断编码 + 政策依据条目
+GZ10000301004000:
+  official:
+    gz_codes:
+      - GZ10000301004000
+    tier1: 医疗类
+    tier2: 药品合理使用类
+  effective_interval:
+    from: '2023-05-15'
+    to: null
+  workflow_messages:
+    precheck:
+      tone: suggest
+      title: 药品区分性别使用
+      body: 系统检测到可能违反「药品区分性别使用」的情形，请核对后再继续。
+      disposal: 请补充依据或调整方案；不符合限定应自费告知。
+    during:
+      basis: 对《国家基本医疗保险、工伤保险和生育保 险药品目录》及《医保药品分类与代码数据 库》区分性别使用的药品进行监管。
+      action: 按疑点线索移交复核
+      denial_text: 违反药品区分性别使用相关医保监管要求。
+    post_audit:
+      lead: 药品区分性别使用
+      evidence_hint: 费用明细 + 病案首页/诊断编码 + 政策依据条目
+GZ10000301005000:
+  official:
+    gz_codes:
+      - GZ10000301005000
+    tier1: 医疗类
+    tier2: 药品合理使用类
+  effective_interval:
+    from: '2023-05-15'
+    to: null
+  workflow_messages:
+    precheck:
+      tone: suggest
+      title: 超说明书用量开药对超说明书给定剂量范围开
+      body: 系统检测到可能违反「超说明书用量开药对超说明书给定剂量范围开药情形进」的情形，请核对后再继续。
+      disposal: 请补充依据或调整方案；不符合限定应自费告知。
+    during:
+      basis: 医疗类药品合理使用类超说明书用量开药 对超说明书给定剂量范围开药情形进行监管 。
+      action: 按疑点线索移交复核
+      denial_text: 违反超说明书用量开药对超说明书给定剂量范围开药情形进相关医保监管要求。
+    post_audit:
+      lead: 超说明书用量开药对超说明书给定剂量范围开药情形进
+      evidence_hint: 费用明细 + 病案首页/诊断编码 + 政策依据条目
+GZ10000301006000:
+  official:
+    gz_codes:
+      - GZ10000301006000
+    tier1: 医疗类
+    tier2: 药品合理使用类
+  effective_interval:
+    from: '2023-05-15'
+    to: null
+  workflow_messages:
+    precheck:
+      tone: suggest
+      title: 重复开药
+      body: 系统检测到可能违反「重复开药」的情形，请核对后再继续。
+      disposal: 请补充依据或调整方案；不符合限定应自费告知。
+    during:
+      basis: 对《国家基本医疗保险、工伤保险和生育保 险药品目录》及《医保药品分类与代码数据 库》中同时开具两种及以上药理作用相似的 药品进行监管。
+      action: 按疑点线索移交复核
+      denial_text: 违反重复开药相关医保监管要求。
+    post_audit:
+      lead: 重复开药
+      evidence_hint: 费用明细 + 病案首页/诊断编码 + 政策依据条目
+GZ10000301007000:
+  official:
+    gz_codes:
+      - GZ10000301007000
+    tier1: 医疗类
+    tier2: 药品合理使用类
+  effective_interval:
+    from: '2023-05-15'
+    to: null
+  workflow_messages:
+    precheck:
+      tone: suggest
+      title: 超说明书适应症用药
+      body: 系统检测到可能违反「超说明书适应症用药」的情形，请核对后再继续。
+      disposal: 请补充依据或调整方案；不符合限定应自费告知。
+    during:
+      basis: 对未按照说明书给定适应症范围开药情形进 行监管。
+      action: 按疑点线索移交复核
+      denial_text: 违反超说明书适应症用药相关医保监管要求。
+    post_audit:
+      lead: 超说明书适应症用药
+      evidence_hint: 费用明细 + 病案首页/诊断编码 + 政策依据条目
+GZ10000301008000:
+  official:
+    gz_codes:
+      - GZ10000301008000
+    tier1: 医疗类
+    tier2: 药品合理使用类
+  effective_interval:
+    from: '2023-05-15'
+    to: null
+  workflow_messages:
+    precheck:
+      tone: suggest
+      title: 药品禁忌症
+      body: 系统检测到可能违反「药品禁忌症」的情形，请核对后再继续。
+      disposal: 请补充依据或调整方案；不符合限定应自费告知。
+    during:
+      basis: 对《国家基本医疗保险、工伤保险和生育保 险药品目录》及《医保药品分类与代码数据 库》中有禁忌症的药品进行监管。
+      action: 按疑点线索移交复核
+      denial_text: 违反药品禁忌症相关医保监管要求。
+    post_audit:
+      lead: 药品禁忌症
+      evidence_hint: 费用明细 + 病案首页/诊断编码 + 政策依据条目
+GZ10000301009000:
+  official:
+    gz_codes:
+      - GZ10000301009000
+    tier1: 医疗类
+    tier2: 药品合理使用类
+  effective_interval:
+    from: '2023-05-15'
+    to: null
+  workflow_messages:
+    precheck:
+      tone: suggest
+      title: 老年人用药安全
+      body: 系统检测到可能违反「老年人用药安全」的情形，请核对后再继续。
+      disposal: 请补充依据或调整方案；不符合限定应自费告知。
+    during:
+      basis: 对《国家基本医疗保险、工伤保险和生育保 险药品目录》及《医保药品分类与代码数据 库》中有老年人使用禁忌的药品进行监管。
+      action: 按疑点线索移交复核
+      denial_text: 违反老年人用药安全相关医保监管要求。
+    post_audit:
+      lead: 老年人用药安全
+      evidence_hint: 费用明细 + 病案首页/诊断编码 + 政策依据条目
+GZ10000301010000:
+  official:
+    gz_codes:
+      - GZ10000301010000
+    tier1: 医疗类
+    tier2: 药品合理使用类
+  effective_interval:
+    from: '2023-05-15'
+    to: null
+  workflow_messages:
+    precheck:
+      tone: suggest
+      title: 妊娠期及哺乳期用药安全
+      body: 系统检测到可能违反「妊娠期及哺乳期用药安全」的情形，请核对后再继续。
+      disposal: 请补充依据或调整方案；不符合限定应自费告知。
+    during:
+      basis: 对《国家基本医疗保险、工伤保险和生育保 险药品目录》及《医保药品分类与代码数据 库》中有妊娠期或哺乳期人群禁忌的药品进 行监管。
+      action: 按疑点线索移交复核
+      denial_text: 违反妊娠期及哺乳期用药安全相关医保监管要求。
+    post_audit:
+      lead: 妊娠期及哺乳期用药安全
+      evidence_hint: 费用明细 + 病案首页/诊断编码 + 政策依据条目
+GZ10000301011000:
+  official:
+    gz_codes:
+      - GZ10000301011000
+    tier1: 医疗类
+    tier2: 药品合理使用类
+  effective_interval:
+    from: '2023-05-15'
+    to: null
+  workflow_messages:
+    precheck:
+      tone: suggest
+      title: 药品相互作用
+      body: 系统检测到可能违反「药品相互作用」的情形，请核对后再继续。
+      disposal: 请补充依据或调整方案；不符合限定应自费告知。
+    during:
+      basis: 对《国家基本医疗保险、工伤保险和生育保 险药品目录》及《医保药品分类与代码数据 库》中有不良相互作用的药品进行监管。
+      action: 按疑点线索移交复核
+      denial_text: 违反药品相互作用相关医保监管要求。
+    post_audit:
+      lead: 药品相互作用
+      evidence_hint: 费用明细 + 病案首页/诊断编码 + 政策依据条目
+GZ10000301012000:
+  official:
+    gz_codes:
+      - GZ10000301012000
+    tier1: 医疗类
+    tier2: 药品合理使用类
+  effective_interval:
+    from: '2023-05-15'
+    to: null
+  workflow_messages:
+    precheck:
+      tone: suggest
+      title: 中药饮片配伍禁忌
+      body: 系统检测到可能违反「中药饮片配伍禁忌」的情形，请核对后再继续。
+      disposal: 请补充依据或调整方案；不符合限定应自费告知。
+    during:
+      basis: 对《国家基本医疗保险、工伤保险和生育保 险药品目录》及《医保药品分类与代码数据 库》的中药饮片配伍进行监管。
+      action: 按疑点线索移交复核
+      denial_text: 违反中药饮片配伍禁忌相关医保监管要求。
+    post_audit:
+      lead: 中药饮片配伍禁忌
+      evidence_hint: 费用明细 + 病案首页/诊断编码 + 政策依据条目
+GZ10000302001000:
+  official:
+    gz_codes:
+      - GZ10000302001000
+    tier1: 医疗类
+    tier2: 医疗服务项目合理使用类
+  effective_interval:
+    from: '2023-05-15'
+    to: null
+  workflow_messages:
+    precheck:
+      tone: suggest
+      title: 无指征检验检查
+      body: 系统检测到可能违反「无指征检验检查」的情形，请核对后再继续。
+      disposal: 请补充依据或调整方案；不符合限定应自费告知。
+    during:
+      basis: 对检验检查无相应适应症等情形进行监管。 6 规则编码一级分类二级分类规则名称定义
+      action: 按疑点线索移交复核
+      denial_text: 违反无指征检验检查相关医保监管要求。
+    post_audit:
+      lead: 无指征检验检查
+      evidence_hint: 费用明细 + 病案首页/诊断编码 + 政策依据条目
+GZ10000302002000:
+  official:
+    gz_codes:
+      - GZ10000302002000
+    tier1: 医疗类
+    tier2: 医疗服务项目合理使用类
+  effective_interval:
+    from: '2023-05-15'
+    to: null
+  workflow_messages:
+    precheck:
+      tone: suggest
+      title: 无指征治疗
+      body: 系统检测到可能违反「无指征治疗」的情形，请核对后再继续。
+      disposal: 请补充依据或调整方案；不符合限定应自费告知。
+    during:
+      basis: 对最新版医疗服务项目分类与代码中与疾病 无关或无治疗依据而反复多次使用的医疗服 务项目进行监管。
+      action: 按疑点线索移交复核
+      denial_text: 违反无指征治疗相关医保监管要求。
+    post_audit:
+      lead: 无指征治疗
+      evidence_hint: 费用明细 + 病案首页/诊断编码 + 政策依据条目
+GZ10000302003000:
+  official:
+    gz_codes:
+      - GZ10000302003000
+    tier1: 医疗类
+    tier2: 医疗服务项目合理使用类
+  effective_interval:
+    from: '2023-05-15'
+    to: null
+  workflow_messages:
+    precheck:
+      tone: suggest
+      title: 医疗服务项目儿童专用
+      body: 系统检测到可能违反「医疗服务项目儿童专用」的情形，请核对后再继续。
+      disposal: 请补充依据或调整方案；不符合限定应自费告知。
+    during:
+      basis: 对最新版医疗服务项目分类与代码中儿童专 用的医疗服务项目进行监管。
+      action: 按疑点线索移交复核
+      denial_text: 违反医疗服务项目儿童专用相关医保监管要求。
+    post_audit:
+      lead: 医疗服务项目儿童专用
+      evidence_hint: 费用明细 + 病案首页/诊断编码 + 政策依据条目
+GZ10000302004000:
+  official:
+    gz_codes:
+      - GZ10000302004000
+    tier1: 医疗类
+    tier2: 医疗服务项目合理使用类
+  effective_interval:
+    from: '2023-05-15'
+    to: null
+  workflow_messages:
+    precheck:
+      tone: suggest
+      title: 医疗服务项目区分性别使用
+      body: 系统检测到可能违反「医疗服务项目区分性别使用」的情形，请核对后再继续。
+      disposal: 请补充依据或调整方案；不符合限定应自费告知。
+    during:
+      basis: 对最新版医疗服务项目分类与代码区分性别 使用的医疗服务项目进行监管。
+      action: 按疑点线索移交复核
+      denial_text: 违反医疗服务项目区分性别使用相关医保监管要求。
+    post_audit:
+      lead: 医疗服务项目区分性别使用
+      evidence_hint: 费用明细 + 病案首页/诊断编码 + 政策依据条目
+GZ10000302005000:
+  official:
+    gz_codes:
+      - GZ10000302005000
+    tier1: 医疗类
+    tier2: 医疗服务项目合理使用类
+  effective_interval:
+    from: '2023-05-15'
+    to: null
+  workflow_messages:
+    precheck:
+      tone: suggest
+      title: 医疗服务项目禁忌症
+      body: 系统检测到可能违反「医疗服务项目禁忌症」的情形，请核对后再继续。
+      disposal: 请补充依据或调整方案；不符合限定应自费告知。
+    during:
+      basis: 对最新版医疗服务项目分类与代码中有禁忌 症的医疗服务项目进行监管。
+      action: 按疑点线索移交复核
+      denial_text: 违反医疗服务项目禁忌症相关医保监管要求。
+    post_audit:
+      lead: 医疗服务项目禁忌症
+      evidence_hint: 费用明细 + 病案首页/诊断编码 + 政策依据条目
+GZ10000302006000:
+  official:
+    gz_codes:
+      - GZ10000302006000
+    tier1: 医疗类
+    tier2: 医疗服务项目合理使用类
+  effective_interval:
+    from: '2023-05-15'
+    to: null
+  workflow_messages:
+    precheck:
+      tone: suggest
+      title: 医疗服务项目超适应症使用
+      body: 系统检测到可能违反「医疗服务项目超适应症使用」的情形，请核对后再继续。
+      disposal: 请补充依据或调整方案；不符合限定应自费告知。
+    during:
+      basis: 对未按照适应症范围使用医疗服务项目的情 形进行监管。
+      action: 按疑点线索移交复核
+      denial_text: 违反医疗服务项目超适应症使用相关医保监管要求。
+    post_audit:
+      lead: 医疗服务项目超适应症使用
+      evidence_hint: 费用明细 + 病案首页/诊断编码 + 政策依据条目
+GZ10000303001000:
+  official:
+    gz_codes:
+      - GZ10000303001000
+    tier1: 医疗类
+    tier2: 医用耗材合理使用类
+  effective_interval:
+    from: '2023-05-15'
+    to: null
+  workflow_messages:
+    precheck:
+      tone: suggest
+      title: 医用耗材与医疗服务项目不符
+      body: 系统检测到可能违反「医用耗材与医疗服务项目不符」的情形，请核对后再继续。
+      disposal: 请补充依据或调整方案；不符合限定应自费告知。
+    during:
+      basis: 对《医保医用耗材分类与代码数据库》中需 与特定医疗服务项目同时使用的耗材进行监 管。
+      action: 按疑点线索移交复核
+      denial_text: 违反医用耗材与医疗服务项目不符相关医保监管要求。
+    post_audit:
+      lead: 医用耗材与医疗服务项目不符
+      evidence_hint: 费用明细 + 病案首页/诊断编码 + 政策依据条目
+GZ10000303002000:
+  official:
+    gz_codes:
+      - GZ10000303002000
+    tier1: 医疗类
+    tier2: 医用耗材合理使用类
+  effective_interval:
+    from: '2023-05-15'
+    to: null
+  workflow_messages:
+    precheck:
+      tone: suggest
+      title: 医用耗材与科室不符
+      body: 系统检测到可能违反「医用耗材与科室不符」的情形，请核对后再继续。
+      disposal: 请补充依据或调整方案；不符合限定应自费告知。
+    during:
+      basis: 对《医保医用耗材分类与代码数据库》中需 在特定科室使用的耗材进行监管。
+      action: 按疑点线索移交复核
+      denial_text: 违反医用耗材与科室不符相关医保监管要求。
+    post_audit:
+      lead: 医用耗材与科室不符
+      evidence_hint: 费用明细 + 病案首页/诊断编码 + 政策依据条目
+GZ10000303003000:
+  official:
+    gz_codes:
+      - GZ10000303003000
+    tier1: 医疗类
+    tier2: 医用耗材合理使用类
+  effective_interval:
+    from: '2023-05-15'
+    to: null
+  workflow_messages:
+    precheck:
+      tone: suggest
+      title: 医用耗材数量超标
+      body: 系统检测到可能违反「医用耗材数量超标」的情形，请核对后再继续。
+      disposal: 请补充依据或调整方案；不符合限定应自费告知。
+    during:
+      basis: 对《医保医用耗材分类与代码数据库》中有 使用数量限定的耗材进行监管。
+      action: 按疑点线索移交复核
+      denial_text: 违反医用耗材数量超标相关医保监管要求。
+    post_audit:
+      lead: 医用耗材数量超标
+      evidence_hint: 费用明细 + 病案首页/诊断编码 + 政策依据条目

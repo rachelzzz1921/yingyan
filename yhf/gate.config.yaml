@@ -39,6 +39,14 @@ gates:
     min_recall: 0.75
     k: 8
 
+  G5_gz_production_ready:
+    enabled: true
+    description: "79 条官方规则生产就绪（implemented + 三态 + test matrix）"
+    layer: gz_production
+    min_implemented: 79
+    min_workflow: 79
+    min_test_anchor: 79
+
 engine:
   # 与 prototype/server.js /api/bench 对齐：跳过临时导入件
   skip_case_ids: ["uploaded"]

@@ -1,0 +1,29 @@
+{
+  "case_meta": {
+    "case_id": "YY-BENCH-VIOL-B202-001",
+    "internal_id": "YY-BENCH-VIOL-B202-001",
+    "case_title": "轻量违规·无指征抗菌药(B-202线索)",
+    "embedded_violation_count": 1
+  },
+  "front_page": {
+    "hospital_level": "二级甲等",
+    "patient_name": "孙感冒",
+    "sex": "女",
+    "age": 35,
+    "insurance_type": "职工基本医疗保险",
+    "admit_time": "2026-05-01 10:00",
+    "discharge_time": "2026-05-04 10:00",
+    "principal_diagnosis": { "name": "急性咽炎", "icd10": "J02.900" }
+  },
+  "progress_notes": [
+    { "date": "2026-05-01", "text": "咽痛流涕2天，体温36.8℃，咽部充血，予对症处理及阿莫西林胶囊口服。" }
+  ],
+  "fee_list": {
+    "items": [
+      { "line_no": 1, "fee_date": "2026-05-01~05-04", "category": "西药费", "item_name": "阿莫西林胶囊", "qty": 2, "unit": "盒", "amount": 28, "linked_order": "临时医嘱#抗感染" }
+    ],
+    "total_amount": 28
+  },
+  "discharge_summary": { "discharge_diagnosis": ["急性咽炎"] },
+  "long_term_orders": { "items": [] }
+}

@@ -1,0 +1,36 @@
+{
+  "case_meta": {
+    "case_id": "YY-GZ-DS-001",
+    "case_title": "GZ族·结算数据异常",
+    "embedded_violation_count": 1,
+    "settlement_incomplete": true,
+    "dept_mismatch": true
+  },
+  "front_page": {
+    "hospital": "示范市第一人民医院（虚构）",
+    "hospital_level": "三级甲等",
+    "patient_name": "周数据",
+    "sex": "男",
+    "age": 45,
+    "insurance_type": "职工基本医疗保险",
+    "admit_time": "2026-06-01 09:00",
+    "discharge_time": "2026-06-10 10:00",
+    "principal_diagnosis": {
+      "name": "肺炎"
+    },
+    "admit_dept": "内科"
+  },
+  "fee_list": {
+    "items": [
+      {
+        "line_no": 1,
+        "fee_date": "2026-05-28",
+        "category": "诊查费",
+        "item_name": "住院诊查费",
+        "amount": 80
+      }
+    ],
+    "total_amount": 80
+  },
+  "progress_notes": []
+}

@@ -224,6 +224,76 @@
       "created_at": "2026-06-18T01:14:10.576Z"
     },
     {
+      "folder": "case_boundary_b201ind",
+      "api_id": "boundary_b201ind",
+      "scope": "BENCH",
+      "domain": "BOUNDARY_B201IND",
+      "bench_tier": "boundary",
+      "internal_id": "YY-BENCH-BOUNDARY-B201IND-001",
+      "pii_token": "P-b201",
+      "created_at": "2026-07-03T00:00:00.000Z"
+    },
+    {
+      "folder": "case_violation_light_f006",
+      "api_id": "violation_light_f006",
+      "scope": "BENCH",
+      "domain": "VIOLATION_F006",
+      "bench_tier": "violation",
+      "internal_id": "YY-BENCH-VIOL-F006-001",
+      "pii_token": "P-f006",
+      "created_at": "2026-07-03T08:00:00.000Z"
+    },
+    {
+      "folder": "case_boundary_secondline",
+      "api_id": "boundary_secondline",
+      "scope": "BENCH",
+      "domain": "BOUNDARY_SL",
+      "bench_tier": "boundary",
+      "internal_id": "YY-BENCH-BOUNDARY-SL-001",
+      "pii_token": "P-b209",
+      "created_at": "2026-07-03T08:00:00.000Z"
+    },
+    {
+      "folder": "case_boundary_temporal",
+      "api_id": "boundary_temporal",
+      "scope": "BENCH",
+      "domain": "BOUNDARY_TEMPORAL",
+      "bench_tier": "boundary",
+      "internal_id": "YY-BENCH-BOUNDARY-TEMPORAL-001",
+      "pii_token": "P-temporal",
+      "created_at": "2026-07-03T10:30:00.000Z"
+    },
+    {
+      "folder": "case_boundary_facility",
+      "api_id": "boundary_facility",
+      "scope": "BENCH",
+      "domain": "BOUNDARY_FL",
+      "bench_tier": "boundary",
+      "internal_id": "YY-BENCH-BOUNDARY-FL-001",
+      "pii_token": "P-b210",
+      "created_at": "2026-07-03T08:00:00.000Z"
+    },
+    {
+      "folder": "case_violation_light_c301",
+      "api_id": "violation_light_c301",
+      "scope": "BENCH",
+      "domain": "VIOLATION_C301",
+      "bench_tier": "violation",
+      "internal_id": "YY-BENCH-VIOL-C301-001",
+      "pii_token": "P-c301",
+      "created_at": "2026-07-03T08:00:00.000Z"
+    },
+    {
+      "folder": "case_violation_light_b202",
+      "api_id": "violation_light_b202",
+      "scope": "BENCH",
+      "domain": "VIOLATION_B202",
+      "bench_tier": "violation",
+      "internal_id": "YY-BENCH-VIOL-B202-001",
+      "pii_token": "P-b202",
+      "created_at": "2026-07-03T08:00:00.000Z"
+    },
+    {
       "folder": "case_boundary_egfr2",
       "api_id": "boundary_egfr2",
       "scope": "BENCH",
@@ -552,6 +622,69 @@
       "bench_tier": null,
       "pii_token": "P-6f73",
       "created_at": "2026-07-02T17:17:51.500Z"
+    },
+    {
+      "folder": "case_gz_family_duplicate_rx",
+      "api_id": "gz_family_duplicate_rx",
+      "scope": "BENCH",
+      "domain": "GZ_PRODUCTION",
+      "bench_tier": "violation",
+      "internal_id": "YY-GZ-DRX-001",
+      "created_at": "2026-07-03T12:22:39.434Z"
+    },
+    {
+      "folder": "case_gz_family_coding",
+      "api_id": "gz_family_coding",
+      "scope": "BENCH",
+      "domain": "GZ_PRODUCTION",
+      "bench_tier": "violation",
+      "internal_id": "YY-GZ-CDM-001",
+      "created_at": "2026-07-03T12:22:39.435Z"
+    },
+    {
+      "folder": "case_gz_family_safety",
+      "api_id": "gz_family_safety",
+      "scope": "BENCH",
+      "domain": "GZ_PRODUCTION",
+      "bench_tier": "violation",
+      "internal_id": "YY-GZ-SAF-001",
+      "created_at": "2026-07-03T12:22:39.435Z"
+    },
+    {
+      "folder": "case_gz_family_tcm",
+      "api_id": "gz_family_tcm",
+      "scope": "BENCH",
+      "domain": "GZ_PRODUCTION",
+      "bench_tier": "violation",
+      "internal_id": "YY-GZ-TCM-001",
+      "created_at": "2026-07-03T12:22:39.435Z"
+    },
+    {
+      "folder": "case_gz_family_data",
+      "api_id": "gz_family_data",
+      "scope": "BENCH",
+      "domain": "GZ_PRODUCTION",
+      "bench_tier": "violation",
+      "internal_id": "YY-GZ-DS-001",
+      "created_at": "2026-07-03T12:22:39.435Z"
+    },
+    {
+      "folder": "case_gz_batch_stats_high",
+      "api_id": "gz_batch_stats_high",
+      "scope": "BENCH",
+      "domain": "GZ_PRODUCTION",
+      "bench_tier": "violation",
+      "internal_id": "YY-GZ-ZB-HI-001",
+      "created_at": "2026-07-03T12:22:39.436Z"
+    },
+    {
+      "folder": "case_gz_batch_stats_readmit",
+      "api_id": "gz_batch_stats_readmit",
+      "scope": "BENCH",
+      "domain": "GZ_PRODUCTION",
+      "bench_tier": "violation",
+      "internal_id": "YY-GZ-ZB-RE-001",
+      "created_at": "2026-07-03T12:22:39.436Z"
     }
   ],
   "meta": {

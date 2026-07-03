@@ -1,0 +1,12 @@
+{
+  "id": "child_drugs_v2024",
+  "label": "限儿童药品集（2024版·示例抽样）",
+  "effective_from": "2024-01-01",
+  "effective_to": "2024-12-31",
+  "threshold_source": "国家",
+  "sample_codes": [
+    { "name": "波生坦片", "age_max": 12 },
+    { "name": "重组人生长激素", "age_max": 14 }
+  ],
+  "note": "完整集由 L3 child_limited 族索引维护；此处为演示 stub"
+}

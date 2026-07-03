@@ -1,0 +1,233 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>鹰眼 EAGLEEYE · 规则审核能力说明</title>
+  <style>
+    :root{
+      --paper:#fff;--ink:#08111f;--soft:#2a3a4d;--muted:#607083;--line:#dce4ee;
+      --red:#f15b52;--red2:#d94438;--teal:#0f766e;--cyan:#14b8a6;--blue:#0b2a4a;
+      --green:#e8f7f0;--cream:#fff7ed;--rose:#fff1f0;--sky:#eef5ff;
+      --sans:"PingFang SC","Hiragino Sans GB","Noto Sans SC","Microsoft YaHei","Helvetica Neue",Arial,sans-serif;
+      --mono:"SF Mono","DM Mono","Roboto Mono",Menlo,Consolas,monospace;
+    }
+    *{box-sizing:border-box;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+    body{margin:0;padding:24px;background:#e5e7eb;font-family:var(--sans);color:var(--ink)}
+    .pack{display:grid;gap:24px;justify-items:center}
+    .page{width:210mm;height:297mm;position:relative;overflow:hidden;padding:10mm 12mm 8mm;background:var(--paper);box-shadow:0 18px 48px rgba(15,23,42,.16);page-break-after:always}
+    .page:before{content:"";position:absolute;inset:0;pointer-events:none;background:radial-gradient(430px 310px at 88% 7%,rgba(241,91,82,.24),rgba(241,91,82,.08) 42%,transparent 72%),radial-gradient(360px 260px at 6% 83%,rgba(20,184,166,.2),rgba(20,184,166,.07) 44%,transparent 74%),linear-gradient(135deg,rgba(11,42,74,.04),transparent 40%)}
+    .content{position:relative;z-index:1;height:100%;display:flex;flex-direction:column;justify-content:space-between;gap:6px;min-height:0}
+    header{display:flex;justify-content:space-between;align-items:center;margin-bottom:2mm;gap:12px;flex-shrink:0}
+    .brand{display:flex;align-items:center;gap:10px}.brand img{width:34px;height:34px;border-radius:10px}
+    .brand b{font-size:21px;font-weight:900;letter-spacing:-.03em}.brand span{display:block;color:var(--muted);font-size:9px;margin-top:2px}
+    .topline{text-align:right;color:var(--muted);font:800 8px var(--mono);letter-spacing:.1em;text-transform:uppercase}.topline em{display:block;color:var(--red);font-style:normal;margin-top:4px}
+    h1,h2,h3,p{margin:0}h1{font-size:39px;line-height:1.05;letter-spacing:-.055em;font-weight:950}h2{font-size:23px;line-height:1.14;font-weight:950;letter-spacing:-.04em}h3{font-size:13.5px;line-height:1.2;font-weight:900}
+    .red{color:var(--red)}.teal{color:var(--teal)}.mut{color:var(--muted)}.mono{font-family:var(--mono)}
+    .eyebrow{color:var(--red);font:900 10px var(--mono);letter-spacing:.14em;text-transform:uppercase;margin-bottom:8px;text-align:center}
+    .hero{border:1px solid #efb7b1;border-radius:18px;background:rgba(255,255,255,.92);padding:18px 20px 16px;box-shadow:0 14px 34px rgba(217,68,56,.1),inset 0 1px rgba(255,255,255,.95);display:flex;flex-direction:column;align-items:center;text-align:center;flex-shrink:0}
+    .lead{margin-top:10px;color:var(--soft);font-size:12.8px;line-height:1.56;font-weight:630;max-width:660px;text-align:center}
+    .line{display:block}.line.tight{margin-top:2px}
+    .proof{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;flex-shrink:0}.proof .tile{border:1px solid var(--line);background:#fff;border-radius:13px;padding:9px 10px;min-height:72px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;box-shadow:0 4px 12px rgba(15,23,42,.045)}.proof .tile.hot{background:var(--rose);border-color:rgba(217,68,56,.38)}.proof .tile.good{background:var(--green);border-color:#bfe8d3}.proof b{display:block;font:950 23px/1 var(--mono);letter-spacing:-.07em}.proof span{display:block;color:var(--muted);font-size:8.7px;line-height:1.28;margin-top:6px;font-weight:760}
+    .section-title{display:flex;align-items:center;justify-content:center;gap:8px;margin:4px 0 3px;flex-shrink:0}.section-title:before,.section-title:after{content:"";height:1px;background:linear-gradient(90deg,transparent,var(--line));flex:1}.section-title:after{background:linear-gradient(90deg,var(--line),transparent)}.section-title b{font-size:14.7px;font-weight:950;text-align:center;white-space:nowrap}
+    .grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px}.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+    .card{background:#fff;border:1px solid var(--line);border-radius:13px;padding:11px 12px;min-height:92px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;box-shadow:0 5px 14px rgba(15,23,42,.045)}.card.blue{background:var(--sky);border-color:#bfd7ff}.card.green{background:var(--green);border-color:#bfe8d3}.card.rose{background:var(--rose);border-color:rgba(217,68,56,.35)}.card.cream{background:var(--cream);border-color:#edd4a6}
+    .card p{color:var(--muted);font-size:9.6px;line-height:1.45;margin-top:6px;font-weight:560}.card strong{color:var(--ink)}
+    .story{display:grid;grid-template-columns:1.05fr .95fr;gap:10px;align-items:stretch;flex-shrink:0}.story .big-card{border:1px solid var(--line);border-radius:16px;background:#fff;padding:15px 16px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;box-shadow:0 7px 18px rgba(15,23,42,.055)}.big-card p{color:var(--soft);font-size:10.4px;line-height:1.58;margin-top:8px;font-weight:590}
+    .path{display:grid;grid-template-columns:1fr 26px 1fr 26px 1fr;gap:5px;align-items:center}.node{min-height:86px;border-radius:14px;border:1px solid var(--line);background:#fff;padding:10px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}.node b{font-size:12.5px}.node span{display:block;font-size:8.7px;color:var(--muted);line-height:1.35;margin-top:5px}.arrow{text-align:center;color:#9aa8b8;font-size:24px;font-weight:950}
+    .timeline{display:grid;gap:6px;height:100%}.moment{display:grid;grid-template-columns:52px 1fr;gap:8px;align-items:center;border:1px solid var(--line);background:#fff;border-radius:12px;padding:9px}.moment b{font:950 12px/1 var(--mono);color:var(--red);text-align:center}.moment p{font-size:9.5px;line-height:1.42;color:var(--soft);font-weight:590}
+    .funnel{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;flex-shrink:0}.funnel .stage{position:relative;min-height:104px;border-radius:14px;border:1px solid var(--line);background:#fff;padding:11px 9px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}.stage:after{content:"";position:absolute;right:-12px;top:43px;border-left:12px solid rgba(11,42,74,.16);border-top:8px solid transparent;border-bottom:8px solid transparent}.stage:last-child:after{display:none}.stage small{font:900 8px var(--mono);color:var(--red);letter-spacing:.08em}.stage b{display:block;font:950 24px/1 var(--mono);margin:8px 0 6px}.stage span{color:var(--muted);font-size:8.4px;line-height:1.3;font-weight:700}
+    .badge-row{display:flex;justify-content:center;flex-wrap:wrap;gap:5px;margin-top:8px}.badge{border:1px solid #dfe7f1;background:#f8fafc;color:#134e72;border-radius:999px;padding:3px 7px;font-size:8px;font-weight:850}
+    .cap-map{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}.cap{border:1px solid var(--line);background:#fff;border-radius:12px;padding:9px 9px;min-height:86px;display:flex;flex-direction:column;justify-content:center;text-align:center}.cap b{display:flex;justify-content:center;gap:6px;font-size:10.8px}.cap i{font-style:normal;color:var(--teal);font:900 10px var(--mono)}.cap p{font-size:8.3px;line-height:1.34;color:var(--muted);margin-top:5px}
+    .cov-legend{display:flex;justify-content:center;flex-wrap:wrap;gap:8px;margin:6px 0 8px;font-size:8px;font-weight:800;color:var(--muted)}
+    .cov-legend span{display:flex;align-items:center;gap:4px}.cov-dot{width:9px;height:9px;border-radius:2px;display:inline-block}
+    .cov-grid{display:grid;grid-template-columns:repeat(13,1fr);gap:2px;max-width:100%;margin:0 auto 4px}
+    .cov-cell{height:10px;border-radius:2px;background:#cbd5e1}.cov-cell.impl{background:#16a34a}.cov-cell.pilot{background:#ca8a04}.cov-cell.cand{background:#94a3b8}.cov-cell.road{background:#6366f1;opacity:.85}
+    .tier-row{display:grid;grid-template-columns:52px 1fr;gap:6px;align-items:center;margin-bottom:4px}.tier-row b{font-size:8.5px;color:var(--soft);text-align:right}
+    .wf3{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}.wf3 .card{min-height:88px}.wf3 h3{font-size:12px}.tag-block{display:inline-block;background:#fef2f2;color:#b91c1c;border:1px solid #fecaca;border-radius:999px;padding:2px 6px;font-size:7.5px;font-weight:900;margin-top:4px}.tag-suggest{display:inline-block;background:#fffbeb;color:#a16207;border:1px solid #fde68a;border-radius:999px;padding:2px 6px;font-size:7.5px;font-weight:900;margin-top:4px}
+    .case-list{display:grid;gap:6px}.case{border:1px solid var(--line);border-left:4px solid var(--red);background:#fff;border-radius:10px;padding:9px 10px;min-height:74px;display:flex;flex-direction:column;justify-content:center}.case.ok{border-left-color:var(--teal)}.case.warn{border-left-color:#c77700}.case b{font-size:11.7px}.case p{font-size:9px;line-height:1.4;color:var(--muted);margin-top:5px}
+    .quote{display:flex;justify-content:space-between;align-items:center;gap:12px;padding-top:8px;border-top:1px solid var(--line);flex-shrink:0}.qr-slot{width:52px;height:52px;border:1px dashed #c8d3df;border-radius:8px;background:rgba(255,255,255,.55);flex-shrink:0}.slogan{flex:1;text-align:right;font-size:15.5px;line-height:1.25;font-weight:950;font-style:italic}
+    .note{color:var(--muted);font-size:7.4px;line-height:1.35;margin-top:2px;text-align:center}.article{display:flex;flex-direction:column;justify-content:center}.article p{font-size:9.6px;line-height:1.5;color:#22384e;margin-bottom:6px;font-weight:560;text-align:center}
+    .p2 h1{font-size:32px}.p3 h1,.p4 h1{font-size:31px}.p4 .hero{padding:15px 18px}
+    @media print{@page{size:A4 portrait;margin:0}body{padding:0;background:#fff}.pack{display:block}.page{box-shadow:none}}
+  </style>
+</head>
+<body>
+  <main class="pack">
+    <section class="page">
+      <div class="content">
+        <header>
+          <div class="brand"><img src="../brand/logo-mark.svg" alt=""><div><b>鹰眼 <span class="teal">EAGLEEYE</span></b><span>医保智能审核 · 挂接国家79条框架</span></div></div>
+          <div class="topline">EAGLEEYE · P1/4<em>FROM RULES TO EVIDENCE</em></div>
+        </header>
+        <div class="hero">
+          <div class="eyebrow">CORE VALUE</div>
+          <h1><span class="line">我们做的不是把两库照单灌入，</span><span class="line tight">而是一套</span><span class="line red">会查案、会举证、会克制的审核系统。</span></h1>
+          <p class="lead"><span class="line">两库给的是边界和条目，真正难的是落到真实病案。</span><span class="line">要读懂、要结构化，还要接到费用行和病历证据，</span><span class="line">最后守住干净件零误报。</span></p>
+        </div>
+        <div class="proof">
+          <div class="tile hot"><b class="red">79</b><span>国家局官方规则框架（GZ/ZB 编码）</span></div>
+          <div class="tile good"><b class="teal">24</b><span>已接入国家框架格（+4 试运行）</span></div>
+          <div class="tile"><b>7822</b><span>可操作规则项，支撑审核判断</span></div>
+          <div class="tile"><b>PASS</b><span>39 案卷回归，干净件零误报</span></div>
+        </div>
+        <div class="section-title"><b>三件核心能力</b></div>
+        <div class="grid3">
+          <div class="card rose"><h3>1. 官方挂接</h3><p>不按自建分类堆规则，而是挂接到国家局 79 条官方坐标：政策类 30、管理类 28、医疗类 21，每条带 GZ/ZB 编码，覆盖状态诚实可查。</p><div class="badge-row"><span class="badge">79条框架</span><span class="badge">GZ+ZB</span><span class="badge">覆盖地图</span></div></div>
+          <div class="card blue"><h3>2. 规则读懂</h3><p>官网 2025 全书与分批规则结构化入库，再提炼为 7822 项可计算索引；复杂场景先入库、再按国家格子逐步接入。</p><div class="badge-row"><span class="badge">11027 KB</span><span class="badge">10337 条目</span><span class="badge">16 模式族</span></div></div>
+          <div class="card green"><h3>3. 工作流适配</h3><p>同一条规则分事前/事中/事后三套话术；政策限定可阻断，医疗合理只建议；按结算日取当时有效版本。</p><div class="badge-row"><span class="badge">三态文案</span><span class="badge">红/黄事前</span><span class="badge">时点法</span></div></div>
+        </div>
+        <div class="section-title"><b>一句话：挂国家坐标，跑监管工作流，出可复核证据</b></div>
+        <div class="path">
+          <div class="node"><b>官网规则</b><span>国家局公开规则库与知识库</span></div>
+          <div class="arrow">›</div>
+          <div class="node"><b>79条挂接</b><span>GZ/ZB 编码 · 覆盖地图 · 结构化索引</span></div>
+          <div class="arrow">›</div>
+          <div class="node"><b>三态审核</b><span>事前提醒 · 事中拒付 · 事后线索 + 证据链</span></div>
+        </div>
+        <div class="quote">
+          <div class="qr-slot" aria-hidden="true"></div>
+          <div class="slogan">把规则写进证据链，<br><span class="red">而不是停在文档里。</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="page p2">
+      <div class="content">
+        <header>
+          <div class="brand"><img src="../brand/logo-mark.svg" alt=""><div><b>鹰眼 <span class="teal">EAGLEEYE</span></b><span>知识来源 · 国家官网公开信息</span></div></div>
+          <div class="topline">KNOWLEDGE · P2/4<em>OFFICIAL PUBLIC SOURCES</em></div>
+        </header>
+        <div class="hero">
+          <div class="eyebrow">KNOWLEDGE BASE</div>
+          <h1><span class="line">先把规则资料<span class="red">变成可用数据</span>，</span><span class="line tight">再谈智能审核。</span></h1>
+          <p class="lead"><span class="line">规则与知识点来自国家医疗保障局官网公开发布内容。</span><span class="line">包括 2025 年版全书、规则框架释义，</span><span class="line">以及官网持续分批公开的智能监管规则更新。</span></p>
+        </div>
+        <div class="section-title"><b>从官网公开信息到可用知识库</b></div>
+        <div class="funnel">
+          <div class="stage"><small>SOURCE</small><b>官网</b><span>国家医保局公开发布规则库与知识库</span></div>
+          <div class="stage"><small>FRAME</small><b>79</b><span>官方 GZ/ZB 规则框架坐标</span></div>
+          <div class="stage"><small>INDEX</small><b>7822</b><span>结构化操作索引项</span></div>
+          <div class="stage"><small>MAP</small><b>79</b><span>国家框架格全部 implemented（含 8 条 ZB 批量监测）</span></div>
+          <div class="stage"><small>CHECK</small><b>PASS</b><span>39 案卷回归 · G5 生产就绪 · 零误报</span></div>
+        </div>
+        <div class="section-title"><b>当前知识覆盖</b></div>
+        <div class="story">
+          <div class="big-card">
+            <h2>2025 年版全书已纳入知识库</h2>
+            <p><span class="line">官网公开的 2025 年版全书与分批规则更新统一整理入库，</span><span class="line">覆盖诊断编码不符、重复开药、无指征检验、用药安全、耗材限用等场景。</span><span class="line">规则条目可检索、可索引、可支撑审核判断。</span></p>
+            <div class="badge-row"><span class="badge">746 页</span><span class="badge">38 规则类</span><span class="badge">10337 条目</span><span class="badge">官网公开</span></div>
+          </div>
+          <div class="timeline">
+            <div class="moment"><b>全书</b><p>2025 年版规则库、知识库全书纳入整理。</p></div>
+            <div class="moment"><b>分批</b><p>官网第 1–17 批智能监管规则公开内容同步纳入。</p></div>
+            <div class="moment"><b>框架</b><p>79 条官方规则逐条结构化：GZ 编码 71 条 + 统计监测 ZB 8 条，一级/二级分类与定义入库。</p></div>
+            <div class="moment"><b>挂接</b><p>鹰眼 checker 映射到官方格子：已实现 24、试运行 4、候选 43、路线图 8（跨就诊统计监测）。</p></div>
+          </div>
+        </div>
+        <div class="section-title"><b>三个关键价值</b></div>
+        <div class="grid3">
+          <div class="card blue"><h3>覆盖可核对</h3><p>看板与覆盖地图按国家 79 格排布：绿=已实现、黄=试运行、灰=候选、紫=路线图，不夸大覆盖。</p></div>
+          <div class="card green"><h3>时点可回溯</h3><p>规则与编码集带生效区间；按结算日取当时有效版本，避免用新规则审旧单。</p></div>
+          <div class="card cream"><h3>持续更新</h3><p>官网新批次规则先入库挂格，再按场景接入 checker，数据底座不用重做。</p></div>
+        </div>
+        <div class="note">口径说明：官方 2025 全书约 24.7 万为编码级规模；鹰眼展示的是品种/项目级聚合行与已接入的审核能力，两者不混用。</div>
+        <div class="quote">
+          <div class="qr-slot" aria-hidden="true"></div>
+          <div class="slogan">权威来源，<br><span class="teal">结构化后才能支撑审核。</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="page p3">
+      <div class="content">
+        <header>
+          <div class="brand"><img src="../brand/logo-mark.svg" alt=""><div><b>鹰眼 <span class="teal">EAGLEEYE</span></b><span>国家79条覆盖地图 · 三态工作流</span></div></div>
+          <div class="topline">OFFICIAL MAP · P3/4<em>GZ FRAMEWORK + WORKFLOW</em></div>
+        </header>
+        <div class="hero">
+          <div class="eyebrow">NATIONAL FRAMEWORK</div>
+          <h1><span class="line">规则库不是自建分类，</span><span class="line tight">而是<span class="red">挂接国家79条坐标</span>，</span><span class="line red">跟着监管流程说话。</span></h1>
+          <p class="lead"><span class="line">政策类 30 · 管理类 28 · 医疗类 21。</span><span class="line">每格标注已实现 / 试运行 / 候选 / 路线图，</span><span class="line">一眼看到在国家框架的哪个位置、诚实地标了什么还没做。</span></p>
+        </div>
+        <div class="proof">
+          <div class="tile good"><b class="teal">24</b><span>已实现（核心 16 + 增强 7）</span></div>
+          <div class="tile"><b>4</b><span>试运行</span></div>
+          <div class="tile"><b>43</b><span>候选（已入库待接）</span></div>
+          <div class="tile"><b class="red">8</b><span>路线图（统计指标监测 ZB）</span></div>
+        </div>
+        <div class="section-title"><b>79 格覆盖地图（产品内可交互演示）</b></div>
+        <div class="cov-legend">
+          <span><i class="cov-dot" style="background:#16a34a"></i>已实现</span>
+          <span><i class="cov-dot" style="background:#ca8a04"></i>试运行</span>
+          <span><i class="cov-dot" style="background:#94a3b8"></i>候选</span>
+          <span><i class="cov-dot" style="background:#6366f1"></i>路线图</span>
+        </div>
+        <div class="tier-row"><b>政策类30</b><div class="cov-grid"><span class="cov-cell impl"></span><span class="cov-cell impl"></span><span class="cov-cell impl"></span><span class="cov-cell impl"></span><span class="cov-cell impl"></span><span class="cov-cell impl"></span><span class="cov-cell impl"></span><span class="cov-cell impl"></span><span class="cov-cell pilot"></span><span class="cov-cell pilot"></span><span class="cov-cell cand"></span><span class="cov-cell cand"></span><span class="cov-cell cand"></span></div></div>
+        <div class="tier-row"><b>管理类28</b><div class="cov-grid"><span class="cov-cell pilot"></span><span class="cov-cell pilot"></span><span class="cov-cell cand"></span><span class="cov-cell cand"></span><span class="cov-cell cand"></span><span class="cov-cell cand"></span><span class="cov-cell cand"></span><span class="cov-cell road"></span><span class="cov-cell road"></span><span class="cov-cell road"></span><span class="cov-cell road"></span><span class="cov-cell road"></span><span class="cov-cell road"></span></div></div>
+        <div class="tier-row"><b>医疗类21</b><div class="cov-grid"><span class="cov-cell impl"></span><span class="cov-cell impl"></span><span class="cov-cell impl"></span><span class="cov-cell impl"></span><span class="cov-cell impl"></span><span class="cov-cell pilot"></span><span class="cov-cell cand"></span><span class="cov-cell cand"></span><span class="cov-cell cand"></span><span class="cov-cell cand"></span><span class="cov-cell cand"></span><span class="cov-cell cand"></span><span class="cov-cell cand"></span></div></div>
+        <div class="note">演示入口：看板「规则治理」缩略矩阵 · 全屏 coverage-map.html · API /api/official-coverage</div>
+        <div class="section-title"><b>三态文案：同一条规则，三个环节不同说法</b></div>
+        <div class="wf3">
+          <div class="card rose"><h3>事前 · 开单提醒</h3><p>给医生看的临床友好话术，插件浮层实时提示。</p><span class="tag-block">政策限定 → 红色阻断</span><span class="tag-suggest">医疗合理 → 黄色建议</span></div>
+          <div class="card blue"><h3>事中 · 经办拒付</h3><p>给结算员的拒付依据与条款引用，可直接写入审核意见。</p></div>
+          <div class="card green"><h3>事后 · 稽核线索</h3><p>给稽核员的线索描述与补证方向，支撑飞检与复核。</p></div>
+        </div>
+        <div class="section-title"><b>两个「内行一眼识货」的细节</b></div>
+        <div class="grid2">
+          <div class="case ok"><b>时点法：结算日取当时有效规则</b><p>2024 年结算单不用 2025 年新规则去审。演示案卷可展示「该规则于结算日尚未生效，不予认定」——负向判定同样严谨。</p></div>
+          <div class="case warn"><b>统计监测不占位短板</b><p>跨就诊、统计离群等能力对位官方「统计指标监测类」8 格（ZB 编码），标为路线图而非「没规划」。</p></div>
+        </div>
+        <div class="quote">
+          <div class="qr-slot" aria-hidden="true"></div>
+          <div class="slogan">智能不是多报，<br><span class="red">智能是证据够时才报。</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="page p4">
+      <div class="content">
+        <header>
+          <div class="brand"><img src="../brand/logo-mark.svg" alt=""><div><b>鹰眼 <span class="teal">EAGLEEYE</span></b><span>可信验证 · 质量门禁</span></div></div>
+          <div class="topline">TRUST · P4/4<em>VERIFIED & READY</em></div>
+        </header>
+        <div class="hero">
+          <div class="eyebrow">QUALITY GATE</div>
+          <h1><span class="line">我们把“做了很多规则”</span><span class="line tight">变成<span class="red">可复跑、可解释、可验收</span>。</span></h1>
+          <p class="lead"><span class="line">资料能复核，数字能复跑，疑点能回到证据，</span><span class="line">干净件能守住不误报——</span><span class="line">这是鹰眼区别于“堆规则文档”的关键。</span></p>
+        </div>
+        <div class="section-title"><b>四个产品亮点</b></div>
+        <div class="grid2">
+          <div class="card rose"><h3>亮点 1：国家坐标挂接</h3><p>79 条 GZ/ZB 官方框架已结构化；checker 映射、覆盖地图、Foundation 漏斗均已接入产品。</p></div>
+          <div class="card blue"><h3>亮点 2：三态 + 时点法</h3><p>79 条官方规则均已配事前/事中/事后文案；引擎、事前插件、39 案卷 YHF 均已运行验证。</p></div>
+          <div class="card green"><h3>亮点 3：低误报优先</h3><p>干净件零误报是红线；医疗合理类事前只建议不拦截，政策限定类才可阻断。</p></div>
+          <div class="card cream"><h3>亮点 4：诚实标注进度</h3><p>43 格候选、8 格路线图（含统计监测）公开可见，覆盖不夸大、缺口不隐藏。</p></div>
+        </div>
+        <div class="section-title"><b>验证结果</b></div>
+        <div class="proof">
+          <div class="tile good"><b class="teal">PASS</b><span>YHF 门禁通过</span></div>
+          <div class="tile"><b>39</b><span>回归案卷</span></div>
+          <div class="tile hot"><b class="red">0 FP</b><span>干净案卷零误报</span></div>
+          <div class="tile"><b>79</b><span>三态文案已上线</span></div>
+        </div>
+        <div class="section-title"><b>口径说明</b></div>
+        <div class="story">
+          <div class="big-card">
+            <h2>三层口径 · 一套产品已跑通</h2>
+            <p><span class="line">编码级（官方 24.7 万）≠ 品种级（10337 条目）≠ 国家框架格（79 条）≠ 已接入 checker（79 implemented）。</span><span class="line">传单、看板、引擎、事前插件共用同一套数字与地图，</span><span class="line">不是 PPT 口径与代码口径两套账。</span></p>
+          </div>
+          <div class="article">
+            <p><strong>已跑通：</strong>79 条目录 · 覆盖地图 UI · 79 三态文案 · 事前红/黄 · 时点法 · ZB 批量引擎 · 39 案卷 YHF G5。</p>
+            <p><strong>演示彩蛋：</strong>boundary_temporal 案卷 — 2024 结算遇 2025 生效规则 →「不予认定」。</p>
+            <p><strong>持续治理：</strong>L3 族 checker 与 KB 操作索引持续扩面；合规门控下部分 medical 类输出线索档。</p>
+          </div>
+        </div>
+        <div class="quote">
+          <div class="qr-slot" aria-hidden="true"></div>
+          <div class="slogan">把规则资料，<br><span class="red">变成可信审核能力。</span></div>
+        </div>
+      </div>
+    </section>
+  </main>
+</body>
+</html>

@@ -37,7 +37,7 @@
     "items": [
       { "line_no": 1, "fee_date": "2026-05-08~05-12", "category": "床位费", "item_name": "床位费（三人间）", "qty": 4, "unit": "日", "unit_price": 50, "amount": 200, "insurance_class": "医保", "flag": "正常" },
       { "line_no": 2, "fee_date": "2026-05-09", "category": "手术费", "item_name": "卵巢囊肿剔除术", "qty": 1, "unit": "次", "unit_price": 2800, "amount": 2800, "insurance_class": "医保", "flag": "正常（同台第一手术）" },
-      { "line_no": 3, "fee_date": "2026-05-09", "category": "手术费", "item_name": "卵巢修补术", "qty": 1, "unit": "次", "unit_price": 2200, "amount": 2200, "insurance_class": "医保", "flag": "★SUR-401：同切口第二手术仍按100%计价，应≤75%折价" }
+      { "line_no": 3, "fee_date": "2026-05-09", "category": "治疗费", "item_name": "卵巢修补术", "qty": 1, "unit": "次", "unit_price": 2200, "amount": 2200, "insurance_class": "医保", "flag": "★SUR-401：同切口第二手术仍按100%计价（治疗费类目），应≤75%折价" }
     ],
     "total_amount": 5200
   },

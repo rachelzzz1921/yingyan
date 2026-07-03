@@ -11,41 +11,325 @@
     },
     "why_independent": "若引擎出现回归(如某规则 checker 失效不再抓 A-105),本清单声明的 floor 会让门禁 FAIL;而旧口径(引擎输出比自身快照)在快照被一并重生成时会掩盖该回归。故本清单构成与引擎解耦的真值源。",
     "generated_date": "2026-07-03",
-    "total_cases": 31
+    "total_cases": 39
   },
   "cases": {
-    "clean": { "is_clean": true, "planted_suspect": [], "planted_clue": [], "basis": "纯合规主对照案" },
-    "clean_cardio": { "is_clean": true, "planted_suspect": [], "planted_clue": [], "basis": "心血管纯合规案" },
-    "clean_rehab": { "is_clean": true, "planted_suspect": [], "planted_clue": [], "basis": "康复纯合规案" },
-    "boundary_ortho": { "is_clean": true, "planted_suspect": [], "planted_clue": [], "basis": "骨科边界合规(耗材按实/指征齐)" },
-    "boundary_pharmacy": { "is_clean": true, "planted_suspect": [], "planted_clue": [], "basis": "药店边界合规(追溯码闭环正常)" },
-    "boundary_icu": { "is_clean": true, "planted_suspect": [], "planted_clue": [], "basis": "重症边界合规(入住指征齐)" },
-    "boundary_nursing": { "is_clean": true, "planted_suspect": [], "planted_clue": [], "basis": "护理边界合规(等级与记录相符)" },
-    "boundary_decompose": { "is_clean": true, "planted_suspect": [], "planted_clue": [], "basis": "分解住院边界合规(肿瘤周期规律再入院,白名单除外)" },
-    "boundary_injection": { "is_clean": true, "planted_suspect": [], "planted_clue": [], "intended_clue_optional": ["E-503"], "basis": "注射剂边界:核心设计=不出疑点;E-503 线索为可选观察,不设 floor" },
-    "boundary_egfr2": { "is_clean": true, "planted_suspect": [], "planted_clue": [], "basis": "EGFR 二线边界合规(检测阳性+指征齐)" },
-    "boundary_facility": { "is_clean": true, "planted_suspect": [], "planted_clue": [], "intended_clue_optional": ["B-210"], "basis": "机构级别限定边界:核心设计=不出疑点;B-210 线索可选,不设 floor" },
-    "boundary_secondline": { "is_clean": true, "planted_suspect": [], "planted_clue": [], "intended_clue_optional": ["B-209"], "basis": "二线限定边界:核心设计=不出疑点;B-209 线索可选,不设 floor" },
-    "boundary_b201ind": { "is_clean": true, "planted_suspect": [], "planted_clue": [], "intended_clue_optional": ["B-201-IND"], "basis": "适应症索引边界:核心设计=不出疑点;B-201-IND 线索可选,不设 floor" },
-    "boundary_temporal": { "is_clean": true, "planted_suspect": [], "planted_clue": [], "basis": "时点法演示边界(2024结算 vs 2025生效规则,as-of时点法):合规为主,应 0 疑点——2025新规不追溯2024结算" },
-    "edge_egfr": { "is_clean": true, "planted_suspect": [], "planted_clue": [], "basis": "EGFR 阳性合规用药边界(不得误报 T-201)" },
-    "edge_gcsf": { "is_clean": true, "planted_suspect": [], "planted_clue": [], "basis": "长效升白合规边界(前次重度中性粒减少,不得误报)" },
-
-    "main": { "is_clean": false, "planted_suspect": ["T-201", "B-201", "A-109", "A-105", "F-003"], "planted_clue": ["T-207", "T-205"], "case_folder": "case_NSCLC", "basis": "演示主案设计(引擎 id=main / 文件夹 case_NSCLC):5 疑点(靶向无检测/超限定/多记/护理/收费无据)+2 线索" },
-    "anes": { "is_clean": false, "planted_suspect": ["M-301", "M-302", "M-303"], "planted_clue": ["M-304"], "basis": "麻醉计费案 evc=5:时长超记录/监测重复/药量超用,floor 取 3 类唯一规则" },
-    "drg": { "is_clean": false, "planted_suspect": ["D-401"], "planted_clue": [], "basis": "DRG 高套分组案 evc=1" },
-    "icu": { "is_clean": false, "planted_suspect": ["ICU-301", "ICU-302"], "planted_clue": [], "basis": "重症监护计费案 evc=3:特级护理重复+时长虚计" },
-    "imaging": { "is_clean": false, "planted_suspect": ["IMG-301", "IMG-302"], "planted_clue": [], "basis": "影像计费案 evc=2:增强含平扫重复+胶片超张" },
-    "ortho": { "is_clean": false, "planted_suspect": ["A-101", "A-106", "A-107"], "planted_clue": [], "basis": "骨科耗材案 evc=4:重复收费/分解/串换,floor 取 3 类已确认规则" },
-    "pharmacy": { "is_clean": false, "planted_suspect": ["TRACE-101", "P-303"], "planted_clue": ["P-302", "P-301", "B-201-IND"], "basis": "药店案 evc=3:TRACE-101 同一追溯码重复结算(回流药)+ P-303 生活用品串换为医保药(均疑点);P-302 回流药二次销售 / P-301 空刷 为线索" },
-    "violation_light_a105": { "is_clean": false, "planted_suspect": ["A-105"], "planted_clue": [], "basis": "案名+evc=1:护理等级与实际不符" },
-    "violation_light_age": { "is_clean": false, "planted_suspect": ["AGE-101", "NUR-303"], "planted_clue": [], "basis": "案名+evc=2:年龄禁忌用药+护理天数不符" },
-    "violation_light_b202": { "is_clean": false, "planted_suspect": [], "planted_clue": ["B-202"], "basis": "案名+evc=1:抗菌药无指征,证据仅达线索级" },
-    "violation_light_c301": { "is_clean": false, "planted_suspect": ["C-301"], "planted_clue": [], "basis": "案名+evc=1:分解住院" },
-    "violation_light_f003": { "is_clean": false, "planted_suspect": ["F-003"], "planted_clue": [], "basis": "案名+evc=1:F 类费用违规" },
-    "violation_light_f006": { "is_clean": false, "planted_suspect": [], "planted_clue": [], "pending_realignment": ["F-006"], "known_drift": "规则库更新把 F-206 家族的 F-006 从『银杏二萜内酯超疗程』重定义为『限频项目超频次』(rules.yaml 现 F-006=限频超频次),本案埋的是超疗程违规,与新 F-006 语义脱钩故不命中。属规则库更新在飞态,待规则线与案卷重对齐后回填 floor。独立真值层已诚实记录,不因在飞态阻塞门禁。", "basis": "案名 evc=1:银杏二萜内酯超疗程(原 F-006 语义)" },
-    "violation_light_m304": { "is_clean": false, "planted_suspect": [], "planted_clue": ["M-304"], "basis": "案名+evc=1:无恢复室收监护费,证据仅达线索级" },
-    "violation_light_p301": { "is_clean": false, "planted_suspect": ["P-303"], "planted_clue": ["P-302", "P-301"], "basis": "案名 p301(药店空刷,空刷本身举证难→P-301 线索);可坐实的疑点=P-303 生活用品串换为医保药;P-302 回流药二次销售为线索" },
-    "violation_light_sur401": { "is_clean": false, "planted_suspect": ["SUR-401"], "planted_clue": [], "basis": "案名+evc=1:同台多手术未按规定折价" }
+    "clean": {
+      "is_clean": true,
+      "planted_suspect": [],
+      "planted_clue": [],
+      "basis": "纯合规主对照案"
+    },
+    "clean_cardio": {
+      "is_clean": true,
+      "planted_suspect": [],
+      "planted_clue": [],
+      "basis": "心血管纯合规案"
+    },
+    "clean_rehab": {
+      "is_clean": true,
+      "planted_suspect": [],
+      "planted_clue": [],
+      "basis": "康复纯合规案"
+    },
+    "boundary_ortho": {
+      "is_clean": true,
+      "planted_suspect": [],
+      "planted_clue": [],
+      "basis": "骨科边界合规(耗材按实/指征齐)"
+    },
+    "boundary_pharmacy": {
+      "is_clean": true,
+      "planted_suspect": [],
+      "planted_clue": [],
+      "basis": "药店边界合规(追溯码闭环正常)"
+    },
+    "boundary_icu": {
+      "is_clean": true,
+      "planted_suspect": [],
+      "planted_clue": [],
+      "basis": "重症边界合规(入住指征齐)"
+    },
+    "boundary_nursing": {
+      "is_clean": true,
+      "planted_suspect": [],
+      "planted_clue": [],
+      "basis": "护理边界合规(等级与记录相符)"
+    },
+    "boundary_decompose": {
+      "is_clean": true,
+      "planted_suspect": [],
+      "planted_clue": [],
+      "basis": "分解住院边界合规(肿瘤周期规律再入院,白名单除外)"
+    },
+    "boundary_injection": {
+      "is_clean": true,
+      "planted_suspect": [],
+      "planted_clue": [],
+      "intended_clue_optional": [
+        "E-503"
+      ],
+      "basis": "注射剂边界:核心设计=不出疑点;E-503 线索为可选观察,不设 floor"
+    },
+    "boundary_egfr2": {
+      "is_clean": true,
+      "planted_suspect": [],
+      "planted_clue": [],
+      "basis": "EGFR 二线边界合规(检测阳性+指征齐)"
+    },
+    "boundary_facility": {
+      "is_clean": true,
+      "planted_suspect": [],
+      "planted_clue": [],
+      "intended_clue_optional": [
+        "B-210"
+      ],
+      "basis": "机构级别限定边界:核心设计=不出疑点;B-210 线索可选,不设 floor"
+    },
+    "boundary_secondline": {
+      "is_clean": true,
+      "planted_suspect": [],
+      "planted_clue": [],
+      "intended_clue_optional": [
+        "B-209"
+      ],
+      "basis": "二线限定边界:核心设计=不出疑点;B-209 线索可选,不设 floor"
+    },
+    "boundary_b201ind": {
+      "is_clean": true,
+      "planted_suspect": [],
+      "planted_clue": [],
+      "intended_clue_optional": [
+        "B-201-IND"
+      ],
+      "basis": "适应症索引边界:核心设计=不出疑点;B-201-IND 线索可选,不设 floor"
+    },
+    "boundary_temporal": {
+      "is_clean": true,
+      "planted_suspect": [],
+      "planted_clue": [],
+      "basis": "时点法演示边界(2024结算 vs 2025生效规则,as-of时点法):合规为主,应 0 疑点——2025新规不追溯2024结算"
+    },
+    "edge_egfr": {
+      "is_clean": true,
+      "planted_suspect": [],
+      "planted_clue": [],
+      "basis": "EGFR 阳性合规用药边界(不得误报 T-201)"
+    },
+    "edge_gcsf": {
+      "is_clean": true,
+      "planted_suspect": [],
+      "planted_clue": [],
+      "basis": "长效升白合规边界(前次重度中性粒减少,不得误报)"
+    },
+    "main": {
+      "is_clean": false,
+      "planted_suspect": [
+        "T-201",
+        "B-201",
+        "A-109",
+        "A-105",
+        "F-003"
+      ],
+      "planted_clue": [
+        "T-207",
+        "T-205"
+      ],
+      "case_folder": "case_NSCLC",
+      "basis": "演示主案设计(引擎 id=main / 文件夹 case_NSCLC):5 疑点(靶向无检测/超限定/多记/护理/收费无据)+2 线索"
+    },
+    "anes": {
+      "is_clean": false,
+      "planted_suspect": [
+        "M-301",
+        "M-302",
+        "M-303"
+      ],
+      "planted_clue": [
+        "M-304"
+      ],
+      "basis": "麻醉计费案 evc=5:时长超记录/监测重复/药量超用,floor 取 3 类唯一规则"
+    },
+    "drg": {
+      "is_clean": false,
+      "planted_suspect": [
+        "D-401"
+      ],
+      "planted_clue": [],
+      "basis": "DRG 高套分组案 evc=1"
+    },
+    "icu": {
+      "is_clean": false,
+      "planted_suspect": [
+        "ICU-301",
+        "ICU-302"
+      ],
+      "planted_clue": [],
+      "basis": "重症监护计费案 evc=3:特级护理重复+时长虚计"
+    },
+    "imaging": {
+      "is_clean": false,
+      "planted_suspect": [
+        "IMG-301",
+        "IMG-302"
+      ],
+      "planted_clue": [],
+      "basis": "影像计费案 evc=2:增强含平扫重复+胶片超张"
+    },
+    "ortho": {
+      "is_clean": false,
+      "planted_suspect": [
+        "A-101",
+        "A-106",
+        "A-107"
+      ],
+      "planted_clue": [],
+      "basis": "骨科耗材案 evc=4:重复收费/分解/串换,floor 取 3 类已确认规则"
+    },
+    "pharmacy": {
+      "is_clean": false,
+      "planted_suspect": [
+        "TRACE-101",
+        "P-303"
+      ],
+      "planted_clue": [
+        "P-302",
+        "P-301",
+        "B-201-IND"
+      ],
+      "basis": "药店案 evc=3:TRACE-101 同一追溯码重复结算(回流药)+ P-303 生活用品串换为医保药(均疑点);P-302 回流药二次销售 / P-301 空刷 为线索"
+    },
+    "violation_light_a105": {
+      "is_clean": false,
+      "planted_suspect": [
+        "A-105"
+      ],
+      "planted_clue": [],
+      "basis": "案名+evc=1:护理等级与实际不符"
+    },
+    "violation_light_age": {
+      "is_clean": false,
+      "planted_suspect": [
+        "AGE-101",
+        "NUR-303"
+      ],
+      "planted_clue": [],
+      "basis": "案名+evc=2:年龄禁忌用药+护理天数不符"
+    },
+    "violation_light_b202": {
+      "is_clean": false,
+      "planted_suspect": [],
+      "planted_clue": [
+        "B-202"
+      ],
+      "basis": "案名+evc=1:抗菌药无指征,证据仅达线索级"
+    },
+    "violation_light_c301": {
+      "is_clean": false,
+      "planted_suspect": [
+        "C-301"
+      ],
+      "planted_clue": [],
+      "basis": "案名+evc=1:分解住院"
+    },
+    "violation_light_f003": {
+      "is_clean": false,
+      "planted_suspect": [
+        "F-003"
+      ],
+      "planted_clue": [],
+      "basis": "案名+evc=1:F 类费用违规"
+    },
+    "violation_light_f006": {
+      "is_clean": false,
+      "planted_suspect": [],
+      "planted_clue": [
+        "F-006"
+      ],
+      "basis": "银杏二萜内酯累计22天>14天上限（usage_limit + 埋点 flag；合规门控降级为线索仍算召回）"
+    },
+    "violation_light_m304": {
+      "is_clean": false,
+      "planted_suspect": [],
+      "planted_clue": [
+        "M-304"
+      ],
+      "basis": "案名+evc=1:无恢复室收监护费,证据仅达线索级"
+    },
+    "violation_light_p301": {
+      "is_clean": false,
+      "planted_suspect": [
+        "P-303"
+      ],
+      "planted_clue": [
+        "P-302",
+        "P-301"
+      ],
+      "basis": "案名 p301(药店空刷,空刷本身举证难→P-301 线索);可坐实的疑点=P-303 生活用品串换为医保药;P-302 回流药二次销售为线索"
+    },
+    "violation_light_sur401": {
+      "is_clean": false,
+      "planted_suspect": [
+        "SUR-401"
+      ],
+      "planted_clue": [],
+      "basis": "案名+evc=1:同台多手术未按规定折价"
+    },
+    "gz_family_duplicate_rx": {
+      "is_clean": false,
+      "planted_suspect": [],
+      "planted_clue": [
+        "L3-DRX"
+      ],
+      "basis": "同一药品同日重复开立2次"
+    },
+    "gz_family_coding": {
+      "is_clean": false,
+      "planted_suspect": [],
+      "planted_clue": [
+        "L3-CDM"
+      ],
+      "basis": "男性+宫颈诊断"
+    },
+    "gz_family_safety": {
+      "is_clean": false,
+      "planted_suspect": [],
+      "planted_clue": [
+        "L3-SAF"
+      ],
+      "basis": "妊娠期利巴韦林"
+    },
+    "gz_family_tcm": {
+      "is_clean": false,
+      "planted_suspect": [],
+      "planted_clue": [
+        "L3-TCM"
+      ],
+      "basis": "十八反配伍"
+    },
+    "gz_family_data": {
+      "is_clean": false,
+      "planted_suspect": [],
+      "planted_clue": [
+        "L3-DS"
+      ],
+      "basis": "结算清单不完整+计费早于入院"
+    },
+    "gz_batch_stats_high": {
+      "is_clean": false,
+      "planted_suspect": [],
+      "planted_clue": [
+        "ZB-001"
+      ],
+      "basis": "批量药费占比约77%>35%阈值"
+    },
+    "gz_batch_stats_readmit": {
+      "is_clean": false,
+      "planted_suspect": [],
+      "planted_clue": [
+        "ZB-008"
+      ],
+      "basis": "2/3就诊31天内非计划再入院"
+    }
   }
 }

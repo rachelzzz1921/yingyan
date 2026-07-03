@@ -32,6 +32,10 @@ function scan() {
     const rec = JSON.parse(fs.readFileSync(mp, 'utf8'));
     const clean = rec.case_meta?.embedded_violation_count === 0;
     const items = rec.fee_list?.items || [];
+    const expPath = path.join(DATA, folder, 'expected_findings.json');
+    const expected = fs.existsSync(expPath) ? JSON.parse(fs.readFileSync(expPath, 'utf8')) : null;
+    const expClue = expected?.report_meta?.summary?.clue_count;
+    const expSus = expected?.report_meta?.summary?.suspected_count;
 
     const a102Raw = findMutualExclusiveHits(items, parseDate);
     const surRaw = findSurgeryDiscountViolations(items);
@@ -44,14 +48,24 @@ function scan() {
     if (clean && s.suspected_count > 0) {
       risks.push({ level: 'HIGH', folder, issue: 'G0 clean has suspected', count: s.suspected_count, rules: rep.findings.filter(f => f.status === '疑点').map(f => f.rule_id) });
     }
+    if (expSus != null && s.suspected_count !== expSus) {
+      risks.push({ level: 'HIGH', folder, issue: 'oracle suspected mismatch', exp: expSus, got: s.suspected_count });
+    }
+    if (expClue != null && s.clue_count !== expClue) {
+      risks.push({ level: 'HIGH', folder, issue: 'oracle clue mismatch', exp: expClue, got: s.clue_count });
+    }
     if (clean && a102Raw.length > 0) {
       risks.push({ level: 'MED', folder, issue: 'A-102 raw hits on clean case', pairs: a102Raw.map(h => `${h.pair.a}×${h.pair.b}`) });
     }
     if (a102Raw.length > 0 && !rep.findings.some(f => f.rule_id === 'A-102')) {
       risks.push({ level: 'INFO', folder, issue: 'A-102 raw>0 but engine 0 (suppressed or reconciled)', raw: a102Raw.length });
     }
-    if (indRaw.length > 0) {
-      risks.push({ level: 'LOW', folder, issue: 'B-201-IND sync clues', drugs: indRaw.map(f => f.rule_id) });
+    const expB201 = (expected?.findings || []).some(f => f.rule_id === 'B-201-IND');
+    if (indRaw.length > 0 && !expB201) {
+      risks.push({ level: 'LOW', folder, issue: 'B-201-IND sync clues (unexpected)', drugs: indRaw.map(f => f.rule_id) });
+    }
+    if (indRaw.length > 0 && expB201) {
+      risks.push({ level: 'INFO', folder, issue: 'B-201-IND sync clues (expected)', count: indRaw.length });
     }
     if (surRaw.length > 0 && !rep.findings.some(f => f.rule_id === 'SUR-401')) {
       risks.push({ level: 'MED', folder, issue: 'SUR-401 raw but not in report', raw: surRaw.length });

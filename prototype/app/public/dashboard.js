@@ -880,7 +880,40 @@ function evalDraftsHTML(drafts) {
     <table class="bench-table"><thead><tr><th>案卷</th><th>规则</th><th>驳回原因</th><th>草案状态</th><th>操作</th></tr></thead><tbody>${rows}</tbody></table></section>`;
 }
 
-function governanceViewHTML(gov, drafts) {
+function coverageMiniMatrixHTML(cov) {
+  if (!cov || !cov.summary) return '';
+  const s = cov.summary;
+  const oc = cov.official_coverage || {};
+  const statusColor = { implemented: '#16a34a', pilot: '#ca8a04', candidate: '#94a3b8', roadmap: '#6366f1' };
+  let cells = '';
+  for (const t1 of (cov.tier1 || []).slice(0, 3)) {
+    for (const t2 of (t1.tier2 || [])) {
+      for (const r of (t2.rules || [])) {
+        const st = r.coverage_status || 'candidate';
+        const col = statusColor[st] || '#64748b';
+        cells += `<a href="/coverage-map.html" class="cov-dot" title="${esc(r.official_code)} ${esc(r.name)} (${st})" style="background:${col}"></a>`;
+      }
+    }
+  }
+  return `<section class="card" style="margin-bottom:16px">
+    <div class="card-head" style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">
+      <h3 class="section-title" style="margin:0">国家 79 条官方规则覆盖</h3>
+      <a class="action-btn secondary" href="/coverage-map.html" style="font-size:12px;padding:6px 12px">全屏地图 →</a>
+    </div>
+    <div class="mini-stats" style="margin:10px 0">
+      ${kpiCard('已实现', s.implemented ?? 0, 'pass', '核心+增强')}
+      ${kpiCard('试运行', s.pilot ?? 0, 'warn', '')}
+      ${kpiCard('候选', s.candidate ?? 0, '', '已入库待接')}
+      ${kpiCard('路线图', s.roadmap ?? 0, '', '统计指标监测等')}
+      ${kpiCard('核心', oc.core_checker_count ?? 0, 'accent', '对齐国家框架')}
+      ${kpiCard('增强', oc.enhancement_checker_count ?? 0, '', '专科扩展')}
+    </div>
+    <div class="cov-matrix" style="display:flex;flex-wrap:wrap;gap:3px;max-height:72px;overflow:hidden">${cells}</div>
+    <p class="muted" style="margin:8px 0 0;font-size:11px">绿=已实现 · 黄=试运行 · 灰=候选 · 紫虚线格=路线图（含跨就诊统计指标监测 8 条）</p>
+  </section>`;
+}
+
+function governanceViewHTML(gov, drafts, coverage) {
   const entries = gov.entries || [];
   const cards = entries.length ? entries.map(e => {
     const cls = e.status === 'shadow' ? '' : (e.status === 'deprecated' ? 'dep' : 'active');
@@ -889,6 +922,7 @@ function governanceViewHTML(gov, drafts) {
       <div class="meta">状态: <b>${esc(e.status)}</b>${hist ? ' · ' + esc(hist) : ''}</div></div>`;
   }).join('') : '<p class="muted">全部规则在役（active）— 无 shadow / deprecated 条目</p>';
   return `
+    ${coverageMiniMatrixHTML(coverage)}
     <div class="doc-toolbar"><h2 style="margin:0">规则治理三态</h2><span class="badge">${esc(gov.model || '')}</span></div>
     <div class="mini-stats" style="margin-bottom:16px">
       ${kpiCard('总数', gov.summary?.total_rules, '', '')}
@@ -1229,8 +1263,11 @@ async function renderView(id) {
       html = priorityViewHTML(rank);
     }
     else if (id === 'governance') {
-      const drafts = await fetchJSON('/api/eval-drafts').catch(() => ({ items: [] }));
-      html = governanceViewHTML(cache.gov, drafts);
+      const [drafts, coverage] = await Promise.all([
+        fetchJSON('/api/eval-drafts').catch(() => ({ items: [] })),
+        fetchJSON('/api/official-coverage', 5000).catch(() => null),
+      ]);
+      html = governanceViewHTML(cache.gov, drafts, coverage);
       root.innerHTML = `<div class="view-panel active">${html}</div>`;
       bindDocCards(root);
       await bindEvalDraftActions(root);

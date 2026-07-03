@@ -1,0 +1,80 @@
+{
+  "case_meta": {
+    "case_id": "YY-BENCH-VIOL-F006-001",
+    "internal_id": "YY-BENCH-VIOL-F006-001",
+    "case_title": "轻量违规·银杏二萜内酯超疗程(F-006)",
+    "embedded_violation_count": 1,
+    "usage_limit_days": 14
+  },
+  "front_page": {
+    "hospital": "示范市第一人民医院（虚构）",
+    "hospital_level": "三级甲等",
+    "patient_name": "张脑梗",
+    "sex": "男",
+    "age": 68,
+    "insurance_type": "职工基本医疗保险",
+    "admission_no": "ZY20260520-0301",
+    "admit_time": "2026-05-20 09:00",
+    "discharge_time": "2026-06-10 10:00",
+    "principal_diagnosis": {
+      "name": "脑梗死恢复期",
+      "icd10": "I63.900x002"
+    },
+    "admit_dept": "神经内科"
+  },
+  "progress_notes": [
+    {
+      "date": "2026-05-20",
+      "type": "首次病程",
+      "text": "脑梗死恢复期，行银杏二萜内酯葡胺注射液改善脑循环治疗。"
+    }
+  ],
+  "fee_list": {
+    "items": [
+      {
+        "line_no": 1,
+        "fee_date": "2026-05-20~06-10",
+        "category": "床位费",
+        "item_name": "床位费",
+        "qty": 21,
+        "unit": "日",
+        "amount": 1050,
+        "linked_order": "长期医嘱#床位"
+      },
+      {
+        "line_no": 2,
+        "fee_date": "2026-05-20~06-02",
+        "category": "西药费",
+        "item_name": "银杏二萜内酯葡胺注射液",
+        "qty": 14,
+        "unit": "天",
+        "unit_price": 86,
+        "amount": 1204,
+        "linked_order": "长期医嘱#银杏",
+        "flag": "疗程内"
+      },
+      {
+        "line_no": 3,
+        "fee_date": "2026-06-03~06-10",
+        "category": "西药费",
+        "item_name": "银杏二萜内酯葡胺注射液",
+        "qty": 8,
+        "unit": "天",
+        "unit_price": 86,
+        "amount": 688,
+        "linked_order": "长期医嘱#银杏",
+        "flag": "★F-006：累计22天>单次最多14天"
+      }
+    ],
+    "total_amount": 2942
+  },
+  "discharge_summary": {
+    "discharge_diagnosis": [
+      "脑梗死恢复期"
+    ],
+    "hospital_course": "好转出院。"
+  },
+  "long_term_orders": {
+    "items": []
+  }
+}

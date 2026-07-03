@@ -1,0 +1,8 @@
+{
+  "meta": {
+    "version": "v2024",
+    "description": "结算行费用类别分类规则（ZB 批量占比用）"
+  },
+  "patterns": {},
+  "note": "运行时 stats-monitoring.js 内置关键词回退"
+}

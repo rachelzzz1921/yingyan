@@ -1,0 +1,31 @@
+{
+  "case_meta": {
+    "case_id": "YY-BENCH-BOUNDARY-SL-001",
+    "internal_id": "YY-BENCH-BOUNDARY-SL-001",
+    "case_title": "边界件·二线用药无前置证据(B-209线索)",
+    "embedded_violation_count": 0,
+    "edge_target_rule": "B-209"
+  },
+  "front_page": {
+    "hospital_level": "三级甲等",
+    "patient_name": "王皮炎",
+    "sex": "女",
+    "age": 12,
+    "insurance_type": "城乡居民基本医疗保险",
+    "admit_time": "2026-05-15 10:00",
+    "discharge_time": "2026-05-18 10:00",
+    "principal_diagnosis": { "name": "特应性皮炎", "icd10": "L20.900" },
+    "admit_dept": "皮肤科"
+  },
+  "progress_notes": [
+    { "date": "2026-05-15", "text": "患儿特应性皮炎，予吡美莫司乳膏外用治疗，病情好转。" }
+  ],
+  "fee_list": {
+    "items": [
+      { "line_no": 1, "fee_date": "2026-05-15~05-18", "category": "西药费", "item_name": "吡美莫司乳膏", "qty": 2, "unit": "支", "amount": 168 }
+    ],
+    "total_amount": 168
+  },
+  "discharge_summary": { "discharge_diagnosis": ["特应性皮炎"] },
+  "long_term_orders": { "items": [] }
+}

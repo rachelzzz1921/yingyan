@@ -49,6 +49,11 @@ function countExpectedSuspected(expected) {
   return list.filter(f => f.status === '疑点').length;
 }
 
+function countExpectedClues(expected) {
+  const n = expected?.report_meta?.summary?.clue_count;
+  return n == null ? null : n;
+}
+
 function runEngineHarness(opts = {}) {
   const cfg = loadGateConfig();
   const dataDir = opts.dataDir || DEFAULTS.prototypeData;
@@ -88,6 +93,12 @@ function runEngineHarness(opts = {}) {
       failures.push(`recall: expected ${expectedSuspected} suspected, got ${foundSuspected}`);
     }
 
+    const foundClue = rep.report_meta.summary.clue_count;
+    const expectedClue = countExpectedClues(expected);
+    if (expectedClue != null && foundClue !== expectedClue) {
+      failures.push(`recall: expected ${expectedClue} clues, got ${foundClue}`);
+    }
+
     results.push({
       case_id: id,
       mode: 'oracle',
@@ -95,8 +106,9 @@ function runEngineHarness(opts = {}) {
       is_clean: isClean,
       expected_violations: expectViolations,
       expected_suspected: expectedSuspected,
+      expected_clue: expectedClue,
       found_suspected: foundSuspected,
-      found_clue: rep.report_meta.summary.clue_count,
+      found_clue: foundClue,
       false_positives: falsePositives,
       latency_ms: ms,
       routing: `${rep.report_meta.routing?.activated_count}/${rep.report_meta.routing?.total}`,

@@ -11,6 +11,7 @@
 'use strict';
 
 const { familyCoverage } = require('./kb-operational-index');
+const { computeOfficialCoverage } = require('./official-coverage');
 
 function buildKbIndex(kb) {
   const idx = {};
@@ -130,6 +131,8 @@ function computeFoundation(rules, kb, checkerIds = [], firedIds = null, kb2 = []
   };
 
   const opFamilies = familyCoverage(checkerIds);
+  let officialCov = null;
+  try { officialCov = computeOfficialCoverage(checkerIds).official_coverage; } catch (_) { /* optional */ }
 
   // ② 操作化漏斗（官方KB → 在库规则 → 有checker → demo真fire）
   const funnel = [
@@ -172,6 +175,7 @@ function computeFoundation(rules, kb, checkerIds = [], firedIds = null, kb2 = []
     clinical_kb,
     pending_ingest: unresolvedList,
     roadmap,
+    official_coverage: officialCov,
     traceability,
     honesty_note: '已入库的均为官方公开发布批次原文（带文号/生效日/核验状态）；少量被规则引用但尚未入库的对照表标注"待入库"，绝不编造。',
   };

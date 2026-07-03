@@ -199,4 +199,22 @@ function mk(rule_id, rule_name, nature, status, violation_type, f) {
   };
 }
 
-module.exports = { detectNative, MALE_ONLY, FEMALE_ONLY, TARGET_REQUIRED, LIMITED_PAYMENT };
+function enrichPrecheckHits(hits, rulesById = {}) {
+  return (hits || []).map((h) => ({
+    ...h,
+    interaction: precheckToneForRule(rulesById, h.rule_id, h.nature),
+    precheck_title: rulesById[h.rule_id]?.workflow_messages?.precheck?.title || h.rule_name,
+    precheck_body: rulesById[h.rule_id]?.workflow_messages?.precheck?.body || '',
+  }));
+}
+
+function precheckToneForRule(rules, ruleId, nature) {
+  const rule = rules?.[ruleId];
+  if (rule?.workflow_messages?.precheck?.tone) return rule.workflow_messages.precheck.tone;
+  if (rule?.official?.tier1 === '医疗类') return 'suggest';
+  if (rule?.official?.tier1 === '政策类' || rule?.official?.tier1 === '管理类') return 'block';
+  if (ruleId === 'F-001' && nature === '明确违规') return 'block';
+  return 'suggest';
+}
+
+module.exports = { detectNative, enrichPrecheckHits, precheckToneForRule, MALE_ONLY, FEMALE_ONLY, TARGET_REQUIRED, LIMITED_PAYMENT };

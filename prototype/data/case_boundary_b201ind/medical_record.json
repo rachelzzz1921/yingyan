@@ -1,0 +1,48 @@
+{
+  "case_meta": {
+    "case_id": "YY-BENCH-BOUNDARY-B201IND-001",
+    "case_title": "边界件·药品限适应症语义层(B-201-IND) 非专用药品",
+    "disclaimer": "虚构数据。B-201-IND 专项演示：非那雄胺片限前列腺增生，本案主诊断为2型糖尿病、无前列腺相关诊断——同步语义层应出线索、不误升疑点（保G0）。与 T-201/T-205/B-201 硬编码 checker 无重叠。",
+    "specialty": "内分泌/慢病",
+    "embedded_violation_count": 0,
+    "distractor_count": 1,
+    "clue_count": 1,
+    "bench_tier": "boundary",
+    "settlement_summary": { "total_amount": 218.0, "insurance_paid_amount": 218.0, "currency": "CNY", "settle_type": "门诊慢特病" }
+  },
+  "front_page": {
+    "doc_type": "门诊病历首页",
+    "hospital": "示范市第一人民医院（虚构）",
+    "patient_name": "赵糖控",
+    "sex": "男",
+    "age": 62,
+    "insurance_type": "职工基本医疗保险（门诊慢特病）",
+    "admit_time": "2026-06-15 09:00",
+    "discharge_time": "2026-06-15 09:30",
+    "principal_diagnosis": { "name": "2型糖尿病", "icd10": "E11.900" },
+    "other_diagnosis": [{ "name": "高脂血症", "icd10": "E78.500" }]
+  },
+  "prescriptions": [
+    { "rx_id": "RX-B201-01", "drug": "二甲双胍片", "date": "2026-06-15", "valid": true },
+    { "rx_id": "RX-B201-02", "drug": "非那雄胺片", "date": "2026-06-15", "valid": true },
+    { "rx_id": "RX-B201-03", "drug": "阿托伐他汀钙片", "date": "2026-06-15", "valid": true }
+  ],
+  "progress_notes": [
+    { "date": "2026-06-15", "type": "门诊病程", "text": "复诊，血糖控制尚可，HbA1c 7.1%。继续二甲双胍。无泌尿系统症状，未诉排尿困难。" }
+  ],
+  "fee_list": {
+    "doc_type": "门诊费用清单",
+    "settle_date": "2026-06-15",
+    "items": [
+      { "line_no": 1, "fee_date": "2026-06-15", "category": "西药费", "item_name": "二甲双胍片", "spec": "0.5g×30", "qty": 2, "unit": "盒", "unit_price": 45.0, "amount": 90.0, "insurance_class": "医保甲", "linked_order": "RX-B201-01", "flag": "正常（适应症匹配·干扰项，正确不报）" },
+      { "line_no": 2, "fee_date": "2026-06-15", "category": "西药费", "item_name": "非那雄胺片", "spec": "5mg×30", "qty": 1, "unit": "盒", "unit_price": 68.0, "amount": 68.0, "insurance_class": "医保乙", "linked_order": "RX-B201-02", "flag": "★B-201-IND：限前列腺增生，本案无相关诊断→线索" },
+      { "line_no": 3, "fee_date": "2026-06-15", "category": "西药费", "item_name": "阿托伐他汀钙片", "spec": "20mg×7", "qty": 1, "unit": "盒", "unit_price": 60.0, "amount": 60.0, "insurance_class": "医保乙", "linked_order": "RX-B201-03", "flag": "正常（高脂血症对症·干扰项）" }
+    ],
+    "total_amount": 218.0
+  },
+  "discharge_summary": {
+    "doc_type": "门诊小结",
+    "discharge_diagnosis": ["2型糖尿病", "高脂血症"],
+    "hospital_course": "门诊复诊调药。"
+  }
+}

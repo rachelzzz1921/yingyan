@@ -32,6 +32,7 @@ const path = require('path');
 })();
 const { runAudit, ruleCheckerIds, buildIndicationLlmFindings } = require('./engine/audit-engine');
 const { computeFoundation, renderFoundationMarkdown, renderFoundationHtml } = require('./engine/foundation');
+const { computeOfficialCoverage } = require('./engine/official-coverage');
 const precipService = require('./engine/rule-precipitation-service');
 const { ingestStructured, ingestDocument } = require('./engine/ingest');
 const { processIntakeBatch } = require('./engine/intake-batch');
@@ -2031,6 +2032,22 @@ const server = http.createServer(async (req, res) => {
         return sendJSON(res, { error: '批量筛查失败:' + e.message + '(先跑 node scripts/gen-settlement-1000.js 生成演示数据)' }, 500);
       }
     }
+    if (p === '/api/stats-monitoring/run') {
+      try {
+        const fs = require('fs');
+        const pathMod = require('path');
+        const { runStatsMonitoring } = require('./engine/stats-monitoring');
+        const dataFile = pathMod.join(__dirname, '../data/screening/settlements_1000.json');
+        const data = JSON.parse(fs.readFileSync(dataFile, 'utf8'));
+        const rulesDoc = JSON.parse(fs.readFileSync(pathMod.join(__dirname, '../data/rules/rules.json'), 'utf8'));
+        const rulesMap = {};
+        for (const r of rulesDoc.rules || []) rulesMap[r.rule_id] = r;
+        const result = runStatsMonitoring(data.rows || [], rulesMap);
+        return sendJSON(res, { ...result, row_count: (data.rows || []).length, source: 'settlements_1000.json' });
+      } catch (e) {
+        return sendJSON(res, { error: '统计指标监测失败: ' + e.message }, 500);
+      }
+    }
     // F2 桌面哨兵·剪贴板通道:任意结算行(Excel 选区 TSV 解析结果)→ 行级筛查漏斗。CORS 全开。
     if (p === '/api/screening/rows') {
       res.setHeader('Access-Control-Allow-Origin', '*');
@@ -2091,9 +2108,14 @@ const server = http.createServer(async (req, res) => {
           rule_id: f.rule_id, rule_name: f.rule_name, nature: f.nature, status: f.status,
           violation_type: f.violation_type, policy: (f.policy || []).slice(0, 3),
           reasoning: f.reasoning, disposal_suggestion: f.disposal_suggestion,
+          interaction: precheckToneForRule(rulesById, f.rule_id, f.nature),
         }));
-        const { detectNative } = require('./engine/precheck-native');
-        const nativeHits = detectNative(patient, items, { policyTexts: ctx.policyTexts, policyVerified: ctx.policyVerified });
+        const { detectNative, enrichPrecheckHits, precheckToneForRule } = require('./engine/precheck-native');
+        const rulesById = Object.fromEntries(rules.map((r) => [r.rule_id, r]));
+        const nativeHits = enrichPrecheckHits(
+          detectNative(patient, items, { policyTexts: ctx.policyTexts, policyVerified: ctx.policyVerified }),
+          rulesById,
+        );
         const seen = new Set(engineHits.map(h => h.rule_id + '|' + (h.evidence?.[0]?.text || '')));
         const hits = [...engineHits, ...nativeHits.filter(h => !seen.has(h.rule_id + '|' + (h.evidence?.[0]?.text || '')))];
         hits.sort((a, b) => (a.nature === '明确违规' ? 0 : 1) - (b.nature === '明确违规' ? 0 : 1));
@@ -2182,8 +2204,20 @@ const server = http.createServer(async (req, res) => {
         firedIds = (rep.findings || []).map(f => f.rule_id).filter(Boolean);
       } catch (e) { /* fired 仅作锦上添花，失败不影响地基统计 */ }
       try {
-        return sendJSON(res, computeFoundation(DB.rulesDoc.rules, (DB.kb1 && DB.kb1.entries) || [], ruleCheckerIds, firedIds, (DB.kb2 && DB.kb2.entries) || []));
+        const base = computeFoundation(DB.rulesDoc.rules, (DB.kb1 && DB.kb1.entries) || [], ruleCheckerIds, firedIds, (DB.kb2 && DB.kb2.entries) || []);
+        const cov = computeOfficialCoverage(ruleCheckerIds);
+        base.official_coverage = cov.official_coverage;
+        base.official_coverage_summary = cov.summary;
+        return sendJSON(res, base);
       } catch (e) { return sendJSON(res, { error: '合规地基统计失败：' + e.message, kb_geometry: { total: 0, layers: {}, top_sources: [] }, funnel: [], traceability_summary: {}, specialty_coverage: [], traceability: [] }); }
+    }
+
+    if (p === '/api/official-coverage') {
+      try {
+        return sendJSON(res, computeOfficialCoverage(ruleCheckerIds));
+      } catch (e) {
+        return sendJSON(res, { error: '官方覆盖地图加载失败：' + e.message, cells: [], summary: { total: 0 } });
+      }
     }
 
     if (p === '/api/provenance-triad') {

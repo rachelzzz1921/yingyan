@@ -1,0 +1,32 @@
+{
+  "case_meta": {
+    "case_id": "YY-BENCH-BOUNDARY-FL-001",
+    "internal_id": "YY-BENCH-BOUNDARY-FL-001",
+    "case_title": "边界件·一级医院使用限二级药(B-210线索)",
+    "embedded_violation_count": 0,
+    "edge_target_rule": "B-210"
+  },
+  "front_page": {
+    "hospital": "示范县中医院（虚构）",
+    "hospital_level": "一级甲等",
+    "patient_name": "李恢复",
+    "sex": "男",
+    "age": 72,
+    "insurance_type": "城乡居民基本医疗保险",
+    "admit_time": "2026-05-10 08:00",
+    "discharge_time": "2026-05-20 10:00",
+    "principal_diagnosis": { "name": "脑梗死恢复期", "icd10": "I63.900x002" },
+    "admit_dept": "内科"
+  },
+  "progress_notes": [
+    { "date": "2026-05-10", "text": "脑梗死恢复期，予银杏二萜内酯葡胺注射液治疗10天。" }
+  ],
+  "fee_list": {
+    "items": [
+      { "line_no": 1, "fee_date": "2026-05-10~05-20", "category": "西药费", "item_name": "银杏二萜内酯葡胺注射液", "qty": 10, "unit": "天", "amount": 860 }
+    ],
+    "total_amount": 860
+  },
+  "discharge_summary": { "discharge_diagnosis": ["脑梗死恢复期"] },
+  "long_term_orders": { "items": [] }
+}

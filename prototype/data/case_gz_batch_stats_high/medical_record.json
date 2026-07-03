@@ -1,0 +1,53 @@
+{
+  "case_meta": {
+    "case_id": "YY-GZ-ZB-HI-001",
+    "case_title": "ZB·药费占比超标",
+    "embedded_violation_count": 1
+  },
+  "front_page": {
+    "hospital": "示范市第一人民医院（虚构）",
+    "hospital_level": "三级甲等",
+    "patient_name": "机构A",
+    "sex": "男",
+    "age": 45,
+    "insurance_type": "职工基本医疗保险",
+    "admit_time": "2026-06-01 09:00",
+    "discharge_time": "2026-06-10 10:00",
+    "principal_diagnosis": {
+      "name": "高血压",
+      "icd10": "I10.x00"
+    },
+    "admit_dept": "内科"
+  },
+  "fee_list": {
+    "items": [],
+    "total_amount": 0
+  },
+  "batch_settlement_rows": [
+    {
+      "row_id": "r1",
+      "visit_id": "v1",
+      "item_name": "头孢曲松",
+      "category": "西药费",
+      "amount": 800,
+      "fee_category": "drug"
+    },
+    {
+      "row_id": "r2",
+      "visit_id": "v1",
+      "item_name": "阿莫西林",
+      "category": "西药费",
+      "amount": 600,
+      "fee_category": "drug"
+    },
+    {
+      "row_id": "r3",
+      "visit_id": "v1",
+      "item_name": "床位费",
+      "category": "床位费",
+      "amount": 200,
+      "fee_category": "other"
+    }
+  ],
+  "progress_notes": []
+}

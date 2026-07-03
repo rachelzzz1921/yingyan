@@ -22,9 +22,26 @@ const { NATURE, NATURE_BASIS, findingNature, caseNature, natureCounts } = requir
 const { applyComplianceGate } = require('./compliance-gate');
 const { JIANGSU_NURSING_PRICE, REF_ID: JIANGSU_NURSING_REF } = require('../kb/jiangsu-prices');
 const { applyParseQAToConfidence } = require('./parse-qa');
-const { findMutualExclusiveHits } = require('./kb-operational-index');
+const { findMutualExclusiveHits, lookupConstraints } = require('./kb-operational-index');
 const { findSurgeryDiscountViolations } = require('./surgery-discount');
 const { evaluateIndicationSync } = require('./indication-semantics');
+const {
+  evaluateGenderFeeConflicts,
+  evaluateChildFeeConflicts,
+  evaluateUsageLimitViolations,
+  evaluateSecondLine,
+  evaluateFacilityLevel,
+  evaluateInsuranceType,
+  evaluateAntibioticIndication,
+  evaluateDecomposeAdmission,
+  evaluateGhostBed,
+  evaluateDuplicateRx,
+  evaluateCodingMismatch,
+  evaluateSafetyRule,
+  evaluateTcmUsage,
+  evaluateDataSupervision,
+} = require('./l3-family-checkers');
+const { runStatsMonitoring } = require('./stats-monitoring');
 
 // ---------- 工具函数 ----------
 function parseDate(s) {
@@ -423,6 +440,7 @@ const ruleCheckers = {
   /** A-102 重复收费—同义/包含项目并收（两库 895 对互斥索引，数据驱动） */
   'A-102': (ctx) => {
     const items = ctx.record.fee_list?.items || [];
+    if (items.length < 2) return [];
     const hits = findMutualExclusiveHits(items, parseDate);
     if (!hits.length) return [];
     const findings = [];
@@ -956,6 +974,21 @@ const ruleCheckers = {
   },
 
   /** E-503 材料含异常指令性文本（对抗注入）——升5 对抗鲁棒性，三审三验首个试运行案例 */
+  'F-001': (ctx) => evaluateGenderFeeConflicts(ctx, mkFinding),
+  'F-002': (ctx) => evaluateChildFeeConflicts(ctx, mkFinding),
+  'F-006': (ctx) => evaluateUsageLimitViolations(ctx, mkFinding),
+  'B-202': (ctx) => evaluateAntibioticIndication(ctx, mkFinding),
+  'B-209': (ctx) => evaluateSecondLine(ctx, mkFinding),
+  'B-210': (ctx) => evaluateFacilityLevel(ctx, mkFinding),
+  'B-211': (ctx) => evaluateInsuranceType(ctx, mkFinding),
+  'C-301': (ctx) => evaluateDecomposeAdmission(ctx, mkFinding),
+  'C-302': (ctx) => evaluateGhostBed(ctx, mkFinding),
+  'L3-DRX': (ctx) => evaluateDuplicateRx(ctx, mkFinding),
+  'L3-CDM': (ctx) => evaluateCodingMismatch(ctx, mkFinding),
+  'L3-SAF': (ctx) => evaluateSafetyRule(ctx, mkFinding),
+  'L3-TCM': (ctx) => evaluateTcmUsage(ctx, mkFinding),
+  'L3-DS': (ctx) => evaluateDataSupervision(ctx, mkFinding),
+
   'E-503': (ctx) => {
     const inj = ctx.caseObj?.flags?.injection_suspects || [];
     if (!inj.length) return [];
@@ -1129,7 +1162,12 @@ function mkFinding(ctx, ruleId, fields) {
   const rule = ctx.rules[ruleId];
   if (!rule) return null;
   _seq += 1;
-  return {
+  const wm = rule.workflow_messages;
+  const disposal = fields.disposal
+    || (wm?.during?.denial_text)
+    || (wm?.during?.action)
+    || '';
+  const out = {
     finding_id: `F-${ctx.caseId}-${String(_seq).padStart(3, '0')}`,
     rule_id: ruleId,
     rule_name: rule.rule_name,
@@ -1142,9 +1180,57 @@ function mkFinding(ctx, ruleId, fields) {
     policy: (rule.policy_basis || []).map(ref => ({ ref, text: lookupPolicy(ctx, ref), verify_status: policyVerifyLabel(ctx, ref) })),
     reasoning: fields.reasoning || '',
     needs_more: fields.needs_more || [],
-    disposal_suggestion: fields.disposal || '',
+    disposal_suggestion: disposal,
     layer_label: rule.layer,
   };
+  if (rule.official) out.official = rule.official;
+  if (wm) out.workflow_messages = wm;
+  return out;
+}
+
+function getAsOfDate(record) {
+  const cm = record.case_meta || {};
+  const raw = cm.settlement_date
+    || cm.settlement_summary?.settlement_date
+    || (cm.settlement_summary?.settle_date);
+  if (raw) return parseDate(String(raw).slice(0, 10));
+  const dis = record.front_page?.discharge_time;
+  if (dis) return parseDate(String(dis).slice(0, 10));
+  return parseDate(new Date().toISOString().slice(0, 10));
+}
+
+function isRuleEffective(rule, asOf) {
+  if (!rule?.effective_interval || !asOf) return true;
+  const from = rule.effective_interval.from ? parseDate(rule.effective_interval.from) : null;
+  const to = rule.effective_interval.to ? parseDate(rule.effective_interval.to) : null;
+  if (from && asOf < from) return false;
+  if (to && asOf > to) return false;
+  return true;
+}
+
+function applyTemporalVetoes(findings, rules, asOf, record) {
+  const showcase = !!record.case_meta?.demo_temporal_showcase;
+  const kept = [];
+  const vetoes = [];
+  const asOfStr = asOf instanceof Date ? asOf.toISOString().slice(0, 10) : String(asOf || '').slice(0, 10);
+  for (const f of findings) {
+    const rule = rules[f.rule_id];
+    if (!rule || isRuleEffective(rule, asOf)) { kept.push(f); continue; }
+    if (showcase) {
+      vetoes.push({
+        ...f,
+        finding_id: `${f.finding_id}-TV`,
+        status: '不认定',
+        temporal_veto: true,
+        violation_type: '时效否决',
+        risk_level: '低',
+        amount_involved: 0,
+        reasoning: `该规则「${rule.rule_name}」于结算日期 ${asOfStr} 时尚未生效（生效日 ${rule.effective_interval.from}），不予认定。`,
+        disposal_suggestion: '时点法：审单须按结算日取当时有效规则版本；本项不构成可追回违规。',
+      });
+    }
+  }
+  return { findings: kept, temporal_vetoes: vetoes };
 }
 
 function lookupPolicy(ctx, ref) {
@@ -1168,7 +1254,12 @@ const triggerPredicates = {
   'A-108': (c) => c.fee_lines.some(f => (f.linked_order === '—' || !f.linked_order) && !/护理|输液|床位|诊查|术|耗材|球囊|骨水泥|套管/.test(f.name)),
   'A-101': (c, r) => !!r.operation_note?.operation_name,
   'A-102': (c, r) => (r.fee_list?.items || []).length >= 2,
-  'SUR-401': (c, r) => (r.fee_list?.items || []).filter(x => /手术费/.test(x.category || '')).length >= 2,
+  'SUR-401': (c, r) => {
+    const items = r.fee_list?.items || [];
+    if (items.filter(x => /手术费/.test(x.category || '')).length >= 2) return true;
+    const indexed = items.filter(x => /术/.test(x.item_name || '') && lookupConstraints(x.item_name).some(z => z.family === 'surgery_discount'));
+    return indexed.length >= 2;
+  },
   'B-201-IND': (c) => c.fee_lines.some(f => /药|片|胶囊|颗粒|注射液/.test(f.name) || /药|西药|中成药/.test(f.category || '')),
   'A-106': (c, r) => !!r.operation_note?.operation_name,
   'A-107': (c, r) => (r.operation_note?.consumables_used || []).length > 0,
@@ -1201,9 +1292,21 @@ const triggerPredicates = {
   'ICU-301': (c, r) => /特级护理/.test(r.icu_record?.nursing_level || '') && (r.fee_list?.items || []).some(x => /专项护理/.test(x.item_name) && !/特级/.test(x.item_name)),
   'ICU-302': (c, r) => !!r.icu_record && (r.fee_list?.items || []).some(x => x.hours_charged != null),
   'ICU-303': (c, r) => (r.fee_list?.items || []).some(x => /重症监护/.test(x.item_name) && !/床位/.test(x.item_name)),
-  'B-202': (c) => c.fee_lines.some(f => /头孢|青霉|喹诺酮|抗菌|可韦|霉素/.test(f.name)),
+  'F-001': (c, r) => !!(r.front_page?.sex) && c.fee_lines.length > 0,
+  'F-002': (c, r) => Number.isFinite(Number(r.front_page?.age)) && c.fee_lines.some(f => /药|片|胶囊|颗粒|注射液/.test(f.name)),
+  'F-006': (c) => c.fee_lines.some(f => /药|注射液|片|胶囊|颗粒/.test(f.name)),
+  'B-202': (c) => c.fee_lines.some(f => /头孢|青霉|喹诺酮|抗菌|可韦|霉素|阿莫西林/.test(f.name)),
+  'B-209': (c) => c.fee_lines.some(f => /药|片|胶囊|乳膏|注射液/.test(f.name)),
+  'B-210': (c, r) => !!(r.front_page?.hospital_level) && c.fee_lines.some(f => /药|注射液/.test(f.name)),
+  'B-211': (c, r) => !!(r.front_page?.insurance_type) && c.fee_lines.some(f => /药|注射液|栓|膏/.test(f.name)),
   'B-206': (c, r) => /带药/.test(JSON.stringify(r.discharge_summary || '')),
   'C-301': (c, r) => (r.front_page?.previous_admissions || []).length > 0,
+  'C-302': (c, r) => (r.nursing_records?.days_documented != null || (r.nursing_records?.entries || []).length > 0) && (r.fee_list?.items || []).some(x => /床位|护理|诊查/.test(x.item_name || '')),
+  'L3-DRX': (c, r) => (r.fee_list?.items || []).filter(x => /药|片|胶囊|注射液/.test(x.item_name || '')).length >= 2 || r.case_meta?.drug_kind_excess === true,
+  'L3-CDM': (c, r) => !!(r.front_page?.principal_diagnosis?.name) || r.case_meta?.coding_mismatch_flag,
+  'L3-SAF': (c, r) => (r.fee_list?.items || []).some(x => /药|片|胶囊|注射液/.test(x.item_name || '')) || r.case_meta?.pregnant || r.case_meta?.drug_interaction_flag,
+  'L3-TCM': (c, r) => (r.fee_list?.items || []).some(x => /中药|饮片/.test(x.category || '') || /饮片|黄芪|甘草/.test(x.item_name || '')) || r.case_meta?.tcm_incompat_flag,
+  'L3-DS': (c, r) => !!(r.fee_list?.items?.length) && (!!(r.front_page?.admit_time) || r.case_meta?.settlement_incomplete || r.case_meta?.dept_mismatch),
   'T-201': (c) => c.fee_lines.some(f => /替尼|单抗/.test(f.name) && !/贝伐|托烷|地塞/.test(f.name)),
   'T-204': (c) => c.fee_lines.some(f => /替尼|单抗/.test(f.name)),
   'T-205': (c) => c.fee_lines.some(f => /聚乙二醇化.*粒细胞刺激因子/.test(f.name)),
@@ -1471,8 +1574,10 @@ function reconcile(rawFindings) {
     arr.sort((a, b) => primaryScore(b) - primaryScore(a)); // 定主：定性确定性×3 + 证据完整度 + 罚则严重度
     const primary = arr[0], corro = arr.slice(1);
     primary.corroborations = corro.map(c => ({ rule_id: c.rule_id, rule_name: c.rule_name, status: c.status, violation_type: c.violation_type, reasoning: c.reasoning, policy: c.policy }));
+    primary.primary_rule_id = primary.rule_id;
     primary._merged_count = arr.length;
     primary._raw_amount_sum = money(arr.reduce((s, x) => s + (x.amount_involved || 0), 0));
+    primary.deduped_amount = primary.amount_involved || 0;
     log.push({ fee_lines: k, merged: arr.length, primary: primary.rule_id, corroborations: corro.map(c => c.rule_id), amount_once: primary.amount_involved || 0, amount_if_double_counted: money(arr.reduce((s, x) => s + (x.amount_involved || 0), 0)) });
     out.push(primary);
   }
@@ -1587,6 +1692,8 @@ function runAudit(record, rulesArray, options = {}) {
 
   // 升2 触发器路由：先算哪些规则被激活（其余零成本跳过）
   const routing = computeRouting(caseObj, record, rulesArray);
+  const asOf = getAsOfDate(record);
+  const showcaseTemporal = !!record.case_meta?.demo_temporal_showcase;
 
   const findings = [];
   const trace = [];
@@ -1594,6 +1701,10 @@ function runAudit(record, rulesArray, options = {}) {
   for (const ruleId of Object.keys(ruleCheckers)) {
     if (!rules[ruleId]) { trace.push({ rule_id: ruleId, rule_name: '(未加载)', hits: 0, ms: 0, skipped: true }); continue; }
     if (retiredSet.has(ruleId)) { trace.push({ rule_id: ruleId, rule_name: rules[ruleId]?.rule_name, hits: 0, ms: 0, retired: true }); continue; }
+    if (!isRuleEffective(rules[ruleId], asOf) && !showcaseTemporal) {
+      trace.push({ rule_id: ruleId, rule_name: rules[ruleId]?.rule_name, hits: 0, ms: 0, skipped: true, skipped_reason: 'not_effective_yet' });
+      continue;
+    }
     const t0 = Date.now();
     let got = [];
     try {
@@ -1607,6 +1718,15 @@ function runAudit(record, rulesArray, options = {}) {
     trace.push({ rule_id: ruleId, rule_name: rules[ruleId]?.rule_name, hits: got.length, ms: Date.now() - t0 });
     findings.push(...got);
   }
+  if (record.batch_settlement_rows?.length) {
+    try {
+      const batch = runStatsMonitoring(record.batch_settlement_rows, rules, mkFinding, ctx);
+      findings.push(...(batch.findings || []));
+      trace.push({ rule_id: 'ZB-batch', rule_name: '统计指标监测', hits: (batch.findings || []).length, ms: 0 });
+    } catch (e) {
+      trace.push({ rule_id: 'ZB-batch', rule_name: '统计指标监测', hits: 0, ms: 0, error: e.message });
+    }
+  }
   try {
     if (!options.skipIndicationSync) {
       findings.push(...(evaluateIndicationSync(ctx, mkFinding).filter(Boolean) || []));
@@ -1614,11 +1734,15 @@ function runAudit(record, rulesArray, options = {}) {
     if (options.extraFindings?.length) findings.push(...options.extraFindings.filter(Boolean));
   } catch (_) { /* 适应症语义层失败不阻断主引擎 */ }
 
+  const temporal = applyTemporalVetoes(findings, rules, asOf, record);
+  let findingsAfterTemporal = temporal.findings;
+  const temporalVetoes = temporal.temporal_vetoes;
+
   let distractors = [];
   try { distractors = checkDistractors(ctx); } catch (e) { /* 干扰项分析在异常材料形状下失败不阻断稽核 */ }
 
   // doc08宏观③ 定义层仲裁：subsumes/互斥/全局豁免（在合议与计金额之前）
-  const arb = applyRelationsArbitration(findings, rules, record);
+  const arb = applyRelationsArbitration(findingsAfterTemporal, rules, record);
 
   // doc08宏观① 合议层：一笔钱被多规则命中→合并1主疑点+佐证视角、金额去重（必须在计金额前）
   const rec = reconcile(arb.findings);
@@ -1655,6 +1779,13 @@ function runAudit(record, rulesArray, options = {}) {
     f.nature_basis = NATURE_BASIS[f.nature];
   }
   const case_nature = caseNature(merged);
+  const asOfStr = asOf ? String(asOf).slice(0, 10) : null;
+  if (temporalVetoes?.length) {
+    for (const tv of temporalVetoes) {
+      tv.nature = '时效否决';
+      tv.nature_basis = '结算日规则尚未生效';
+    }
+  }
 
   return {
     report_meta: {
@@ -1662,6 +1793,8 @@ function runAudit(record, rulesArray, options = {}) {
       patient: `${record.front_page.patient_name} ${record.front_page.sex} ${record.front_page.age}岁`,
       audit_engine: '鹰眼·医保基金稽核智能体 v0.5（事实层+合规前置+ParseQA+路由+合议层+控辩裁+CoVe+置信）',
       parse_quality: parseQuality,
+      settlement_as_of: asOfStr,
+      temporal_vetoes: temporalVetoes,
       audit_scope: `本次住院（${record.front_page.admit_time?.slice(0,10)} ~ ${record.front_page.discharge_time?.slice(0,10)}）全部费用与病历材料`,
       human_baseline_minutes: 40,
       agent_seconds: 90,
@@ -1676,13 +1809,13 @@ function runAudit(record, rulesArray, options = {}) {
       summary: {
         case_nature,
         nature_counts: natureCounts(merged),
-        raw_findings_before_merge: findings.length,
-        merged_count: findings.length - merged.length,
+        raw_findings_before_merge: findingsAfterTemporal.length,
+        merged_count: findingsAfterTemporal.length - merged.length,
         amount_if_double_counted: money(rec.reconciliation_log.reduce((s, l) => s + (l.amount_if_double_counted - l.amount_once), 0) + suspected.reduce((s, f) => s + (f.amount_involved || 0), 0)),
         ...govSummary,
       },
     },
-    findings: merged,
+    findings: [...merged, ...(temporalVetoes || [])],
     correctly_not_flagged: distractors,
     engine_trace: trace,
     case_object: caseObj,

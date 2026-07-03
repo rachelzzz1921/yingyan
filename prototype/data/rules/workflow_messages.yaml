@@ -1,0 +1,304 @@
+# 三态文案 + 官方挂接（schema 3.3）— build-rules.js 合并进 rules.json
+# tone: block=政策类可拦截 · suggest=医疗类仅提示（医师法诊疗自主权）
+
+F-001:
+  official:
+    gz_codes: [GZ10000302004000]
+    tier1: 政策类
+    tier2: 医疗服务项目政策限定类
+  effective_interval: { from: "2023-05-15", to: null }
+  code_set_refs: [gender_services_v2024]
+  workflow_messages:
+    precheck:
+      tone: block
+      title: 性别与项目冲突
+      body: 本次开立项目与患者性别登记不符，请核对身份信息或调整项目。
+      disposal: 请核对患者性别与项目适用人群后再开立。
+    during:
+      basis: 区分性别使用的医疗服务项目与患者性别矛盾
+      action: 拒付或责令退回相应费用
+      denial_text: 患者性别与收费项目适用性别不符，涉嫌虚构医药服务项目。
+    post_audit:
+      lead: 性别—项目硬互斥
+      evidence_hint: 费用行项目名 + 病案首页性别 + 区分性别使用清单条目
+
+F-002:
+  official:
+    gz_codes: [GZ10000101007000, GZ10000101006000]
+    tier1: 政策类
+    tier2: 药品政策限定类
+  effective_interval: { from: "2023-05-15", to: null }
+  code_set_refs: [child_drugs_v2024]
+  workflow_messages:
+    precheck:
+      tone: block
+      title: 年龄与项目/药品不符
+      body: 该项目或药品有年龄限定，当前患者年龄不在适用范围内。
+      disposal: 请确认患者年龄符合医保支付限定后再开立。
+    during:
+      basis: 医保目录年龄限定支付范围
+      action: 拒付超年龄限定部分
+      denial_text: 收费项目或药品超出目录年龄限定支付范围。
+    post_audit:
+      lead: 年龄—项目/药品冲突
+      evidence_hint: 费用行 + 出生日期/年龄 + 目录限定条款
+
+F-003:
+  official:
+    gz_codes: [GZ10000201003000]
+    tier1: 管理类
+    tier2: 信息数据监管类
+  effective_interval: { from: "2023-05-15", to: null }
+  workflow_messages:
+    precheck:
+      tone: suggest
+      title: 费用日期异常
+      body: 开立日期与在院时段可能不一致，请核对计费时点。
+      disposal: 请确认费用发生时间在合理诊疗时段内。
+    during:
+      basis: 出院/死亡后仍发生费用或时间逻辑矛盾
+      action: 拒付出院后计费部分
+      denial_text: 费用发生日晚于出院日期，对应服务不可能发生。
+    post_audit:
+      lead: 时间逻辑硬冲突
+      evidence_hint: 费用行日期 + 出院小结/病案首页出院时间
+
+F-004:
+  official:
+    gz_codes: [GZ10000102014000]
+    tier1: 政策类
+    tier2: 医疗服务项目政策限定类
+  effective_interval: { from: "2023-05-15", to: null }
+  workflow_messages:
+    precheck:
+      tone: block
+      title: 单日计量超物理上限
+      body: 按小时计费项目单日累计超过24小时，请核对计费数量。
+      disposal: 请修正计费数量或补充合理说明。
+    during:
+      basis: 单日计时项目超物理上限
+      action: 核减超量部分
+      denial_text: 同一计时项目单日累计超过24小时，物理上不可能。
+    post_audit:
+      lead: 单日计量超上限
+      evidence_hint: 同日费用行聚合数量 + 项目计价单位
+
+F-006:
+  official:
+    gz_codes: [GZ10000101009000, GZ10000101010000, GZ10000102014000]
+    tier1: 政策类
+    tier2: 药品政策限定类
+  effective_interval: { from: "2023-05-15", to: null }
+  workflow_messages:
+    precheck:
+      tone: block
+      title: 超频次/超疗程
+      body: 该项目或药品已超过政策允许的支付频次或疗程上限。
+      disposal: 请确认是否符合疗程/频次限定后再开立。
+    during:
+      basis: 医保目录疗程或频次限定
+      action: 拒付超限部分
+      denial_text: 超过目录规定的最大支付天数、开药量或频次上限。
+    post_audit:
+      lead: 限频/疗程超限
+      evidence_hint: 费用行聚合次数 + 规则依据中的天数/次数上限
+
+A-102:
+  official:
+    gz_codes: [GZ10000102012000]
+    tier1: 政策类
+    tier2: 医疗服务项目政策限定类
+  effective_interval: { from: "2023-05-15", to: null }
+  workflow_messages:
+    precheck:
+      tone: block
+      title: 疑似重复/互斥收费
+      body: 本次医嘱中存在内涵包含或互斥的项目组合，请核对是否应合并计价。
+      disposal: 请确认项目内涵，避免重复收费。
+    during:
+      basis: 医疗服务项目重复收费（内涵包含或不得另行收费）
+      action: 拒付重复计价部分
+      denial_text: 同一时段互斥或包含关系项目重复收费。
+    post_audit:
+      lead: 互斥/重复收费
+      evidence_hint: 互斥项目对 + 同日费用行 + 立项指南内涵
+
+A-105:
+  official:
+    gz_codes: [GZ10000302005000]
+    tier1: 医疗类
+    tier2: 医疗服务项目合理使用类
+  effective_interval: { from: "2023-05-15", to: null }
+  workflow_messages:
+    precheck:
+      tone: suggest
+      title: 护理等级与医嘱不一致
+      body: 收费护理等级高于医嘱护理等级，请核对护理记录。
+      disposal: 请确认护理等级与医嘱、护理记录一致。
+    during:
+      basis: 护理等级收费与医嘱/记录不符
+      action: 按实际护理等级核减差额
+      denial_text: 收费护理等级高于医嘱或护理记录支持的等级。
+    post_audit:
+      lead: 护理等级不符
+      evidence_hint: 费用行护理等级 + 长期医嘱 + 护理记录
+
+B-201-IND:
+  official:
+    gz_codes: [GZ10000101008000, GZ10000301002000]
+    tier1: 医疗类
+    tier2: 药品合理使用类
+  effective_interval: { from: "2023-05-15", to: null }
+  workflow_messages:
+    precheck:
+      tone: suggest
+      title: 适应症证据不足
+      body: 该药品有适应症或限定支付要求，当前诊断/证据可能不足以支持医保支付。
+      disposal: 请补充适应症支撑材料；不符合限定应自费告知。
+    during:
+      basis: 药品超适应症或超限定支付范围
+      action: 拒付或转为自费
+      denial_text: 用药超出医保目录适应症或限定支付情形。
+    post_audit:
+      lead: 适应症/限定支付线索
+      evidence_hint: 费用行药品 + 诊断 + 病程/检验证据
+
+B-209:
+  official:
+    gz_codes: [GZ10000101005000]
+    tier1: 政策类
+    tier2: 药品政策限定类
+  effective_interval: { from: "2023-05-15", to: null }
+  workflow_messages:
+    precheck:
+      tone: suggest
+      title: 二线用药证据
+      body: 二线药品通常需一线治疗失败或不耐受证据，请确认是否已满足。
+      disposal: 请补充一线治疗无效/不耐受记录后再开立。
+    during:
+      basis: 医保目录限二线使用
+      action: 拒付缺乏二线指征部分
+      denial_text: 使用二线药品但未见一线治疗失败或不耐受证据。
+    post_audit:
+      lead: 二线用药线索
+      evidence_hint: 用药记录 + 一线治疗史 + 目录备注
+
+B-210:
+  official:
+    gz_codes: [GZ10000102011000]
+    tier1: 政策类
+    tier2: 医疗服务项目政策限定类
+  effective_interval: { from: "2023-05-15", to: null }
+  workflow_messages:
+    precheck:
+      tone: block
+      title: 超医疗机构级别
+      body: 该项目限更高等级医疗机构开展，请确认本院级别是否符合。
+      disposal: 请确认项目与机构等级匹配后再开立。
+    during:
+      basis: 医疗服务项目限医疗机构级别
+      action: 拒付超级别收费
+      denial_text: 医疗机构级别低于项目限定级别。
+    post_audit:
+      lead: 机构等级不符
+      evidence_hint: 机构等级 + 项目限定级别 + 费用行
+
+B-211:
+  official:
+    gz_codes: [GZ10000101001000, GZ10000101002000]
+    tier1: 政策类
+    tier2: 药品政策限定类
+  effective_interval: { from: "2023-05-15", to: null }
+  workflow_messages:
+    precheck:
+      tone: block
+      title: 险种不符
+      body: 该项目或药品限特定险种（工伤/生育等），与当前参保类型不符。
+      disposal: 请确认险种与项目限定一致。
+    during:
+      basis: 目录限工伤保险/生育保险等
+      action: 拒付险种不符部分
+      denial_text: 参保险种与目录限定支付险种不符。
+    post_audit:
+      lead: 险种限定冲突
+      evidence_hint: 险种登记 + 目录限定 + 费用行
+
+T-201:
+  official:
+    gz_codes: [GZ10000301008000]
+    tier1: 医疗类
+    tier2: 药品合理使用类
+  effective_interval: { from: "2023-05-15", to: null }
+  workflow_messages:
+    precheck:
+      tone: suggest
+      title: 靶向药检测前置
+      body: 靶向药通常需对应基因/靶点检测阳性，请确认已有检测结果。
+      disposal: 请补充靶点检测阳性报告后再开立。
+    during:
+      basis: 靶向药限靶点检测阳性支付
+      action: 拒付或要求补证
+      denial_text: 使用靶向药但未见对应靶点检测阳性证据。
+    post_audit:
+      lead: 靶向药未检先用线索
+      evidence_hint: 用药 + 基因检测/病理报告 + 目录备注
+
+SUR-401:
+  official:
+    gz_codes: [GZ10000102002000]
+    tier1: 政策类
+    tier2: 医疗服务项目政策限定类
+  effective_interval: { from: "2023-05-15", to: null }
+  workflow_messages:
+    precheck:
+      tone: block
+      title: 手术折价
+      body: 同台次第二及以后手术应按规定折价，请核对手术计价。
+      disposal: 请按折价规则调整手术费用。
+    during:
+      basis: 手术项目未按规定折价收费
+      action: 核减应折价部分
+      denial_text: 同台手术未按计价规定折价收费。
+    post_audit:
+      lead: 手术折价
+      evidence_hint: 手术记录台次 + 费用行折价比例
+
+ICU-301:
+  official:
+    gz_codes: [GZ10000302002000]
+    tier1: 医疗类
+    tier2: 医疗服务项目合理使用类
+  effective_interval: { from: "2023-05-15", to: null }
+  workflow_messages:
+    precheck:
+      tone: suggest
+      title: ICU护理内涵
+      body: 特级护理内涵已含部分专项护理，请避免重复开立。
+      disposal: 请核对护理内涵与收费项目是否重复。
+    during:
+      basis: 重症监护与专项护理内涵重复
+      action: 核减重复护理费
+      denial_text: 特级/重症监护费内涵已含项目另行收费。
+    post_audit:
+      lead: ICU护理重复线索
+      evidence_hint: ICU记录 + 护理等级 + 费用行
+
+M-301:
+  official:
+    gz_codes: [GZ10000302002000]
+    tier1: 医疗类
+    tier2: 医疗服务项目合理使用类
+  effective_interval: { from: "2025-01-01", to: null }
+  workflow_messages:
+    precheck:
+      tone: suggest
+      title: 麻醉时长计费
+      body: 麻醉收费时长与记录可能不一致，请核对麻醉记录单。
+      disposal: 请按麻醉记录实际时长计费。
+    during:
+      basis: 麻醉收费与记录时长不符
+      action: 核减多计部分
+      denial_text: 麻醉收费时长超过麻醉记录支持时长。
+    post_audit:
+      lead: 麻醉时长不符
+      evidence_hint: 麻醉记录时长 + 麻醉费用行

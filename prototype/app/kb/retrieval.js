@@ -62,8 +62,8 @@ function buildPolicyMaps(kb1, kb2, pl) {
         }
       }
     }
-    const summary = (d.official_example ? d.official_example + ' ' : '') + (d.items || []).map(i => i.text).join(' / ');
-    for (const k of [`KB1-问题清单${alias}(行业B类·待官方核)`, `KB1-问题清单${alias}(旁证·待官方核)`]) {
+    const summary = ((d.official_example ? d.official_example + ' ' : '') + (d.items || []).map(i => i.text).join(' / ')).trim();
+    if (summary) for (const k of [`KB1-问题清单${alias}(行业B类·待官方核)`, `KB1-问题清单${alias}(旁证·待官方核)`]) {
       policyTexts[k] = summary.slice(0, 400);
     }
   }

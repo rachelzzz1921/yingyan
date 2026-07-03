@@ -1,0 +1,67 @@
+{
+  "case_meta": {
+    "case_id": "YY-BENCH-BOUNDARY-TEMPORAL-001",
+    "case_title": "时点法演示·2024结算 vs 2025生效规则",
+    "disclaimer": "虚构数据。演示时点法：M-301 规则 effective_interval.from=2025-01-01，本案结算日 2024-08-20，引擎应输出时效否决而非可追回疑点。",
+    "embedded_violation_count": 0,
+    "demo_temporal_showcase": true,
+    "settlement_date": "2024-08-20",
+    "settlement_summary": {
+      "total_amount": 1200.0,
+      "insurance_paid_amount": 1200.0,
+      "currency": "CNY",
+      "settle_type": "住院·按项目付费",
+      "settlement_date": "2024-08-20"
+    }
+  },
+  "front_page": {
+    "doc_type": "病案首页",
+    "hospital": "示范市第一人民医院（虚构）",
+    "hospital_level": "三级甲等",
+    "patient_name": "时点法演示",
+    "sex": "女",
+    "age": 48,
+    "birth_date": "1976-03-08",
+    "insurance_type": "职工基本医疗保险",
+    "admission_no": "ZY20240818-0901",
+    "admit_time": "2024-08-18 09:00",
+    "discharge_time": "2024-08-20 10:00",
+    "actual_inpatient_days": 2,
+    "admit_dept": "肝胆外科",
+    "principal_diagnosis": { "name": "胆囊结石", "icd10": "K80.101" },
+    "operation": { "name": "腹腔镜胆囊切除术", "date": "2024-08-19", "anesthesia": "全身麻醉" }
+  },
+  "anesthesia_record": {
+    "anesthesia_method": "全身麻醉（气管插管全麻）",
+    "anesthesia_start": "2024-08-19 09:00",
+    "anesthesia_end": "2024-08-19 12:00",
+    "actual_duration_min": 180,
+    "pacu_used": false
+  },
+  "long_term_orders": { "items": [] },
+  "temporary_orders": { "items": [
+    { "order_id": "T03", "time": "2024-08-19 09:00", "content": "全身麻醉（气管插管）", "doctor": "郑医生" }
+  ]},
+  "fee_list": {
+    "settle_date": "2024-08-20",
+    "items": [
+      {
+        "line_no": 1,
+        "fee_date": "2024-08-19",
+        "category": "麻醉费",
+        "item_name": "全身麻醉（气管插管）",
+        "qty": 1,
+        "unit": "次",
+        "unit_price": 1200.0,
+        "amount": 1200.0,
+        "duration_charged_min": 240,
+        "linked_order": "T03"
+      }
+    ],
+    "total_amount": 1200.0
+  },
+  "discharge_summary": {
+    "discharge_date": "2024-08-20",
+    "hospital_course": "腹腔镜胆囊切除术后恢复良好。"
+  }
+}

@@ -1,9 +1,9 @@
 {
   "meta": {
-    "schema_version": "3.2",
+    "schema_version": "3.3",
     "rules_version": "v0.3",
     "generated_date": "2026-06-12",
-    "total_rules": 63,
+    "total_rules": 79,
     "three_element_gate": [
       "原始证据定位",
       "违反的政策条款原文",
@@ -297,6 +297,24 @@
         "exam_scope": true
       },
       {
+        "id": "B-209",
+        "title": "诊疗合理 · 药品限二线使用（两库索引）（B-209）",
+        "prefix": "B",
+        "exam_scope": true
+      },
+      {
+        "id": "B-210",
+        "title": "诊疗合理 · 药品限医疗机构级别（两库索引）（B-210）",
+        "prefix": "B",
+        "exam_scope": true
+      },
+      {
+        "id": "B-211",
+        "title": "诊疗合理 · 药品限险种（两库索引）（B-211）",
+        "prefix": "B",
+        "exam_scope": true
+      },
+      {
         "id": "B-202",
         "title": "诊疗合理 · 无指征使用抗菌药物（B-202）",
         "prefix": "B",
@@ -565,6 +583,84 @@
         "title": "AGE · 未成年用药年龄分层(14/18岁两档)（AGE-101）",
         "prefix": "AGE",
         "exam_scope": true
+      },
+      {
+        "id": "L3-DRX",
+        "title": "L3 · 重复开药/药品种类超标（L3-DRX）",
+        "prefix": "L3",
+        "exam_scope": true
+      },
+      {
+        "id": "L3-CDM",
+        "title": "L3 · 编码/诊断手术不符（L3-CDM）",
+        "prefix": "L3",
+        "exam_scope": true
+      },
+      {
+        "id": "L3-SAF",
+        "title": "L3 · 用药安全(禁忌/相互作用/妊娠)（L3-SAF）",
+        "prefix": "L3",
+        "exam_scope": true
+      },
+      {
+        "id": "L3-TCM",
+        "title": "L3 · 中药饮片用法/配伍（L3-TCM）",
+        "prefix": "L3",
+        "exam_scope": true
+      },
+      {
+        "id": "L3-DS",
+        "title": "L3 · 结算/明细数据异常（L3-DS）",
+        "prefix": "L3",
+        "exam_scope": true
+      },
+      {
+        "id": "ZB-001",
+        "title": "ZB · 药费占比统计监测（ZB-001）",
+        "prefix": "ZB",
+        "exam_scope": true
+      },
+      {
+        "id": "ZB-002",
+        "title": "ZB · 检验检查占比统计监测（ZB-002）",
+        "prefix": "ZB",
+        "exam_scope": true
+      },
+      {
+        "id": "ZB-003",
+        "title": "ZB · 耗材占比统计监测（ZB-003）",
+        "prefix": "ZB",
+        "exam_scope": true
+      },
+      {
+        "id": "ZB-004",
+        "title": "ZB · 治疗占比统计监测（ZB-004）",
+        "prefix": "ZB",
+        "exam_scope": true
+      },
+      {
+        "id": "ZB-005",
+        "title": "ZB · CT检查占比统计监测（ZB-005）",
+        "prefix": "ZB",
+        "exam_scope": true
+      },
+      {
+        "id": "ZB-006",
+        "title": "ZB · 核磁检查占比统计监测（ZB-006）",
+        "prefix": "ZB",
+        "exam_scope": true
+      },
+      {
+        "id": "ZB-007",
+        "title": "ZB · 院内感染发生率统计监测（ZB-007）",
+        "prefix": "ZB",
+        "exam_scope": true
+      },
+      {
+        "id": "ZB-008",
+        "title": "ZB · 非计划再入院率统计监测（ZB-008）",
+        "prefix": "ZB",
+        "exam_scope": true
       }
     ]
   },
@@ -602,6 +698,38 @@
         "gender_restricted_table": "KB1-性别限定项目对照表"
       },
       "demo_seed": "男性患者费用清单含'宫颈刮片'",
+      "official": {
+        "gz_codes": [
+          "GZ10000302004000",
+          "GZ10000301004000"
+        ],
+        "tier1": "政策类",
+        "tier2": "医疗服务项目政策限定类"
+      },
+      "effective_interval": {
+        "from": "2023-05-15",
+        "to": null
+      },
+      "code_set_refs": [
+        "gender_services_v2024"
+      ],
+      "workflow_messages": {
+        "precheck": {
+          "tone": "block",
+          "title": "性别与项目冲突",
+          "body": "本次开立项目与患者性别登记不符，请核对身份信息或调整项目。",
+          "disposal": "请核对患者性别与项目适用人群后再开立。"
+        },
+        "during": {
+          "basis": "区分性别使用的医疗服务项目与患者性别矛盾",
+          "action": "拒付或责令退回相应费用",
+          "denial_text": "患者性别与收费项目适用性别不符，涉嫌虚构医药服务项目。"
+        },
+        "post_audit": {
+          "lead": "性别—项目硬互斥",
+          "evidence_hint": "费用行项目名 + 病案首页性别 + 区分性别使用清单条目"
+        }
+      },
       "catalog": {
         "prefix": "F",
         "family_label": "基础逻辑",
@@ -642,6 +770,43 @@
         "age_restricted_table": "KB1-年龄适用人群对照表"
       },
       "demo_seed": "成人患者收'新生儿护理'",
+      "official": {
+        "gz_codes": [
+          "GZ10000101007000",
+          "GZ10000101006000",
+          "GZ10000102005000",
+          "GZ10000102006000",
+          "GZ10000103001000",
+          "GZ10000103002000",
+          "GZ10000302003000"
+        ],
+        "tier1": "政策类",
+        "tier2": "药品政策限定类"
+      },
+      "effective_interval": {
+        "from": "2023-05-15",
+        "to": null
+      },
+      "code_set_refs": [
+        "child_drugs_v2024"
+      ],
+      "workflow_messages": {
+        "precheck": {
+          "tone": "block",
+          "title": "年龄与项目/药品不符",
+          "body": "该项目或药品有年龄限定，当前患者年龄不在适用范围内。",
+          "disposal": "请确认患者年龄符合医保支付限定后再开立。"
+        },
+        "during": {
+          "basis": "医保目录年龄限定支付范围",
+          "action": "拒付超年龄限定部分",
+          "denial_text": "收费项目或药品超出目录年龄限定支付范围。"
+        },
+        "post_audit": {
+          "lead": "年龄—项目/药品冲突",
+          "evidence_hint": "费用行 + 出生日期/年龄 + 目录限定条款"
+        }
+      },
       "catalog": {
         "prefix": "F",
         "family_label": "基础逻辑",
@@ -682,6 +847,36 @@
       "kb2_refs": [],
       "params": {},
       "demo_seed": "出院日(2026-03-20)次日(03-21)仍计二级护理+输液费",
+      "official": {
+        "gz_codes": [
+          "GZ10000201003000",
+          "GZ10000102009000",
+          "GZ10000201008000"
+        ],
+        "tier1": "管理类",
+        "tier2": "信息数据监管类"
+      },
+      "effective_interval": {
+        "from": "2023-05-15",
+        "to": null
+      },
+      "workflow_messages": {
+        "precheck": {
+          "tone": "suggest",
+          "title": "费用日期异常",
+          "body": "开立日期与在院时段可能不一致，请核对计费时点。",
+          "disposal": "请确认费用发生时间在合理诊疗时段内。"
+        },
+        "during": {
+          "basis": "出院/死亡后仍发生费用或时间逻辑矛盾",
+          "action": "拒付出院后计费部分",
+          "denial_text": "费用发生日晚于出院日期，对应服务不可能发生。"
+        },
+        "post_audit": {
+          "lead": "时间逻辑硬冲突",
+          "evidence_hint": "费用行日期 + 出院小结/病案首页出院时间"
+        }
+      },
       "test_cases": [
         {
           "id": "F-003-p1",
@@ -765,6 +960,34 @@
         "max_per_day": "按项目配置(吸氧24h/护理24h/...)"
       },
       "demo_seed": "单日'持续吸氧'计费30小时",
+      "official": {
+        "gz_codes": [
+          "GZ10000102014000"
+        ],
+        "tier1": "政策类",
+        "tier2": "医疗服务项目政策限定类"
+      },
+      "effective_interval": {
+        "from": "2023-05-15",
+        "to": null
+      },
+      "workflow_messages": {
+        "precheck": {
+          "tone": "block",
+          "title": "单日计量超物理上限",
+          "body": "按小时计费项目单日累计超过24小时，请核对计费数量。",
+          "disposal": "请修正计费数量或补充合理说明。"
+        },
+        "during": {
+          "basis": "单日计时项目超物理上限",
+          "action": "核减超量部分",
+          "denial_text": "同一计时项目单日累计超过24小时，物理上不可能。"
+        },
+        "post_audit": {
+          "lead": "单日计量超上限",
+          "evidence_hint": "同日费用行聚合数量 + 项目计价单位"
+        }
+      },
       "catalog": {
         "prefix": "F",
         "family_label": "基础逻辑",
@@ -846,6 +1069,37 @@
         "freq_limit_table": "从地方价格项目规范导入"
       },
       "demo_seed": "入院诊查费(限每住院1次)重复计费2次",
+      "official": {
+        "gz_codes": [
+          "GZ10000101009000",
+          "GZ10000101010000",
+          "GZ10000102014000",
+          "GZ10000102010000"
+        ],
+        "tier1": "政策类",
+        "tier2": "药品政策限定类"
+      },
+      "effective_interval": {
+        "from": "2023-05-15",
+        "to": null
+      },
+      "workflow_messages": {
+        "precheck": {
+          "tone": "block",
+          "title": "超频次/超疗程",
+          "body": "该项目或药品已超过政策允许的支付频次或疗程上限。",
+          "disposal": "请确认是否符合疗程/频次限定后再开立。"
+        },
+        "during": {
+          "basis": "医保目录疗程或频次限定",
+          "action": "拒付超限部分",
+          "denial_text": "超过目录规定的最大支付天数、开药量或频次上限。"
+        },
+        "post_audit": {
+          "lead": "限频/疗程超限",
+          "evidence_hint": "费用行聚合次数 + 规则依据中的天数/次数上限"
+        }
+      },
       "catalog": {
         "prefix": "F",
         "family_label": "基础逻辑",
@@ -891,6 +1145,35 @@
         "connotation_kb": "KB1-立项指南-项目内涵"
       },
       "demo_seed": "收'经皮椎体成形术'同时另收'椎体穿刺术'；'心电监护'同日另收'血氧饱和度监测'",
+      "official": {
+        "gz_codes": [
+          "GZ10000102001000",
+          "GZ10000102015000"
+        ],
+        "tier1": "政策类",
+        "tier2": "医疗服务项目政策限定类"
+      },
+      "effective_interval": {
+        "from": "2023-05-15",
+        "to": null
+      },
+      "workflow_messages": {
+        "precheck": {
+          "tone": "block",
+          "title": "医疗服务项目超限定单价收费",
+          "body": "系统检测到可能违反「医疗服务项目超限定单价收费」的情形，请核对后再继续。",
+          "disposal": "请修正后再提交结算/开立。"
+        },
+        "during": {
+          "basis": "对最新版医疗服务项目分类与代码中限定单 价的医疗服务项目进行监管。",
+          "action": "拒付或责令退回相应费用",
+          "denial_text": "违反医疗服务项目超限定单价收费相关医保监管要求。"
+        },
+        "post_audit": {
+          "lead": "医疗服务项目超限定单价收费",
+          "evidence_hint": "费用明细 + 病案首页/诊断编码 + 政策依据条目"
+        }
+      },
       "test_cases": [
         {
           "id": "A-101-p1",
@@ -975,6 +1258,34 @@
         "synonym_map": "KB1-同义映射表"
       },
       "demo_seed": "'特级护理'与'重症监护'同日并收",
+      "official": {
+        "gz_codes": [
+          "GZ10000102012000"
+        ],
+        "tier1": "政策类",
+        "tier2": "医疗服务项目政策限定类"
+      },
+      "effective_interval": {
+        "from": "2023-05-15",
+        "to": null
+      },
+      "workflow_messages": {
+        "precheck": {
+          "tone": "block",
+          "title": "疑似重复/互斥收费",
+          "body": "本次医嘱中存在内涵包含或互斥的项目组合，请核对是否应合并计价。",
+          "disposal": "请确认项目内涵，避免重复收费。"
+        },
+        "during": {
+          "basis": "医疗服务项目重复收费（内涵包含或不得另行收费）",
+          "action": "拒付重复计价部分",
+          "denial_text": "同一时段互斥或包含关系项目重复收费。"
+        },
+        "post_audit": {
+          "lead": "互斥/重复收费",
+          "evidence_hint": "互斥项目对 + 同日费用行 + 立项指南内涵"
+        }
+      },
       "catalog": {
         "prefix": "A",
         "family_label": "收费合规",
@@ -1101,6 +1412,34 @@
         "nursing_price": "一级/二级/三级护理单价(江苏价格目录)"
       },
       "demo_seed": "医嘱'二级护理'，全程按'一级护理'计费(本案预埋点#4)",
+      "official": {
+        "gz_codes": [
+          "GZ10000302005000"
+        ],
+        "tier1": "医疗类",
+        "tier2": "医疗服务项目合理使用类"
+      },
+      "effective_interval": {
+        "from": "2023-05-15",
+        "to": null
+      },
+      "workflow_messages": {
+        "precheck": {
+          "tone": "suggest",
+          "title": "护理等级与医嘱不一致",
+          "body": "收费护理等级高于医嘱护理等级，请核对护理记录。",
+          "disposal": "请确认护理等级与医嘱、护理记录一致。"
+        },
+        "during": {
+          "basis": "护理等级收费与医嘱/记录不符",
+          "action": "按实际护理等级核减差额",
+          "denial_text": "收费护理等级高于医嘱或护理记录支持的等级。"
+        },
+        "post_audit": {
+          "lead": "护理等级不符",
+          "evidence_hint": "费用行护理等级 + 长期医嘱 + 护理记录"
+        }
+      },
       "test_cases": [
         {
           "id": "A-105-p1",
@@ -1189,6 +1528,34 @@
         "bundle_kb": "KB1-立项指南-打包项目"
       },
       "demo_seed": "手术含的常规缝合、冲洗拆开收；组套检验拆单项叠加",
+      "official": {
+        "gz_codes": [
+          "GZ10000102013000"
+        ],
+        "tier1": "政策类",
+        "tier2": "医疗服务项目政策限定类"
+      },
+      "effective_interval": {
+        "from": "2023-05-15",
+        "to": null
+      },
+      "workflow_messages": {
+        "precheck": {
+          "tone": "block",
+          "title": "医疗服务项目分解收费",
+          "body": "系统检测到可能违反「医疗服务项目分解收费」的情形，请核对后再继续。",
+          "disposal": "请修正后再提交结算/开立。"
+        },
+        "during": {
+          "basis": "对最新版医疗服务项目分类与代码中应合并 收费的医疗服务项目存在拆分为若干收费项 目的情形进行监管。",
+          "action": "拒付或责令退回相应费用",
+          "denial_text": "违反医疗服务项目分解收费相关医保监管要求。"
+        },
+        "post_audit": {
+          "lead": "医疗服务项目分解收费",
+          "evidence_hint": "费用明细 + 病案首页/诊断编码 + 政策依据条目"
+        }
+      },
       "catalog": {
         "prefix": "A",
         "family_label": "收费合规",
@@ -1231,6 +1598,36 @@
       "kb2_refs": [],
       "params": {},
       "demo_seed": "病程'行刮痧治疗'，费用清单结算'中医定向透药疗法'",
+      "official": {
+        "gz_codes": [
+          "GZ10000103003000",
+          "GZ10000303001000",
+          "GZ10000303003000"
+        ],
+        "tier1": "政策类",
+        "tier2": "医用耗材政策限定类"
+      },
+      "effective_interval": {
+        "from": "2023-05-15",
+        "to": null
+      },
+      "workflow_messages": {
+        "precheck": {
+          "tone": "block",
+          "title": "耗材超限定报销总额",
+          "body": "系统检测到可能违反「耗材超限定报销总额」的情形，请核对后再继续。",
+          "disposal": "请修正后再提交结算/开立。"
+        },
+        "during": {
+          "basis": "对《医保医用耗材分类与代码数据库》中有 限定报销总额的耗材进行监管。",
+          "action": "拒付或责令退回相应费用",
+          "denial_text": "违反耗材超限定报销总额相关医保监管要求。"
+        },
+        "post_audit": {
+          "lead": "耗材超限定报销总额",
+          "evidence_hint": "费用明细 + 病案首页/诊断编码 + 政策依据条目"
+        }
+      },
       "catalog": {
         "prefix": "A",
         "family_label": "收费合规",
@@ -1283,6 +1680,35 @@
         "negative_proof_scope": "已核对单据范围必须列明，阴性结论可复核"
       },
       "demo_seed": "收'伤口换药(大)'×6，医嘱与护理记录仅2次；收'雾化吸入'全程无医嘱",
+      "official": {
+        "gz_codes": [
+          "GZ10000302001000",
+          "GZ10000303002000"
+        ],
+        "tier1": "医疗类",
+        "tier2": "医疗服务项目合理使用类"
+      },
+      "effective_interval": {
+        "from": "2023-05-15",
+        "to": null
+      },
+      "workflow_messages": {
+        "precheck": {
+          "tone": "suggest",
+          "title": "无指征检验检查",
+          "body": "系统检测到可能违反「无指征检验检查」的情形，请核对后再继续。",
+          "disposal": "请补充依据或调整方案；不符合限定应自费告知。"
+        },
+        "during": {
+          "basis": "对检验检查无相应适应症等情形进行监管。 6 规则编码一级分类二级分类规则名称定义",
+          "action": "按疑点线索移交复核",
+          "denial_text": "违反无指征检验检查相关医保监管要求。"
+        },
+        "post_audit": {
+          "lead": "无指征检验检查",
+          "evidence_hint": "费用明细 + 病案首页/诊断编码 + 政策依据条目"
+        }
+      },
       "catalog": {
         "prefix": "A",
         "family_label": "收费合规",
@@ -1460,6 +1886,34 @@
         "region_override": "江苏不缩紧限定支付(地市无权调整)，以国家目录备注为准"
       },
       "demo_seed": "人血白蛋白—病历白蛋白38g/L、非重症非抢救，医保结算多支",
+      "official": {
+        "gz_codes": [
+          "GZ10000101008000"
+        ],
+        "tier1": "政策类",
+        "tier2": "药品政策限定类"
+      },
+      "effective_interval": {
+        "from": "2023-05-15",
+        "to": null
+      },
+      "workflow_messages": {
+        "precheck": {
+          "tone": "block",
+          "title": "药品限适应症",
+          "body": "系统检测到可能违反「药品限适应症」的情形，请核对后再继续。",
+          "disposal": "请修正后再提交结算/开立。"
+        },
+        "during": {
+          "basis": "对《国家基本医疗保险、工伤保险和生育保 险药品目录》及《医保药品分类与代码数据 库》中有适应症支付限定的药品进行监管。",
+          "action": "拒付或责令退回相应费用",
+          "denial_text": "违反药品限适应症相关医保监管要求。"
+        },
+        "post_audit": {
+          "lead": "药品限适应症",
+          "evidence_hint": "费用明细 + 病案首页/诊断编码 + 政策依据条目"
+        }
+      },
       "test_cases": [
         {
           "id": "B-201-p1",
@@ -1547,6 +2001,39 @@
         "index": "kb_operational_index.json·indication_limited"
       },
       "demo_seed": "索引药品×诊断不符→线索",
+      "official": {
+        "gz_codes": [
+          "GZ10000101008000",
+          "GZ10000301002000",
+          "GZ10000101011000",
+          "GZ10000102007000",
+          "GZ10000301007000",
+          "GZ10000302006000"
+        ],
+        "tier1": "医疗类",
+        "tier2": "药品合理使用类"
+      },
+      "effective_interval": {
+        "from": "2023-05-15",
+        "to": null
+      },
+      "workflow_messages": {
+        "precheck": {
+          "tone": "suggest",
+          "title": "适应症证据不足",
+          "body": "该药品有适应症或限定支付要求，当前诊断/证据可能不足以支持医保支付。",
+          "disposal": "请补充适应症支撑材料；不符合限定应自费告知。"
+        },
+        "during": {
+          "basis": "药品超适应症或超限定支付范围",
+          "action": "拒付或转为自费",
+          "denial_text": "用药超出医保目录适应症或限定支付情形。"
+        },
+        "post_audit": {
+          "lead": "适应症/限定支付线索",
+          "evidence_hint": "费用行药品 + 诊断 + 病程/检验证据"
+        }
+      },
       "catalog": {
         "prefix": "B",
         "family_label": "诊疗合理",
@@ -1554,6 +2041,224 @@
         "layer_hint": "L2语义",
         "exam_scope": true,
         "display_title": "诊疗合理 · 药品限适应症（两库索引·语义层）（B-201-IND）"
+      }
+    },
+    {
+      "rule_id": "B-209",
+      "rule_name": "药品限二线使用（两库索引）",
+      "category": "B诊疗合理",
+      "violation_type": "将不属于医保基金支付范围的费用纳入医保结算",
+      "layer": "L2语义",
+      "risk_level": "中",
+      "applies_to": [
+        "住院",
+        "门诊"
+      ],
+      "specialty_tags": [
+        "通用",
+        "皮肤科"
+      ],
+      "trigger_logic": "L3 second_line 索引 → 费用行药品命中二线限定；\n病历检索一线无效/不耐受/规范治疗无效等前置证据；\n无证据 → 线索。\n",
+      "evidence_min_set": [
+        "费用行",
+        "两库限定支付原文",
+        "一线用药史检索"
+      ],
+      "output_modes": {
+        "线索": "未见二线前置证据",
+        "不输出": "病程载明一线无效或不耐受"
+      },
+      "exclusions": "病程明确记载一线治疗无效、不耐受或规范治疗无效的",
+      "policy_basis": [
+        "KB1-条例-第38条(六)",
+        "KB1-两库2025-药品限二线使用"
+      ],
+      "kb2_refs": [],
+      "params": {
+        "index": "kb_operational_index.json·second_line"
+      },
+      "demo_seed": "吡美莫司乳膏×特应性皮炎但无一线失败记录→线索",
+      "official": {
+        "gz_codes": [
+          "GZ10000101005000"
+        ],
+        "tier1": "政策类",
+        "tier2": "药品政策限定类"
+      },
+      "effective_interval": {
+        "from": "2023-05-15",
+        "to": null
+      },
+      "workflow_messages": {
+        "precheck": {
+          "tone": "suggest",
+          "title": "二线用药证据",
+          "body": "二线药品通常需一线治疗失败或不耐受证据，请确认是否已满足。",
+          "disposal": "请补充一线治疗无效/不耐受记录后再开立。"
+        },
+        "during": {
+          "basis": "医保目录限二线使用",
+          "action": "拒付缺乏二线指征部分",
+          "denial_text": "使用二线药品但未见一线治疗失败或不耐受证据。"
+        },
+        "post_audit": {
+          "lead": "二线用药线索",
+          "evidence_hint": "用药记录 + 一线治疗史 + 目录备注"
+        }
+      },
+      "catalog": {
+        "prefix": "B",
+        "family_label": "诊疗合理",
+        "family_description": "无指征、过度医疗、出院带药",
+        "layer_hint": "L2语义",
+        "exam_scope": true,
+        "display_title": "诊疗合理 · 药品限二线使用（两库索引）（B-209）"
+      }
+    },
+    {
+      "rule_id": "B-210",
+      "rule_name": "药品限医疗机构级别（两库索引）",
+      "category": "B诊疗合理",
+      "violation_type": "将不属于医保基金支付范围的费用纳入医保结算",
+      "layer": "L1+L2",
+      "risk_level": "中",
+      "applies_to": [
+        "住院",
+        "门诊"
+      ],
+      "specialty_tags": [
+        "通用"
+      ],
+      "trigger_logic": "L3 facility_level 索引 → 比对病案首页机构级别 vs 限定最低级别；\n机构级别不足 → 线索。\n",
+      "evidence_min_set": [
+        "费用行",
+        "机构级别",
+        "两库限定支付原文"
+      ],
+      "output_modes": {
+        "线索": "机构级别可能不符",
+        "不输出": "三级/二级医院使用二级及以上限定药"
+      },
+      "exclusions": "首次处方在符合级别机构、本次仅延续用药的复杂情形需人工复核",
+      "policy_basis": [
+        "KB1-条例-第38条(六)",
+        "KB1-两库2025-药品限医疗机构"
+      ],
+      "kb2_refs": [],
+      "params": {
+        "index": "kb_operational_index.json·facility_level"
+      },
+      "demo_seed": "一级医院使用限二级及以上药品→线索",
+      "official": {
+        "gz_codes": [
+          "GZ10000102011000",
+          "GZ10000101012000"
+        ],
+        "tier1": "政策类",
+        "tier2": "医疗服务项目政策限定类"
+      },
+      "effective_interval": {
+        "from": "2023-05-15",
+        "to": null
+      },
+      "workflow_messages": {
+        "precheck": {
+          "tone": "block",
+          "title": "超医疗机构级别",
+          "body": "该项目限更高等级医疗机构开展，请确认本院级别是否符合。",
+          "disposal": "请确认项目与机构等级匹配后再开立。"
+        },
+        "during": {
+          "basis": "医疗服务项目限医疗机构级别",
+          "action": "拒付超级别收费",
+          "denial_text": "医疗机构级别低于项目限定级别。"
+        },
+        "post_audit": {
+          "lead": "机构等级不符",
+          "evidence_hint": "机构等级 + 项目限定级别 + 费用行"
+        }
+      },
+      "catalog": {
+        "prefix": "B",
+        "family_label": "诊疗合理",
+        "family_description": "无指征、过度医疗、出院带药",
+        "layer_hint": "L2语义",
+        "exam_scope": true,
+        "display_title": "诊疗合理 · 药品限医疗机构级别（两库索引）（B-210）"
+      }
+    },
+    {
+      "rule_id": "B-211",
+      "rule_name": "药品限险种（两库索引）",
+      "category": "B诊疗合理",
+      "violation_type": "将不属于医保基金支付范围的费用纳入医保结算",
+      "layer": "L1确定性",
+      "risk_level": "高",
+      "applies_to": [
+        "住院",
+        "门诊"
+      ],
+      "specialty_tags": [
+        "通用",
+        "产科"
+      ],
+      "trigger_logic": "L3 insurance_type 索引 → 比对参保险种 vs 限定险种（工伤/生育）；\n不符 → 疑点。\n",
+      "evidence_min_set": [
+        "费用行",
+        "参保险种",
+        "两库限定支付原文"
+      ],
+      "output_modes": {
+        "疑点": "险种与限定支付范围不符"
+      },
+      "exclusions": "无",
+      "policy_basis": [
+        "KB1-条例-第38条(六)",
+        "KB1-两库2025-药品限生育保险/工伤保险"
+      ],
+      "kb2_refs": [],
+      "params": {
+        "index": "kb_operational_index.json·insurance_type"
+      },
+      "demo_seed": "职工医保结算限生育保险药品→疑点",
+      "official": {
+        "gz_codes": [
+          "GZ10000101001000",
+          "GZ10000101002000",
+          "GZ10000102003000",
+          "GZ10000102004000"
+        ],
+        "tier1": "政策类",
+        "tier2": "药品政策限定类"
+      },
+      "effective_interval": {
+        "from": "2023-05-15",
+        "to": null
+      },
+      "workflow_messages": {
+        "precheck": {
+          "tone": "block",
+          "title": "险种不符",
+          "body": "该项目或药品限特定险种（工伤/生育等），与当前参保类型不符。",
+          "disposal": "请确认险种与项目限定一致。"
+        },
+        "during": {
+          "basis": "目录限工伤保险/生育保险等",
+          "action": "拒付险种不符部分",
+          "denial_text": "参保险种与目录限定支付险种不符。"
+        },
+        "post_audit": {
+          "lead": "险种限定冲突",
+          "evidence_hint": "险种登记 + 目录限定 + 费用行"
+        }
+      },
+      "catalog": {
+        "prefix": "B",
+        "family_label": "诊疗合理",
+        "family_description": "无指征、过度医疗、出院带药",
+        "layer_hint": "L2语义",
+        "exam_scope": true,
+        "display_title": "诊疗合理 · 药品限险种（两库索引）（B-211）"
       }
     },
     {
@@ -1589,6 +2294,36 @@
       "params": {},
       "demo_seed": "无感染证据使用三代头孢",
       "note": "本案头孢呋辛有CRP升高+黄痰支持感染→不触发B-202，仅触发A-109超量(测试不过度报)",
+      "official": {
+        "gz_codes": [
+          "GZ10000202002000",
+          "GZ10000202003000",
+          "GZ10000301001000"
+        ],
+        "tier1": "管理类",
+        "tier2": "药品监管类"
+      },
+      "effective_interval": {
+        "from": "2023-05-15",
+        "to": null
+      },
+      "workflow_messages": {
+        "precheck": {
+          "tone": "block",
+          "title": "围手术期抗菌药物预防性应用监管",
+          "body": "系统检测到可能违反「围手术期抗菌药物预防性应用监管」的情形，请核对后再继续。",
+          "disposal": "请修正后再提交结算/开立。"
+        },
+        "during": {
+          "basis": "对《国家基本医疗保险、工伤保险和生育保 险药品目录》及《医保药品分类与代码数据 库》中抗菌药物的围手术期预防性应用情况 进行监管。",
+          "action": "拒付或责令退回相应费用",
+          "denial_text": "违反围手术期抗菌药物预防性应用监管相关医保监管要求。"
+        },
+        "post_audit": {
+          "lead": "围手术期抗菌药物预防性应用监管",
+          "evidence_hint": "费用明细 + 病案首页/诊断编码 + 政策依据条目"
+        }
+      },
       "catalog": {
         "prefix": "B",
         "family_label": "诊疗合理",
@@ -1908,6 +2643,35 @@
         "豁免": "放化疗周期/血透/急诊新发/转诊(全局豁免清单,仲裁层统一应用)"
       },
       "demo_seed": "本案干扰项2：第1→第2周期间隔15天、主诊断同，但属放化疗周期→正确不报",
+      "official": {
+        "gz_codes": [
+          "GZ10000204001000",
+          "GZ10000204004000"
+        ],
+        "tier1": "管理类",
+        "tier2": "行为主体监管类"
+      },
+      "effective_interval": {
+        "from": "2023-05-15",
+        "to": null
+      },
+      "workflow_messages": {
+        "precheck": {
+          "tone": "block",
+          "title": "分解住院",
+          "body": "系统检测到可能违反「分解住院」的情形，请核对后再继续。",
+          "disposal": "请修正后再提交结算/开立。"
+        },
+        "during": {
+          "basis": "对参保人在非特殊情况下，在同一家医疗机 构相邻的两次住院间隔异常情形进行监管。",
+          "action": "拒付或责令退回相应费用",
+          "denial_text": "违反分解住院相关医保监管要求。"
+        },
+        "post_audit": {
+          "lead": "分解住院",
+          "evidence_hint": "费用明细 + 病案首页/诊断编码 + 政策依据条目"
+        }
+      },
       "catalog": {
         "prefix": "C",
         "family_label": "住院行为",
@@ -1948,6 +2712,34 @@
         "idle_days": 3
       },
       "demo_seed": "住院期间连续3日无任何记录但床位护理费持续计费",
+      "official": {
+        "gz_codes": [
+          "GZ10000204005000"
+        ],
+        "tier1": "管理类",
+        "tier2": "行为主体监管类"
+      },
+      "effective_interval": {
+        "from": "2023-05-15",
+        "to": null
+      },
+      "workflow_messages": {
+        "precheck": {
+          "tone": "block",
+          "title": "无指征住院（低标准入院）",
+          "body": "系统检测到可能违反「无指征住院（低标准入院）」的情形，请核对后再继续。",
+          "disposal": "请修正后再提交结算/开立。"
+        },
+        "during": {
+          "basis": "对参保人不满足住院标准而发生住院行为的 情形进行监管。",
+          "action": "拒付或责令退回相应费用",
+          "denial_text": "违反无指征住院（低标准入院）相关医保监管要求。"
+        },
+        "post_audit": {
+          "lead": "无指征住院（低标准入院）",
+          "evidence_hint": "费用明细 + 病案首页/诊断编码 + 政策依据条目"
+        }
+      },
       "catalog": {
         "prefix": "C",
         "family_label": "住院行为",
@@ -2071,6 +2863,34 @@
         "not_grouping_code_list": "KB2-2.0不入组编码列表"
       },
       "demo_seed": "社区获得性肺炎编码为'重症肺炎'但血气/氧合/病程不支持",
+      "official": {
+        "gz_codes": [
+          "GZ10000204002000"
+        ],
+        "tier1": "管理类",
+        "tier2": "行为主体监管类"
+      },
+      "effective_interval": {
+        "from": "2023-05-15",
+        "to": null
+      },
+      "workflow_messages": {
+        "precheck": {
+          "tone": "block",
+          "title": "频繁门诊对单位时间区内参保人门诊就医次数",
+          "body": "系统检测到可能违反「频繁门诊对单位时间区内参保人门诊就医次数超出设定」的情形，请核对后再继续。",
+          "disposal": "请修正后再提交结算/开立。"
+        },
+        "during": {
+          "basis": "管理类行为主体监管类频繁门诊 对单位时间区内参保人门诊就医次数超出设 定次数的情形进行监管。",
+          "action": "拒付或责令退回相应费用",
+          "denial_text": "违反频繁门诊对单位时间区内参保人门诊就医次数超出设定相关医保监管要求。"
+        },
+        "post_audit": {
+          "lead": "频繁门诊对单位时间区内参保人门诊就医次数超出设定",
+          "evidence_hint": "费用明细 + 病案首页/诊断编码 + 政策依据条目"
+        }
+      },
       "test_cases": [
         {
           "id": "D-401-p1",
@@ -2441,6 +3261,35 @@
           "工程审：触发器=结算明确靶点药，三态可判✓"
         ]
       },
+      "official": {
+        "gz_codes": [
+          "GZ10000301008000",
+          "GZ10000301001000"
+        ],
+        "tier1": "医疗类",
+        "tier2": "药品合理使用类"
+      },
+      "effective_interval": {
+        "from": "2023-05-15",
+        "to": null
+      },
+      "workflow_messages": {
+        "precheck": {
+          "tone": "suggest",
+          "title": "靶向药检测前置",
+          "body": "靶向药通常需对应基因/靶点检测阳性，请确认已有检测结果。",
+          "disposal": "请补充靶点检测阳性报告后再开立。"
+        },
+        "during": {
+          "basis": "靶向药限靶点检测阳性支付",
+          "action": "拒付或要求补证",
+          "denial_text": "使用靶向药但未见对应靶点检测阳性证据。"
+        },
+        "post_audit": {
+          "lead": "靶向药未检先用线索",
+          "evidence_hint": "用药 + 基因检测/病理报告 + 目录备注"
+        }
+      },
       "test_cases": [
         {
           "id": "T-201-p1",
@@ -2665,6 +3514,34 @@
       },
       "policy_attribution_note": "★核验(2026-06-12)：长效升白针(聚乙二醇化G-CSF,西药917乙类)医保限定支付='限前次化疗曾发生重度中性粒细胞减少的患者'(✅已核验,2024版目录文本PDF逐字)。本案前次周期仅有概述性'无骨髓抑制不适'记载、无前次逐日血常规→判定须调阅前次血常规、证据在单包外→出线索。短效G-CSF(西药918)无此限定。",
       "demo_seed": "长效升白针，前次化疗无重度中性粒减少证据(前次血常规不在本包)，预防性使用(本案预埋点#6→线索，可演示控辩裁降级)",
+      "official": {
+        "gz_codes": [
+          "GZ10000301009000"
+        ],
+        "tier1": "医疗类",
+        "tier2": "药品合理使用类"
+      },
+      "effective_interval": {
+        "from": "2023-05-15",
+        "to": null
+      },
+      "workflow_messages": {
+        "precheck": {
+          "tone": "suggest",
+          "title": "老年人用药安全",
+          "body": "系统检测到可能违反「老年人用药安全」的情形，请核对后再继续。",
+          "disposal": "请补充依据或调整方案；不符合限定应自费告知。"
+        },
+        "during": {
+          "basis": "对《国家基本医疗保险、工伤保险和生育保 险药品目录》及《医保药品分类与代码数据 库》中有老年人使用禁忌的药品进行监管。",
+          "action": "按疑点线索移交复核",
+          "denial_text": "违反老年人用药安全相关医保监管要求。"
+        },
+        "post_audit": {
+          "lead": "老年人用药安全",
+          "evidence_hint": "费用明细 + 病案首页/诊断编码 + 政策依据条目"
+        }
+      },
       "test_cases": [
         {
           "id": "T-205-p1",
@@ -2918,6 +3795,34 @@
       "kb2_refs": [],
       "params": {},
       "demo_seed": "全麻收费180分钟，麻醉记录实际120分钟",
+      "official": {
+        "gz_codes": [
+          "GZ10000302002000"
+        ],
+        "tier1": "医疗类",
+        "tier2": "医疗服务项目合理使用类"
+      },
+      "effective_interval": {
+        "from": "2025-01-01",
+        "to": null
+      },
+      "workflow_messages": {
+        "precheck": {
+          "tone": "suggest",
+          "title": "麻醉时长计费",
+          "body": "麻醉收费时长与记录可能不一致，请核对麻醉记录单。",
+          "disposal": "请按麻醉记录实际时长计费。"
+        },
+        "during": {
+          "basis": "麻醉收费与记录时长不符",
+          "action": "核减多计部分",
+          "denial_text": "麻醉收费时长超过麻醉记录支持时长。"
+        },
+        "post_audit": {
+          "lead": "麻醉时长不符",
+          "evidence_hint": "麻醉记录时长 + 麻醉费用行"
+        }
+      },
       "catalog": {
         "prefix": "M",
         "family_label": "麻醉",
@@ -3069,6 +3974,35 @@
         "note": "ICU特级/一般专项护理重复与两库互斥索引同笔费用时，专科规则优先"
       },
       "demo_seed": "ICU特级护理同时另收一般专项护理",
+      "official": {
+        "gz_codes": [
+          "GZ10000302002000",
+          "GZ10000302005000"
+        ],
+        "tier1": "医疗类",
+        "tier2": "医疗服务项目合理使用类"
+      },
+      "effective_interval": {
+        "from": "2023-05-15",
+        "to": null
+      },
+      "workflow_messages": {
+        "precheck": {
+          "tone": "suggest",
+          "title": "ICU护理内涵",
+          "body": "特级护理内涵已含部分专项护理，请避免重复开立。",
+          "disposal": "请核对护理内涵与收费项目是否重复。"
+        },
+        "during": {
+          "basis": "重症监护与专项护理内涵重复",
+          "action": "核减重复护理费",
+          "denial_text": "特级/重症监护费内涵已含项目另行收费。"
+        },
+        "post_audit": {
+          "lead": "ICU护理重复线索",
+          "evidence_hint": "ICU记录 + 护理等级 + 费用行"
+        }
+      },
       "catalog": {
         "prefix": "ICU",
         "family_label": "重症ICU",
@@ -3111,6 +4045,34 @@
         "discount_ratio": 0.75
       },
       "demo_seed": "同切口卵巢囊肿剔除术+卵巢修补术，第二术式未折价",
+      "official": {
+        "gz_codes": [
+          "GZ10000102002000"
+        ],
+        "tier1": "政策类",
+        "tier2": "医疗服务项目政策限定类"
+      },
+      "effective_interval": {
+        "from": "2023-05-15",
+        "to": null
+      },
+      "workflow_messages": {
+        "precheck": {
+          "tone": "block",
+          "title": "手术折价",
+          "body": "同台次第二及以后手术应按规定折价，请核对手术计价。",
+          "disposal": "请按折价规则调整手术费用。"
+        },
+        "during": {
+          "basis": "手术项目未按规定折价收费",
+          "action": "核减应折价部分",
+          "denial_text": "同台手术未按计价规定折价收费。"
+        },
+        "post_audit": {
+          "lead": "手术折价",
+          "evidence_hint": "手术记录台次 + 费用行折价比例"
+        }
+      },
       "catalog": {
         "prefix": "SUR",
         "family_label": "SUR",
@@ -3219,6 +4181,35 @@
       "kb2_refs": [],
       "params": {},
       "demo_seed": "刷卡结算但无对应药品出库",
+      "official": {
+        "gz_codes": [
+          "GZ10000202001000",
+          "GZ10000203001000"
+        ],
+        "tier1": "管理类",
+        "tier2": "药品监管类"
+      },
+      "effective_interval": {
+        "from": "2023-05-15",
+        "to": null
+      },
+      "workflow_messages": {
+        "precheck": {
+          "tone": "block",
+          "title": "药品进销存异常",
+          "body": "系统检测到可能违反「药品进销存异常」的情形，请核对后再继续。",
+          "disposal": "请修正后再提交结算/开立。"
+        },
+        "during": {
+          "basis": "对《国家基本医疗保险、工伤保险和生育保 险药品目录》及《医保药品分类与代码数据 库》中药品的进销存数据进行监管。",
+          "action": "拒付或责令退回相应费用",
+          "denial_text": "违反药品进销存异常相关医保监管要求。"
+        },
+        "post_audit": {
+          "lead": "药品进销存异常",
+          "evidence_hint": "费用明细 + 病案首页/诊断编码 + 政策依据条目"
+        }
+      },
       "catalog": {
         "prefix": "P",
         "family_label": "零售药店",
@@ -3330,6 +4321,34 @@
       "kb2_refs": [],
       "params": {},
       "demo_seed": "CT增强扫描同时另收CT平扫",
+      "official": {
+        "gz_codes": [
+          "GZ10000302001000"
+        ],
+        "tier1": "医疗类",
+        "tier2": "医疗服务项目合理使用类"
+      },
+      "effective_interval": {
+        "from": "2023-05-15",
+        "to": null
+      },
+      "workflow_messages": {
+        "precheck": {
+          "tone": "suggest",
+          "title": "无指征检验检查",
+          "body": "系统检测到可能违反「无指征检验检查」的情形，请核对后再继续。",
+          "disposal": "请补充依据或调整方案；不符合限定应自费告知。"
+        },
+        "during": {
+          "basis": "对检验检查无相应适应症等情形进行监管。 6 规则编码一级分类二级分类规则名称定义",
+          "action": "按疑点线索移交复核",
+          "denial_text": "违反无指征检验检查相关医保监管要求。"
+        },
+        "post_audit": {
+          "lead": "无指征检验检查",
+          "evidence_hint": "费用明细 + 病案首页/诊断编码 + 政策依据条目"
+        }
+      },
       "catalog": {
         "prefix": "IMG",
         "family_label": "医学影像",
@@ -3639,6 +4658,34 @@
         "pediatric_age": 14
       },
       "demo_seed": "16岁肺炎患者使用左氧氟沙星注射液(18岁以下禁用)——答疑现场周夕鸣亲口举例的14/18两档",
+      "official": {
+        "gz_codes": [
+          "GZ10000301003000"
+        ],
+        "tier1": "医疗类",
+        "tier2": "药品合理使用类"
+      },
+      "effective_interval": {
+        "from": "2023-05-15",
+        "to": null
+      },
+      "workflow_messages": {
+        "precheck": {
+          "tone": "suggest",
+          "title": "药品儿童禁用对儿童禁忌使用的药物进行监管",
+          "body": "系统检测到可能违反「药品儿童禁用对儿童禁忌使用的药物进行监管。」的情形，请核对后再继续。",
+          "disposal": "请补充依据或调整方案；不符合限定应自费告知。"
+        },
+        "during": {
+          "basis": "医疗类药品合理使用类药品儿童禁用对儿童禁忌使用的药物进行监管。",
+          "action": "按疑点线索移交复核",
+          "denial_text": "违反药品儿童禁用对儿童禁忌使用的药物进行监管。相关医保监管要求。"
+        },
+        "post_audit": {
+          "lead": "药品儿童禁用对儿童禁忌使用的药物进行监管。",
+          "evidence_hint": "费用明细 + 病案首页/诊断编码 + 政策依据条目"
+        }
+      },
       "catalog": {
         "prefix": "AGE",
         "family_label": "AGE",
@@ -3646,6 +4693,719 @@
         "layer_hint": "L1确定性",
         "exam_scope": true,
         "display_title": "AGE · 未成年用药年龄分层(14/18岁两档)（AGE-101）"
+      }
+    },
+    {
+      "rule_id": "L3-DRX",
+      "rule_name": "重复开药/药品种类超标",
+      "category": "B诊疗合理",
+      "violation_type": "重复开药",
+      "layer": "L1确定性",
+      "risk_level": "中",
+      "applies_to": [
+        "住院",
+        "门诊"
+      ],
+      "specialty_tags": [
+        "通用"
+      ],
+      "trigger_logic": "L3 duplicate_rx 族：同通用名/同成分重复开立或药品种类数超阈值",
+      "evidence_min_set": [
+        "药品费用行",
+        "医嘱/处方"
+      ],
+      "policy_basis": [
+        "KB1-两库2025-重复开药"
+      ],
+      "params": {
+        "max_distinct_drugs": 5
+      },
+      "official": {
+        "gz_codes": [
+          "GZ10000202004000",
+          "GZ10000204003000",
+          "GZ10000301006000"
+        ],
+        "tier1": "管理类",
+        "tier2": "药品监管类"
+      },
+      "effective_interval": {
+        "from": "2023-05-15",
+        "to": null
+      },
+      "workflow_messages": {
+        "precheck": {
+          "tone": "block",
+          "title": "药品种类超标",
+          "body": "系统检测到可能违反「药品种类超标」的情形，请核对后再继续。",
+          "disposal": "请修正后再提交结算/开立。"
+        },
+        "during": {
+          "basis": "对《国家基本医疗保险、工伤保险和生育保 险药品目录》及《医保药品分类与代码数据 库》中的药品进行日常开药种类的监管。",
+          "action": "拒付或责令退回相应费用",
+          "denial_text": "违反药品种类超标相关医保监管要求。"
+        },
+        "post_audit": {
+          "lead": "药品种类超标",
+          "evidence_hint": "费用明细 + 病案首页/诊断编码 + 政策依据条目"
+        }
+      },
+      "catalog": {
+        "prefix": "L3",
+        "family_label": "L3",
+        "family_description": "",
+        "layer_hint": "L1确定性",
+        "exam_scope": true,
+        "display_title": "L3 · 重复开药/药品种类超标（L3-DRX）"
+      }
+    },
+    {
+      "rule_id": "L3-CDM",
+      "rule_name": "编码/诊断手术不符",
+      "category": "F基础逻辑",
+      "violation_type": "编码异常",
+      "layer": "L1确定性",
+      "risk_level": "中",
+      "applies_to": [
+        "住院"
+      ],
+      "specialty_tags": [
+        "通用"
+      ],
+      "trigger_logic": "L3 coding_mismatch 族：诊断/手术编码与性别年龄或主手术选择矛盾",
+      "evidence_min_set": [
+        "病案首页诊断/手术",
+        "费用明细"
+      ],
+      "policy_basis": [
+        "KB1-两库2025-编码监管"
+      ],
+      "official": {
+        "gz_codes": [
+          "GZ10000201003000",
+          "GZ10000201004000",
+          "GZ10000201005000",
+          "GZ10000201006000",
+          "GZ10000204006000",
+          "GZ10000204007000"
+        ],
+        "tier1": "管理类",
+        "tier2": "信息数据监管类"
+      },
+      "effective_interval": {
+        "from": "2023-05-15",
+        "to": null
+      },
+      "workflow_messages": {
+        "precheck": {
+          "tone": "block",
+          "title": "疾病诊断编码异常对医保结算清单中填写的诊",
+          "body": "系统检测到可能违反「疾病诊断编码异常对医保结算清单中填写的诊断编码在」的情形，请核对后再继续。",
+          "disposal": "请修正后再提交结算/开立。"
+        },
+        "during": {
+          "basis": "管理类信息数据监管类疾病诊断编码异常 对医保结算清单中填写的诊断编码在结算明 细中无对应医疗服务项目（或药品、医用耗 材）的情形进行监管。",
+          "action": "拒付或责令退回相应费用",
+          "denial_text": "违反疾病诊断编码异常对医保结算清单中填写的诊断编码在相关医保监管要求。"
+        },
+        "post_audit": {
+          "lead": "疾病诊断编码异常对医保结算清单中填写的诊断编码在",
+          "evidence_hint": "费用明细 + 病案首页/诊断编码 + 政策依据条目"
+        }
+      },
+      "catalog": {
+        "prefix": "L3",
+        "family_label": "L3",
+        "family_description": "",
+        "layer_hint": "L1确定性",
+        "exam_scope": true,
+        "display_title": "L3 · 编码/诊断手术不符（L3-CDM）"
+      }
+    },
+    {
+      "rule_id": "L3-SAF",
+      "rule_name": "用药安全(禁忌/相互作用/妊娠)",
+      "category": "B诊疗合理",
+      "violation_type": "用药安全",
+      "layer": "L1确定性",
+      "risk_level": "中",
+      "applies_to": [
+        "住院",
+        "门诊"
+      ],
+      "specialty_tags": [
+        "通用"
+      ],
+      "trigger_logic": "L3 safety_rule 族：禁忌症/相互作用/妊娠期用药",
+      "evidence_min_set": [
+        "药品费用行",
+        "诊断/病程"
+      ],
+      "policy_basis": [
+        "KB2-用药安全"
+      ],
+      "official": {
+        "gz_codes": [
+          "GZ10000301005000",
+          "GZ10000301010000",
+          "GZ10000301011000"
+        ],
+        "tier1": "医疗类",
+        "tier2": "药品合理使用类"
+      },
+      "effective_interval": {
+        "from": "2023-05-15",
+        "to": null
+      },
+      "workflow_messages": {
+        "precheck": {
+          "tone": "suggest",
+          "title": "超说明书用量开药对超说明书给定剂量范围开",
+          "body": "系统检测到可能违反「超说明书用量开药对超说明书给定剂量范围开药情形进」的情形，请核对后再继续。",
+          "disposal": "请补充依据或调整方案；不符合限定应自费告知。"
+        },
+        "during": {
+          "basis": "医疗类药品合理使用类超说明书用量开药 对超说明书给定剂量范围开药情形进行监管 。",
+          "action": "按疑点线索移交复核",
+          "denial_text": "违反超说明书用量开药对超说明书给定剂量范围开药情形进相关医保监管要求。"
+        },
+        "post_audit": {
+          "lead": "超说明书用量开药对超说明书给定剂量范围开药情形进",
+          "evidence_hint": "费用明细 + 病案首页/诊断编码 + 政策依据条目"
+        }
+      },
+      "catalog": {
+        "prefix": "L3",
+        "family_label": "L3",
+        "family_description": "",
+        "layer_hint": "L1确定性",
+        "exam_scope": true,
+        "display_title": "L3 · 用药安全(禁忌/相互作用/妊娠)（L3-SAF）"
+      }
+    },
+    {
+      "rule_id": "L3-TCM",
+      "rule_name": "中药饮片用法/配伍",
+      "category": "B诊疗合理",
+      "violation_type": "中药不合理",
+      "layer": "L1确定性",
+      "risk_level": "中",
+      "applies_to": [
+        "住院",
+        "门诊"
+      ],
+      "specialty_tags": [
+        "中医"
+      ],
+      "trigger_logic": "L3 tcm_usage_rule 族：配伍禁忌或用法不符",
+      "evidence_min_set": [
+        "中药费用行",
+        "医嘱"
+      ],
+      "policy_basis": [
+        "KB1-两库2025-中药饮片"
+      ],
+      "official": {
+        "gz_codes": [
+          "GZ10000301012000"
+        ],
+        "tier1": "医疗类",
+        "tier2": "药品合理使用类"
+      },
+      "effective_interval": {
+        "from": "2023-05-15",
+        "to": null
+      },
+      "workflow_messages": {
+        "precheck": {
+          "tone": "suggest",
+          "title": "中药饮片配伍禁忌",
+          "body": "系统检测到可能违反「中药饮片配伍禁忌」的情形，请核对后再继续。",
+          "disposal": "请补充依据或调整方案；不符合限定应自费告知。"
+        },
+        "during": {
+          "basis": "对《国家基本医疗保险、工伤保险和生育保 险药品目录》及《医保药品分类与代码数据 库》的中药饮片配伍进行监管。",
+          "action": "按疑点线索移交复核",
+          "denial_text": "违反中药饮片配伍禁忌相关医保监管要求。"
+        },
+        "post_audit": {
+          "lead": "中药饮片配伍禁忌",
+          "evidence_hint": "费用明细 + 病案首页/诊断编码 + 政策依据条目"
+        }
+      },
+      "catalog": {
+        "prefix": "L3",
+        "family_label": "L3",
+        "family_description": "",
+        "layer_hint": "L1确定性",
+        "exam_scope": true,
+        "display_title": "L3 · 中药饮片用法/配伍（L3-TCM）"
+      }
+    },
+    {
+      "rule_id": "L3-DS",
+      "rule_name": "结算/明细数据异常",
+      "category": "F基础逻辑",
+      "violation_type": "数据质量",
+      "layer": "L1确定性",
+      "risk_level": "中",
+      "applies_to": [
+        "住院"
+      ],
+      "specialty_tags": [
+        "通用"
+      ],
+      "trigger_logic": "结算清单字段缺失/明细与诊断编码不一致/计费时点异常",
+      "evidence_min_set": [
+        "病案首页",
+        "费用清单"
+      ],
+      "policy_basis": [
+        "KB1-条例-第38条"
+      ],
+      "official": {
+        "gz_codes": [
+          "GZ10000102008000",
+          "GZ10000201001000",
+          "GZ10000201002000",
+          "GZ10000201007000"
+        ],
+        "tier1": "政策类",
+        "tier2": "医疗服务项目政策限定类"
+      },
+      "effective_interval": {
+        "from": "2023-05-15",
+        "to": null
+      },
+      "workflow_messages": {
+        "precheck": {
+          "tone": "block",
+          "title": "医疗服务项目限科室使用",
+          "body": "系统检测到可能违反「医疗服务项目限科室使用」的情形，请核对后再继续。",
+          "disposal": "请修正后再提交结算/开立。"
+        },
+        "during": {
+          "basis": "对最新版医疗服务项目分类与代码中有限科 室使用的医疗服务项目进行监管。",
+          "action": "拒付或责令退回相应费用",
+          "denial_text": "违反医疗服务项目限科室使用相关医保监管要求。"
+        },
+        "post_audit": {
+          "lead": "医疗服务项目限科室使用",
+          "evidence_hint": "费用明细 + 病案首页/诊断编码 + 政策依据条目"
+        }
+      },
+      "catalog": {
+        "prefix": "L3",
+        "family_label": "L3",
+        "family_description": "",
+        "layer_hint": "L1确定性",
+        "exam_scope": true,
+        "display_title": "L3 · 结算/明细数据异常（L3-DS）"
+      }
+    },
+    {
+      "rule_id": "ZB-001",
+      "rule_name": "药费占比统计监测",
+      "category": "F基础逻辑",
+      "violation_type": "统计指标异常",
+      "layer": "L1确定性",
+      "risk_level": "中",
+      "applies_to": [
+        "批量"
+      ],
+      "specialty_tags": [
+        "监管"
+      ],
+      "trigger_logic": "机构药费/总费用 > 阈值",
+      "params": {
+        "ratio_max": 0.35
+      },
+      "official": {
+        "gz_codes": [
+          "ZB10000205001000"
+        ],
+        "tier1": "管理类",
+        "tier2": "统计指标监测类"
+      },
+      "effective_interval": {
+        "from": "2023-05-15",
+        "to": null
+      },
+      "workflow_messages": {
+        "precheck": {
+          "tone": "block",
+          "title": "药费占比统计",
+          "body": "系统检测到可能违反「药费占比统计」的情形，请核对后再继续。",
+          "disposal": "请修正后再提交结算/开立。"
+        },
+        "during": {
+          "basis": "对《国家基本医疗保险、工伤保险和生育保 险药品目录》及《医保药品分类与代码数据 库》中的药品费用与总费用比值进行监管。",
+          "action": "拒付或责令退回相应费用",
+          "denial_text": "违反药费占比统计相关医保监管要求。"
+        },
+        "post_audit": {
+          "lead": "药费占比统计",
+          "evidence_hint": "费用明细 + 病案首页/诊断编码 + 政策依据条目"
+        }
+      },
+      "catalog": {
+        "prefix": "ZB",
+        "family_label": "ZB",
+        "family_description": "",
+        "layer_hint": "L1确定性",
+        "exam_scope": true,
+        "display_title": "ZB · 药费占比统计监测（ZB-001）"
+      }
+    },
+    {
+      "rule_id": "ZB-002",
+      "rule_name": "检验检查占比统计监测",
+      "category": "F基础逻辑",
+      "violation_type": "统计指标异常",
+      "layer": "L1确定性",
+      "risk_level": "中",
+      "applies_to": [
+        "批量"
+      ],
+      "params": {
+        "ratio_max": 0.4
+      },
+      "official": {
+        "gz_codes": [
+          "ZB10000205002000"
+        ],
+        "tier1": "管理类",
+        "tier2": "统计指标监测类"
+      },
+      "effective_interval": {
+        "from": "2023-05-15",
+        "to": null
+      },
+      "workflow_messages": {
+        "precheck": {
+          "tone": "block",
+          "title": "检验检查占比统计",
+          "body": "系统检测到可能违反「检验检查占比统计」的情形，请核对后再继续。",
+          "disposal": "请修正后再提交结算/开立。"
+        },
+        "during": {
+          "basis": "对最新版医疗服务项目分类与代码中检验检 查费用与总费用比值进行监管。",
+          "action": "拒付或责令退回相应费用",
+          "denial_text": "违反检验检查占比统计相关医保监管要求。"
+        },
+        "post_audit": {
+          "lead": "检验检查占比统计",
+          "evidence_hint": "费用明细 + 病案首页/诊断编码 + 政策依据条目"
+        }
+      },
+      "catalog": {
+        "prefix": "ZB",
+        "family_label": "ZB",
+        "family_description": "",
+        "layer_hint": "L1确定性",
+        "exam_scope": true,
+        "display_title": "ZB · 检验检查占比统计监测（ZB-002）"
+      }
+    },
+    {
+      "rule_id": "ZB-003",
+      "rule_name": "耗材占比统计监测",
+      "category": "F基础逻辑",
+      "violation_type": "统计指标异常",
+      "layer": "L1确定性",
+      "risk_level": "中",
+      "applies_to": [
+        "批量"
+      ],
+      "params": {
+        "ratio_max": 0.25
+      },
+      "official": {
+        "gz_codes": [
+          "ZB10000205003000"
+        ],
+        "tier1": "管理类",
+        "tier2": "统计指标监测类"
+      },
+      "effective_interval": {
+        "from": "2023-05-15",
+        "to": null
+      },
+      "workflow_messages": {
+        "precheck": {
+          "tone": "block",
+          "title": "耗材占比统计",
+          "body": "系统检测到可能违反「耗材占比统计」的情形，请核对后再继续。",
+          "disposal": "请修正后再提交结算/开立。"
+        },
+        "during": {
+          "basis": "对最新版医疗服务项目分类与代码中耗材费 用与总费用比值进行监管。",
+          "action": "拒付或责令退回相应费用",
+          "denial_text": "违反耗材占比统计相关医保监管要求。"
+        },
+        "post_audit": {
+          "lead": "耗材占比统计",
+          "evidence_hint": "费用明细 + 病案首页/诊断编码 + 政策依据条目"
+        }
+      },
+      "catalog": {
+        "prefix": "ZB",
+        "family_label": "ZB",
+        "family_description": "",
+        "layer_hint": "L1确定性",
+        "exam_scope": true,
+        "display_title": "ZB · 耗材占比统计监测（ZB-003）"
+      }
+    },
+    {
+      "rule_id": "ZB-004",
+      "rule_name": "治疗占比统计监测",
+      "category": "F基础逻辑",
+      "violation_type": "统计指标异常",
+      "layer": "L1确定性",
+      "risk_level": "中",
+      "applies_to": [
+        "批量"
+      ],
+      "params": {
+        "ratio_max": 0.45
+      },
+      "official": {
+        "gz_codes": [
+          "ZB10000205004000"
+        ],
+        "tier1": "管理类",
+        "tier2": "统计指标监测类"
+      },
+      "effective_interval": {
+        "from": "2023-05-15",
+        "to": null
+      },
+      "workflow_messages": {
+        "precheck": {
+          "tone": "block",
+          "title": "治疗占比统计",
+          "body": "系统检测到可能违反「治疗占比统计」的情形，请核对后再继续。",
+          "disposal": "请修正后再提交结算/开立。"
+        },
+        "during": {
+          "basis": "对最新版医疗服务项目分类与代码中治疗费 用与总费用比值进行监管。",
+          "action": "拒付或责令退回相应费用",
+          "denial_text": "违反治疗占比统计相关医保监管要求。"
+        },
+        "post_audit": {
+          "lead": "治疗占比统计",
+          "evidence_hint": "费用明细 + 病案首页/诊断编码 + 政策依据条目"
+        }
+      },
+      "catalog": {
+        "prefix": "ZB",
+        "family_label": "ZB",
+        "family_description": "",
+        "layer_hint": "L1确定性",
+        "exam_scope": true,
+        "display_title": "ZB · 治疗占比统计监测（ZB-004）"
+      }
+    },
+    {
+      "rule_id": "ZB-005",
+      "rule_name": "CT检查占比统计监测",
+      "category": "F基础逻辑",
+      "violation_type": "统计指标异常",
+      "layer": "L1确定性",
+      "risk_level": "中",
+      "applies_to": [
+        "批量"
+      ],
+      "params": {
+        "ratio_max": 0.08
+      },
+      "official": {
+        "gz_codes": [
+          "ZB10000205005000"
+        ],
+        "tier1": "管理类",
+        "tier2": "统计指标监测类"
+      },
+      "effective_interval": {
+        "from": "2023-05-15",
+        "to": null
+      },
+      "workflow_messages": {
+        "precheck": {
+          "tone": "block",
+          "title": "CT检查占比统计",
+          "body": "系统检测到可能违反「CT检查占比统计」的情形，请核对后再继续。",
+          "disposal": "请修正后再提交结算/开立。"
+        },
+        "during": {
+          "basis": "对最新版医疗服务项目分类与代码中CT检查 费用与总费用比值进行监管。",
+          "action": "拒付或责令退回相应费用",
+          "denial_text": "违反CT检查占比统计相关医保监管要求。"
+        },
+        "post_audit": {
+          "lead": "CT检查占比统计",
+          "evidence_hint": "费用明细 + 病案首页/诊断编码 + 政策依据条目"
+        }
+      },
+      "catalog": {
+        "prefix": "ZB",
+        "family_label": "ZB",
+        "family_description": "",
+        "layer_hint": "L1确定性",
+        "exam_scope": true,
+        "display_title": "ZB · CT检查占比统计监测（ZB-005）"
+      }
+    },
+    {
+      "rule_id": "ZB-006",
+      "rule_name": "核磁检查占比统计监测",
+      "category": "F基础逻辑",
+      "violation_type": "统计指标异常",
+      "layer": "L1确定性",
+      "risk_level": "中",
+      "applies_to": [
+        "批量"
+      ],
+      "params": {
+        "ratio_max": 0.05
+      },
+      "official": {
+        "gz_codes": [
+          "ZB10000205006000"
+        ],
+        "tier1": "管理类",
+        "tier2": "统计指标监测类"
+      },
+      "effective_interval": {
+        "from": "2023-05-15",
+        "to": null
+      },
+      "workflow_messages": {
+        "precheck": {
+          "tone": "block",
+          "title": "核磁检查占比统计",
+          "body": "系统检测到可能违反「核磁检查占比统计」的情形，请核对后再继续。",
+          "disposal": "请修正后再提交结算/开立。"
+        },
+        "during": {
+          "basis": "对最新版医疗服务项目分类与代码中核磁检 查费用与总费用比值进行监管。",
+          "action": "拒付或责令退回相应费用",
+          "denial_text": "违反核磁检查占比统计相关医保监管要求。"
+        },
+        "post_audit": {
+          "lead": "核磁检查占比统计",
+          "evidence_hint": "费用明细 + 病案首页/诊断编码 + 政策依据条目"
+        }
+      },
+      "catalog": {
+        "prefix": "ZB",
+        "family_label": "ZB",
+        "family_description": "",
+        "layer_hint": "L1确定性",
+        "exam_scope": true,
+        "display_title": "ZB · 核磁检查占比统计监测（ZB-006）"
+      }
+    },
+    {
+      "rule_id": "ZB-007",
+      "rule_name": "院内感染发生率统计监测",
+      "category": "F基础逻辑",
+      "violation_type": "统计指标异常",
+      "layer": "L1确定性",
+      "risk_level": "中",
+      "applies_to": [
+        "批量"
+      ],
+      "params": {
+        "rate_max": 0.05
+      },
+      "official": {
+        "gz_codes": [
+          "ZB10000205007000"
+        ],
+        "tier1": "管理类",
+        "tier2": "统计指标监测类"
+      },
+      "effective_interval": {
+        "from": "2023-05-15",
+        "to": null
+      },
+      "workflow_messages": {
+        "precheck": {
+          "tone": "block",
+          "title": "院内感染发生率统计对院内感染发生的情况进",
+          "body": "系统检测到可能违反「院内感染发生率统计对院内感染发生的情况进行监管。」的情形，请核对后再继续。",
+          "disposal": "请修正后再提交结算/开立。"
+        },
+        "during": {
+          "basis": "管理类统计指标监测类院内感染发生率统计对院内感染发生的情况进行监管。",
+          "action": "拒付或责令退回相应费用",
+          "denial_text": "违反院内感染发生率统计对院内感染发生的情况进行监管。相关医保监管要求。"
+        },
+        "post_audit": {
+          "lead": "院内感染发生率统计对院内感染发生的情况进行监管。",
+          "evidence_hint": "费用明细 + 病案首页/诊断编码 + 政策依据条目"
+        }
+      },
+      "catalog": {
+        "prefix": "ZB",
+        "family_label": "ZB",
+        "family_description": "",
+        "layer_hint": "L1确定性",
+        "exam_scope": true,
+        "display_title": "ZB · 院内感染发生率统计监测（ZB-007）"
+      }
+    },
+    {
+      "rule_id": "ZB-008",
+      "rule_name": "非计划再入院率统计监测",
+      "category": "F基础逻辑",
+      "violation_type": "统计指标异常",
+      "layer": "L1确定性",
+      "risk_level": "中",
+      "applies_to": [
+        "批量"
+      ],
+      "params": {
+        "rate_max": 0.08,
+        "readmit_days": 31
+      },
+      "official": {
+        "gz_codes": [
+          "ZB10000205008000"
+        ],
+        "tier1": "管理类",
+        "tier2": "统计指标监测类"
+      },
+      "effective_interval": {
+        "from": "2023-05-15",
+        "to": null
+      },
+      "workflow_messages": {
+        "precheck": {
+          "tone": "block",
+          "title": "非计划再入院率统计对31天内非计划再入院",
+          "body": "系统检测到可能违反「非计划再入院率统计对31天内非计划再入院发生的情」的情形，请核对后再继续。",
+          "disposal": "请修正后再提交结算/开立。"
+        },
+        "during": {
+          "basis": "管理类统计指标监测类非计划再入院率统计 对31天内非计划再入院发生的情况进行监管 。",
+          "action": "拒付或责令退回相应费用",
+          "denial_text": "违反非计划再入院率统计对31天内非计划再入院发生的情相关医保监管要求。"
+        },
+        "post_audit": {
+          "lead": "非计划再入院率统计对31天内非计划再入院发生的情",
+          "evidence_hint": "费用明细 + 病案首页/诊断编码 + 政策依据条目"
+        }
+      },
+      "catalog": {
+        "prefix": "ZB",
+        "family_label": "ZB",
+        "family_description": "",
+        "layer_hint": "L1确定性",
+        "exam_scope": true,
+        "display_title": "ZB · 非计划再入院率统计监测（ZB-008）"
       }
     }
   ]

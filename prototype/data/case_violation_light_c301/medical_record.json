@@ -1,0 +1,43 @@
+{
+  "case_meta": {
+    "case_id": "YY-BENCH-VIOL-C301-001",
+    "internal_id": "YY-BENCH-VIOL-C301-001",
+    "case_title": "轻量违规·分解住院(C-301)",
+    "embedded_violation_count": 1
+  },
+  "front_page": {
+    "hospital_level": "二级甲等",
+    "patient_name": "赵肺炎",
+    "sex": "男",
+    "age": 55,
+    "insurance_type": "职工基本医疗保险",
+    "admission_no": "ZY20260420-0088",
+    "admit_time": "2026-04-20 09:00",
+    "discharge_time": "2026-04-26 10:00",
+    "principal_diagnosis": { "name": "社区获得性肺炎", "icd10": "J18.900" },
+    "previous_admissions": [
+      {
+        "admission_no": "ZY20260405-0042",
+        "discharge_time": "2026-04-08 11:00",
+        "principal_diagnosis": "社区获得性肺炎",
+        "discharge_note": "抗感染治疗后症状好转但未完全吸收，建议近期再入院继续治疗。",
+        "flag": "病情未愈"
+      }
+    ]
+  },
+  "admission_note": {
+    "chief_complaint": "咳嗽咳痰10天，再入院继续抗感染治疗。",
+    "present_illness": "12天前因社区获得性肺炎住院，出院后仍有咳嗽，今再入院。"
+  },
+  "progress_notes": [
+    { "date": "2026-04-20", "text": "社区获得性肺炎，继续抗感染治疗。" }
+  ],
+  "fee_list": {
+    "items": [
+      { "line_no": 1, "fee_date": "2026-04-20~04-26", "category": "床位费", "item_name": "床位费", "qty": 6, "unit": "日", "amount": 300 }
+    ],
+    "total_amount": 3200
+  },
+  "discharge_summary": { "discharge_diagnosis": ["社区获得性肺炎"] },
+  "long_term_orders": { "items": [] }
+}

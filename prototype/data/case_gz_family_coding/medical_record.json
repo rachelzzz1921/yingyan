@@ -1,0 +1,36 @@
+{
+  "case_meta": {
+    "case_id": "YY-GZ-CDM-001",
+    "case_title": "GZ族·诊断性别不符",
+    "embedded_violation_count": 1,
+    "coding_mismatch_flag": "主诊断与性别不符"
+  },
+  "front_page": {
+    "hospital": "示范市第一人民医院（虚构）",
+    "hospital_level": "三级甲等",
+    "patient_name": "王编码",
+    "sex": "男",
+    "age": 45,
+    "insurance_type": "职工基本医疗保险",
+    "admit_time": "2026-06-01 09:00",
+    "discharge_time": "2026-06-10 10:00",
+    "principal_diagnosis": {
+      "name": "宫颈恶性肿瘤",
+      "icd10": "C53.900"
+    },
+    "admit_dept": "内科"
+  },
+  "fee_list": {
+    "items": [
+      {
+        "line_no": 1,
+        "fee_date": "2026-06-01",
+        "category": "诊查费",
+        "item_name": "住院诊查费",
+        "amount": 100
+      }
+    ],
+    "total_amount": 100
+  },
+  "progress_notes": []
+}

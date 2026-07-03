@@ -12,6 +12,41 @@ const { enrichRulesDoc } = require('./engine/rule-catalog');
 const YAML_PATH = path.resolve(__dirname, '../data/rules/rules.yaml');
 const JSON_PATH = path.resolve(__dirname, '../data/rules/rules.json');
 const CORE_TC_PATH = path.resolve(__dirname, '../data/rules/core_test_cases.json');
+const WORKFLOW_PATH = path.resolve(__dirname, '../data/rules/workflow_messages.yaml');
+const WORKFLOW_OFFICIAL_PATH = path.resolve(__dirname, '../data/rules/workflow_messages_official.yaml');
+const GZ_MAPPING_PATH = path.resolve(__dirname, '../data/rules/rule_gz_mapping.yaml');
+
+function loadWorkflowOverlay() {
+  const out = {};
+  if (fs.existsSync(WORKFLOW_PATH)) Object.assign(out, yaml.load(fs.readFileSync(WORKFLOW_PATH, 'utf8')) || {});
+  return out;
+}
+
+function loadOfficialWorkflowByRuleId() {
+  if (!fs.existsSync(WORKFLOW_OFFICIAL_PATH) || !fs.existsSync(GZ_MAPPING_PATH)) return {};
+  const official = yaml.load(fs.readFileSync(WORKFLOW_OFFICIAL_PATH, 'utf8')) || {};
+  const mapping = yaml.load(fs.readFileSync(GZ_MAPPING_PATH, 'utf8')) || {};
+  const byRule = {};
+  for (const m of mapping.mappings || []) {
+    const wf = official[m.official_code];
+    if (!wf) continue;
+    for (const rid of m.eagle_rule_ids || []) {
+      if (!byRule[rid]) byRule[rid] = { ...wf, official: { ...(wf.official || {}), gz_codes: [...(byRule[rid]?.official?.gz_codes || []), m.official_code] } };
+      else if (byRule[rid].official?.gz_codes) byRule[rid].official.gz_codes.push(m.official_code);
+    }
+  }
+  return byRule;
+}
+
+function validateWorkflowTone(rule) {
+  const wm = rule.workflow_messages;
+  if (!wm?.precheck?.tone) return null;
+  const tier1 = rule.official?.tier1;
+  if (tier1 === '医疗类' && wm.precheck.tone === 'block') {
+    return `${rule.rule_id}: 医疗类规则事前 tone 不得为 block（医师法诊疗自主权）`;
+  }
+  return null;
+}
 
 try {
   const raw = fs.readFileSync(YAML_PATH, 'utf8');
@@ -20,6 +55,17 @@ try {
     throw new Error('rules.yaml 缺少 rules 数组');
   }
   let coreMerged = 0;
+  const workflowOverlay = loadWorkflowOverlay();
+  const officialByRule = loadOfficialWorkflowByRuleId();
+  for (const r of doc.rules) {
+    const overlay = workflowOverlay[r.rule_id];
+    if (overlay) Object.assign(r, overlay);
+    const off = officialByRule[r.rule_id];
+    if (off && !r.workflow_messages) Object.assign(r, off);
+    else if (off?.official?.gz_codes && r.official) {
+      r.official.gz_codes = [...new Set([...(r.official.gz_codes || []), ...(off.official.gz_codes || [])])];
+    }
+  }
   if (fs.existsSync(CORE_TC_PATH)) {
     const coreDoc = JSON.parse(fs.readFileSync(CORE_TC_PATH, 'utf8'));
     for (const r of doc.rules) {
@@ -49,6 +95,13 @@ try {
     console.warn(`⚠ ${missing.length} 条规则缺少关键字段:`, missing.map(r => r.rule_id || '?').join(', '));
   } else {
     console.log('✅ 全部规则关键字段完整（rule_id/rule_name/layer/violation_type）');
+  }
+  const toneErrors = doc.rules.map(validateWorkflowTone).filter(Boolean);
+  if (toneErrors.length) {
+    console.warn('⚠ workflow tone 校验:', toneErrors.join('; '));
+  } else if (Object.keys(workflowOverlay).length || Object.keys(officialByRule).length) {
+    const n = Object.keys(workflowOverlay).length + Object.keys(officialByRule).length;
+    console.log(`✅ workflow_messages 合并：rule ${Object.keys(workflowOverlay).length} + official→rule ${Object.keys(officialByRule).length} · tone 校验通过`);
   }
   // 分层统计
   const byCat = {};

@@ -1,0 +1,50 @@
+{
+  "case_meta": {
+    "case_id": "YY-GZ-ZB-RE-001",
+    "case_title": "ZB·31天再入院率超标",
+    "embedded_violation_count": 1
+  },
+  "front_page": {
+    "hospital": "示范市第一人民医院（虚构）",
+    "hospital_level": "三级甲等",
+    "patient_name": "机构B",
+    "sex": "男",
+    "age": 45,
+    "insurance_type": "职工基本医疗保险",
+    "admit_time": "2026-06-01 09:00",
+    "discharge_time": "2026-06-10 10:00",
+    "principal_diagnosis": {
+      "name": "高血压",
+      "icd10": "I10.x00"
+    },
+    "admit_dept": "内科"
+  },
+  "fee_list": {
+    "items": [],
+    "total_amount": 0
+  },
+  "batch_settlement_rows": [
+    {
+      "row_id": "r1",
+      "visit_id": "v1",
+      "item_name": "诊查费",
+      "amount": 50,
+      "readmit_within_31d": true
+    },
+    {
+      "row_id": "r2",
+      "visit_id": "v2",
+      "item_name": "诊查费",
+      "amount": 50,
+      "readmit_within_31d": true
+    },
+    {
+      "row_id": "r3",
+      "visit_id": "v3",
+      "item_name": "诊查费",
+      "amount": 50,
+      "readmit_within_31d": false
+    }
+  ],
+  "progress_notes": []
+}

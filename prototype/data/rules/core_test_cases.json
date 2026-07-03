@@ -1,7 +1,19 @@
 {
   "_meta": {
     "description": "Phase 4 核心 10 规则 L2 红蓝用例（≥3阳+≥3阴），与 yhf/gate.config.yaml core_rules 对齐",
-    "schema": { "expect": "fire|no_fire", "polarity": "positive|negative", "case_id": "AuditBench 案卷 id" }
+    "schema": { "expect": "fire|no_fire", "polarity": "positive|negative", "case_id": "AuditBench 案卷 id" },
+    "official_gz_index": {
+      "T-201": ["GZ10000301008000"],
+      "B-201": ["GZ10000101008000"],
+      "T-207": ["GZ10000301001000"],
+      "A-109": ["GZ10000302001000"],
+      "A-105": ["GZ10000302005000"],
+      "F-003": ["GZ10000201008000", "GZ10000102009000"],
+      "T-205": ["GZ10000301009000"],
+      "D-401": ["GZ10000204002000"],
+      "A-101": ["GZ10000102001000", "GZ10000102015000"],
+      "E-503": ["GZ10000201001000"]
+    }
   },
   "T-201": [
     { "id": "T-201-p1", "expect": "fire", "polarity": "positive", "case_id": "main", "note": "奥希替尼无EGFR检测报告" },
