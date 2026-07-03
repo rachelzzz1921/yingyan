@@ -3,7 +3,7 @@
     "schema_version": "3.2",
     "rules_version": "v0.3",
     "generated_date": "2026-06-12",
-    "total_rules": 61,
+    "total_rules": 63,
     "three_element_gate": [
       "原始证据定位",
       "违反的政策条款原文",
@@ -291,6 +291,12 @@
         "exam_scope": true
       },
       {
+        "id": "B-201-IND",
+        "title": "诊疗合理 · 药品限适应症（两库索引·语义层）（B-201-IND）",
+        "prefix": "B",
+        "exam_scope": true
+      },
+      {
         "id": "B-202",
         "title": "诊疗合理 · 无指征使用抗菌药物（B-202）",
         "prefix": "B",
@@ -468,6 +474,12 @@
         "id": "ICU-301",
         "title": "重症ICU · 特级护理重复收取一般专项护理费（ICU-301）",
         "prefix": "ICU",
+        "exam_scope": true
+      },
+      {
+        "id": "SUR-401",
+        "title": "SUR · 同台多手术未按规定折价（SUR-401）",
+        "prefix": "SUR",
         "exam_scope": true
       },
       {
@@ -1499,6 +1511,49 @@
         "layer_hint": "L2语义",
         "exam_scope": true,
         "display_title": "诊疗合理 · 药品使用超出医保目录限定支付范围（B-201）"
+      }
+    },
+    {
+      "rule_id": "B-201-IND",
+      "rule_name": "药品限适应症（两库索引·语义层）",
+      "category": "B诊疗合理",
+      "violation_type": "将不属于医保基金支付范围的费用纳入医保结算",
+      "layer": "L2语义",
+      "risk_level": "中",
+      "applies_to": [
+        "住院",
+        "门诊"
+      ],
+      "specialty_tags": [
+        "通用"
+      ],
+      "trigger_logic": "L3 indication_limited 索引（510项）→ 诊断/病程与限定支付原文交叉；\n同步层保守出线索；super+LLM 可升疑点。\n跳过已有专科 checker 的药品（T-201靶向/T-205升白/B-201白蛋白）。\n",
+      "evidence_min_set": [
+        "费用行",
+        "两库限定支付原文",
+        "病历诊断检索"
+      ],
+      "output_modes": {
+        "线索": "适应症交叉不足",
+        "疑点": "LLM语义层明确不符"
+      },
+      "exclusions": "已有 T-201/T-205/B-201 硬编码 checker 的药品",
+      "policy_basis": [
+        "KB1-条例-第38条(六)",
+        "KB1-两库2025-药品限适应症"
+      ],
+      "kb2_refs": [],
+      "params": {
+        "index": "kb_operational_index.json·indication_limited"
+      },
+      "demo_seed": "索引药品×诊断不符→线索",
+      "catalog": {
+        "prefix": "B",
+        "family_label": "诊疗合理",
+        "family_description": "无指征、过度医疗、出院带药",
+        "layer_hint": "L2语义",
+        "exam_scope": true,
+        "display_title": "诊疗合理 · 药品限适应症（两库索引·语义层）（B-201-IND）"
       }
     },
     {
@@ -3007,6 +3062,12 @@
       ],
       "kb2_refs": [],
       "params": {},
+      "relations": {
+        "subsumes": [
+          "A-102"
+        ],
+        "note": "ICU特级/一般专项护理重复与两库互斥索引同笔费用时，专科规则优先"
+      },
       "demo_seed": "ICU特级护理同时另收一般专项护理",
       "catalog": {
         "prefix": "ICU",
@@ -3015,6 +3076,48 @@
         "layer_hint": "L2语义",
         "exam_scope": true,
         "display_title": "重症ICU · 特级护理重复收取一般专项护理费（ICU-301）"
+      }
+    },
+    {
+      "rule_id": "SUR-401",
+      "rule_name": "同台多手术未按规定折价",
+      "category": "A收费合规",
+      "violation_type": "超标准收费",
+      "layer": "L1确定性",
+      "risk_level": "高",
+      "applies_to": [
+        "住院"
+      ],
+      "specialty_tags": [
+        "通用",
+        "外科"
+      ],
+      "trigger_logic": "经同一切口进行的两种及以上不同手术：\nIF 第二及以后手术仍按100%计价(未按70~75%折价): 命中\n",
+      "evidence_min_set": [
+        "同台手术费用行组",
+        "两库手术折价索引",
+        "折价差额计算"
+      ],
+      "output_modes": {
+        "疑点": "未按规定折价"
+      },
+      "exclusions": "不同切口独立手术；已按规定折价计收的",
+      "policy_basis": [
+        "KB1-条例-第38条(三)",
+        "KB1-两库2025-手术项目未按规定折价收费"
+      ],
+      "kb2_refs": [],
+      "params": {
+        "discount_ratio": 0.75
+      },
+      "demo_seed": "同切口卵巢囊肿剔除术+卵巢修补术，第二术式未折价",
+      "catalog": {
+        "prefix": "SUR",
+        "family_label": "SUR",
+        "family_description": "",
+        "layer_hint": "L1确定性",
+        "exam_scope": true,
+        "display_title": "SUR · 同台多手术未按规定折价（SUR-401）"
       }
     },
     {
@@ -3523,7 +3626,7 @@
       "exclusions": "说明书允许的特殊获益人群(需病历记载评估);年龄缺失不判",
       "policy_basis": [
         "KB1-条例-第38条(六)",
-        "KB1-两库2025-国家医保局关于更新发布有-药品限儿童使用-1",
+        "KB1-两库2025-药品限儿童使用-波生坦分散片-1",
         "KB2-喹诺酮说明书禁忌(18岁以下)"
       ],
       "kb2_refs": [

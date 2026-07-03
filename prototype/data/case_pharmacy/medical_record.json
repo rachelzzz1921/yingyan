@@ -6,7 +6,7 @@
     "scene": "门诊药店",
     "embedded_violation_count": 3,
     "distractor_count": 1,
-    "clue_count": 2,
+    "clue_count": 3,
     "specialty": "定点零售药店",
     "settlement_summary": {"total_amount": 663.0, "insurance_paid_amount": 663.0, "currency": "CNY", "settle_type": "门诊统筹·定点零售药店刷卡结算"}
   },

@@ -5,8 +5,8 @@
     "gold_standard_note": "Oracle 引擎自动生成，供 YHF/shadow 使用",
     "summary": {
       "suspected_count": 3,
-      "clue_count": 2,
-      "total_findings": 5
+      "clue_count": 3,
+      "total_findings": 6
     }
   },
   "findings": [
@@ -44,6 +44,13 @@
       "status": "线索",
       "amount_involved": 38,
       "violation_type": "虚构医药服务项目"
+    },
+    {
+      "rule_id": "B-201-IND",
+      "rule_name": "药品限适应症（L3语义层）",
+      "status": "线索",
+      "amount_involved": 145,
+      "violation_type": "超标准收费/限定支付"
     }
   ],
   "correctly_not_flagged": [

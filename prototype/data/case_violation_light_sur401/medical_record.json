@@ -1,0 +1,49 @@
+{
+  "case_meta": {
+    "case_id": "YY-BENCH-VIOL-SUR401-001",
+    "internal_id": "YY-BENCH-VIOL-SUR401-001",
+    "case_title": "轻量违规·同台多手术未折价(SUR-401)",
+    "embedded_violation_count": 1
+  },
+  "front_page": {
+    "doc_type": "病案首页",
+    "hospital": "示范市第一人民医院（虚构）",
+    "hospital_level": "三级甲等",
+    "patient_name": "周妇科",
+    "sex": "女",
+    "age": 42,
+    "insurance_type": "职工基本医疗保险",
+    "admission_no": "ZY20260508-0201",
+    "admit_time": "2026-05-08 08:00",
+    "discharge_time": "2026-05-12 10:00",
+    "actual_inpatient_days": 4,
+    "admit_dept": "妇科",
+    "bed_no": "妇科-06床",
+    "principal_diagnosis": { "name": "卵巢囊肿", "icd10": "N83.201" },
+    "principal_operation": { "name": "卵巢囊肿剔除术+卵巢修补术", "icd9": "65.25" }
+  },
+  "operation_note": {
+    "doc_type": "手术记录",
+    "operation_name": "卵巢囊肿剔除术+卵巢修补术",
+    "operation_date": "2026-05-09",
+    "procedure_steps": "经同一切口：先行卵巢囊肿剔除，后行卵巢修补缝合，第二术式应按规定折价计收。"
+  },
+  "progress_notes": [
+    { "date": "2026-05-09", "type": "手术记录/术后病程", "text": "今日腹腔镜下卵巢囊肿剔除+卵巢修补，同切口完成。" }
+  ],
+  "fee_list": {
+    "doc_type": "费用清单",
+    "settle_date": "2026-05-12",
+    "items": [
+      { "line_no": 1, "fee_date": "2026-05-08~05-12", "category": "床位费", "item_name": "床位费（三人间）", "qty": 4, "unit": "日", "unit_price": 50, "amount": 200, "insurance_class": "医保", "flag": "正常" },
+      { "line_no": 2, "fee_date": "2026-05-09", "category": "手术费", "item_name": "卵巢囊肿剔除术", "qty": 1, "unit": "次", "unit_price": 2800, "amount": 2800, "insurance_class": "医保", "flag": "正常（同台第一手术）" },
+      { "line_no": 3, "fee_date": "2026-05-09", "category": "手术费", "item_name": "卵巢修补术", "qty": 1, "unit": "次", "unit_price": 2200, "amount": 2200, "insurance_class": "医保", "flag": "★SUR-401：同切口第二手术仍按100%计价，应≤75%折价" }
+    ],
+    "total_amount": 5200
+  },
+  "discharge_summary": {
+    "doc_type": "出院小结",
+    "discharge_diagnosis": ["卵巢囊肿（术后）"],
+    "hospital_course": "腹腔镜手术顺利，好转出院。"
+  }
+}

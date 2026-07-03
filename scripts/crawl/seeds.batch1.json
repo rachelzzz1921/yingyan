@@ -8,8 +8,8 @@
       "type": "list",
       "parser": "xlsx-liangku",
       "filter": "智能监管|两库|规则和知识点|知识点",
-      "maxPages": 3,
-      "maxArticles": 8
+      "maxPages": 15,
+      "maxArticles": 80
     },
     {
       "id": "problem-2025-xlsx",

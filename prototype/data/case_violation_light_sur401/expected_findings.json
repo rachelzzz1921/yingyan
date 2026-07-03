@@ -1,0 +1,16 @@
+{
+  "report_meta": {
+    "case_id": "YY-BENCH-VIOL-SUR401-001",
+    "gold_standard": true,
+    "summary": { "suspected_count": 1, "clue_count": 0, "total_findings": 1 }
+  },
+  "findings": [
+    {
+      "rule_id": "SUR-401",
+      "rule_name": "同台多手术未按规定折价",
+      "status": "疑点",
+      "amount_involved": 550,
+      "violation_type": "超标准收费"
+    }
+  ]
+}

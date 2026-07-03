@@ -22,6 +22,9 @@ const { NATURE, NATURE_BASIS, findingNature, caseNature, natureCounts } = requir
 const { applyComplianceGate } = require('./compliance-gate');
 const { JIANGSU_NURSING_PRICE, REF_ID: JIANGSU_NURSING_REF } = require('../kb/jiangsu-prices');
 const { applyParseQAToConfidence } = require('./parse-qa');
+const { findMutualExclusiveHits } = require('./kb-operational-index');
+const { findSurgeryDiscountViolations } = require('./surgery-discount');
+const { evaluateIndicationSync } = require('./indication-semantics');
 
 // ---------- 工具函数 ----------
 function parseDate(s) {
@@ -415,6 +418,49 @@ const ruleCheckers = {
       }
     }
     return findings;
+  },
+
+  /** A-102 重复收费—同义/包含项目并收（两库 895 对互斥索引，数据驱动） */
+  'A-102': (ctx) => {
+    const items = ctx.record.fee_list?.items || [];
+    const hits = findMutualExclusiveHits(items, parseDate);
+    if (!hits.length) return [];
+    const findings = [];
+    for (const { pair, lineA, lineB, ref } of hits) {
+      const dupLine = lineB.amount <= lineA.amount ? lineB : lineA;
+      const otherLine = dupLine === lineB ? lineA : lineB;
+      const windowNote = pair.window ? `（${pair.window}）` : '';
+      findings.push(mkFinding(ctx, 'A-102', {
+        status: '疑点', risk_level: '高', amount_involved: dupLine.amount,
+        evidence: [
+          ev('费用行', `费用清单 第${lineA.line_no}行`, `${lineA.item_name} ${money(lineA.amount)}元 · ${lineA.fee_date || '—'}`),
+          ev('费用行', `费用清单 第${lineB.line_no}行`, `${lineB.item_name} ${money(lineB.amount)}元 · ${lineB.fee_date || '—'}`),
+          ev('两库互斥索引', ref || 'KB1-两库2025-医疗服务项目重复收费', `官方重复收费规则：「${pair.a}」与「${pair.b}」不得同时收费${windowNote}`),
+          ev('比对结论', 'L3操作索引·mutual_exclusive', `两项目在同一收费窗口内并收，构成重复收费`),
+        ],
+        reasoning: `费用清单第${lineA.line_no}行「${lineA.item_name}」与第${lineB.line_no}行「${lineB.item_name}」在同一收费窗口${windowNote}内并收。依据国家两库「医疗服务项目重复收费」规则，「${pair.a}」×「${pair.b}」属互斥项目，不应同时计费（条例38条第三项）。建议以较小重复项「${dupLine.item_name}」${money(dupLine.amount)}元作为退回金额；与「${otherLine.item_name}」保留其一即可。`,
+        disposal: `建议责令退回重复收取的「${dupLine.item_name}」${money(dupLine.amount)}元。`,
+      }));
+    }
+    return findings;
+  },
+
+  /** SUR-401 同台多手术未按规定折价（两库 surgery_discount 索引） */
+  'SUR-401': (ctx) => {
+    const items = ctx.record.fee_list?.items || [];
+    const hits = findSurgeryDiscountViolations(items);
+    if (!hits.length) return [];
+    return hits.map(({ primary, secondary, ref, basis, overAmount }) => mkFinding(ctx, 'SUR-401', {
+      status: '疑点', risk_level: '高', amount_involved: overAmount,
+      evidence: [
+        ev('费用行', `费用清单 第${primary.line_no}行`, `${primary.item_name} 单价${primary.unit_price}元（同台第一手术）`),
+        ev('费用行', `费用清单 第${secondary.line_no}行`, `${secondary.item_name} 单价${secondary.unit_price}元（应按≤75%折价，实际全价）`),
+        ev('两库折价索引', ref || 'KB1-两库2025-手术项目未按规定折价收费', basis),
+        ev('计算', '折价差额', `第二手术应≤${Math.round((primary.unit_price || secondary.unit_price) * 75) / 100}元/次，超额约 ${money(overAmount)} 元`),
+      ],
+      reasoning: `同日同台「${primary.item_name}」与「${secondary.item_name}」为两种不同手术。依同切口手术折价规则，第二及以后手术应按规定比例（通常70~75%）计收，本案第二手术仍按全价 ${secondary.unit_price} 元/次计费 → 未按规定折价（38条三）。`,
+      disposal: `建议按折价标准重新核算第二手术费用，退回超额 ${money(overAmount)} 元。`,
+    }));
   },
 
   /** A-106 分解项目收费（骨科：打包内涵拆出单收） */
@@ -1081,6 +1127,7 @@ function ev(type, loc, text) { return { type, loc, text }; }
 let _seq = 0;
 function mkFinding(ctx, ruleId, fields) {
   const rule = ctx.rules[ruleId];
+  if (!rule) return null;
   _seq += 1;
   return {
     finding_id: `F-${ctx.caseId}-${String(_seq).padStart(3, '0')}`,
@@ -1120,6 +1167,9 @@ const triggerPredicates = {
   'A-110': (c) => c.fee_lines.some(f => /白蛋白|免疫球蛋白/.test(f.name)),
   'A-108': (c) => c.fee_lines.some(f => (f.linked_order === '—' || !f.linked_order) && !/护理|输液|床位|诊查|术|耗材|球囊|骨水泥|套管/.test(f.name)),
   'A-101': (c, r) => !!r.operation_note?.operation_name,
+  'A-102': (c, r) => (r.fee_list?.items || []).length >= 2,
+  'SUR-401': (c, r) => (r.fee_list?.items || []).filter(x => /手术费/.test(x.category || '')).length >= 2,
+  'B-201-IND': (c) => c.fee_lines.some(f => /药|片|胶囊|颗粒|注射液/.test(f.name) || /药|西药|中成药/.test(f.category || '')),
   'A-106': (c, r) => !!r.operation_note?.operation_name,
   'A-107': (c, r) => (r.operation_note?.consumables_used || []).length > 0,
   'D-401': (c, r) => /重症|伴并发症|伴重症|脓毒/.test(r.front_page?.principal_diagnosis?.name || ''),
@@ -1330,6 +1380,23 @@ function applyRelationsArbitration(findings, rules, record) {
     }
   }
 
+  // ② ICU 专科优先：特级/一般专项护理重复时，压制两库 A-102 同笔重复（防与 ICU-301 平行计）
+  if (out.some(f => f.rule_id === 'ICU-301')) {
+    const drop = out.filter(f => f.rule_id === 'A-102' && /一般专项护理|专项护理/.test(JSON.stringify(f.evidence || []) + (f.reasoning || '')));
+    if (drop.length) {
+      out = out.filter(f => !drop.includes(f));
+      for (const f of drop) log.suppressed.push({ finding_id: f.finding_id, rule_id: f.rule_id, scene: 'ICU-301优先', basis: '特级护理内涵重复由 ICU-301 覆盖' });
+    }
+  }
+  // ③ 真 ICU 患者：两库截断名「重症监护×一般专项护理」在确已入 ICU 时不另报 A-102（与 ICU-303 除外一致）
+  if (record.icu_record?.admission_to_icu) {
+    const drop = out.filter(f => f.rule_id === 'A-102' && /重症监护/.test(JSON.stringify(f.evidence || []) + (f.reasoning || '')));
+    if (drop.length) {
+      out = out.filter(f => !drop.includes(f));
+      for (const f of drop) log.suppressed.push({ finding_id: f.finding_id, rule_id: f.rule_id, scene: 'ICU收治', basis: '确已入ICU，重症监护相关互斥对暂不另报A-102' });
+    }
+  }
+
   // ① subsumes：父命中 → 子命中并入父的明细
   const byRule = () => { const m = new Map(); for (const f of out) { if (!m.has(f.rule_id)) m.set(f.rule_id, []); m.get(f.rule_id).push(f); } return m; };
   let idx = byRule();
@@ -1388,7 +1455,7 @@ function feeLineKey(finding) {
   }
   return ids.size ? [...ids].sort((a, b) => a - b).join(',') : null;
 }
-const RULE_CERTAINTY = { 'B-201': 3, 'A-110': 2, 'A-108': 1.5, 'F-003': 3, 'A-109': 3, 'A-105': 2.5, 'T-201': 3, 'T-207': 2.5, 'T-205': 2 };
+const RULE_CERTAINTY = { 'B-201': 3, 'B-201-IND': 1.8, 'A-110': 2, 'A-108': 1.5, 'F-003': 3, 'A-109': 3, 'A-105': 2.5, 'T-201': 3, 'T-207': 2.5, 'T-205': 4, 'ICU-301': 4, 'A-102': 2, 'SUR-401': 3 };
 function rulePenalty(ruleId) { return /A-108|C-304|E-50|T-202|^A-107/.test(ruleId) ? 3 : 2; } // 40条骗保类=3，38条=2
 function primaryScore(f) { return (RULE_CERTAINTY[f.rule_id] ?? 2.5) * 3 + (f.evidence?.length || 0) + rulePenalty(f.rule_id); }
 function reconcile(rawFindings) {
@@ -1454,7 +1521,7 @@ function evidenceChainCompleteness(record) {
 const COVERAGE_DIMENSIONS = [
   { key: '费用↔医嘱/执行一致性', rules: ['A-108', 'A-109', 'T-204', 'NUR-303'] },
   { key: '费用↔诊断/限定支付', rules: ['B-201', 'A-110', 'T-201', 'T-202', 'T-203', 'AGE-101'] },
-  { key: '收费规范(重复/分解/超标/串换)', rules: ['A-101', 'A-102', 'A-103', 'A-104', 'A-105', 'A-106', 'A-107', 'T-206'] },
+  { key: '收费规范(重复/分解/超标/串换)', rules: ['A-101', 'A-102', 'A-103', 'A-104', 'A-105', 'A-106', 'A-107', 'T-206', 'SUR-401'] },
   { key: '住院行为', rules: ['C-301', 'C-302', 'C-303'] },
   { key: '支付方式(高套/转嫁)', rules: ['D-401', 'D-402', 'T-207', 'T-208'] },
   { key: '基础逻辑底线', rules: ['F-001', 'F-002', 'F-003', 'F-004', 'F-005', 'F-006'] },
@@ -1531,6 +1598,7 @@ function runAudit(record, rulesArray, options = {}) {
     let got = [];
     try {
       got = ruleCheckers[ruleId](ctx) || [];
+      got = got.filter(Boolean);
     } catch (e) {
       // 单条规则在异常材料形状下抛错 → 跳过该规则并记录，绝不让整次稽核 500（导入的稀疏案卷尤需）
       trace.push({ rule_id: ruleId, rule_name: rules[ruleId]?.rule_name, hits: 0, ms: Date.now() - t0, error: e.message });
@@ -1539,6 +1607,13 @@ function runAudit(record, rulesArray, options = {}) {
     trace.push({ rule_id: ruleId, rule_name: rules[ruleId]?.rule_name, hits: got.length, ms: Date.now() - t0 });
     findings.push(...got);
   }
+  try {
+    if (!options.skipIndicationSync) {
+      findings.push(...(evaluateIndicationSync(ctx, mkFinding).filter(Boolean) || []));
+    }
+    if (options.extraFindings?.length) findings.push(...options.extraFindings.filter(Boolean));
+  } catch (_) { /* 适应症语义层失败不阻断主引擎 */ }
+
   let distractors = [];
   try { distractors = checkDistractors(ctx); } catch (e) { /* 干扰项分析在异常材料形状下失败不阻断稽核 */ }
 
@@ -1664,4 +1739,21 @@ function applyPostAuditGovernance(findings, options = {}) {
   };
 }
 
-module.exports = { runAudit, parseDate, computeExpectedQty, compileCaseObject, reconcile, applyRelationsArbitration, applyPostAuditGovernance, ruleCheckerIds: Object.keys(ruleCheckers) };
+async function buildIndicationLlmFindings(record, rulesArray, policyTexts = {}, policyVerified = {}) {
+  const { evaluateIndicationLlm } = require('./indication-semantics');
+  const { isReady } = require('./llm-provider');
+  if (!isReady()) return [];
+  const rules = {};
+  for (const r of rulesArray) rules[r.rule_id] = r;
+  const ctx = {
+    record,
+    rules,
+    policyTexts,
+    policyVerified,
+    caseId: (record.case_meta?.case_id || 'CASE').replace(/[^A-Z0-9]/gi, '').slice(-8),
+    params: {},
+  };
+  return evaluateIndicationLlm(record, ctx, mkFinding);
+}
+
+module.exports = { runAudit, buildIndicationLlmFindings, parseDate, computeExpectedQty, compileCaseObject, reconcile, applyRelationsArbitration, applyPostAuditGovernance, ruleCheckerIds: Object.keys(ruleCheckers) };

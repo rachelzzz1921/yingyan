@@ -2,7 +2,7 @@
 
 const { semanticSearch } = require('./retrieval');
 
-/** 从案卷 + 规则触发词构造 RAG 查询 */
+/** 从案卷 + 规则触发词构造 RAG 查询（药名/违规类型优先，利于两库召回） */
 function buildQueryFromCase(record, rules = []) {
   const parts = [];
   const meta = record?.case_meta || {};
@@ -11,12 +11,17 @@ function buildQueryFromCase(record, rules = []) {
   for (const d of (record?.diagnoses || []).slice(0, 5)) {
     if (d.name || d.text) parts.push(d.name || d.text);
   }
-  for (const f of (record?.fee_list?.items || []).slice(0, 12)) {
+  for (const f of (record?.fee_list?.items || []).slice(0, 16)) {
     if (f.item_name) parts.push(f.item_name);
+    if (f.drug_name) parts.push(f.drug_name);
   }
-  for (const r of rules.slice(0, 8)) {
-    if (r.trigger_logic) parts.push(String(r.trigger_logic).slice(0, 120));
+  for (const r of rules.slice(0, 12)) {
     if (r.violation_type) parts.push(r.violation_type);
+    if (r.rule_name) parts.push(r.rule_name);
+    if (r.trigger_logic) parts.push(String(r.trigger_logic).slice(0, 160));
+    for (const ref of (r.policy_basis || []).slice(0, 3)) {
+      if (String(ref).includes('两库')) parts.push(String(ref).replace(/^KB1-两库2025-/, '').replace(/-\d+$/, ''));
+    }
   }
   return [...new Set(parts.filter(Boolean))].join(' ');
 }

@@ -25,15 +25,36 @@ function shouldReplace(existing, incoming, force) {
 
 function upsertPolicies(kb, incoming, force) {
   const byRef = new Map((kb.entries || []).map((e) => [e.ref_id, e]));
+  // 两库 content_key 去重：新稳定 ref_id 入库时移除同内容旧 ref（仅爬虫待抽检条目）
+  const liangkuByContent = new Map();
+  for (const e of kb.entries || []) {
+    if (e.doc_id !== 'KB1-两库2025') continue;
+    const ck = e.metadata?.content_key;
+    if (ck) liangkuByContent.set(ck, e.ref_id);
+  }
+
   let added = 0;
   let updated = 0;
   let skipped = 0;
   let rejected = 0;
+  let deduped = 0;
   for (const row of incoming) {
     // 入库质量门（第二道防线，覆盖所有 parser）：解析垃圾不入库
     if (isJunkPolicyText(row.text)) {
       rejected++;
       continue;
+    }
+    const ck = row.metadata?.content_key;
+    if (ck && row.doc_id === 'KB1-两库2025') {
+      const oldRef = liangkuByContent.get(ck);
+      if (oldRef && oldRef !== row.ref_id) {
+        const oldEntry = byRef.get(oldRef);
+        if (oldEntry && !isProtected(oldEntry)) {
+          byRef.delete(oldRef);
+          deduped++;
+        }
+      }
+      liangkuByContent.set(ck, row.ref_id);
     }
     const prev = byRef.get(row.ref_id);
     if (!shouldReplace(prev, row, force)) {
@@ -45,7 +66,7 @@ function upsertPolicies(kb, incoming, force) {
     byRef.set(row.ref_id, { ...prev, ...row });
   }
   kb.entries = [...byRef.values()];
-  return { added, updated, skipped, rejected, total: kb.entries.length };
+  return { added, updated, skipped, rejected, deduped, total: kb.entries.length };
 }
 
 function mergeProblemDomains(kb, domains, force) {

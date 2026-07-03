@@ -70,8 +70,17 @@ export function slugPart(s, max = 24) {
     .slice(0, max) || '项';
 }
 
+/** @deprecated 批次标题作 slug 时本地/爬虫 re-import 会撞 ref_id；新入库用 refIdLiangkuStable */
 export function refIdLiangku(batch, category, idx) {
   return `KB1-两库2025-${slugPart(batch, 12)}-${slugPart(category, 16)}-${idx}`;
+}
+
+/** 稳定 ref_id：规则类别 + 药品通用名 + 表内序号（与公告批次无关，可幂等 upsert） */
+export function refIdLiangkuStable(category, drugName, rowSeq) {
+  const cat = slugPart(String(category || '').replace(/[""]/g, ''), 20);
+  const drug = slugPart(drugName, 24);
+  const seq = String(rowSeq || '0').replace(/\D/g, '') || '0';
+  return `KB1-两库2025-${cat}-${drug}-${seq}`;
 }
 
 export function refIdProblem(domain, no) {

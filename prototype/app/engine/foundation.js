@@ -10,6 +10,8 @@
  */
 'use strict';
 
+const { familyCoverage } = require('./kb-operational-index');
+
 function buildKbIndex(kb) {
   const idx = {};
   for (const e of kb) { if (e.ref_id) idx[e.ref_id] = e; if (e.doc_id) idx[e.doc_id] = e; }
@@ -127,13 +129,23 @@ function computeFoundation(rules, kb, checkerIds = [], firedIds = null, kb2 = []
     note: '已声明未操作化的规则 + 待入库对照表 = 从官方两库持续扩展的路线图(非地基缺失)。',
   };
 
+  const opFamilies = familyCoverage(checkerIds);
+
   // ② 操作化漏斗（官方KB → 在库规则 → 有checker → demo真fire）
   const funnel = [
     { stage: '官方两库已入库', count: kb.length, note: `KB1 政策/规则/目录条目（${withEffective} 条带生效日，支持 as_of 版本回溯）` },
     { stage: '其中"规则"层条目', count: layers['规则'] || 0, note: '可作为确定性规则的官方依据来源' },
+  ];
+  if (opFamilies) {
+    funnel.push(
+      { stage: 'L3 操作索引（模式族提炼）', count: opFamilies.merged_items, note: `两库 ${opFamilies.raw_rows || '—'} 行 → ${opFamilies.merged_items} 项 · ${opFamilies.exclusive_pairs} 对互斥` },
+      { stage: '模式族已接 checker', count: opFamilies.operationalized_items, note: `${opFamilies.operationalized_pct}% 索引项有确定性/事前检测（${opFamilies.families.filter(f => f.operationalized).length}/${opFamilies.families.length} 族）` },
+    );
+  }
+  funnel.push(
     { stage: '已操作化为在库规则', count: rules.length, note: `横跨 ${specialtyList.length} 个临床专科` },
     { stage: '有确定性 checker', count: rulesWithChecker, note: '真·计算判定（非声明）' },
-  ];
+  );
   if (firedSet) funnel.push({ stage: 'demo 案卷真 fire', count: rules.filter(r => firedSet.has(r.rule_id)).length, note: '主案卷上实际命中' });
 
   return {
@@ -146,6 +158,7 @@ function computeFoundation(rules, kb, checkerIds = [], firedIds = null, kb2 = []
       top_sources: topSources,
     },
     funnel,
+    operational_families: opFamilies,
     traceability_summary: {
       rules_total: rules.length,
       rules_with_official_ref: traceability.filter(t => t.policy_refs.length).length,
@@ -185,6 +198,16 @@ function renderFoundationMarkdown(f) {
   L.push('|---|---:|---|');
   f.funnel.forEach(s => L.push(`| ${s.stage} | ${s.count} | ${s.note || ''} |`));
   L.push('');
+  if (f.operational_families) {
+    L.push('### 模式族覆盖（L3 操作索引 → checker）');
+    L.push('');
+    L.push('| 模式族 | 索引项 | checker | 状态 |');
+    L.push('|---|---:|---|---|');
+    f.operational_families.families.forEach(x => {
+      L.push(`| ${x.name} | ${x.items} | ${x.checker || '—'} | ${x.operationalized ? '✓ 已接' : '待扩展'} |`);
+    });
+    L.push('');
+  }
   L.push('## 三、溯源完整性');
   L.push('');
   L.push(`- 引用官方政策的规则：**${t.rules_with_official_ref}/${t.rules_total}**`);
@@ -266,6 +289,10 @@ function renderFoundationHtml(f) {
 </div>
 <h2>一、操作化漏斗（官方两库 → 可执行稽核）</h2>
 <table><tr><th>阶段</th><th>数量</th><th>说明</th></tr>${funnelRows}</table>
+${f.operational_families ? `<h2>模式族覆盖（L3 操作索引 → checker）</h2>
+<table><tr><th>模式族</th><th>索引项</th><th>checker</th><th>状态</th></tr>
+${f.operational_families.families.map(x => `<tr><td>${esc(x.name)}</td><td class="num">${x.items}</td><td>${esc(x.checker || '—')}</td><td>${x.operationalized ? '✓ 已接' : '待扩展'}</td></tr>`).join('')}
+</table>` : ''}
 <p class="muted">来源：${g.top_sources.map(s => esc(s.source) + ' ' + s.count).join(' · ')}　|　layer：${Object.entries(g.layers).map(([k, v]) => esc(k) + v).join(' ')}</p>
 ${f.clinical_kb ? `<p class="muted">📖 两库另一半·临床知识库：${f.clinical_kb.total} 条临床指导原则/说明书/重点监控，${f.clinical_kb.rules_referencing} 条规则同时引临床依据（政策条款 + 临床指南双重溯源）。</p>` : ''}
 <h2>二、专科覆盖</h2><p>${sp}</p>

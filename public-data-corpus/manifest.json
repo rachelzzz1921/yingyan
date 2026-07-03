@@ -3,10 +3,10 @@
   "summary": {
     "total_kb_entries": 31,
     "total_problem_list_items": 74,
-    "total_grand": 1531,
+    "total_grand": 4819,
     "unique_official_documents": 18,
     "unique_source_urls": 17,
-    "kb1_policy_entries": 1295,
+    "kb1_policy_entries": 4583,
     "kb2_clinical_entries": 9,
     "problem_list_domains": 15,
     "problem_list_items": 236,
@@ -22,15 +22,16 @@
       "problem_list_pending_items": 9
     },
     "last_crawl": {
-      "phase": "rerun",
-      "crawled_policies": 40,
-      "crawled_domains": 0,
+      "phase": "import-liangku-book-2025",
+      "parsed": 295,
       "merge": {
         "policies": {
-          "added": 40,
-          "updated": 0,
+          "added": 287,
+          "updated": 8,
           "skipped": 0,
-          "total": 1467
+          "rejected": 0,
+          "deduped": 0,
+          "total": 4583
         },
         "problemDomains": {
           "added": 0,
@@ -43,10 +44,10 @@
         }
       },
       "kb": {
-        "kb1_entries": 1467,
+        "kb1_entries": 4583,
         "problem_domains": 25,
         "problem_items": 236,
-        "total_grand": 1703
+        "total_grand": 4819
       }
     }
   },
@@ -567,6 +568,599 @@
       "removed": 172,
       "kb1_after": 1295,
       "note": "质量门清洗：移除表头错位产出的纯序号/合计/无连续汉字爬虫条目"
+    },
+    {
+      "at": "2026-07-02T08:26:33.376Z",
+      "phase": "bulk-import-local",
+      "crawled_policies": 743,
+      "crawled_domains": 0,
+      "merge": {
+        "policies": {
+          "added": 743,
+          "updated": 0,
+          "skipped": 0,
+          "rejected": 0,
+          "deduped": 0,
+          "total": 2038
+        },
+        "problemDomains": {
+          "added": 0,
+          "updated": 0,
+          "skipped": 0
+        },
+        "paths": {
+          "policiesPath": "/Users/chenzhiwei/Desktop/鹰眼/prototype/data/kb/kb1_policies.json",
+          "problemPath": "/Users/chenzhiwei/Desktop/鹰眼/prototype/data/kb/kb1_problem_lists.json"
+        }
+      },
+      "kb": {
+        "kb1_entries": 2038,
+        "problem_domains": 25,
+        "problem_items": 236,
+        "total_grand": 2274
+      }
+    },
+    {
+      "at": "2026-07-02T08:27:24.294Z",
+      "phase": "reconcile-liangku-dupes",
+      "removed": 609,
+      "kb": {
+        "kb1_entries": 1429,
+        "problem_domains": 25,
+        "problem_items": 236,
+        "total_grand": 1665
+      }
+    },
+    {
+      "at": "2026-07-02T08:29:58.203Z",
+      "phase": "sync-liangku-col109",
+      "articles": 9,
+      "files": 2,
+      "crawled_policies": 310,
+      "merge": {
+        "policies": {
+          "added": 310,
+          "updated": 0,
+          "skipped": 0,
+          "rejected": 0,
+          "deduped": 0,
+          "total": 1739
+        },
+        "problemDomains": {
+          "added": 0,
+          "updated": 0,
+          "skipped": 0
+        },
+        "paths": {
+          "policiesPath": "/Users/chenzhiwei/Desktop/鹰眼/prototype/data/kb/kb1_policies.json",
+          "problemPath": "/Users/chenzhiwei/Desktop/鹰眼/prototype/data/kb/kb1_problem_lists.json"
+        }
+      },
+      "kb": {
+        "kb1_entries": 1739,
+        "problem_domains": 25,
+        "problem_items": 236,
+        "total_grand": 1975
+      }
+    },
+    {
+      "at": "2026-07-02T08:50:08.751Z",
+      "phase": "sync-liangku-col109",
+      "articles": 9,
+      "files": 15,
+      "crawled_policies": 1415,
+      "merge": {
+        "policies": {
+          "added": 1121,
+          "updated": 294,
+          "skipped": 0,
+          "rejected": 0,
+          "deduped": 0,
+          "total": 2860
+        },
+        "problemDomains": {
+          "added": 0,
+          "updated": 0,
+          "skipped": 0
+        },
+        "paths": {
+          "policiesPath": "/Users/chenzhiwei/Desktop/鹰眼/prototype/data/kb/kb1_policies.json",
+          "problemPath": "/Users/chenzhiwei/Desktop/鹰眼/prototype/data/kb/kb1_problem_lists.json"
+        }
+      },
+      "kb": {
+        "kb1_entries": 2860,
+        "problem_domains": 25,
+        "problem_items": 236,
+        "total_grand": 3096
+      }
+    },
+    {
+      "at": "2026-07-02T08:51:27.937Z",
+      "phase": "bulk-import-local",
+      "crawled_policies": 900,
+      "crawled_domains": 0,
+      "merge": {
+        "policies": {
+          "added": 900,
+          "updated": 0,
+          "skipped": 0,
+          "rejected": 0,
+          "deduped": 0,
+          "total": 3760
+        },
+        "problemDomains": {
+          "added": 0,
+          "updated": 0,
+          "skipped": 0
+        },
+        "paths": {
+          "policiesPath": "/Users/chenzhiwei/Desktop/鹰眼/prototype/data/kb/kb1_policies.json",
+          "problemPath": "/Users/chenzhiwei/Desktop/鹰眼/prototype/data/kb/kb1_problem_lists.json"
+        }
+      },
+      "kb": {
+        "kb1_entries": 3760,
+        "problem_domains": 25,
+        "problem_items": 236,
+        "total_grand": 3996
+      }
+    },
+    {
+      "at": "2026-07-02T08:53:14.316Z",
+      "phase": "liangku-batch2-pdf",
+      "crawled_policies": 378,
+      "merge": {
+        "policies": {
+          "added": 378,
+          "updated": 0,
+          "skipped": 0,
+          "rejected": 0,
+          "deduped": 0,
+          "total": 4138
+        },
+        "problemDomains": {
+          "added": 0,
+          "updated": 0,
+          "skipped": 0
+        },
+        "paths": {
+          "policiesPath": "/Users/chenzhiwei/Desktop/鹰眼/prototype/data/kb/kb1_policies.json",
+          "problemPath": "/Users/chenzhiwei/Desktop/鹰眼/prototype/data/kb/kb1_problem_lists.json"
+        }
+      },
+      "kb": {
+        "kb1_entries": 4138,
+        "problem_domains": 25,
+        "problem_items": 236,
+        "total_grand": 4374
+      }
+    },
+    {
+      "at": "2026-07-02T10:02:19.367Z",
+      "phase": "bulk-import-local",
+      "crawled_policies": 3024,
+      "crawled_domains": 0,
+      "merge": {
+        "policies": {
+          "added": 0,
+          "updated": 3024,
+          "skipped": 0,
+          "rejected": 0,
+          "deduped": 0,
+          "total": 4138
+        },
+        "problemDomains": {
+          "added": 0,
+          "updated": 0,
+          "skipped": 0
+        },
+        "paths": {
+          "policiesPath": "/Users/chenzhiwei/Desktop/鹰眼/prototype/data/kb/kb1_policies.json",
+          "problemPath": "/Users/chenzhiwei/Desktop/鹰眼/prototype/data/kb/kb1_problem_lists.json"
+        }
+      },
+      "kb": {
+        "kb1_entries": 4138,
+        "problem_domains": 25,
+        "problem_items": 236,
+        "total_grand": 4374
+      }
+    },
+    {
+      "at": "2026-07-02T10:03:24.696Z",
+      "phase": "bulk-import-local",
+      "crawled_policies": 153,
+      "crawled_domains": 0,
+      "merge": {
+        "policies": {
+          "added": 153,
+          "updated": 0,
+          "skipped": 0,
+          "rejected": 0,
+          "deduped": 0,
+          "total": 4291
+        },
+        "problemDomains": {
+          "added": 0,
+          "updated": 0,
+          "skipped": 0
+        },
+        "paths": {
+          "policiesPath": "/Users/chenzhiwei/Desktop/鹰眼/prototype/data/kb/kb1_policies.json",
+          "problemPath": "/Users/chenzhiwei/Desktop/鹰眼/prototype/data/kb/kb1_problem_lists.json"
+        }
+      },
+      "kb": {
+        "kb1_entries": 4291,
+        "problem_domains": 25,
+        "problem_items": 236,
+        "total_grand": 4527
+      }
+    },
+    {
+      "at": "2026-07-02T11:40:00.853Z",
+      "phase": "sync-liangku-col109",
+      "articles": 1,
+      "files": 8,
+      "crawled_policies": 411,
+      "merge": {
+        "policies": {
+          "added": 0,
+          "updated": 411,
+          "skipped": 0,
+          "rejected": 0,
+          "deduped": 0,
+          "total": 4291
+        },
+        "problemDomains": {
+          "added": 0,
+          "updated": 0,
+          "skipped": 0
+        },
+        "paths": {
+          "policiesPath": "/Users/chenzhiwei/Desktop/鹰眼/prototype/data/kb/kb1_policies.json",
+          "problemPath": "/Users/chenzhiwei/Desktop/鹰眼/prototype/data/kb/kb1_problem_lists.json"
+        }
+      },
+      "kb": {
+        "kb1_entries": 4291,
+        "problem_domains": 25,
+        "problem_items": 236,
+        "total_grand": 4527
+      }
+    },
+    {
+      "at": "2026-07-02T11:41:46.676Z",
+      "phase": "sync-liangku-col109",
+      "articles": 9,
+      "files": 10,
+      "crawled_policies": 795,
+      "merge": {
+        "policies": {
+          "added": 0,
+          "updated": 795,
+          "skipped": 0,
+          "rejected": 0,
+          "deduped": 0,
+          "total": 4291
+        },
+        "problemDomains": {
+          "added": 0,
+          "updated": 0,
+          "skipped": 0
+        },
+        "paths": {
+          "policiesPath": "/Users/chenzhiwei/Desktop/鹰眼/prototype/data/kb/kb1_policies.json",
+          "problemPath": "/Users/chenzhiwei/Desktop/鹰眼/prototype/data/kb/kb1_problem_lists.json"
+        }
+      },
+      "kb": {
+        "kb1_entries": 4291,
+        "problem_domains": 25,
+        "problem_items": 236,
+        "total_grand": 4527
+      }
+    },
+    {
+      "at": "2026-07-02T11:42:31.926Z",
+      "phase": "bulk-import-local",
+      "crawled_policies": 3177,
+      "crawled_domains": 0,
+      "merge": {
+        "policies": {
+          "added": 0,
+          "updated": 3177,
+          "skipped": 0,
+          "rejected": 0,
+          "deduped": 0,
+          "total": 4291
+        },
+        "problemDomains": {
+          "added": 0,
+          "updated": 0,
+          "skipped": 0
+        },
+        "paths": {
+          "policiesPath": "/Users/chenzhiwei/Desktop/鹰眼/prototype/data/kb/kb1_policies.json",
+          "problemPath": "/Users/chenzhiwei/Desktop/鹰眼/prototype/data/kb/kb1_problem_lists.json"
+        }
+      },
+      "kb": {
+        "kb1_entries": 4291,
+        "problem_domains": 25,
+        "problem_items": 236,
+        "total_grand": 4527
+      }
+    },
+    {
+      "at": "2026-07-02T11:42:32.764Z",
+      "phase": "liangku-batch2-pdf",
+      "crawled_policies": 378,
+      "merge": {
+        "policies": {
+          "added": 0,
+          "updated": 378,
+          "skipped": 0,
+          "rejected": 0,
+          "deduped": 0,
+          "total": 4291
+        },
+        "problemDomains": {
+          "added": 0,
+          "updated": 0,
+          "skipped": 0
+        },
+        "paths": {
+          "policiesPath": "/Users/chenzhiwei/Desktop/鹰眼/prototype/data/kb/kb1_policies.json",
+          "problemPath": "/Users/chenzhiwei/Desktop/鹰眼/prototype/data/kb/kb1_problem_lists.json"
+        }
+      },
+      "kb": {
+        "kb1_entries": 4291,
+        "problem_domains": 25,
+        "problem_items": 236,
+        "total_grand": 4527
+      }
+    },
+    {
+      "at": "2026-07-02T11:45:25.777Z",
+      "phase": "liangku-batch2-pdf",
+      "crawled_policies": 378,
+      "merge": {
+        "policies": {
+          "added": 0,
+          "updated": 378,
+          "skipped": 0,
+          "rejected": 0,
+          "deduped": 0,
+          "total": 4291
+        },
+        "problemDomains": {
+          "added": 0,
+          "updated": 0,
+          "skipped": 0
+        },
+        "paths": {
+          "policiesPath": "/Users/chenzhiwei/Desktop/鹰眼/prototype/data/kb/kb1_policies.json",
+          "problemPath": "/Users/chenzhiwei/Desktop/鹰眼/prototype/data/kb/kb1_problem_lists.json"
+        }
+      },
+      "kb": {
+        "kb1_entries": 4291,
+        "problem_domains": 25,
+        "problem_items": 236,
+        "total_grand": 4527
+      }
+    },
+    {
+      "at": "2026-07-02T11:45:25.940Z",
+      "phase": "import-mail-liangku-all",
+      "merge": {
+        "policies": {
+          "added": 4,
+          "updated": 3177,
+          "skipped": 0,
+          "rejected": 0,
+          "deduped": 0,
+          "total": 4295
+        },
+        "problemDomains": {
+          "added": 0,
+          "updated": 0,
+          "skipped": 0
+        },
+        "paths": {
+          "policiesPath": "/Users/chenzhiwei/Desktop/鹰眼/prototype/data/kb/kb1_policies.json",
+          "problemPath": "/Users/chenzhiwei/Desktop/鹰眼/prototype/data/kb/kb1_problem_lists.json"
+        }
+      },
+      "kb": {
+        "kb1_entries": 4295,
+        "problem_domains": 25,
+        "problem_items": 236,
+        "total_grand": 4531
+      }
+    },
+    {
+      "at": "2026-07-02T11:50:44.905Z",
+      "phase": "sync-liangku-col109",
+      "articles": 9,
+      "files": 23,
+      "crawled_policies": 2726,
+      "merge": {
+        "policies": {
+          "added": 0,
+          "updated": 2726,
+          "skipped": 0,
+          "rejected": 0,
+          "deduped": 0,
+          "total": 4295
+        },
+        "problemDomains": {
+          "added": 0,
+          "updated": 0,
+          "skipped": 0
+        },
+        "paths": {
+          "policiesPath": "/Users/chenzhiwei/Desktop/鹰眼/prototype/data/kb/kb1_policies.json",
+          "problemPath": "/Users/chenzhiwei/Desktop/鹰眼/prototype/data/kb/kb1_problem_lists.json"
+        }
+      },
+      "kb": {
+        "kb1_entries": 4295,
+        "problem_domains": 25,
+        "problem_items": 236,
+        "total_grand": 4531
+      }
+    },
+    {
+      "at": "2026-07-02T12:39:40.562Z",
+      "phase": "liangku-batch2-pdf",
+      "crawled_policies": 378,
+      "merge": {
+        "policies": {
+          "added": 0,
+          "updated": 378,
+          "skipped": 0,
+          "rejected": 0,
+          "deduped": 0,
+          "total": 4295
+        },
+        "problemDomains": {
+          "added": 0,
+          "updated": 0,
+          "skipped": 0
+        },
+        "paths": {
+          "policiesPath": "/Users/chenzhiwei/Desktop/鹰眼/prototype/data/kb/kb1_policies.json",
+          "problemPath": "/Users/chenzhiwei/Desktop/鹰眼/prototype/data/kb/kb1_problem_lists.json"
+        }
+      },
+      "kb": {
+        "kb1_entries": 4295,
+        "problem_domains": 25,
+        "problem_items": 236,
+        "total_grand": 4531
+      }
+    },
+    {
+      "at": "2026-07-02T12:39:40.728Z",
+      "phase": "import-mail-liangku-all",
+      "merge": {
+        "policies": {
+          "added": 0,
+          "updated": 3181,
+          "skipped": 0,
+          "rejected": 0,
+          "deduped": 0,
+          "total": 4295
+        },
+        "problemDomains": {
+          "added": 0,
+          "updated": 0,
+          "skipped": 0
+        },
+        "paths": {
+          "policiesPath": "/Users/chenzhiwei/Desktop/鹰眼/prototype/data/kb/kb1_policies.json",
+          "problemPath": "/Users/chenzhiwei/Desktop/鹰眼/prototype/data/kb/kb1_problem_lists.json"
+        }
+      },
+      "kb": {
+        "kb1_entries": 4295,
+        "problem_domains": 25,
+        "problem_items": 236,
+        "total_grand": 4531
+      }
+    },
+    {
+      "at": "2026-07-02T12:42:39.343Z",
+      "phase": "liangku-batch2-pdf",
+      "crawled_policies": 378,
+      "merge": {
+        "policies": {
+          "added": 0,
+          "updated": 378,
+          "skipped": 0,
+          "rejected": 0,
+          "deduped": 0,
+          "total": 4295
+        },
+        "problemDomains": {
+          "added": 0,
+          "updated": 0,
+          "skipped": 0
+        },
+        "paths": {
+          "policiesPath": "/Users/chenzhiwei/Desktop/鹰眼/prototype/data/kb/kb1_policies.json",
+          "problemPath": "/Users/chenzhiwei/Desktop/鹰眼/prototype/data/kb/kb1_problem_lists.json"
+        }
+      },
+      "kb": {
+        "kb1_entries": 4295,
+        "problem_domains": 25,
+        "problem_items": 236,
+        "total_grand": 4531
+      }
+    },
+    {
+      "at": "2026-07-02T12:42:39.528Z",
+      "phase": "import-mail-liangku-all",
+      "merge": {
+        "policies": {
+          "added": 1,
+          "updated": 3181,
+          "skipped": 0,
+          "rejected": 0,
+          "deduped": 0,
+          "total": 4296
+        },
+        "problemDomains": {
+          "added": 0,
+          "updated": 0,
+          "skipped": 0
+        },
+        "paths": {
+          "policiesPath": "/Users/chenzhiwei/Desktop/鹰眼/prototype/data/kb/kb1_policies.json",
+          "problemPath": "/Users/chenzhiwei/Desktop/鹰眼/prototype/data/kb/kb1_problem_lists.json"
+        }
+      },
+      "kb": {
+        "kb1_entries": 4296,
+        "problem_domains": 25,
+        "problem_items": 236,
+        "total_grand": 4532
+      }
+    },
+    {
+      "at": "2026-07-02T12:42:50.920Z",
+      "phase": "import-liangku-book-2025",
+      "parsed": 295,
+      "merge": {
+        "policies": {
+          "added": 287,
+          "updated": 8,
+          "skipped": 0,
+          "rejected": 0,
+          "deduped": 0,
+          "total": 4583
+        },
+        "problemDomains": {
+          "added": 0,
+          "updated": 0,
+          "skipped": 0
+        },
+        "paths": {
+          "policiesPath": "/Users/chenzhiwei/Desktop/鹰眼/prototype/data/kb/kb1_policies.json",
+          "problemPath": "/Users/chenzhiwei/Desktop/鹰眼/prototype/data/kb/kb1_problem_lists.json"
+        }
+      },
+      "kb": {
+        "kb1_entries": 4583,
+        "problem_domains": 25,
+        "problem_items": 236,
+        "total_grand": 4819
+      }
     }
   ]
 }

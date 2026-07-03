@@ -2095,6 +2095,16 @@ async function foundationHtml() {
     </div>
     <div class="facts-h">⛓ 操作化漏斗：官方两库 → 可执行稽核</div>
     <div class="ins-bars">${funnelRows}</div>
+    ${d.operational_families ? (() => {
+      const fam = d.operational_families;
+      const maxFam = Math.max(...fam.families.map(x => x.items), 1);
+      const famBars = fam.families.map(x => `<div class="ins-bar-row">
+        <span class="ins-bar-label">${esc(x.name)}</span>
+        <span class="ins-bar-track"><span class="ins-bar-fill ${x.operationalized ? 'dom' : ''}" style="width:${Math.max(5, Math.round(x.items / maxFam * 100))}%"></span></span>
+        <span class="ins-bar-val">${x.items}${x.operationalized ? ' ✓' : ''}</span>
+      </div><div class="muted" style="font-size:11px;margin:-2px 0 7px 38%">${x.operationalized ? esc(x.checker + ' · ' + (x.note || '')) : esc(x.note || '待 LLM/专项 checker')}</div>`).join('');
+      return `<div class="facts-h" style="margin-top:14px">🧬 模式族覆盖（L3 索引 ${fmt(fam.merged_items)} 项 · ${fam.exclusive_pairs} 对互斥 · ${fam.operationalized_pct}% 已操作化）</div><div class="ins-bars">${famBars}</div>`;
+    })() : ''}
     <p class="muted" style="font-size:11.5px">来源：${g.top_sources.slice(0, 4).map(s => esc(s.source) + ' ' + s.count).join(' · ')}　|　layer：${Object.entries(g.layers).map(([k, v]) => esc(k) + v).join(' ')}</p>
     ${d.clinical_kb ? `<p class="muted" style="font-size:11.5px">📖 <b>两库另一半 · 临床知识库</b>：${d.clinical_kb.total} 条临床指导原则/说明书/重点监控（${d.clinical_kb.sources.slice(0, 3).map(s => esc(s.source)).join('、')}…），<b>${d.clinical_kb.rules_referencing}</b> 条规则同时引临床依据——政策条款 + 临床指南双重溯源。</p>` : ''}
     <div class="ins-2col">

@@ -1,0 +1,556 @@
+{
+  "snapshots": [
+    {
+      "snapshot_id": "SNAP-main-1782993356707",
+      "case_id": "main",
+      "at": "2026-07-02T11:55:56.707Z",
+      "mode": "exam",
+      "summary": {
+        "suspected": 5,
+        "clue": 2,
+        "amount": 6301
+      },
+      "findings": [
+        {
+          "key": "T-201|费用清单 第7行",
+          "finding_id": "F-NSCLC001-004",
+          "rule_id": "T-201",
+          "rule_name": "靶向药无基因检测证据使用",
+          "status": "疑点",
+          "violation_type": "串换/无指征/范围外（依证据落条款）",
+          "violation_nature": "非主观差错",
+          "amount_involved": 4704,
+          "evidence_loc": "费用清单 第7行"
+        },
+        {
+          "key": "B-201|费用清单 第21行",
+          "finding_id": "F-NSCLC001-007",
+          "rule_id": "B-201",
+          "rule_name": "药品使用超出医保目录限定支付范围",
+          "status": "疑点",
+          "violation_type": "将不属于医保基金支付范围的费用纳入医保结算",
+          "violation_nature": "非主观差错",
+          "amount_involved": 1280,
+          "evidence_loc": "费用清单 第21行"
+        },
+        {
+          "key": "A-109|费用清单 第8行",
+          "finding_id": "F-NSCLC001-003",
+          "rule_id": "A-109",
+          "rule_name": "多记费用—结算数量超医嘱/记录数量",
+          "status": "疑点",
+          "violation_type": "超量计费/多记",
+          "violation_nature": "非主观差错",
+          "amount_involved": 180,
+          "evidence_loc": "费用清单 第8行"
+        },
+        {
+          "key": "A-105|费用清单 第2行",
+          "finding_id": "F-NSCLC001-002",
+          "rule_id": "A-105",
+          "rule_name": "超标准收费—护理等级与实际不符",
+          "status": "疑点",
+          "violation_type": "超标准收费",
+          "violation_nature": "非主观差错",
+          "amount_involved": 104,
+          "evidence_loc": "费用清单 第2行"
+        },
+        {
+          "key": "F-003|费用清单 第3行",
+          "finding_id": "F-NSCLC001-001",
+          "rule_id": "F-003",
+          "rule_name": "时间逻辑冲突",
+          "status": "疑点",
+          "violation_type": "虚构服务项目候选",
+          "violation_nature": "非主观差错",
+          "amount_involved": 33,
+          "evidence_loc": "费用清单 第3行"
+        },
+        {
+          "key": "T-207|病程记录 2026-03-14",
+          "finding_id": "F-NSCLC001-006",
+          "rule_id": "T-207",
+          "rule_name": "院外购药费用转嫁",
+          "status": "线索",
+          "violation_type": "费用转嫁（D-402特化）",
+          "violation_nature": "待定",
+          "amount_involved": 2600,
+          "evidence_loc": "病程记录 2026-03-14"
+        },
+        {
+          "key": "T-205|费用清单 第9行",
+          "finding_id": "F-NSCLC001-005",
+          "rule_id": "T-205",
+          "rule_name": "化疗辅助用药超规/无指征",
+          "status": "线索",
+          "violation_type": "过度诊疗/重点监控",
+          "violation_nature": "非主观差错",
+          "amount_involved": 1180,
+          "evidence_loc": "费用清单 第9行"
+        }
+      ]
+    },
+    {
+      "snapshot_id": "SNAP-main-1783000514357",
+      "case_id": "main",
+      "at": "2026-07-02T13:55:14.357Z",
+      "mode": "exam",
+      "summary": {
+        "suspected": 5,
+        "clue": 2,
+        "amount": 6301
+      },
+      "findings": [
+        {
+          "key": "T-201|费用清单 第7行",
+          "finding_id": "F-NSCLC001-004",
+          "rule_id": "T-201",
+          "rule_name": "靶向药无基因检测证据使用",
+          "status": "疑点",
+          "violation_type": "串换/无指征/范围外（依证据落条款）",
+          "violation_nature": "非主观差错",
+          "amount_involved": 4704,
+          "evidence_loc": "费用清单 第7行"
+        },
+        {
+          "key": "B-201|费用清单 第21行",
+          "finding_id": "F-NSCLC001-007",
+          "rule_id": "B-201",
+          "rule_name": "药品使用超出医保目录限定支付范围",
+          "status": "疑点",
+          "violation_type": "将不属于医保基金支付范围的费用纳入医保结算",
+          "violation_nature": "非主观差错",
+          "amount_involved": 1280,
+          "evidence_loc": "费用清单 第21行"
+        },
+        {
+          "key": "A-109|费用清单 第8行",
+          "finding_id": "F-NSCLC001-003",
+          "rule_id": "A-109",
+          "rule_name": "多记费用—结算数量超医嘱/记录数量",
+          "status": "疑点",
+          "violation_type": "超量计费/多记",
+          "violation_nature": "非主观差错",
+          "amount_involved": 180,
+          "evidence_loc": "费用清单 第8行"
+        },
+        {
+          "key": "A-105|费用清单 第2行",
+          "finding_id": "F-NSCLC001-002",
+          "rule_id": "A-105",
+          "rule_name": "超标准收费—护理等级与实际不符",
+          "status": "疑点",
+          "violation_type": "超标准收费",
+          "violation_nature": "非主观差错",
+          "amount_involved": 104,
+          "evidence_loc": "费用清单 第2行"
+        },
+        {
+          "key": "F-003|费用清单 第3行",
+          "finding_id": "F-NSCLC001-001",
+          "rule_id": "F-003",
+          "rule_name": "时间逻辑冲突",
+          "status": "疑点",
+          "violation_type": "虚构服务项目候选",
+          "violation_nature": "非主观差错",
+          "amount_involved": 33,
+          "evidence_loc": "费用清单 第3行"
+        },
+        {
+          "key": "T-207|病程记录 2026-03-14",
+          "finding_id": "F-NSCLC001-006",
+          "rule_id": "T-207",
+          "rule_name": "院外购药费用转嫁",
+          "status": "线索",
+          "violation_type": "费用转嫁（D-402特化）",
+          "violation_nature": "待定",
+          "amount_involved": 2600,
+          "evidence_loc": "病程记录 2026-03-14"
+        },
+        {
+          "key": "T-205|费用清单 第9行",
+          "finding_id": "F-NSCLC001-005",
+          "rule_id": "T-205",
+          "rule_name": "化疗辅助用药超规/无指征",
+          "status": "线索",
+          "violation_type": "过度诊疗/重点监控",
+          "violation_nature": "非主观差错",
+          "amount_involved": 1180,
+          "evidence_loc": "费用清单 第9行"
+        }
+      ]
+    },
+    {
+      "snapshot_id": "SNAP-main-1783000529386",
+      "case_id": "main",
+      "at": "2026-07-02T13:55:29.386Z",
+      "mode": "exam",
+      "summary": {
+        "suspected": 5,
+        "clue": 2,
+        "amount": 6301
+      },
+      "findings": [
+        {
+          "key": "T-201|费用清单 第7行",
+          "finding_id": "F-NSCLC001-004",
+          "rule_id": "T-201",
+          "rule_name": "靶向药无基因检测证据使用",
+          "status": "疑点",
+          "violation_type": "串换/无指征/范围外（依证据落条款）",
+          "violation_nature": "非主观差错",
+          "amount_involved": 4704,
+          "evidence_loc": "费用清单 第7行"
+        },
+        {
+          "key": "B-201|费用清单 第21行",
+          "finding_id": "F-NSCLC001-007",
+          "rule_id": "B-201",
+          "rule_name": "药品使用超出医保目录限定支付范围",
+          "status": "疑点",
+          "violation_type": "将不属于医保基金支付范围的费用纳入医保结算",
+          "violation_nature": "非主观差错",
+          "amount_involved": 1280,
+          "evidence_loc": "费用清单 第21行"
+        },
+        {
+          "key": "A-109|费用清单 第8行",
+          "finding_id": "F-NSCLC001-003",
+          "rule_id": "A-109",
+          "rule_name": "多记费用—结算数量超医嘱/记录数量",
+          "status": "疑点",
+          "violation_type": "超量计费/多记",
+          "violation_nature": "非主观差错",
+          "amount_involved": 180,
+          "evidence_loc": "费用清单 第8行"
+        },
+        {
+          "key": "A-105|费用清单 第2行",
+          "finding_id": "F-NSCLC001-002",
+          "rule_id": "A-105",
+          "rule_name": "超标准收费—护理等级与实际不符",
+          "status": "疑点",
+          "violation_type": "超标准收费",
+          "violation_nature": "非主观差错",
+          "amount_involved": 104,
+          "evidence_loc": "费用清单 第2行"
+        },
+        {
+          "key": "F-003|费用清单 第3行",
+          "finding_id": "F-NSCLC001-001",
+          "rule_id": "F-003",
+          "rule_name": "时间逻辑冲突",
+          "status": "疑点",
+          "violation_type": "虚构服务项目候选",
+          "violation_nature": "非主观差错",
+          "amount_involved": 33,
+          "evidence_loc": "费用清单 第3行"
+        },
+        {
+          "key": "T-207|病程记录 2026-03-14",
+          "finding_id": "F-NSCLC001-006",
+          "rule_id": "T-207",
+          "rule_name": "院外购药费用转嫁",
+          "status": "线索",
+          "violation_type": "费用转嫁（D-402特化）",
+          "violation_nature": "待定",
+          "amount_involved": 2600,
+          "evidence_loc": "病程记录 2026-03-14"
+        },
+        {
+          "key": "T-205|费用清单 第9行",
+          "finding_id": "F-NSCLC001-005",
+          "rule_id": "T-205",
+          "rule_name": "化疗辅助用药超规/无指征",
+          "status": "线索",
+          "violation_type": "过度诊疗/重点监控",
+          "violation_nature": "非主观差错",
+          "amount_involved": 1180,
+          "evidence_loc": "费用清单 第9行"
+        }
+      ]
+    },
+    {
+      "snapshot_id": "SNAP-main-1783000543297",
+      "case_id": "main",
+      "at": "2026-07-02T13:55:43.297Z",
+      "mode": "exam",
+      "summary": {
+        "suspected": 5,
+        "clue": 2,
+        "amount": 6301
+      },
+      "findings": [
+        {
+          "key": "T-201|费用清单 第7行",
+          "finding_id": "F-NSCLC001-004",
+          "rule_id": "T-201",
+          "rule_name": "靶向药无基因检测证据使用",
+          "status": "疑点",
+          "violation_type": "串换/无指征/范围外（依证据落条款）",
+          "violation_nature": "非主观差错",
+          "amount_involved": 4704,
+          "evidence_loc": "费用清单 第7行"
+        },
+        {
+          "key": "B-201|费用清单 第21行",
+          "finding_id": "F-NSCLC001-007",
+          "rule_id": "B-201",
+          "rule_name": "药品使用超出医保目录限定支付范围",
+          "status": "疑点",
+          "violation_type": "将不属于医保基金支付范围的费用纳入医保结算",
+          "violation_nature": "非主观差错",
+          "amount_involved": 1280,
+          "evidence_loc": "费用清单 第21行"
+        },
+        {
+          "key": "A-109|费用清单 第8行",
+          "finding_id": "F-NSCLC001-003",
+          "rule_id": "A-109",
+          "rule_name": "多记费用—结算数量超医嘱/记录数量",
+          "status": "疑点",
+          "violation_type": "超量计费/多记",
+          "violation_nature": "非主观差错",
+          "amount_involved": 180,
+          "evidence_loc": "费用清单 第8行"
+        },
+        {
+          "key": "A-105|费用清单 第2行",
+          "finding_id": "F-NSCLC001-002",
+          "rule_id": "A-105",
+          "rule_name": "超标准收费—护理等级与实际不符",
+          "status": "疑点",
+          "violation_type": "超标准收费",
+          "violation_nature": "非主观差错",
+          "amount_involved": 104,
+          "evidence_loc": "费用清单 第2行"
+        },
+        {
+          "key": "F-003|费用清单 第3行",
+          "finding_id": "F-NSCLC001-001",
+          "rule_id": "F-003",
+          "rule_name": "时间逻辑冲突",
+          "status": "疑点",
+          "violation_type": "虚构服务项目候选",
+          "violation_nature": "非主观差错",
+          "amount_involved": 33,
+          "evidence_loc": "费用清单 第3行"
+        },
+        {
+          "key": "T-207|病程记录 2026-03-14",
+          "finding_id": "F-NSCLC001-006",
+          "rule_id": "T-207",
+          "rule_name": "院外购药费用转嫁",
+          "status": "线索",
+          "violation_type": "费用转嫁（D-402特化）",
+          "violation_nature": "待定",
+          "amount_involved": 2600,
+          "evidence_loc": "病程记录 2026-03-14"
+        },
+        {
+          "key": "T-205|费用清单 第9行",
+          "finding_id": "F-NSCLC001-005",
+          "rule_id": "T-205",
+          "rule_name": "化疗辅助用药超规/无指征",
+          "status": "线索",
+          "violation_type": "过度诊疗/重点监控",
+          "violation_nature": "非主观差错",
+          "amount_involved": 1180,
+          "evidence_loc": "费用清单 第9行"
+        }
+      ]
+    },
+    {
+      "snapshot_id": "SNAP-main-1783012253499",
+      "case_id": "main",
+      "at": "2026-07-02T17:10:53.499Z",
+      "mode": "exam",
+      "summary": {
+        "suspected": 5,
+        "clue": 2,
+        "amount": 6301
+      },
+      "findings": [
+        {
+          "key": "T-201|费用清单 第7行",
+          "finding_id": "F-NSCLC001-004",
+          "rule_id": "T-201",
+          "rule_name": "靶向药无基因检测证据使用",
+          "status": "疑点",
+          "violation_type": "串换/无指征/范围外（依证据落条款）",
+          "violation_nature": "非主观差错",
+          "amount_involved": 4704,
+          "evidence_loc": "费用清单 第7行"
+        },
+        {
+          "key": "B-201|费用清单 第21行",
+          "finding_id": "F-NSCLC001-007",
+          "rule_id": "B-201",
+          "rule_name": "药品使用超出医保目录限定支付范围",
+          "status": "疑点",
+          "violation_type": "将不属于医保基金支付范围的费用纳入医保结算",
+          "violation_nature": "非主观差错",
+          "amount_involved": 1280,
+          "evidence_loc": "费用清单 第21行"
+        },
+        {
+          "key": "A-109|费用清单 第8行",
+          "finding_id": "F-NSCLC001-003",
+          "rule_id": "A-109",
+          "rule_name": "多记费用—结算数量超医嘱/记录数量",
+          "status": "疑点",
+          "violation_type": "超量计费/多记",
+          "violation_nature": "非主观差错",
+          "amount_involved": 180,
+          "evidence_loc": "费用清单 第8行"
+        },
+        {
+          "key": "A-105|费用清单 第2行",
+          "finding_id": "F-NSCLC001-002",
+          "rule_id": "A-105",
+          "rule_name": "超标准收费—护理等级与实际不符",
+          "status": "疑点",
+          "violation_type": "超标准收费",
+          "violation_nature": "非主观差错",
+          "amount_involved": 104,
+          "evidence_loc": "费用清单 第2行"
+        },
+        {
+          "key": "F-003|费用清单 第3行",
+          "finding_id": "F-NSCLC001-001",
+          "rule_id": "F-003",
+          "rule_name": "时间逻辑冲突",
+          "status": "疑点",
+          "violation_type": "虚构服务项目候选",
+          "violation_nature": "非主观差错",
+          "amount_involved": 33,
+          "evidence_loc": "费用清单 第3行"
+        },
+        {
+          "key": "T-207|病程记录 2026-03-14",
+          "finding_id": "F-NSCLC001-006",
+          "rule_id": "T-207",
+          "rule_name": "院外购药费用转嫁",
+          "status": "线索",
+          "violation_type": "费用转嫁（D-402特化）",
+          "violation_nature": "待定",
+          "amount_involved": 2600,
+          "evidence_loc": "病程记录 2026-03-14"
+        },
+        {
+          "key": "T-205|费用清单 第9行",
+          "finding_id": "F-NSCLC001-005",
+          "rule_id": "T-205",
+          "rule_name": "化疗辅助用药超规/无指征",
+          "status": "线索",
+          "violation_type": "过度诊疗/重点监控",
+          "violation_nature": "非主观差错",
+          "amount_involved": 1180,
+          "evidence_loc": "费用清单 第9行"
+        }
+      ]
+    },
+    {
+      "snapshot_id": "SNAP-main-1783012272224",
+      "case_id": "main",
+      "at": "2026-07-02T17:11:12.224Z",
+      "mode": "exam",
+      "summary": {
+        "suspected": 5,
+        "clue": 2,
+        "amount": 6301
+      },
+      "findings": [
+        {
+          "key": "T-201|费用清单 第7行",
+          "finding_id": "F-NSCLC001-004",
+          "rule_id": "T-201",
+          "rule_name": "靶向药无基因检测证据使用",
+          "status": "疑点",
+          "violation_type": "串换/无指征/范围外（依证据落条款）",
+          "violation_nature": "非主观差错",
+          "amount_involved": 4704,
+          "evidence_loc": "费用清单 第7行"
+        },
+        {
+          "key": "B-201|费用清单 第21行",
+          "finding_id": "F-NSCLC001-007",
+          "rule_id": "B-201",
+          "rule_name": "药品使用超出医保目录限定支付范围",
+          "status": "疑点",
+          "violation_type": "将不属于医保基金支付范围的费用纳入医保结算",
+          "violation_nature": "非主观差错",
+          "amount_involved": 1280,
+          "evidence_loc": "费用清单 第21行"
+        },
+        {
+          "key": "A-109|费用清单 第8行",
+          "finding_id": "F-NSCLC001-003",
+          "rule_id": "A-109",
+          "rule_name": "多记费用—结算数量超医嘱/记录数量",
+          "status": "疑点",
+          "violation_type": "超量计费/多记",
+          "violation_nature": "非主观差错",
+          "amount_involved": 180,
+          "evidence_loc": "费用清单 第8行"
+        },
+        {
+          "key": "A-105|费用清单 第2行",
+          "finding_id": "F-NSCLC001-002",
+          "rule_id": "A-105",
+          "rule_name": "超标准收费—护理等级与实际不符",
+          "status": "疑点",
+          "violation_type": "超标准收费",
+          "violation_nature": "非主观差错",
+          "amount_involved": 104,
+          "evidence_loc": "费用清单 第2行"
+        },
+        {
+          "key": "F-003|费用清单 第3行",
+          "finding_id": "F-NSCLC001-001",
+          "rule_id": "F-003",
+          "rule_name": "时间逻辑冲突",
+          "status": "疑点",
+          "violation_type": "虚构服务项目候选",
+          "violation_nature": "非主观差错",
+          "amount_involved": 33,
+          "evidence_loc": "费用清单 第3行"
+        },
+        {
+          "key": "T-207|病程记录 2026-03-14",
+          "finding_id": "F-NSCLC001-006",
+          "rule_id": "T-207",
+          "rule_name": "院外购药费用转嫁",
+          "status": "线索",
+          "violation_type": "费用转嫁（D-402特化）",
+          "violation_nature": "待定",
+          "amount_involved": 2600,
+          "evidence_loc": "病程记录 2026-03-14"
+        },
+        {
+          "key": "T-205|费用清单 第9行",
+          "finding_id": "F-NSCLC001-005",
+          "rule_id": "T-205",
+          "rule_name": "化疗辅助用药超规/无指征",
+          "status": "线索",
+          "violation_type": "过度诊疗/重点监控",
+          "violation_nature": "非主观差错",
+          "amount_involved": 1180,
+          "evidence_loc": "费用清单 第9行"
+        }
+      ]
+    },
+    {
+      "snapshot_id": "SNAP-uploaded-1783012671597",
+      "case_id": "uploaded",
+      "at": "2026-07-02T17:17:51.597Z",
+      "mode": "exam",
+      "summary": {
+        "suspected": 0,
+        "clue": 0,
+        "amount": 0
+      },
+      "findings": []
+    }
+  ]
+}

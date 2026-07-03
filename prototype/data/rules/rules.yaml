@@ -18,7 +18,7 @@ meta:
   schema_version: "3.2"
   rules_version: "v0.3"
   generated_date: "2026-06-12"
-  total_rules: 61  # 由 build-rules.js 校验与 rules 数组实际条数一致(58 + 赛前A3埋点3: TRACE-101/NUR-303/AGE-101)
+  total_rules: 63  # 含 B-201-IND 适应症索引语义层 + SUR-401 手术折价
   three_element_gate: ["原始证据定位", "违反的政策条款原文", "完整推理过程"]
   output_states: ["疑点", "线索", "不输出"]
   execution_order:
@@ -468,6 +468,26 @@ rules:
     kb2_refs: ["KB2-药品说明书", "KB2-限定支付核对卡"]
     params: {region_override: "江苏不缩紧限定支付(地市无权调整)，以国家目录备注为准"}
     demo_seed: "人血白蛋白—病历白蛋白38g/L、非重症非抢救，医保结算多支"
+
+  - rule_id: B-201-IND
+    rule_name: 药品限适应症（两库索引·语义层）
+    category: B诊疗合理
+    violation_type: 将不属于医保基金支付范围的费用纳入医保结算
+    layer: L2语义
+    risk_level: 中
+    applies_to: [住院, 门诊]
+    specialty_tags: [通用]
+    trigger_logic: |
+      L3 indication_limited 索引（510项）→ 诊断/病程与限定支付原文交叉；
+      同步层保守出线索；super+LLM 可升疑点。
+      跳过已有专科 checker 的药品（T-201靶向/T-205升白/B-201白蛋白）。
+    evidence_min_set: ["费用行", "两库限定支付原文", "病历诊断检索"]
+    output_modes: {线索: "适应症交叉不足", 疑点: "LLM语义层明确不符"}
+    exclusions: "已有 T-201/T-205/B-201 硬编码 checker 的药品"
+    policy_basis: ["KB1-条例-第38条(六)", "KB1-两库2025-药品限适应症"]
+    kb2_refs: []
+    params: {index: "kb_operational_index.json·indication_limited"}
+    demo_seed: "索引药品×诊断不符→线索"
 
   - rule_id: B-202
     rule_name: 无指征使用抗菌药物
@@ -1119,7 +1139,27 @@ rules:
     policy_basis: ["KB1-条例-第38条(三)", "KB1-问题清单2025-重症-175"]
     kb2_refs: []
     params: {}
+    relations: {subsumes: [A-102], note: "ICU特级/一般专项护理重复与两库互斥索引同笔费用时，专科规则优先"}
     demo_seed: "ICU特级护理同时另收一般专项护理"
+
+  - rule_id: SUR-401
+    rule_name: 同台多手术未按规定折价
+    category: A收费合规
+    violation_type: 超标准收费
+    layer: L1确定性
+    risk_level: 高
+    applies_to: [住院]
+    specialty_tags: [通用, 外科]
+    trigger_logic: |
+      经同一切口进行的两种及以上不同手术：
+      IF 第二及以后手术仍按100%计价(未按70~75%折价): 命中
+    evidence_min_set: ["同台手术费用行组", "两库手术折价索引", "折价差额计算"]
+    output_modes: {疑点: "未按规定折价"}
+    exclusions: "不同切口独立手术；已按规定折价计收的"
+    policy_basis: ["KB1-条例-第38条(三)", "KB1-两库2025-手术项目未按规定折价收费"]
+    kb2_refs: []
+    params: {discount_ratio: 0.75}
+    demo_seed: "同切口卵巢囊肿剔除术+卵巢修补术，第二术式未折价"
 
   - rule_id: ICU-302
     rule_name: 按小时计价监护项目时长虚计
@@ -1348,7 +1388,7 @@ rules:
     trigger_logic: "两档年龄分层: ① IF 患者年龄<18 AND 费用含喹诺酮类(左氧氟沙星/环丙沙星/莫西沙星等,说明书18岁以下禁用): 命中→疑点(全额); ② IF 患者年龄≥14 AND 费用含儿童专用制剂(名称含'小儿'/'儿童型',两库限儿童支付): 命中→疑点(全额)"
     evidence_min_set: ["药品费用行", "病案首页年龄", "年龄限制依据(说明书禁忌/两库限定)"]
     exclusions: "说明书允许的特殊获益人群(需病历记载评估);年龄缺失不判"
-    policy_basis: ["KB1-条例-第38条(六)", "KB1-两库2025-国家医保局关于更新发布有-药品限儿童使用-1", "KB2-喹诺酮说明书禁忌(18岁以下)"]
+    policy_basis: ["KB1-条例-第38条(六)", "KB1-两库2025-药品限儿童使用-波生坦分散片-1", "KB2-喹诺酮说明书禁忌(18岁以下)"]
     kb2_refs: ["KB2-喹诺酮说明书禁忌"]
     params: {quinolone_pattern: "左氧氟沙星|环丙沙星|莫西沙星|氧氟沙星|诺氟沙星|培氟沙星|洛美沙星|司帕沙星|加替沙星", pediatric_pattern: "^小儿|儿童型", minor_age: 18, pediatric_age: 14}
     demo_seed: "16岁肺炎患者使用左氧氟沙星注射液(18岁以下禁用)——答疑现场周夕鸣亲口举例的14/18两档"

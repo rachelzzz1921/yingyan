@@ -34,7 +34,10 @@ const LIMITED_PAYMENT = [
     policy_ref: 'KB1-目录2025-人血白蛋白-备注',
   },
 ];
-const PEDIATRIC_LIMITED = /波生坦|生长激素|重组人生长激素/; // 两库"限儿童使用",成人用超年龄限定
+const PEDIATRIC_LIMITED = /波生坦|生长激素|重组人生长激素/; // 兜底（索引缺失时）
+
+// —— L3 操作索引（两库 3481 项二次提炼产物,详见 docs/鹰眼-知识架构.md）——
+const { lookupConstraints } = require('./kb-operational-index');
 
 function ev(type, loc, text) { return { type, loc, text }; }
 function pol(ref, text) { return { ref, text }; }
@@ -118,7 +121,56 @@ function detectNative(patient, items, kb = {}) {
         }));
       }
     }
-    if (PEDIATRIC_LIMITED.test(name) && Number.isFinite(age) && age >= 14) {
+    // ④ L3 操作索引·数据驱动检测（两库 3481 项提炼:性别/儿童/饮片,详见 docs/鹰眼-知识架构.md）
+    const recs = lookupConstraints(name);
+    let idxChildHit = false;
+    for (const rec of recs) {
+      const refs = (rec.refs || []).slice(0, 2);
+      const policyOf = (fallback) => refs.map(ref => ({ ...polOf(ref, fallback), verify_status: vstatus(ref) }))
+        .concat([{ ...polOf('KB1-条例-第38条(六)', '将不属于医保基金支付范围的费用纳入结算'), verify_status: vstatus('KB1-条例-第38条(六)') }]);
+
+      // ④a 性别限定（索引级,补 ① 正则覆盖不到的药名,如"前列舒通胶囊"）
+      if (rec.family === 'gender_limited' && rec.cond.limit_sex && sex && sex !== rec.cond.limit_sex && !sexConflict) {
+        const exact = !rec.cond.sex_inferred;
+        hits.push(mk('F-001', '性别—药品/项目冲突（两库·区分性别使用）', exact ? '明确违规' : '可疑', exact ? '疑点' : '线索', '性别与限定不符', {
+          evidence: [ev('开单项目', '本次医嘱', `「${name}」两库限定 ${rec.cond.limit_sex} 性使用${exact ? '' : '（据功能主治推断,请人工复核）'}`), ev('患者信息', '就诊登记', `患者性别:${sex}`)],
+          policy: policyOf(`两库·区分性别使用:限${rec.cond.limit_sex}性 · ${rec.basis.slice(0, 80)}`),
+          reasoning: `${sex}性患者开立两库「区分性别使用」清单内限${rec.cond.limit_sex}性的「${name}」${exact ? '——官方清单硬性别限定' : '——功能主治提示性别限定（推断）,建议复核'}。`,
+          disposal: exact ? '开单拦截:核对患者性别与用药必要性。' : '开单软提醒:请复核该药性别适用性。',
+        }));
+      }
+
+      // ④b 儿童限定（索引级,覆盖 315 项;含"限3-12岁"等精确区间）
+      if (rec.family === 'child_limited' && Number.isFinite(age)) {
+        const over = rec.cond.age_max != null && age > rec.cond.age_max;
+        const under = rec.cond.age_min != null && age < rec.cond.age_min;
+        if (over || under) {
+          idxChildHit = true;
+          const rng = rec.cond.age_min != null ? `${rec.cond.age_min}-${rec.cond.age_max}岁` : `≤${rec.cond.age_max}岁（儿童）`;
+          hits.push(mk('B-201', '药品使用超出医保目录限定支付范围', '可疑', '线索', '超年龄限定支付', {
+            evidence: [ev('开单药品', '本次医嘱', `「${name}」两库限 ${rng} 使用`), ev('患者信息', '就诊登记', `患者年龄:${age}岁`)],
+            policy: policyOf(`两库·儿童限定:限${rng} · ${rec.basis.slice(0, 80)}`),
+            reasoning: `「${name}」在两库儿童限定清单内（限${rng}）,患者 ${age} 岁不在限定区间 → 超年龄限定支付范围。`,
+            disposal: '开单软提醒:超年龄使用需自费告知或换用目录内替代。',
+          }));
+        }
+      }
+
+      // ④c 中药饮片不予支付（单复方均不予=硬;单方不予=软,复方可支付需人工判断处方构成）
+      if (rec.family === 'tcm_no_pay' && rec.matched === String(name).replace(/\s+/g, '')) {
+        const both = rec.cond.tcm_mode === 'both';
+        hits.push(mk('B-201', both ? '中药饮片单复方均不予支付' : '中药饮片单方使用不予支付', both ? '明确违规' : '可疑', both ? '疑点' : '线索', '饮片不予支付', {
+          evidence: [ev('开单饮片', '本次医嘱', `「${name}」在两库「${both ? '单复方均不予支付' : '单方使用不予支付'}」清单内`)],
+          policy: policyOf(`两库·饮片不予支付清单`),
+          reasoning: both
+            ? `「${name}」属官方「单复方均不予支付」饮片——无论单方复方均不得纳入基金支付。`
+            : `「${name}」属「单方使用不予支付」饮片——单方开立不予支付;若为复方一味,复方整体可支付,请复核处方构成。`,
+          disposal: both ? '开单拦截:该饮片不得医保结算,应自费告知。' : '开单软提醒:确认为复方组成,单方使用应自费。',
+        }));
+      }
+    }
+
+    if (!idxChildHit && PEDIATRIC_LIMITED.test(name) && Number.isFinite(age) && age >= 14) {
       // 引用 KB 里精确的"限儿童使用"两库条目(按药名匹配),再以第38条(六)作法规兜底
       const token = (name.match(/波生坦|生长激素/) || [])[0];
       const pedRef = token ? Object.keys(texts).find(k => /药品限儿童使用/.test(k) && k.includes(token)) : null;

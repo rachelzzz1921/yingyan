@@ -77,7 +77,7 @@ function buildPolicyMaps(kb1, kb2, pl) {
 }
 
 async function loadFromSupabase() {
-  const rows = await supabase.listEntries({ limit: 1000 });
+  const rows = await supabase.listAllEntries();
   if (!rows.length) return null;
   const policyTexts = {};
   const policyVerified = {};
@@ -145,6 +145,25 @@ function keywordSearch(query, policyTexts, { limit = 8, kbLayerPrefix = null } =
   return scored.slice(0, limit);
 }
 
+/** 向量 + 关键词 RRF 合并（提升条例/问题清单/药名类 recall） */
+function mergeHybridHits(vecRows, kwRows, limit) {
+  const scores = new Map();
+  const rows = new Map();
+  const add = (list, weight) => {
+    list.forEach((r, rank) => {
+      const id = r.ref_id;
+      scores.set(id, (scores.get(id) || 0) + weight / (rank + 1));
+      if (!rows.has(id)) rows.set(id, r);
+    });
+  };
+  add(vecRows || [], 1);
+  add(kwRows || [], 1.2);
+  return [...scores.entries()]
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, limit)
+    .map(([id, score]) => ({ ...rows.get(id), score, source: rows.get(id).source || 'hybrid' }));
+}
+
 /** pgvector 语义检索；无 embedding 时回退 keywordSearch */
 async function semanticSearch(query, { limit = 8, kbLayer = null, policyTexts = null, policyVerified = null, policyMeta = null, asOf = null, minSimilarity = 0.25 } = {}) {
   const q = String(query || '').trim();
@@ -156,6 +175,12 @@ async function semanticSearch(query, { limit = 8, kbLayer = null, policyTexts = 
     texts = filtered.policyTexts;
     verified = filtered.policyVerified;
   }
+  const prefix = kbLayer === 'KB2' ? 'KB2' : kbLayer === 'KB1' ? 'KB1' : kbLayer === 'PL' ? 'KB1-问题清单' : null;
+  const kwRows = keywordSearch(q, texts, { limit, kbLayerPrefix: prefix }).map(h => ({
+    ...h,
+    source: 'keyword',
+  }));
+
   if (canUseSupabase() && canEmbed()) {
     try {
       const embedded = await supabase.countEmbeddedChunks();
@@ -174,36 +199,17 @@ async function semanticSearch(query, { limit = 8, kbLayer = null, policyTexts = 
             score: r.similarity,
             source: 'pgvector',
           }));
-          const prefix = kbLayer === 'KB2' ? 'KB2' : kbLayer === 'KB1' ? 'KB1' : kbLayer === 'PL' ? 'KB1-问题清单' : null;
-          const kwRows = keywordSearch(q, texts, { limit, kbLayerPrefix: prefix }).map(h => ({
-            ...h,
-            source: 'keyword',
-          }));
-          const wantsOrdinance = /条例/.test(q) && !/实施细则/.test(q);
-          if (wantsOrdinance && vecRows.length && kwRows.length) {
-            const vecTop = vecRows[0]?.ref_id || '';
-            const kwTop = kwRows[0]?.ref_id || '';
-            if (!vecTop.includes('条例') && kwTop.includes('条例')) {
-              const merged = [...kwRows];
-              const seen = new Set(kwRows.map(r => r.ref_id));
-              for (const r of vecRows) {
-                if (!seen.has(r.ref_id)) merged.push(r);
-              }
-              return merged.slice(0, limit);
-            }
+          if (vecRows.length && kwRows.length) {
+            return mergeHybridHits(vecRows, kwRows, limit);
           }
-          return vecRows;
+          return vecRows.length ? vecRows : kwRows;
         }
       }
     } catch (e) {
       console.warn('[kb] semanticSearch pgvector:', e.message);
     }
   }
-  const prefix = kbLayer === 'KB2' ? 'KB2' : kbLayer === 'KB1' ? 'KB1' : kbLayer === 'PL' ? 'KB1-问题清单' : null;
-  return keywordSearch(q, texts, { limit, kbLayerPrefix: prefix }).map(h => ({
-    ...h,
-    source: 'keyword',
-  }));
+  return kwRows;
 }
 
 async function status(dataDir) {

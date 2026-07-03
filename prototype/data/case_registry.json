@@ -204,6 +204,16 @@
       "created_at": "2026-06-18T01:14:08.362Z"
     },
     {
+      "folder": "case_violation_light_sur401",
+      "api_id": "violation_light_sur401",
+      "scope": "BENCH",
+      "domain": "VIOLATION_LI",
+      "bench_tier": "violation",
+      "internal_id": "YY-BENCH-VIOL-SUR401-001",
+      "pii_token": "P-sur4",
+      "created_at": "2026-07-03T00:00:00.000Z"
+    },
+    {
       "folder": "case_boundary_icu",
       "api_id": "boundary_icu",
       "scope": "BENCH",
@@ -512,6 +522,36 @@
       "bench_tier": "violation",
       "pii_token": "P-6175",
       "created_at": "2026-07-02T07:08:03.478Z"
+    },
+    {
+      "internal_id": "YY-INT-UNK-028",
+      "folder": null,
+      "api_id": "uploaded",
+      "scope": "INT",
+      "domain": "UNK",
+      "bench_tier": null,
+      "pii_token": "P-c371",
+      "created_at": "2026-07-02T08:22:30.030Z"
+    },
+    {
+      "internal_id": "YY-INT-UNK-029",
+      "folder": null,
+      "api_id": "uploaded",
+      "scope": "INT",
+      "domain": "UNK",
+      "bench_tier": null,
+      "pii_token": "P-2e8e",
+      "created_at": "2026-07-02T08:23:24.044Z"
+    },
+    {
+      "internal_id": "YY-INT-UNK-030",
+      "folder": null,
+      "api_id": "uploaded",
+      "scope": "INT",
+      "domain": "UNK",
+      "bench_tier": null,
+      "pii_token": "P-6f73",
+      "created_at": "2026-07-02T17:17:51.500Z"
     }
   ],
   "meta": {

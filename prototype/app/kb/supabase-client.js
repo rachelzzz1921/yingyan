@@ -87,26 +87,60 @@ async function getEntryByRefId(refId) {
   return rows?.[0] || null;
 }
 
-async function listEntries({ kbLayer, limit = 500 } = {}) {
-  let q = `select=ref_id,text,verify_status,kb_layer&limit=${limit}`;
+async function listEntries({ kbLayer, limit = 500, offset = 0 } = {}) {
+  let q = `select=ref_id,text,verify_status,kb_layer&limit=${limit}&offset=${offset}`;
   if (kbLayer) q += `&kb_layer=eq.${encodeURIComponent(kbLayer)}`;
   return rest('GET', 'kb_entries', { query: q, service: false }) || [];
 }
 
+/** 分页拉全量 kb_entries（PostgREST 默认单次 ≤1000） */
+async function listAllEntries({ kbLayer, pageSize = 1000 } = {}) {
+  const all = [];
+  let offset = 0;
+  for (;;) {
+    const page = await listEntries({ kbLayer, limit: pageSize, offset });
+    all.push(...page);
+    if (page.length < pageSize) break;
+    offset += pageSize;
+  }
+  return all;
+}
+
 async function countEntries() {
-  const rows = await rest('GET', 'kb_entries', {
-    query: 'select=ref_id',
-    service: false,
-  });
-  return Array.isArray(rows) ? rows.length : 0;
+  const cfg = ragConfig();
+  const url = `${apiBase()}/kb_entries?select=ref_id`;
+  const key = cfg.supabaseServiceKey;
+  const headers = key === 'local-dev-postgres'
+    ? { Prefer: 'count=exact' }
+    : { apikey: key, Authorization: `Bearer ${key}`, Prefer: 'count=exact' };
+  const res = await fetch(url, { method: 'HEAD', headers });
+  if (!res.ok) {
+    const rows = await listAllEntries();
+    return rows.length;
+  }
+  const range = res.headers.get('content-range') || '';
+  const m = range.match(/\/(\d+)$/);
+  return m ? Number(m[1]) : 0;
 }
 
 async function countEmbeddedChunks() {
-  const rows = await rest('GET', 'kb_chunks', {
-    query: 'select=ref_id&embedding=not.is.null',
-    service: false,
-  });
-  return Array.isArray(rows) ? rows.length : 0;
+  const cfg = ragConfig();
+  const url = `${apiBase()}/kb_chunks?select=ref_id&embedding=not.is.null`;
+  const key = cfg.supabaseServiceKey;
+  const headers = key === 'local-dev-postgres'
+    ? { Prefer: 'count=exact' }
+    : { apikey: key, Authorization: `Bearer ${key}`, Prefer: 'count=exact' };
+  const res = await fetch(url, { method: 'HEAD', headers });
+  if (!res.ok) {
+    const rows = await rest('GET', 'kb_chunks', {
+      query: 'select=ref_id&embedding=not.is.null&limit=1000',
+      service: false,
+    });
+    return Array.isArray(rows) ? rows.length : 0;
+  }
+  const range = res.headers.get('content-range') || '';
+  const m = range.match(/\/(\d+)$/);
+  return m ? Number(m[1]) : 0;
 }
 
 /** pgvector 相似度检索（需 kb_match RPC + embedding 已灌） */
@@ -201,6 +235,7 @@ module.exports = {
   upsertChunks,
   getEntryByRefId,
   listEntries,
+  listAllEntries,
   countEntries,
   countEmbeddedChunks,
   rpcKbMatch,
