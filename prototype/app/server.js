@@ -1383,6 +1383,14 @@ const server = http.createServer(async (req, res) => {
       const entry = record(body);
       return sendJSON(res, { ok: true, entry });
     }
+    // 监管回执(双向闭环):监管员对未遵从单登记处置(核实违规/驳回误报/已联系院端)→ 回执写回院端
+    if (p === '/api/precheck/supervise' && req.method === 'POST') {
+      res.setHeader('Access-Control-Allow-Origin', '*');
+      const body = await readBody(req);
+      const { setSupervisorDisposition } = require('./engine/precheck-ledger');
+      const r = setSupervisorDisposition(body.id, body.verdict, body.note);
+      return sendJSON(res, r, r.error ? 404 : 200);
+    }
     // F1 闭环·院端看板汇总 + 监管联动清单(未遵从待重点审核)
     if (p === '/api/precheck/ledger') {
       res.setHeader('Access-Control-Allow-Origin', '*');

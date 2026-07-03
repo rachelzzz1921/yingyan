@@ -76,17 +76,26 @@ function renderFee(){
 }
 renderFee();
 document.getElementById('btnSettle').onclick = function(){ alert('已提交医保结算(未经鹰眼自查——演示对照组)'); };
-document.getElementById('btnCheck').onclick = async function(){
+var RN = {'AGE-101':'未成年用药年龄分层','TRACE-101':'同一追溯码重复结算(回流药)','F-001':'性别—项目冲突','QTY-901':'单日数量超常'};
+var lastHitIdx = []; // 上次命中的 FEE 行下标(采纳整改时移除)
+async function runSettleCheck(){
   var rows = FEE.map(function(f,i){ return { row_id:'R'+(i+1), item_name:f.item_name, qty:f.qty, amount:f.amount, trace_code:f.trace_code, settle_date:f.settle_date, patient_age:AGE, patient_sex:SEX, dept:DEPT }; });
   var r = await fetch('/api/screening/rows', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ rows: rows }) }).then(x=>x.json());
   var f = r.funnel || {by_nature:{}};
   document.getElementById('funnel').innerHTML = '本单 '+f.total_rows+' 行 → <span class="tri" style="background:#b91c1c">明确违规 '+(f.by_nature['明确违规']||0)+'</span> <span class="tri" style="background:#f59e0b">可疑 '+(f.by_nature['可疑']||0)+'</span> <span class="tri" style="background:#0a7a4b">放行 '+f.clean_rows+'</span> · 命中涉及 ¥'+(f.hit_amount||0).toLocaleString();
-  var RN = {'AGE-101':'未成年用药年龄分层','TRACE-101':'同一追溯码重复结算(回流药)','F-001':'性别—项目冲突','QTY-901':'单日数量超常'};
-  var hits = (r.top20||[]).map(function(h){ return { rule_id:h.rule_id, rule_name:RN[h.rule_id]||'', nature:h.nature, reasoning:'第'+String(h.row_id).replace('R','')+'行「'+h.item_name+'」:'+h.reason, amount_involved:h.amount, evidence:[], policy:[], disposal_suggestion:'' }; });
-  window.YingyanDisposition.renderDisposition('#result', { hits: hits, engine: r.elapsed_ms+'ms · 行级筛查·本地' }, {
+  lastHitIdx = [];
+  var hits = (r.top20||[]).map(function(h){ var idx=parseInt(String(h.row_id).replace('R',''))-1; if(idx>=0)lastHitIdx.push(idx); return { rule_id:h.rule_id, rule_name:RN[h.rule_id]||'', nature:h.nature, reasoning:'第'+String(h.row_id).replace('R','')+'行「'+h.item_name+'」:'+h.reason, amount_involved:h.amount, evidence:[], policy:[], disposal_suggestion:'' }; });
+  return { hits: hits, engine: r.elapsed_ms+'ms · 行级筛查·本地' };
+}
+document.getElementById('btnCheck').onclick = async function(){
+  var r = await runSettleCheck();
+  window.YingyanDisposition.renderDisposition('#result', r, {
     engineBase:'', source:'settle', patient:{ sex:SEX, age:AGE, dept:DEPT, diagnosis:'社区获得性肺炎' },
-    heedLabel:'采纳建议·整改后结算', overrideLabel:'坚持结算',
-    onHeed: function(){ document.getElementById('funnel').innerHTML += ' <b style="color:#0a7a4b">· 已整改标注行,可重新结算</b>'; }
+    heedLabel:'采纳建议·整改标注行后结算', overrideLabel:'坚持结算',
+    // 整改=移除命中的费用行(串换/超量/回流药),重校验通过后放行结算
+    onHeed: function(){ var keep=FEE.filter(function(_,i){return lastHitIdx.indexOf(i)<0;}); FEE.length=0; keep.forEach(function(x){FEE.push(x);}); renderFee(); },
+    reCheck: runSettleCheck, submitLabel:'确认结算(已整改)',
+    onSubmit: function(){ alert('整改后医保结算已提交(命中行已剔除/退费)'); }
   });
 };
 </script>

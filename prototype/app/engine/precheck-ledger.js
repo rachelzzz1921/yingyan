@@ -88,10 +88,34 @@ function summary() {
   const pendingSupervision = overridden.filter(e => e.hits.length > 0);
   const byRule = {};
   for (const e of fired) for (const h of e.hits) byRule[h.rule_id] = (byRule[h.rule_id] || 0) + 1;
-  // 三角色触点(同一引擎、同一台账):医生开单 / 编码员 / 结算员
+  // 三角色触点(同一台账):医生开单 / 编码员 / 结算员。逐角色统计提醒/采纳/未遵从/遵从率
   const ROLE = { plugin: '医生开单', embed: '医生开单', coder: '编码员', settle: '结算员' };
   const byRole = {};
-  for (const e of fired) { const r = ROLE[e.source] || '其他'; byRole[r] = (byRole[r] || 0) + 1; }
+  const roleStats = {};
+  for (const e of fired) {
+    const r = ROLE[e.source] || '其他';
+    byRole[r] = (byRole[r] || 0) + 1;
+    const rs = roleStats[r] || (roleStats[r] = { fired: 0, heeded: 0, overridden: 0 });
+    rs.fired += 1;
+    if (e.action === 'heeded') rs.heeded += 1; else if (e.action === 'overridden') rs.overridden += 1;
+  }
+  for (const r of Object.keys(roleStats)) {
+    const rs = roleStats[r]; const d = rs.heeded + rs.overridden;
+    rs.heed_rate = d ? Math.round((rs.heeded / d) * 100) : null;
+  }
+  // 未遵从理由分布 → 规则优化信号(某规则被同一类理由反复未遵从 → 提示接数据源/调阈值)
+  const overrideReasons = {};
+  for (const e of overridden) { const k = e.reason || '(未填)'; overrideReasons[k] = (overrideReasons[k] || 0) + 1; }
+  const ruleReason = {}; // rule_id → { reason → count }
+  for (const e of overridden) { const rid = e.top_rule || '?'; (ruleReason[rid] = ruleReason[rid] || {}); const k = e.reason || '(未填)'; ruleReason[rid][k] = (ruleReason[rid][k] || 0) + 1; }
+  const improvementSignals = [];
+  for (const rid of Object.keys(ruleReason)) {
+    for (const rk of Object.keys(ruleReason[rid])) {
+      if (ruleReason[rid][rk] >= 2 && rk !== '(未填)') improvementSignals.push({ rule_id: rid, reason: rk, count: ruleReason[rid][rk], hint: /外院|检测|评估/.test(rk) ? '建议接入外院检测/评估数据源,减少误提醒' : /临床|必要/.test(rk) ? '建议细化临床例外条件或加会诊留痕' : '高频未遵从,建议复核规则阈值/口径' });
+    }
+  }
+  // 监管回执(双向闭环):未遵从单被监管处置的计数与明细
+  const supervised = pendingSupervision.filter(e => e.supervisor_disposition);
   const decided = heeded.length + overridden.length;
   return {
     generated_at: new Date().toISOString(),
@@ -105,10 +129,15 @@ function summary() {
     budding_intercepts: buddingIntercepts.length, // 院端拦下的明确违规(院端拦截量,非监管实际减少量)
     by_rule: byRule,
     by_role: byRole, // 三角色触点分布(医生开单/编码员/结算员)
+    role_stats: roleStats, // 逐角色 {fired,heeded,overridden,heed_rate}
+    override_reasons: overrideReasons, // 未遵从理由分布
+    improvement_signals: improvementSignals, // 规则优化信号(高频未遵从理由→接数据源/调阈值)
+    supervised_count: supervised.length, // 监管已回执的未遵从条数(双向闭环)
     pending_supervision: pendingSupervision.slice(-20).reverse().map(e => ({
       id: e.id, at: e.at, role: ROLE[e.source] || '其他', dept: e.patient.dept, sex: e.patient.sex, age: e.patient.age,
       diagnosis: e.patient.diagnosis, top_rule: e.top_rule, hard_count: e.hard_count,
       reason: e.reason, rules: e.hits.map(h => h.rule_id),
+      supervisor_disposition: e.supervisor_disposition || null, // 监管回执 {verdict,note,at}
     })),
     recent: fired.slice(-25).reverse().map(e => ({
       id: e.id, at: e.at, role: ROLE[e.source] || '其他', dept: e.patient.dept, action: e.action,
@@ -118,6 +147,17 @@ function summary() {
   };
 }
 
+// 监管回执(双向闭环):对未遵从单登记监管处置(核实违规/驳回误报/已联系院端)
+function setSupervisorDisposition(id, verdict, note) {
+  const store = load();
+  const e = (store.events || []).find(x => x.id === id);
+  if (!e) return { error: 'event 不存在' };
+  const V = ['核实违规', '驳回误报', '已联系院端'];
+  e.supervisor_disposition = { verdict: V.includes(verdict) ? verdict : '已联系院端', note: String(note || '').slice(0, 200), at: new Date().toISOString() };
+  save(store);
+  return { ok: true, disposition: e.supervisor_disposition };
+}
+
 function reset() { save({ schema: '1.0', events: [] }); }
 
-module.exports = { record, summary, reset, pruneStale, LEDGER_PATH };
+module.exports = { record, summary, reset, pruneStale, setSupervisorDisposition, LEDGER_PATH };

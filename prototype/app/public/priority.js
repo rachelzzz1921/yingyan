@@ -551,13 +551,27 @@ async function loadPreAlerts() {
   try {
     const d = await fetch('/api/precheck/ledger').then(r => r.json());
     const pend = d.pending_supervision || [];
-    $('#preAlertMeta').textContent = pend.length ? `${pend.length} 单待重点审核 · 院端今日萌芽拦截 ${d.budding_intercepts || 0} 条` : '暂无未遵从(院端均采纳整改)';
+    const supN = d.supervised_count || 0;
+    $('#preAlertMeta').textContent = pend.length ? `${pend.length} 单待重点审核 · 已回执 ${supN} · 院端今日萌芽拦截 ${d.budding_intercepts || 0} 条` : '暂无未遵从(院端均采纳整改)';
     const body = $('#preAlertBody');
-    if (!pend.length) { body.innerHTML = '<p class="muted" style="font-size:12px">暂无——医生均采纳了事前提醒,违规都消灭在开单环节。</p>'; return; }
+    if (!pend.length) { body.innerHTML = '<p class="muted" style="font-size:12px">暂无——院端均采纳了事前提醒,违规都消灭在开单/编码/结算环节。</p>'; return; }
     const hhmm = (iso) => { try { return new Date(iso).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }); } catch (_) { return String(iso).slice(11, 16); } };
-    body.innerHTML = `<table class="pri-table"><thead><tr><th>时间</th><th>角色</th><th>科室</th><th>患者</th><th>命中</th><th>坚持理由</th><th>标记</th></tr></thead><tbody>${
-      pend.map(e => `<tr><td>${esc(hhmm(e.at))}</td><td>${esc(e.role || '—')}</td><td>${esc(e.dept || '—')}</td><td>${esc((e.sex || '') + (e.age != null ? e.age + '岁' : ''))} ${esc(e.diagnosis || '')}</td><td>${(e.rules || []).map(r => `<span class="tri-badge tri-hard">${esc(r)}</span>`).join(' ')}</td><td class="muted">${esc(e.reason || '—')}</td><td><span class="nature-badge" style="background:#fffbe6;color:#b45309;border:1px solid #fde68a">⚠开单时已提醒</span></td></tr>`).join('')
+    const dispCell = (e) => {
+      if (e.supervisor_disposition) {
+        const v = e.supervisor_disposition.verdict;
+        const bg = v === '核实违规' ? '#fef2f2;color:#b91c1c;border:1px solid #fecaca' : v === '驳回误报' ? '#f1f5f9;color:#475569;border:1px solid #cbd5e1' : '#ecfdf5;color:#0a7a4b;border:1px solid #a7f3d0';
+        return `<span class="nature-badge" style="background:${bg}">监管回执:${esc(v)}</span>`;
+      }
+      return `<button class="btn sm secondary sup-btn" data-id="${esc(e.id)}" data-v="核实违规">核实违规</button> <button class="btn sm secondary sup-btn" data-id="${esc(e.id)}" data-v="驳回误报">驳回</button> <button class="btn sm secondary sup-btn" data-id="${esc(e.id)}" data-v="已联系院端">已联系</button>`;
+    };
+    body.innerHTML = `<table class="pri-table"><thead><tr><th>时间</th><th>角色</th><th>科室</th><th>患者</th><th>命中</th><th>坚持理由</th><th>监管回执/处置</th></tr></thead><tbody>${
+      pend.map(e => `<tr><td>${esc(hhmm(e.at))}</td><td>${esc(e.role || '—')}</td><td>${esc(e.dept || '—')}</td><td>${esc((e.sex || '') + (e.age != null ? e.age + '岁' : ''))} ${esc(e.diagnosis || '')}</td><td>${(e.rules || []).map(r => `<span class="tri-badge tri-hard">${esc(r)}</span>`).join(' ')}</td><td class="muted">${esc(e.reason || '—')}</td><td>${dispCell(e)}</td></tr>`).join('')
     }</tbody></table>`;
+    body.querySelectorAll('.sup-btn').forEach(btn => btn.addEventListener('click', async () => {
+      btn.disabled = true;
+      await fetch('/api/precheck/supervise', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id: btn.dataset.id, verdict: btn.dataset.v }) });
+      loadPreAlerts(); // 回执写回,刷新(院端看板也会看到已回执数上升)
+    }));
   } catch (_) { $('#preAlertMeta').textContent = ''; }
 }
 $('#btnPreAlertRefresh')?.addEventListener('click', loadPreAlerts);

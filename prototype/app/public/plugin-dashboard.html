@@ -47,7 +47,8 @@ button{padding:5px 12px;border:1px solid #cbd5e1;background:#fff;border-radius:6
 </div>
 
 <div class="cards" id="cards"></div>
-<div class="panel" id="rolePanel" style="display:none"><h2>📍 三角色触点分布</h2><div id="byRole" style="display:flex;gap:12px;flex-wrap:wrap"></div></div>
+<div class="panel" id="rolePanel" style="display:none"><h2>📍 三角色触点分布 · 逐角色遵从率</h2><div id="byRole" style="display:flex;gap:12px;flex-wrap:wrap"></div></div>
+<div class="panel" id="sigPanel" style="display:none"><h2>📈 未遵从理由 → 规则优化信号</h2><div class="sub" style="margin-bottom:8px">同一规则被同类理由反复未遵从 → 提示接数据源/调阈值,反哺规则库("成熟一条、停用一条")。</div><div id="sigBody"></div></div>
 
 <div class="panel">
   <h2>⚠ 事前已提醒·未遵从 → 监管重点审核清单</h2>
@@ -69,18 +70,30 @@ async function load(){
   const t = d.today||{};
   const heedRate = d.heed_rate==null? '—' : d.heed_rate+'%';
   document.getElementById('cards').innerHTML = [
-    ['今日提醒', t.reminders_fired||0, '', '开单命中提醒的次数'],
+    ['今日提醒', t.reminders_fired||0, '', '开单/编码/结算命中提醒次数'],
     ['遵从率', heedRate, 'green', '采纳整改 / 已处置'],
     ['萌芽拦截', d.budding_intercepts||0, 'green', '采纳的明确违规·消灭在开单环节(院端拦截量)'],
     ['未遵从待监管', t.overridden||0, 'amber', '强行提交·转监管重点审核'],
+    ['监管已回执', d.supervised_count||0, 'green', '监管侧核实/驳回的未遵从(双向闭环)'],
   ].map(function(c){return '<div class="card"><div class="n '+c[2]+'">'+c[1]+'</div><div class="l">'+c[0]+'</div><div class="hint">'+c[3]+'</div></div>';}).join('');
 
   const roles = d.by_role||{};
+  const rstats = d.role_stats||{};
   const rkeys = Object.keys(roles);
   document.getElementById('rolePanel').style.display = rkeys.length ? '' : 'none';
   document.getElementById('byRole').innerHTML = ['医生开单','编码员','结算员'].filter(function(r){return roles[r];}).map(function(r){
-    return '<div style="padding:8px 16px;background:#f1f5f9;border-radius:10px"><b style="font-size:18px">'+roles[r]+'</b> <span style="color:#7a8ba0">'+r+'</span></div>';
+    var s=rstats[r]||{}; var hr=s.heed_rate==null?'—':s.heed_rate+'%';
+    return '<div style="padding:8px 16px;background:#f1f5f9;border-radius:10px"><b style="font-size:18px">'+roles[r]+'</b> <span style="color:#7a8ba0">'+r+'</span><div style="font-size:11px;color:#7a8ba0;margin-top:2px">采纳 '+(s.heeded||0)+' · 未遵从 '+(s.overridden||0)+' · 遵从率 <b style="color:#0a7a4b">'+hr+'</b></div></div>';
   }).join('') || '<span class="empty">暂无</span>';
+
+  const sig = d.improvement_signals||[]; const reasons = d.override_reasons||{};
+  var sp = document.getElementById('sigPanel');
+  if (rkeys.length && (sig.length || Object.keys(reasons).length)) {
+    sp.style.display='';
+    var sigHtml = sig.length ? sig.map(function(x){return '<div style="padding:8px 10px;background:#fff8e6;border:1px solid #f0d488;border-radius:8px;margin-bottom:6px;font-size:12.5px">📈 <b>'+esc(x.rule_id)+'</b> 被"'+esc(x.reason)+'"未遵从 '+x.count+' 次 → <b style="color:#8a6d00">'+esc(x.hint)+'</b></div>';}).join('') : '<div class="empty" style="padding:8px">暂无高频未遵从规则(同规则同理由≥2次才提示)</div>';
+    var reasonHtml = Object.keys(reasons).sort(function(a,b){return reasons[b]-reasons[a];}).map(function(k){return '<span style="display:inline-block;padding:2px 10px;background:#f1f5f9;border-radius:20px;margin:2px;font-size:12px">'+esc(k)+' × '+reasons[k]+'</span>';}).join('');
+    document.getElementById('sigBody').innerHTML = sigHtml + '<div style="margin-top:8px;font-size:12px;color:#7a8ba0">未遵从理由分布:</div><div style="margin-top:4px">'+reasonHtml+'</div>';
+  } else { sp.style.display='none'; }
 
   const pend = d.pending_supervision||[];
   document.getElementById('pending').innerHTML = pend.length

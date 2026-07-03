@@ -125,7 +125,16 @@
       heed.disabled = true; if (override) override.disabled = true; // 防 await 期间连点重复写台账
       await logDisposition(ctx, result, 'heeded');
       if (typeof window.__yingyanOnHeed === 'function') { try { window.__yingyanOnHeed(result.hits || []); } catch (_) {} } // 让靶站移除标注行(整改可见)
-      box.querySelector('#yy-actions').outerHTML = '<div style="padding:14px;text-align:center;color:#0a7a4b;font-weight:600">🟩 已采纳整改 · 违规消灭在萌芽<div style="font-size:11px;color:#5b6d82;font-weight:400;margin-top:4px">监管侧少处理一条 · 已计入院端看板</div></div>';
+      // 整改验证闭环:移除标注行后自动重新审方,翻绿放行(开单场景 reCheck=再抓表单重审)
+      box.querySelector('#yy-actions').outerHTML = '<div id="yy-recheck" style="padding:14px;text-align:center;color:#0a7a4b;font-weight:600">🟩 已采纳整改 · 正在重新审方…</div>';
+      await new Promise(r => setTimeout(r, 500)); // 等靶站移除标注行的淡出动画(≈400ms)完成,再抓表单重校验
+      let fresh = null;
+      try { fresh = await run({ engineBase: ctx.engineBase, source: ctx.source, scenario: ctx.scenario, silent: true }); } catch (_) {}
+      const slot = box.querySelector('#yy-recheck');
+      if (slot) {
+        if (fresh && !((fresh.hits || []).length)) slot.innerHTML = '🟩 已整改 · 重新审方通过 · 违规消灭在萌芽<div style="font-size:11px;color:#5b6d82;font-weight:400;margin-top:4px">监管侧少处理一条 · 已计入院端看板 · 可提交医嘱</div>';
+        else slot.innerHTML = '🟩 已采纳整改 · 违规消灭在萌芽<div style="font-size:11px;color:#5b6d82;font-weight:400;margin-top:4px">监管侧少处理一条 · 已计入院端看板</div>';
+      }
     };
     if (override) override.onclick = () => {
       const wrap = box.querySelector('#yy-actions');
@@ -158,11 +167,14 @@
         method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload),
       });
       const j = await r.json();
+      // silent(整改验证重校验):只返回结果,不重弹浮层、不写台账(由 heed 流程更新原浮层 slot)
+      if (opts.silent) return j;
       // opts.showClean===false 时,合规(无命中)不弹绿浮层(设置项);有命中始终弹
       if (!(opts.showClean === false && (j.hits || []).length === 0)) showOverlay(j, ctx);
       else if ((j.hits || []).length === 0) logDisposition(ctx, j, 'no_hit'); // 关了绿浮层时仍记合规审方一笔(no_hit 不计入遵从率分母,仅留痕)
       return j;
     } catch (e) {
+      if (opts.silent) return null;
       showOverlay({ hits: [], engine: '引擎未连接(' + e.message + ')——请确认鹰眼本地服务已启动' }, ctx);
       return null;
     }

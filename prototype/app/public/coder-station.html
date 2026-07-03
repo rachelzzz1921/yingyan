@@ -79,20 +79,26 @@ document.getElementById('scenarioPick').onchange = function(){
   document.getElementById('result').innerHTML = '';
 };
 document.getElementById('btnSubmit').onclick = function(){ alert('编码已提交(未经鹰眼校验——演示对照组)'); };
-document.getElementById('btnCheck').onclick = async function(){
+async function runCoderCheck(){
   var payload = {
     diagnosis: document.getElementById('dxName').value,
     icd10: document.getElementById('dxIcd').value,
     has_severe_evidence: document.getElementById('severeEvidence').checked,
     procedures: document.getElementById('proc').value,
   };
-  var r = await fetch('/api/precheck/drg', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(payload) }).then(x=>x.json());
-  var patient = { sex: document.querySelector('[data-field="sex"]').textContent, age: parseInt(document.querySelector('[data-field="age"]').textContent), dept: '病案科', diagnosis: payload.diagnosis };
+  return fetch('/api/precheck/drg', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(payload) }).then(x=>x.json());
+}
+document.getElementById('btnCheck').onclick = async function(){
+  var r = await runCoderCheck();
+  var patient = { sex: document.querySelector('[data-field="sex"]').textContent, age: parseInt(document.querySelector('[data-field="age"]').textContent), dept: '病案科', diagnosis: document.getElementById('dxName').value };
   window.YingyanDisposition.renderDisposition('#result', r, {
     engineBase:'', source:'coder', patient: patient,
     heedLabel:'采纳建议·降编到实际应入组(ES35)',
-    // 整改=降编:把主诊断改为非重症名并保持不勾重症依据 → 重跑入 base 组、正确不报(而非替高套背书)
-    onHeed: function(){ document.getElementById('dxName').value = '社区获得性肺炎(降编)'; document.getElementById('dxIcd').value = 'J15.900'; document.getElementById('severeEvidence').checked = false; }
+    // 整改=降编:主诊断改非重症名+不勾重症依据 → 重校验入 base 组、正确不报(而非替高套背书)
+    onHeed: function(){ document.getElementById('dxName').value = '社区获得性肺炎(降编)'; document.getElementById('dxIcd').value = 'J15.900'; document.getElementById('severeEvidence').checked = false; },
+    reCheck: runCoderCheck,        // 采纳后自动重校验:降编后应入 ES35、校验通过
+    submitLabel: '确认提交编码(已合规)',
+    onSubmit: function(){ document.getElementById('funnelHint') && 0; alert('编码已按 ES35 提交(整改后合规)'); }
   });
 };
 </script>

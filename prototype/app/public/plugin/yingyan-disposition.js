@@ -58,6 +58,23 @@
       heed.disabled = true; over.disabled = true;
       await logDisposition(ctx, result, 'heeded');
       if (typeof ctx.onHeed === 'function') { try { ctx.onHeed(hits); } catch (_) {} }
+      // 整改验证闭环:提供 reCheck 时自动重校验,翻绿并放行提交;否则静态"已采纳"
+      if (typeof ctx.reCheck === 'function') {
+        el.querySelector('#yy-d-actions').outerHTML = '<div id="yy-d-recheck" style="padding:12px;text-align:center;color:#0a7a4b;font-weight:600">🟩 已采纳整改 · 正在重新校验…</div>';
+        let fresh; try { fresh = await ctx.reCheck(); } catch (_) { fresh = null; }
+        if (fresh && !fresh.error && !((fresh.hits || []).length)) {
+          // 重校验通过:整个结果区替换为干净的"已整改·校验通过"态(命中卡消失,不矛盾)
+          el.innerHTML = '<div style="border:1px solid #a7f3d0;background:#ecfdf5;border-radius:12px;padding:16px;text-align:center;color:#0a7a4b">'
+            + '<div style="font-size:15px;font-weight:600">🟩 已整改 · 重新校验通过 · 违规消灭在萌芽</div>'
+            + '<div style="font-size:12px;color:#5b6d82;margin-top:4px">监管侧少处理一条 · 已计入院端看板</div>'
+            + (ctx.onSubmit ? '<button id="yy-d-submit" style="margin-top:10px;padding:8px 18px;border:0;border-radius:6px;background:#0a7a4b;color:#fff;font-weight:700;cursor:pointer">✅ ' + esc(ctx.submitLabel || '确认提交(已合规)') + '</button>' : '') + '</div>';
+          const sb = el.querySelector('#yy-d-submit');
+          if (sb) sb.onclick = function () { sb.disabled = true; if (typeof ctx.onSubmit === 'function') { try { ctx.onSubmit(); } catch (_) {} } sb.outerHTML = '<div style="margin-top:10px;color:#0a7a4b;font-weight:600">✓ 已提交 · 合规放行</div>'; };
+        } else {
+          renderDisposition(el, fresh || { hits: [] }, ctx); // 仍有命中→再来一轮整改
+        }
+        return;
+      }
       el.querySelector('#yy-d-actions').outerHTML = '<div style="padding:12px;text-align:center;color:#0a7a4b;font-weight:600">🟩 已采纳整改 · 违规消灭在萌芽 <span style="font-size:11px;color:#5b6d82;font-weight:400">· 监管侧少处理一条 · 已计入院端看板</span></div>';
     };
     over.onclick = function () {
