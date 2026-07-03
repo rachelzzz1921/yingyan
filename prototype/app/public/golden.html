@@ -214,7 +214,7 @@ table.mini td.num{font-family:var(--mono);text-align:right;font-variant-numeric:
   <div class="final" id="final">
     <h2>✅ 闭环走完</h2>
     <p id="finalText"></p>
-    <p style="margin-top:8px;font-size:12.5px;color:var(--muted)">纵深追问 → <a href="/home.html">全面平台</a> · 关口前移 → <a href="/plugins.html">插件产品线（三角色事前提醒）</a> · 口径出处 → docs/GOLDEN-PATH.md</p>
+    <p style="margin-top:8px;font-size:12.5px;color:var(--muted)">纵深追问 → <a href="/?role=audit">② 鹰眼大平台</a> · 零对接插件 → <a href="/plugins.html">③ 插件 & 小工具箱</a> · 口径出处 → docs/GOLDEN-PATH.md</p>
   </div>
 
   <div class="vs">
@@ -356,8 +356,18 @@ const HANDLERS = {
 
   async review(){
     if(!S.report) throw new Error('先跑第①步');
-    const f=activeFindings(S.report).find(x=>x.status==='疑点');
-    if(!f) throw new Error('本案卷无疑点可复核，可换一份演示案卷');
+    const act=activeFindings(S.report);
+    const susp=act.filter(x=>x.status==='疑点');
+    // 无疑点(干净件/边界件/仅线索):复核环节不阻塞演示——如实说明「人是闸门,本案无需介入」,放行下一步
+    if(!susp.length){
+      const clue=act.filter(x=>x.status==='线索');
+      const msg=clue.length
+        ? '本案无「疑点」档、仅 '+clue.length+' 条线索级——按三档设计,线索证据不足不进人工处置。<b>人是闸门,本案无需介入。</b>'
+        : '<b>✅ 干净件:零疑点、零线索</b>,G0 零误报红线守住——复核环节无对象。';
+      out('review','<div class="f-card clue" style="border-left-color:var(--ok)"><div class="fh"><b>本案无需人工复核</b><span class="rid">'+esc(CASE_ID)+'</span></div><p class="tri" style="color:#3D5A76;margin-top:6px">'+msg+' 直接进入下一步。</p></div>');
+      return;
+    }
+    const f=susp[0];
     S.reviewedFinding=f;
     out('review',
       '<div class="f-card"><div class="fh"><b>'+esc(f.rule_name)+'</b><span class="rid">'+esc(f.rule_id)+'</span><span class="amt">'+fmtY(f.amount_involved)+'</span></div></div>'+
