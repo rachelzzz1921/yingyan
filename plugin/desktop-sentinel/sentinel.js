@@ -41,6 +41,12 @@ console.log('   把 xlsx/csv/pdf/扫描件 拖进来即自动稽核。Ctrl+C 退
 const seen = new Map(); // name -> mtime,防重复触发
 let busy = Promise.resolve();
 
+function triageLabel(nature) {
+  if (nature === '明确违规') return { icon: '🟥', label: 'A 建议重点核查' };
+  if (nature === '可疑') return { icon: '🟨', label: 'B 建议补材料后核查' };
+  return { icon: '🟩', label: 'C 建议暂缓/观察' };
+}
+
 async function auditFile(fp) {
   const name = path.basename(fp);
   const ext = path.extname(name).toLowerCase();
@@ -79,8 +85,8 @@ async function auditFile(fp) {
     }).then(r => r.json());
     const s = audit.report_meta?.summary || {};
     const nature = audit.report_meta?.case_nature || (s.suspected_count ? '可疑' : '干净');
-    const icon = nature === '明确违规' ? '🟥' : nature === '可疑' ? '🟨' : '🟩';
-    console.log(`   ${icon} 定档「${nature}」· 疑点 ${s.suspected_count ?? 0} 条 / 线索 ${s.clue_count ?? 0} 条 · 涉及 ¥${s.suspected_amount ?? 0}`);
+    const tier = triageLabel(nature);
+    console.log(`   ${tier.icon} 定档「${tier.label}」· 疑点 ${s.suspected_count ?? 0} 条 / 线索 ${s.clue_count ?? 0} 条 · 涉及 ¥${s.suspected_amount ?? 0}`);
     for (const f of (audit.findings || []).slice(0, 3)) {
       console.log(`      · ${f.rule_id} ${f.rule_name || ''} ¥${f.amount_involved ?? 0}(${f.nature || f.status})`);
     }

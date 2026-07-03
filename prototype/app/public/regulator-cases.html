@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#F0F4F8">
+<title>判例速查卡 · 鹰眼监管小工具箱</title>
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<style>
+:root{--ink:#0B2A4A;--ink2:#134E72;--muted:#5C7185;--dim:#8296A9;--teal:#14B8A6;--amber:#E8A838;--bg:#F0F4F8;--surface:#fff;--line:#E2E9F0;--hair:#D3DDE7;--sans:"PingFang SC","Hiragino Sans GB","Noto Sans SC","Microsoft YaHei",-apple-system,sans-serif}
+*{box-sizing:border-box;margin:0}body{font-family:var(--sans);background:var(--bg);color:var(--ink);line-height:1.65;min-height:100vh}body::before{content:"";position:fixed;inset:0;background-image:radial-gradient(rgba(11,42,74,.055) 1.5px,transparent 1.5px);background-size:26px 26px;pointer-events:none}.wrap{max-width:1080px;margin:0 auto;padding:34px 24px 48px;position:relative}.top{display:flex;justify-content:space-between;gap:16px;align-items:flex-start;margin-bottom:24px}.back{color:var(--ink2);text-decoration:none;border:1px solid var(--line);background:var(--surface);border-radius:10px;padding:9px 14px;font-weight:800;font-size:13px}.eyebrow{font-size:12px;color:var(--dim);letter-spacing:.12em;font-weight:800}h1{font-size:clamp(28px,4vw,42px);line-height:1.25}.lead{color:var(--muted);max-width:820px;margin-top:8px}.panel{border:1px solid var(--line);border-radius:14px;background:var(--surface);padding:20px;box-shadow:0 3px 14px rgba(11,42,74,.05);margin-top:16px}.query{display:grid;grid-template-columns:1fr auto;gap:10px}@media(max-width:680px){.query{grid-template-columns:1fr}}input{width:100%;border:1px solid var(--line);border-radius:10px;padding:12px;background:#F8FAFC;color:var(--ink);font-weight:700}.btn{border:1px solid transparent;border-radius:10px;background:linear-gradient(90deg,var(--ink2),#0E9384);color:#fff;font-weight:800;padding:11px 16px;cursor:pointer}.case{border:1px solid var(--line);border-radius:12px;background:#F8FAFC;padding:14px;margin-top:10px}.case h2{font-size:17px;margin-bottom:5px}.case p{color:var(--muted);font-size:13px;margin-top:6px}.tag{display:inline-flex;border-radius:999px;background:#FFF7E6;color:#8F6210;padding:3px 9px;font-weight:800;font-size:11px;margin-right:6px}.status{background:#EAFBF8;color:#0E756A}.note{border:1px dashed var(--hair);border-radius:12px;background:#fff;padding:12px;color:var(--muted);margin-top:12px;font-size:13px}.muted{color:var(--muted)}
+</style>
+</head>
+<body>
+<main class="wrap">
+  <header class="top">
+    <div>
+      <div class="eyebrow">REGULATOR TOOLKIT · PREVIEW · CASES</div>
+      <h1>判例速查卡</h1>
+      <p class="lead">从公开曝光台案例库检索同类案例，只作公开案例参照和历史处理区间提示，最终由监管人员结合事实与程序判断。</p>
+    </div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap"><a class="back" href="/plugins.html#regulator">← 工具箱</a><a class="back" href="/home.html">← 三入口</a></div>
+  </header>
+
+  <section class="panel">
+    <div class="query">
+      <input id="q" value="回流药" aria-label="违规类型关键词">
+      <button class="btn" id="search" type="button">检索</button>
+    </div>
+    <div class="note">边界：本页只展示公开案例参照、历史处理区间和核验状态，避免把案例检索包装成自动化处理意见。</div>
+  </section>
+  <section class="panel" id="results"><p class="muted">输入关键词后检索公开案例。</p></section>
+</main>
+<script>
+const $ = (s) => document.querySelector(s);
+const esc = (v) => String(v ?? '').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+async function search() {
+  const q = $('#q').value.trim();
+  $('#results').innerHTML = '<p class="muted">检索中...</p>';
+  try {
+    const r = await fetch('/api/regulator/exposure-cases?q=' + encodeURIComponent(q)).then(x => x.json());
+    if (r.error) throw new Error(r.error);
+    $('#results').innerHTML = `
+      <p class="muted">检索到 ${esc(r.count)} 条。${esc(r.note)}</p>
+      ${(r.cases || []).map(c => `<article class="case">
+        <h2>${esc(c.case_id)}</h2>
+        <span class="tag">${esc(c.violation_type)}</span><span class="tag status">${esc(c.verify_status)}</span>
+        <p><b>行为摘要：</b>${esc(c.behavior)}</p>
+        <p><b>历史处理区间：</b>${esc(c.outcome)}</p>
+        <p><b>依据：</b>${esc((c.law_refs || []).join(' / '))}</p>
+        <p><b>来源：</b>${esc(c.source)}</p>
+      </article>`).join('') || '<p class="muted">未找到匹配案例。</p>'}`;
+  } catch (e) {
+    $('#results').innerHTML = `<p class="muted">检索失败：${esc(e.message)}</p>`;
+  }
+}
+$('#search').addEventListener('click', search);
+$('#q').addEventListener('keydown', e => { if (e.key === 'Enter') search(); });
+</script>
+</body>
+</html>

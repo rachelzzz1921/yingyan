@@ -36,7 +36,7 @@
 .topbar-ops{display:flex;align-items:center;gap:8px;padding-left:10px;border-left:1px solid rgba(255,255,255,.12)}
 .topbar-ops .btn{padding:8px 14px;font-size:12px}
 
-.pri-main{max-width:1280px;margin:0 auto;padding:20px 24px 48px;display:flex;flex-direction:column;gap:16px;position:relative;z-index:1}
+.pri-main{max-width:1320px;margin:0 auto;padding:16px 24px 48px;display:flex;flex-direction:column;gap:12px;position:relative;z-index:1}
 .card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:16px 18px;box-shadow:var(--shadow-sm)}
 .pri-glossary-wrap{padding:0;overflow:hidden}
 .pri-glossary{border:none;margin:0}
@@ -63,26 +63,51 @@
 .pri-mode-row .chk:has(input:checked){background:#ecfdf5;border-color:rgba(45,212,191,.45);color:var(--yy-ink-2)}
 .pri-mode-row .chk input{accent-color:var(--yy-iris-d);cursor:pointer}
 .pri-mode-tools{display:flex;flex-wrap:wrap;gap:8px;margin-left:auto}
-.pri-actions{display:flex;flex-wrap:wrap;align-items:center;gap:10px}
+.pri-guide{display:flex;align-items:center;justify-content:space-between;gap:18px;padding:14px 18px;border-left:4px solid var(--yy-iris-d)}
+.pri-guide strong{display:block;font-size:16px;color:var(--yy-ink-2);margin-bottom:3px}
+.pri-guide p{margin:0;font-size:12px}
+.pri-guide-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+.pri-actions{display:flex;flex-wrap:wrap;align-items:center;gap:10px;padding:12px 18px}
 .pri-actions .pri-topn-wrap{display:inline-flex;align-items:center;gap:6px;font-size:12px;color:var(--muted);font-weight:600}
 .pri-topn-input{width:72px;padding:7px 10px;border:1px solid var(--line);border-radius:8px;font-size:13px;
   font-family:var(--font-num);font-weight:600}
-.pri-actions .btn-batch-topn{background:linear-gradient(180deg,#fff 0%,#f0f4f8 100%);color:var(--yy-ink-2);
-  border:1px solid var(--line)}
-.pri-actions .btn-batch-topn:hover{border-color:var(--yy-iris-d)}
 .pri-actions #rankMeta{margin-left:auto;font-size:12px}
 .pri-table-wrap{overflow-x:auto}
 .pri-table{width:100%;border-collapse:collapse;font-size:12.5px}
 .pri-table th,.pri-table td{padding:10px 8px;border-bottom:1px solid var(--line);text-align:left;vertical-align:middle}
 .pri-table th{font-size:11px;color:var(--muted);background:#f8fafc;position:sticky;top:0}
+.pri-table tr.pri-case-row{cursor:pointer}
+.pri-table tr.selected td{background:#ecfdf5}
 .pri-th-score{min-width:96px;line-height:1.25;cursor:help;text-align:right}
-.pri-th-main{display:block;font-size:10px;font-weight:800;color:var(--yy-ink-2);letter-spacing:.03em}
+.pri-th-main{display:inline-block;font-size:10px;font-weight:800;color:var(--yy-ink-2);letter-spacing:.03em}
 .pri-th-hint{display:block;font-size:9px;font-weight:600;color:var(--yy-warn,#C77700);margin-top:2px}
 .pri-table .num{font-family:var(--font-num);font-variant-numeric:tabular-nums;text-align:right}
 .pri-table tr:hover td{background:#f0fdfa}
 .pri-table td .btn.sm{padding:5px 10px;font-size:11px;margin:0}
-.pri-row-actions{display:flex;flex-wrap:wrap;gap:4px;min-width:148px}
-.pri-row-actions .btn.sm{flex:1 1 auto;min-width:44px}
+.pri-row-actions{display:flex;align-items:center;justify-content:flex-end;gap:6px;min-width:108px;position:relative}
+.pri-row-actions .btn.sm{min-width:44px}
+.rank-cell{font-family:var(--font-num);font-weight:900;color:var(--yy-ink-2);white-space:nowrap}
+.risk-cell{min-width:170px}
+.case-cell strong,.case-cell span,.amt-cell span,.problem-cell span{display:block}
+.case-cell{min-width:220px}
+.case-cell strong{font-size:13px;color:var(--ink)}
+.amt-cell{min-width:108px}
+.amt-cell .muted{font-family:var(--font);font-size:10.5px;margin-top:3px}
+.problem-cell{min-width:260px}
+.problem-cell strong{display:block;margin-bottom:4px}
+.problem-cell .disposition{margin-top:5px;max-width:260px}
+.score-line{margin-top:7px;font-size:10.5px;color:var(--muted)}
+.score-line span{display:block;margin-bottom:3px;font-family:var(--font-num)}
+.score-line{position:relative}
+.score-line::before,.score-line i{content:'';display:block;height:5px;border-radius:999px}
+.score-line::before{background:#e2e8f0}
+.score-line i{position:absolute;left:0;bottom:0;background:linear-gradient(90deg,var(--yy-iris-d),#14b8a6)}
+.pri-help{display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;border-radius:999px;border:1px solid var(--line);background:#fff;color:var(--yy-ink-2);font-weight:900;cursor:pointer;margin-left:4px}
+.pri-more{position:relative}
+.pri-menu{display:none;position:absolute;right:0;top:calc(100% + 4px);z-index:20;min-width:98px;background:#fff;border:1px solid var(--line);box-shadow:var(--shadow-lg);border-radius:8px;padding:5px}
+.pri-more:focus-within .pri-menu,.pri-more:hover .pri-menu,.pri-more.open .pri-menu{display:flex;flex-direction:column}
+.pri-menu button{border:none;background:transparent;text-align:left;padding:7px 8px;border-radius:6px;font:600 12px var(--font);cursor:pointer;color:var(--ink2)}
+.pri-menu button:hover{background:#f0fdfa;color:var(--yy-ink-2)}
 .pri-pkg-modal{max-width:880px;display:flex;flex-direction:column;max-height:92vh}
 .pri-pkg-frame{width:100%;flex:1;min-height:420px;border:1px solid var(--line);border-radius:10px;background:#fff}
 .pri-toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);z-index:200;
@@ -100,6 +125,11 @@
 .tri-hard{background:var(--red);color:#fff}
 .tri-suspect{background:var(--amber-bg);color:#92400e;border:1px solid #fcd34d}
 .tri-clean{background:#ecfdf5;color:#047857;border:1px solid #a7f3d0}
+.risk-badge{display:inline-flex;align-items:center;justify-content:center;padding:3px 9px;border-radius:6px;font-size:11px;font-weight:900;letter-spacing:.3px;white-space:nowrap}
+.risk-hard{background:var(--red);color:#fff}
+.risk-suspect{background:var(--amber-bg);color:#92400e;border:1px solid #fcd34d}
+.risk-clean{background:#ecfdf5;color:#047857;border:1px solid #a7f3d0}
+.tier-hint{display:inline-block;margin-left:6px;font-size:10.5px;color:var(--muted);font-weight:700}
 .nature-section td{background:#f8fafc;border-top:2px solid var(--line);padding:8px 12px!important}
 .nature-section-hint{font-size:11px;color:var(--muted);margin-left:6px}
 .score-pill{font-family:var(--font-num);font-weight:800;font-size:15px;color:var(--yy-ink-2)}
@@ -108,7 +138,20 @@
 .pri-shadow-item .amt{text-decoration:line-through}
 .pri-boundary-list{display:flex;flex-direction:column;gap:8px}
 .pri-boundary-item{padding:10px 12px;border:1px dashed #c4b5fd;border-radius:10px;background:#f5f3ff;font-size:12px;color:var(--ink2)}
-.pri-detail-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.pri-tabs{padding:0;overflow:hidden}
+.pri-tabbar{display:flex;align-items:center;gap:4px;padding:8px;border-bottom:1px solid var(--line);background:#f8fafc;overflow-x:auto}
+.pri-tab{position:relative;border:none;background:transparent;color:var(--ink2);font:700 12px var(--font);padding:8px 12px;border-radius:8px;cursor:pointer;white-space:nowrap}
+.pri-tab:hover,.pri-tab.active{background:#fff;color:var(--yy-ink-2);box-shadow:var(--shadow-sm)}
+.pri-dot{display:inline-flex;align-items:center;justify-content:center;min-width:16px;height:16px;padding:0 4px;margin-left:4px;border-radius:999px;background:var(--red);color:#fff;font-size:10px}
+.pri-tab-panel{padding:14px 16px}
+.pri-tab-note{font-size:12px;line-height:1.55;margin:-4px 0 10px}
+.pri-detail-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:12px}
+.pri-detail-head h2,.pri-tab-panel h2{font-size:15px;margin:0}
+.pri-drawer-mask{position:fixed;inset:0;background:rgba(11,42,74,.38);z-index:89}
+.pri-drawer-mask.hidden{display:none!important}
+.pri-detail{position:fixed;right:0;top:0;bottom:0;width:min(560px,92vw);height:100vh;z-index:90;overflow-y:auto;border-radius:0;padding:18px 20px;box-shadow:-20px 0 50px rgba(11,42,74,.22);animation:drawerIn .18s ease-out}
+.pri-detail.hidden{display:none!important}
+@keyframes drawerIn{from{transform:translateX(24px);opacity:.5}to{transform:translateX(0);opacity:1}}
 .pri-finding{border:1px solid var(--line);border-radius:10px;padding:12px;margin-bottom:10px}
 .pri-finding.suspected{border-left:4px solid var(--red)}
 .pri-finding.clue{border-left:4px solid var(--amber)}
@@ -134,19 +177,48 @@
 .risk-tag{display:inline-block;padding:1px 6px;border-radius:4px;font-size:10px;background:#ecfdf5;color:#047857;margin-right:4px}
 .disposition{font-size:11px;color:var(--ink2);max-width:120px}
 .pri-finding .btn-pkg-f{margin-top:8px}
+.pri-preset-row{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}
 .pri-config-form{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}
+.pri-config-form-inner{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
 .pri-config-form label{font-size:11px;font-weight:600;color:var(--muted);display:flex;flex-direction:column;gap:4px}
-.pri-config-form input{padding:6px 8px;border:1px solid var(--line);border-radius:6px}
+.pri-config-form input,.pri-config-form select{padding:6px 8px;border:1px solid var(--line);border-radius:6px}
+.pri-advanced{grid-column:1/-1;border:1px solid var(--line);border-radius:8px;padding:8px 10px;background:#f8fafc}
+.pri-advanced summary{cursor:pointer;font-size:12px;font-weight:800;color:var(--yy-ink-2)}
 .pri-modal-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:12px}
 .pri-pre{font-size:11px;background:#0d1e2f;color:#eaf2f7;padding:12px;border-radius:8px;overflow-x:auto;white-space:pre-wrap}
+.pri-bd-body{font-size:12px}
+.pri-breakdown p{margin:0 0 8px;line-height:1.6}
+.pri-bd-equation{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin:10px 0 14px;padding:10px;border:1px solid var(--line);border-radius:8px;background:#f8fafc}
+.pri-bd-equation span,.pri-bd-equation b{display:inline-flex;padding:4px 7px;border-radius:6px;background:#fff;border:1px solid var(--line);font-family:var(--font-num);font-size:11px}
+.pri-bd-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.pri-bd-factor{border:1px solid var(--line);border-radius:8px;padding:9px;background:#fff}
+.pri-bd-factor-main{display:flex;justify-content:space-between;gap:8px}
+.pri-bd-factor-note{font-size:11px;color:var(--muted);line-height:1.4;margin:5px 0 7px}
+.pri-bd-bar{height:5px;background:#e2e8f0;border-radius:999px;overflow:hidden}
+.pri-bd-bar i{display:block;height:100%;background:linear-gradient(90deg,var(--yy-iris-d),#14b8a6);border-radius:999px}
+.pri-bd-foot{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px}
+.pri-bd-foot span{font-size:11px;color:var(--ink2);background:#f8fafc;border:1px solid var(--line);border-radius:999px;padding:4px 8px}
+.pri-report-body{max-height:64vh;overflow-y:auto}
+.pri-report-table{margin:6px 0 14px}
 .pri-report-toolbar label{display:flex;align-items:center;gap:8px;font-size:12px;font-weight:600;color:var(--muted)}
 .pri-report-toolbar select{padding:6px 10px;border:1px solid var(--line);border-radius:8px;font-size:12px}
 .foot{text-align:center;padding:16px;font-size:11px;color:var(--muted);border-top:1px solid var(--line);margin-top:8px}
+.subjective{color:var(--red);font-weight:800}
+.receipt{display:inline-block;border-radius:999px;padding:3px 8px;font-size:11px;font-weight:800}
+.receipt-hard{background:#fef2f2;color:#b91c1c;border:1px solid #fecaca}
+.receipt-muted{background:#f1f5f9;color:#475569;border:1px solid #cbd5e1}
+.receipt-ok{background:#ecfdf5;color:#0a7a4b;border:1px solid #a7f3d0}
+.screening-summary{display:flex;gap:8px;align-items:center;flex-wrap:wrap;font-size:13px;margin-top:10px}
+.demo-badge{display:inline-flex;align-items:center;justify-content:center;padding:5px 9px;border-radius:999px;background:var(--yy-amber);color:var(--yy-ink);font-size:11px;font-weight:900}
 @media(max-width:900px){
   .topbar{flex-wrap:wrap;gap:12px;padding:12px 16px}
   .topbar-actions{width:100%;justify-content:flex-start}
   .topbar-ops{border-left:none;padding-left:0;margin-left:0}
   .pri-mode-tools{margin-left:0;width:100%}
   .pri-actions #rankMeta{margin-left:0;width:100%}
+  .pri-guide{align-items:flex-start;flex-direction:column}
+  .pri-guide-actions{justify-content:flex-start}
+  .pri-bd-grid,.pri-config-form,.pri-config-form-inner{grid-template-columns:1fr}
+  .pri-detail{width:94vw}
 }
 .exam-label::after{content:' · 飞检暴露口径';font-size:10px;color:var(--muted);font-weight:400}

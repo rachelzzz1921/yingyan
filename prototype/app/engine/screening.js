@@ -17,7 +17,21 @@ const PEDIATRIC_RE = /^小儿|儿童型/;
 const MALE_ONLY_RE = /前列腺|精液|睾酮(?!.*女)/;
 const FEMALE_ONLY_RE = /宫颈|子宫|卵巢|阴道|TCT|HPV/;
 
-function screenRows(rowsIn) {
+function screeningParams(opts = {}) {
+  const num = (v, fallback) => {
+    const n = Number(v);
+    return Number.isFinite(n) ? n : fallback;
+  };
+  return {
+    minor_age: num(opts.minor_age ?? opts.age_limit, 18),
+    pediatric_age: num(opts.pediatric_age, 14),
+    qty_limit: num(opts.qty_limit ?? opts.max_qty, 30),
+  };
+}
+
+function screenRows(rowsIn, opts = {}) {
+  const params = screeningParams(opts);
+  const hasQtyOverride = opts.qty_limit != null || opts.max_qty != null;
   const rows = (rowsIn || []).filter(r => r && typeof r === 'object'); // 防 null/非对象行让整次筛查 500
   const hits = [];
   const hit = (row, rule, nature, reason) => hits.push({
@@ -47,12 +61,15 @@ function screenRows(rowsIn) {
   for (const r of rows) {
     const age = Number(r.patient_age);
     if (Number.isFinite(age)) {
-      if (age < 18 && QUINOLONE_RE.test(r.item_name)) hit(r, 'AGE-101', '明确违规', `${age}岁使用喹诺酮类(18岁以下禁用,两库年龄分层18档)`);
-      else if (age >= 14 && PEDIATRIC_RE.test(r.item_name)) hit(r, 'AGE-101', '明确违规', `${age}岁使用儿童专用制剂(限14岁以下支付,14档)`);
+      if (age < params.minor_age && QUINOLONE_RE.test(r.item_name)) hit(r, 'AGE-101', '明确违规', `${age}岁使用喹诺酮类(${params.minor_age}岁以下禁用,两库年龄分层${params.minor_age}档)`);
+      else if (age >= params.pediatric_age && PEDIATRIC_RE.test(r.item_name)) hit(r, 'AGE-101', '明确违规', `${age}岁使用儿童专用制剂(限${params.pediatric_age}岁以下支付,${params.pediatric_age}档)`);
     }
     if (r.patient_sex === '女' && MALE_ONLY_RE.test(r.item_name)) hit(r, 'F-001', '明确违规', '女性患者收取男性专属项目——性别-项目冲突');
     if (r.patient_sex === '男' && FEMALE_ONLY_RE.test(r.item_name)) hit(r, 'F-001', '明确违规', '男性患者收取女性专属项目——性别-项目冲突');
-    if (/静脉输液|注射/.test(r.item_name) && r.qty >= 30) hit(r, 'QTY-901', '可疑', `单日「${r.item_name}」×${r.qty} 超常(经验上限),需调阅医嘱核实`);
+    if (/静脉输液|注射/.test(r.item_name) && r.qty >= params.qty_limit) {
+      const limitText = hasQtyOverride ? `试算上限${params.qty_limit}` : '经验上限';
+      hit(r, 'QTY-901', '可疑', `单日「${r.item_name}」×${r.qty} 超常(${limitText}),需调阅医嘱核实`);
+    }
   }
   return hits;
 }
@@ -114,4 +131,76 @@ function screenExternalRows(rowsIn) {
   return aggregateHits(rows, hits, t0);
 }
 
-module.exports = { runScreening, screenRows, aggregateHits, screenExternalRows };
+function rowMap(rows) {
+  return new Map((rows || []).map(r => [r.row_id, r]));
+}
+
+function runThresholdTrial({ rule_id, param_key, param_value } = {}) {
+  const ruleId = String(rule_id || '').trim();
+  if (!['AGE-101', 'QTY-901'].includes(ruleId)) {
+    return { ok: false, error: '仅支持 AGE-101 / QTY-901 演示试算' };
+  }
+  const value = Number(param_value);
+  if (!Number.isFinite(value)) return { ok: false, error: 'param_value 必须是数字' };
+
+  const data = JSON.parse(fs.readFileSync(DATA_FILE, 'utf8'));
+  const rows = data.rows || [];
+  const params = {};
+  const key = param_key || (ruleId === 'AGE-101' ? 'minor_age' : 'qty_limit');
+  if (ruleId === 'AGE-101') {
+    if (!['minor_age', 'age_limit', 'pediatric_age'].includes(key)) return { ok: false, error: 'AGE-101 仅支持 minor_age / pediatric_age' };
+    params[key === 'age_limit' ? 'minor_age' : key] = value;
+  } else {
+    if (!['qty_limit', 'max_qty'].includes(key)) return { ok: false, error: 'QTY-901 仅支持 qty_limit' };
+    params.qty_limit = value;
+  }
+
+  const baseline = screenRows(rows).filter(h => h.rule_id === ruleId);
+  const trial = screenRows(rows, params).filter(h => h.rule_id === ruleId);
+  const baseIds = new Set(baseline.map(h => h.row_id));
+  const trialIds = new Set(trial.map(h => h.row_id));
+  const truthIds = new Set((data.embedded_truth || [])
+    .filter(t => t.rule === ruleId && !/首笔/.test(t.note || ''))
+    .map(t => t.row_id));
+  const rowsById = rowMap(rows);
+  const added = [...trialIds].filter(id => !baseIds.has(id));
+  const removed = [...baseIds].filter(id => !trialIds.has(id));
+  const newFalsePositives = added.filter(id => !truthIds.has(id)).length;
+  const goldRegressions = removed.filter(id => truthIds.has(id)).length;
+  const hitById = new Map([...baseline, ...trial].map(h => [h.row_id, h]));
+  const casesChanged = [...added.map(id => ({ id, change: '新增命中' })), ...removed.map(id => ({ id, change: '减少命中' }))]
+    .map(x => {
+      const row = rowsById.get(x.id) || {};
+      const hit = hitById.get(x.id) || {};
+      return {
+        row_id: x.id,
+        change: x.change,
+        rule_id: ruleId,
+        item_name: row.item_name,
+        dept: row.dept,
+        doctor: row.doctor,
+        amount: row.amount || hit.amount || 0,
+        is_truth: truthIds.has(x.id),
+        note: truthIds.has(x.id) ? '命中演示真值' : '非真值埋点新增命中，计入疑似误报压力',
+      };
+    })
+    .sort((a, b) => (b.amount || 0) - (a.amount || 0))
+    .slice(0, 50);
+
+  return {
+    ok: true,
+    source: 'settlements_1000.json',
+    rule_id: ruleId,
+    param_key: key,
+    param_value: value,
+    baseline_hits: baseIds.size,
+    trial_hits: trialIds.size,
+    delta: trialIds.size - baseIds.size,
+    new_false_positives: newFalsePositives,
+    gold_regressions: goldRegressions,
+    cases_changed: casesChanged,
+    conclusion: `阈值试算: ${ruleId} ${key}=${value} 后,触发量 ${baseIds.size}→${trialIds.size} (${trialIds.size - baseIds.size >= 0 ? '+' : ''}${trialIds.size - baseIds.size}),疑似误报压力 ${newFalsePositives}`,
+  };
+}
+
+module.exports = { runScreening, screenRows, aggregateHits, screenExternalRows, runThresholdTrial };

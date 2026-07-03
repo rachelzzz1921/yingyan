@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#F0F4F8">
+<title>数据体检哨兵 · 鹰眼监管小工具箱</title>
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<style>
+:root{--ink:#0B2A4A;--ink2:#134E72;--muted:#5C7185;--dim:#8296A9;--teal:#14B8A6;--amber:#E8A838;--red:#DC4A3D;--bg:#F0F4F8;--surface:#fff;--line:#E2E9F0;--hair:#D3DDE7;--sans:"PingFang SC","Hiragino Sans GB","Noto Sans SC","Microsoft YaHei",-apple-system,sans-serif;--mono:"SF Mono","DM Mono","Roboto Mono",Menlo,monospace}
+*{box-sizing:border-box;margin:0}body{font-family:var(--sans);background:var(--bg);color:var(--ink);line-height:1.65;min-height:100vh}body::before{content:"";position:fixed;inset:0;background-image:radial-gradient(rgba(11,42,74,.055) 1.5px,transparent 1.5px);background-size:26px 26px;pointer-events:none}.wrap{max-width:1080px;margin:0 auto;padding:34px 24px 48px;position:relative}.top{display:flex;justify-content:space-between;gap:16px;align-items:flex-start;margin-bottom:24px}.back{color:var(--ink2);text-decoration:none;border:1px solid var(--line);background:var(--surface);border-radius:10px;padding:9px 14px;font-weight:800;font-size:13px}.eyebrow{font-family:var(--mono);font-size:12px;color:var(--dim);letter-spacing:.12em}h1{font-size:clamp(28px,4vw,42px);line-height:1.25}.lead{color:var(--muted);max-width:820px;margin-top:8px}.panel{border:1px solid var(--line);border-radius:14px;background:var(--surface);padding:20px;box-shadow:0 3px 14px rgba(11,42,74,.05);margin-top:16px}textarea{width:100%;min-height:210px;border:1px solid var(--line);border-radius:12px;background:#F8FAFC;padding:12px;color:var(--ink);font-family:var(--mono);font-size:13px;line-height:1.55}.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}.btn{border:1px solid transparent;border-radius:10px;background:linear-gradient(90deg,var(--ink2),#0E9384);color:#fff;font-weight:800;padding:11px 16px;cursor:pointer}.ghost{background:#fff;color:var(--ink2);border-color:var(--line)}.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:12px}@media(max-width:780px){.cards{grid-template-columns:1fr}}.metric{border:1px solid var(--line);border-radius:12px;background:#F8FAFC;padding:14px}.metric b{display:block;font-family:var(--mono);font-size:26px}.metric span{color:var(--dim);font-size:12px}.issue{border:1px solid var(--line);border-left:5px solid var(--amber);border-radius:12px;background:#F8FAFC;padding:12px;margin-top:10px}.issue.hot{border-left-color:var(--red)}.issue.ok{border-left-color:var(--teal)}.issue h2{font-size:16px}.issue p,.issue li{font-size:13px;color:var(--muted)}ul{padding-left:18px}.note{border:1px dashed var(--hair);border-radius:12px;background:#fff;padding:12px;color:var(--muted);margin-top:12px;font-size:13px}.muted{color:var(--muted)}
+</style>
+</head>
+<body>
+<main class="wrap">
+  <header class="top">
+    <div>
+      <div class="eyebrow">REGULATOR TOOLKIT · PREVIEW · DATA HEALTH</div>
+      <h1>数据体检哨兵</h1>
+      <p class="lead">用于医院报送 Excel 的复制粘贴快检：字段缺失、编码格式、孤儿行。只提示数据质量问题，不做稽核认定。</p>
+    </div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap"><a class="back" href="/plugins.html#regulator">← 工具箱</a><a class="back" href="/home.html">← 三入口</a></div>
+  </header>
+
+  <section class="panel">
+    <textarea id="raw" aria-label="报送表 TSV 或 CSV">项目名称	年龄	性别	数量	金额	科室	医生	追溯码
+左氧氟沙星注射液	16	男	1	120	儿科	李医生	
+静脉输液	40	女	35	280	内科	王医生	
+	60	女	2	90	内科	王医生	85907831160000000214
+阿托伐他汀钙片			1	100		张医生	85907831160000000214</textarea>
+    <div class="actions">
+      <button class="btn" type="button" id="check">开始体检</button>
+      <button class="btn ghost" type="button" id="demo">载入演示表</button>
+    </div>
+    <div class="note">支持从 Excel 直接复制的 TSV，也兼容简单 CSV。生产版可接上传解析；当前预览版保持零依赖。</div>
+  </section>
+
+  <section class="panel" id="result">
+    <p class="muted">点击“开始体检”查看字段缺失、编码格式、孤儿行三类数据质量问题。</p>
+  </section>
+</main>
+<script>
+const $ = (s) => document.querySelector(s);
+const esc = (v) => String(v ?? '').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const REQUIRED = [
+  ['item_name', /项目名称|项目|名称|收费项目|药品名称|诊疗项目|品名/],
+  ['patient_age', /年龄|患者年龄/],
+  ['patient_sex', /性别/],
+  ['qty', /数量|次数/],
+  ['amount', /金额|费用|合计/],
+  ['dept', /科室|开单科室/],
+  ['doctor', /医生|医师/],
+];
+const TRACE_RE = /^[0-9A-Za-z]{12,32}$/;
+function splitLine(line, sep) {
+  if (sep === '\t') return line.split('\t');
+  return line.split(',').map(x => x.replace(/^"|"$/g, '').trim());
+}
+function parseTable(text) {
+  const lines = text.split(/\r?\n/).filter(l => l.trim());
+  if (!lines.length) return { header: [], rows: [], sep: '\t' };
+  const sep = lines[0].includes('\t') ? '\t' : ',';
+  return { header: splitLine(lines[0], sep), rows: lines.slice(1).map(l => splitLine(l, sep)), sep };
+}
+function runCheck() {
+  const { header, rows } = parseTable($('#raw').value);
+  const col = {};
+  for (const [field, re] of REQUIRED) {
+    const idx = header.findIndex(h => re.test(h));
+    if (idx >= 0) col[field] = idx;
+  }
+  const missing = REQUIRED.filter(([field]) => col[field] == null).map(([field]) => field);
+  const emptyStats = Object.entries(col).map(([field, idx]) => ({
+    field,
+    empty: rows.filter(r => !String(r[idx] ?? '').trim()).length,
+  })).filter(x => x.empty > 0);
+  const formatIssues = [];
+  rows.forEach((r, i) => {
+    const lineNo = i + 2;
+    if (col.patient_age != null) {
+      const v = String(r[col.patient_age] ?? '').trim();
+      if (v && (!/^\d+(\.\d+)?$/.test(v) || Number(v) < 0 || Number(v) > 120)) formatIssues.push(`第 ${lineNo} 行：年龄格式异常`);
+    }
+    if (col.qty != null) {
+      const v = String(r[col.qty] ?? '').trim();
+      if (v && (!/^\d+(\.\d+)?$/.test(v) || Number(v) <= 0)) formatIssues.push(`第 ${lineNo} 行：数量格式异常`);
+    }
+    if (col.amount != null) {
+      const v = String(r[col.amount] ?? '').trim();
+      if (v && (!/^\d+(\.\d+)?$/.test(v) || Number(v) < 0)) formatIssues.push(`第 ${lineNo} 行：金额格式异常`);
+    }
+  });
+  const traceIdx = header.findIndex(h => /追溯码|溯源码|trace/i.test(h));
+  if (traceIdx >= 0) {
+    const seen = new Map();
+    rows.forEach((r, i) => {
+      const v = String(r[traceIdx] ?? '').trim();
+      if (!v) return;
+      if (!TRACE_RE.test(v)) formatIssues.push(`第 ${i + 2} 行：追溯码格式异常`);
+      if (seen.has(v)) formatIssues.push(`第 ${i + 2} 行：追溯码与第 ${seen.get(v)} 行重复`);
+      else seen.set(v, i + 2);
+    });
+  }
+  emptyStats.forEach(x => formatIssues.push(`${x.field} 空值 ${x.empty} 行`));
+  const orphanRows = rows.map((r, i) => ({ r, i: i + 2 })).filter(({ r }) => {
+    const hasAmount = col.amount != null && String(r[col.amount] ?? '').trim();
+    const noItem = col.item_name == null || !String(r[col.item_name] ?? '').trim();
+    const noDeptDoctor = (col.dept == null || !String(r[col.dept] ?? '').trim()) && (col.doctor == null || !String(r[col.doctor] ?? '').trim());
+    return hasAmount && (noItem || noDeptDoctor);
+  });
+  $('#result').innerHTML = `
+    <div class="cards">
+      <div class="metric"><b>${rows.length}</b><span>数据行</span></div>
+      <div class="metric"><b>${missing.length}</b><span>字段缺失</span></div>
+      <div class="metric"><b>${formatIssues.length}</b><span>编码/格式问题</span></div>
+      <div class="metric"><b>${orphanRows.length}</b><span>孤儿行</span></div>
+    </div>
+    <article class="issue ${missing.length ? 'hot' : 'ok'}"><h2>1. 字段缺失</h2>${missing.length ? `<ul>${missing.map(x => `<li>${esc(x)}</li>`).join('')}</ul>` : '<p>必要字段均已识别。</p>'}</article>
+    <article class="issue ${formatIssues.length ? 'hot' : 'ok'}"><h2>2. 编码格式</h2>${formatIssues.length ? `<ul>${formatIssues.map(x => `<li>${esc(x)}</li>`).join('')}</ul>` : '<p>年龄、数量、金额、追溯码格式未发现明显异常。</p>'}</article>
+    <article class="issue ${orphanRows.length ? 'hot' : 'ok'}"><h2>3. 孤儿行</h2>${orphanRows.length ? `<ul>${orphanRows.map(x => `<li>第 ${x.i} 行：有金额但缺项目名或科室/医生归属</li>`).join('')}</ul>` : '<p>未发现有金额但缺关键归属的孤儿行。</p>'}</article>
+    <div class="note">建议动作：补齐字段、修正空值和孤儿行后，再进入疑点分诊或飞检行装包。</div>`;
+}
+$('#check').addEventListener('click', runCheck);
+$('#demo').addEventListener('click', () => { $('#raw').value = document.querySelector('#raw').defaultValue; runCheck(); });
+</script>
+</body>
+</html>

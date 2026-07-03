@@ -8,7 +8,32 @@
 <link rel="icon" type="image/svg+xml" href="/favicon.svg">
 <style>
 :root{--ink:#0B2A4A;--ink2:#134E72;--muted:#5C7185;--dim:#8296A9;--teal:#14B8A6;--amber:#E8A838;--red:#DC4A3D;--bg:#F0F4F8;--surface:#fff;--line:#E2E9F0;--hair:#D3DDE7;--sans:"PingFang SC","Hiragino Sans GB","Noto Sans SC","Microsoft YaHei",-apple-system,sans-serif;--mono:"SF Mono","DM Mono","Roboto Mono",Menlo,monospace}
-*{box-sizing:border-box;margin:0}body{font-family:var(--sans);background:var(--bg);color:var(--ink);line-height:1.65;min-height:100vh}body::before{content:"";position:fixed;inset:0;background-image:radial-gradient(rgba(11,42,74,.055) 1.5px,transparent 1.5px);background-size:26px 26px;pointer-events:none}.wrap{max-width:1160px;margin:0 auto;padding:34px 24px 48px;position:relative}.top{display:flex;justify-content:space-between;gap:16px;align-items:flex-start;margin-bottom:24px}.back{color:var(--ink2);text-decoration:none;border:1px solid var(--line);background:var(--surface);border-radius:10px;padding:9px 14px;font-weight:800;font-size:13px}.eyebrow{font-family:var(--mono);font-size:12px;color:var(--dim);letter-spacing:.12em}h1{font-size:clamp(28px,4vw,42px);line-height:1.25}h2{font-size:18px;margin-bottom:10px}.lead{color:var(--muted);max-width:840px;margin-top:8px}.grid{display:grid;grid-template-columns:340px 1fr;gap:18px;margin-top:20px}@media(max-width:880px){.grid{grid-template-columns:1fr}.top{flex-direction:column}}.panel{border:1px solid var(--line);border-radius:14px;background:var(--surface);padding:20px;box-shadow:0 3px 14px rgba(11,42,74,.05)}label{display:block;color:var(--muted);font-size:13px;font-weight:800;margin:14px 0 6px}.select,.input{width:100%;border:1px solid var(--line);border-radius:10px;padding:10px 12px;background:#F8FAFC;color:var(--ink);font-weight:700}.actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:16px}.btn{border:1px solid var(--line);border-radius:10px;background:#F8FAFC;color:var(--ink2);font-weight:800;padding:10px 13px;text-decoration:none;cursor:pointer;font-size:14px}.btn.primary{background:linear-gradient(90deg,var(--teal),#0E9384);border-color:transparent;color:#fff}.btn[aria-disabled="true"]{cursor:default;opacity:.8}.kit{display:grid;gap:12px}.block{border:1px solid var(--line);border-radius:12px;background:#F8FAFC;padding:14px}.block h3{font-size:16px;margin-bottom:6px}.block p,.block li{color:var(--muted);font-size:13px}.block ul{padding-left:18px}.placeholder{margin-top:14px;border:1px dashed var(--hair);border-radius:12px;padding:14px;color:var(--muted);background:rgba(255,255,255,.75);font-size:13px}
+*{box-sizing:border-box;margin:0}
+body{font-family:var(--sans);background:var(--bg);color:var(--ink);line-height:1.65;min-height:100vh}
+body::before{content:"";position:fixed;inset:0;background-image:radial-gradient(rgba(11,42,74,.055) 1.5px,transparent 1.5px);background-size:26px 26px;pointer-events:none}
+.wrap{max-width:1160px;margin:0 auto;padding:34px 24px 48px;position:relative}
+.top{display:flex;justify-content:space-between;gap:16px;align-items:flex-start;margin-bottom:24px}
+.back{color:var(--ink2);text-decoration:none;border:1px solid var(--line);background:var(--surface);border-radius:10px;padding:9px 14px;font-weight:800;font-size:13px}
+.eyebrow{font-family:var(--mono);font-size:12px;color:var(--dim);letter-spacing:.12em}
+h1{font-size:clamp(28px,4vw,42px);line-height:1.25}
+h2{font-size:18px;margin-bottom:10px}
+.lead{color:var(--muted);max-width:840px;margin-top:8px}
+.grid{display:grid;grid-template-columns:340px 1fr;gap:18px;margin-top:20px}
+@media(max-width:880px){.grid{grid-template-columns:1fr}.top{flex-direction:column}}
+.panel{border:1px solid var(--line);border-radius:14px;background:var(--surface);padding:20px;box-shadow:0 3px 14px rgba(11,42,74,.05)}
+label{display:block;color:var(--muted);font-size:13px;font-weight:800;margin:14px 0 6px}
+.select,.input{width:100%;border:1px solid var(--line);border-radius:10px;padding:10px 12px;background:#F8FAFC;color:var(--ink);font-weight:700}
+.actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:16px}
+.btn{border:1px solid var(--line);border-radius:10px;background:#F8FAFC;color:var(--ink2);font-weight:800;padding:10px 13px;text-decoration:none;cursor:pointer;font-size:14px}
+.btn.primary{background:linear-gradient(90deg,var(--teal),#0E9384);border-color:transparent;color:#fff}
+.kit{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px;margin-bottom:12px}
+@media(max-width:980px){.kit{grid-template-columns:1fr 1fr}}
+.block{border:1px solid var(--line);border-radius:12px;background:#F8FAFC;padding:12px}
+.block h3{font-size:14px;margin-bottom:5px}
+.block p,.block li{color:var(--muted);font-size:12px}
+.block ul{padding-left:16px}
+.placeholder{margin-top:14px;border:1px dashed var(--hair);border-radius:12px;padding:14px;color:var(--muted);background:rgba(255,255,255,.75);font-size:13px}
+.pkg-frame{width:100%;min-height:520px;border:1px solid var(--line);border-radius:12px;background:#fff;margin-top:14px}
 </style>
 </head>
 <body>
@@ -17,10 +42,14 @@
     <div>
       <div class="eyebrow">REGULATOR TOOLKIT · ③ FIELD KIT</div>
       <h1>飞检行装包生成器</h1>
-      <p class="lead">面向飞检组长和现场检查员，把疑点清单、证据索引、核查任务单和缺失材料清单整理成一份进场材料。</p>
+      <p class="lead">从主平台“优先队列”的举证包能力拆出来，面向飞检组长和现场检查员整理进场前材料。</p>
     </div>
-    <a class="back" href="/regulator-plugins.html">返回工具箱</a>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <a class="back" href="/plugins.html#regulator">← 插件 & 小工具箱</a>
+      <a class="back" href="/home.html">← 三入口</a>
+    </div>
   </header>
+  <p style="font-size:12px;color:var(--dim);margin:-12px 0 18px"><a href="/home.html" style="color:var(--muted);text-decoration:none">三入口</a> → <a href="/plugins.html#regulator" style="color:var(--muted);text-decoration:none">③ 插件 & 小工具箱</a> → <b style="color:var(--ink)">飞检行装包生成器</b></p>
 
   <section class="grid">
     <aside class="panel">
@@ -35,43 +64,77 @@
       <label for="period">期间</label>
       <input class="input" id="period" value="2026-06">
       <div class="actions">
-        <button class="btn primary" type="button" aria-disabled="true">生成行装包 · Phase B 接 API</button>
+        <button class="btn primary" type="button" id="btnGenerate">生成行装包</button>
         <a class="btn" href="/golden.html">打开黄金闭环案卷快读</a>
       </div>
-      <div class="placeholder">Phase B 新增 <code>/api/regulator/field-kit</code>，聚合单案稽核、举证包和现场任务单模板。</div>
+      <div class="placeholder">调用 <code>/api/regulator/field-kit</code>：复用审计报告与举证包，再聚合现场任务单、缺失材料清单和询问要点。</div>
     </aside>
 
     <section class="panel">
-      <h2>行装包预览占位</h2>
+      <h2>行装包预览</h2>
       <div class="kit">
-        <article class="block">
-          <h3>1. 疑点清单</h3>
-          <p>规则、金额、三档性质和建议动作。</p>
-        </article>
-        <article class="block">
-          <h3>2. 证据索引</h3>
-          <ul><li>费用行锚点</li><li>病历锚点</li><li>政策 ref_id</li></ul>
-        </article>
-        <article class="block">
-          <h3>3. 现场核查任务单</h3>
-          <p>查什么、问什么、调阅什么。</p>
-        </article>
-        <article class="block">
-          <h3>4. 缺失材料清单</h3>
-          <p>按证据链缺口列出需补材料。</p>
-        </article>
-        <article class="block">
-          <h3>5. 询问笔录要点</h3>
-          <p>只列建议问题，不生成最终笔录。</p>
-        </article>
+        <article class="block"><h3>1. 疑点清单</h3><p>规则、金额、三档性质和建议动作。</p></article>
+        <article class="block"><h3>2. 证据索引</h3><ul><li>费用行锚点</li><li>病历锚点</li><li>政策 ref_id</li></ul></article>
+        <article class="block"><h3>3. 现场核查任务单</h3><p>查什么、问什么、调阅什么。</p></article>
+        <article class="block"><h3>4. 缺失材料清单</h3><p>按证据链缺口列出需补材料。</p></article>
+        <article class="block"><h3>5. 询问笔录要点</h3><p>只列建议问题，不生成最终笔录。</p></article>
       </div>
       <div class="actions">
-        <button class="btn" type="button" aria-disabled="true">下载 Markdown · Phase B</button>
-        <button class="btn" type="button" aria-disabled="true">打印 · Phase B</button>
-        <a class="btn" href="/agent-chain.html?case_id=main">对争议项进入复核</a>
+        <button class="btn" type="button" id="btnDownload">下载 Markdown</button>
+        <button class="btn" type="button" id="btnPrint">打印</button>
+        <a class="btn" href="/agent-chain.html?preview=appeal&case_id=main">对争议项进入复核</a>
       </div>
+      <div class="placeholder" id="status">点击“生成行装包”后，将载入疑点清单、证据索引、现场核查任务单和缺失材料清单。</div>
+      <iframe class="pkg-frame" id="pkgFrame" title="飞检行装包预览"></iframe>
     </section>
   </section>
 </main>
+<script>
+const $ = (s) => document.querySelector(s);
+const esc = (v) => String(v ?? '').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+async function fetchPackage(format) {
+  const caseId = $('#case').value || 'main';
+  const res = await fetch('/api/regulator/field-kit', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      case_id: caseId,
+      org_name: $('#org').value,
+      period: $('#period').value,
+      format,
+    }),
+  });
+  if (!res.ok) throw new Error(await res.text() || `HTTP ${res.status}`);
+  return res.text();
+}
+$('#btnGenerate').addEventListener('click', async () => {
+  $('#status').textContent = '正在生成举证包...';
+  $('#pkgFrame').srcdoc = '<p style="padding:24px;font-family:sans-serif;color:#5C7185">生成中...</p>';
+  try {
+    $('#pkgFrame').srcdoc = await fetchPackage('html');
+    $('#status').textContent = '已生成完整行装包：疑点清单、证据索引、现场任务单、缺失材料和询问要点。';
+  } catch (e) {
+    $('#status').innerHTML = `生成失败：${esc(e.message)}`;
+    $('#pkgFrame').srcdoc = '';
+  }
+});
+$('#btnDownload').addEventListener('click', async () => {
+  try {
+    const md = await fetchPackage('markdown');
+    const blob = new Blob([md], { type: 'text/markdown;charset=utf-8' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = `yingyan-field-kit-${$('#case').value || 'main'}.md`;
+    a.click();
+    URL.revokeObjectURL(a.href);
+  } catch (e) {
+    $('#status').innerHTML = `下载失败：${esc(e.message)}`;
+  }
+});
+$('#btnPrint').addEventListener('click', () => {
+  try { $('#pkgFrame').contentWindow.print(); }
+  catch (e) { $('#status').textContent = '打印失败：' + e.message; }
+});
+</script>
 </body>
 </html>

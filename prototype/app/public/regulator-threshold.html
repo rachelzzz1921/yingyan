@@ -8,7 +8,7 @@
 <link rel="icon" type="image/svg+xml" href="/favicon.svg">
 <style>
 :root{--ink:#0B2A4A;--ink2:#134E72;--muted:#5C7185;--dim:#8296A9;--teal:#14B8A6;--amber:#E8A838;--red:#DC4A3D;--ok:#0D9B6A;--bg:#F0F4F8;--surface:#fff;--line:#E2E9F0;--hair:#D3DDE7;--sans:"PingFang SC","Hiragino Sans GB","Noto Sans SC","Microsoft YaHei",-apple-system,sans-serif;--mono:"SF Mono","DM Mono","Roboto Mono",Menlo,monospace}
-*{box-sizing:border-box;margin:0}body{font-family:var(--sans);background:var(--bg);color:var(--ink);line-height:1.65;min-height:100vh}body::before{content:"";position:fixed;inset:0;background-image:radial-gradient(rgba(11,42,74,.055) 1.5px,transparent 1.5px);background-size:26px 26px;pointer-events:none}.wrap{max-width:1120px;margin:0 auto;padding:34px 24px 48px;position:relative}.top{display:flex;justify-content:space-between;gap:16px;align-items:flex-start;margin-bottom:24px}.back{color:var(--ink2);text-decoration:none;border:1px solid var(--line);background:var(--surface);border-radius:10px;padding:9px 14px;font-weight:800;font-size:13px}.eyebrow{font-family:var(--mono);font-size:12px;color:var(--dim);letter-spacing:.12em}h1{font-size:clamp(28px,4vw,42px);line-height:1.25}h2{font-size:18px;margin-bottom:10px}.lead{color:var(--muted);max-width:820px;margin-top:8px}.grid{display:grid;grid-template-columns:360px 1fr;gap:18px;margin-top:20px}@media(max-width:840px){.grid{grid-template-columns:1fr}.top{flex-direction:column}}.panel{border:1px solid var(--line);border-radius:14px;background:var(--surface);padding:20px;box-shadow:0 3px 14px rgba(11,42,74,.05)}label{display:block;color:var(--muted);font-size:13px;font-weight:800;margin:14px 0 6px}select,input[type=range]{width:100%}.select{border:1px solid var(--line);border-radius:10px;padding:10px 12px;background:#F8FAFC;color:var(--ink);font-weight:700}.range-row{display:grid;grid-template-columns:1fr auto;gap:12px;align-items:center}.value{font-family:var(--mono);font-weight:800;color:var(--ink2);border:1px solid var(--line);border-radius:9px;padding:7px 10px;background:#F8FAFC}.cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}@media(max-width:700px){.cards{grid-template-columns:1fr}}.metric{border:1px solid var(--line);border-radius:12px;background:#F8FAFC;padding:15px}.metric b{display:block;font-family:var(--mono);font-size:28px}.metric span{font-size:12px;color:var(--dim)}.metric.ok b{color:var(--ok)}.metric.warn b{color:var(--amber)}.metric.hot b{color:var(--red)}.placeholder{margin-top:14px;border:1px dashed var(--hair);border-radius:12px;padding:14px;color:var(--muted);background:rgba(255,255,255,.75);font-size:13px}.table{width:100%;border-collapse:collapse;font-size:13px;margin-top:14px}.table th,.table td{border-bottom:1px solid var(--line);padding:9px;text-align:left}.table th{color:var(--dim);font-size:12px}.btn{display:inline-flex;margin-top:16px;border:1px solid transparent;border-radius:10px;background:linear-gradient(90deg,var(--teal),#0E9384);color:#fff;font-weight:800;padding:11px 14px;text-decoration:none;font-size:14px;cursor:default}
+*{box-sizing:border-box;margin:0}body{font-family:var(--sans);background:var(--bg);color:var(--ink);line-height:1.65;min-height:100vh}body::before{content:"";position:fixed;inset:0;background-image:radial-gradient(rgba(11,42,74,.055) 1.5px,transparent 1.5px);background-size:26px 26px;pointer-events:none}.wrap{max-width:1120px;margin:0 auto;padding:34px 24px 48px;position:relative}.top{display:flex;justify-content:space-between;gap:16px;align-items:flex-start;margin-bottom:24px}.back{color:var(--ink2);text-decoration:none;border:1px solid var(--line);background:var(--surface);border-radius:10px;padding:9px 14px;font-weight:800;font-size:13px}.eyebrow{font-family:var(--mono);font-size:12px;color:var(--dim);letter-spacing:.12em}h1{font-size:clamp(28px,4vw,42px);line-height:1.25}h2{font-size:18px;margin-bottom:10px}.lead{color:var(--muted);max-width:820px;margin-top:8px}.grid{display:grid;grid-template-columns:360px 1fr;gap:18px;margin-top:20px}@media(max-width:840px){.grid{grid-template-columns:1fr}.top{flex-direction:column}}.panel{border:1px solid var(--line);border-radius:14px;background:var(--surface);padding:20px;box-shadow:0 3px 14px rgba(11,42,74,.05)}label{display:block;color:var(--muted);font-size:13px;font-weight:800;margin:14px 0 6px}select,input[type=range]{width:100%}.select{border:1px solid var(--line);border-radius:10px;padding:10px 12px;background:#F8FAFC;color:var(--ink);font-weight:700}.range-row{display:grid;grid-template-columns:1fr auto;gap:12px;align-items:center}.value{font-family:var(--mono);font-weight:800;color:var(--ink2);border:1px solid var(--line);border-radius:9px;padding:7px 10px;background:#F8FAFC}.cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}@media(max-width:700px){.cards{grid-template-columns:1fr}}.metric{border:1px solid var(--line);border-radius:12px;background:#F8FAFC;padding:15px}.metric b{display:block;font-family:var(--mono);font-size:28px}.metric span{font-size:12px;color:var(--dim)}.metric.ok b{color:var(--ok)}.metric.warn b{color:var(--amber)}.metric.hot b{color:var(--red)}.placeholder{margin-top:14px;border:1px dashed var(--hair);border-radius:12px;padding:14px;color:var(--muted);background:rgba(255,255,255,.75);font-size:13px}.table{width:100%;border-collapse:collapse;font-size:13px;margin-top:14px}.table th,.table td{border-bottom:1px solid var(--line);padding:9px;text-align:left}.table th{color:var(--dim);font-size:12px}.btn{display:inline-flex;margin-top:16px;border:1px solid transparent;border-radius:10px;background:linear-gradient(90deg,var(--teal),#0E9384);color:#fff;font-weight:800;padding:11px 14px;text-decoration:none;font-size:14px;cursor:pointer}
 </style>
 </head>
 <body>
@@ -17,18 +17,22 @@
     <div>
       <div class="eyebrow">REGULATOR TOOLKIT · ② THRESHOLD</div>
       <h1>规则阈值试算器</h1>
-      <p class="lead">面向地方规则管理员和信息科，调整阈值前先看触发量变化、历史案卷 diff 和干净案卷新增命中。</p>
+      <p class="lead">从主平台“规则沉淀回放”和“统计指标监测”拆出来，面向地方规则管理员和信息科，调整阈值前先看触发量变化和误报压力。</p>
     </div>
-    <a class="back" href="/regulator-plugins.html">返回工具箱</a>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <a class="back" href="/plugins.html#regulator">← 插件 & 小工具箱</a>
+      <a class="back" href="/home.html">← 三入口</a>
+    </div>
   </header>
+  <p style="font-size:12px;color:var(--dim);margin:-12px 0 18px"><a href="/home.html" style="color:var(--muted);text-decoration:none">三入口</a> → <a href="/plugins.html#regulator" style="color:var(--muted);text-decoration:none">③ 插件 & 小工具箱</a> → <b style="color:var(--ink)">规则阈值试算器</b></p>
 
   <section class="grid">
     <aside class="panel">
       <h2>试算参数</h2>
       <label for="rule">规则</label>
       <select class="select" id="rule">
-        <option>AGE-101 · 未成年用药年龄分层</option>
-        <option>QTY-901 · 单日数量超常</option>
+        <option value="AGE-101">AGE-101 · 未成年用药年龄分层</option>
+        <option value="QTY-901">QTY-901 · 单日数量超常</option>
         <option disabled>更多规则 · 演示扩展</option>
       </select>
       <label for="age">AGE-101 年龄上限</label>
@@ -41,22 +45,21 @@
         <input id="qty" type="range" min="20" max="80" value="30">
         <span class="value">30</span>
       </div>
-      <button class="btn" type="button" aria-disabled="true">Phase B 接 /api/rules/threshold-trial</button>
+      <button class="btn" type="button" id="btnTrial">运行阈值试算</button>
     </aside>
 
     <section class="panel">
-      <h2>试算结果占位</h2>
+      <h2>试算结果</h2>
       <div class="cards">
-        <div class="metric hot"><b>+/- N</b><span>触发量变化</span></div>
-        <div class="metric warn"><b>Diff</b><span>历史案卷命中变化</span></div>
-        <div class="metric ok"><b>0</b><span>疑似误报压力目标</span></div>
+        <div class="metric hot"><b id="mDelta">—</b><span>触发量变化</span></div>
+        <div class="metric warn"><b id="mHits">—</b><span>基线 → 试算</span></div>
+        <div class="metric ok"><b id="mFp">—</b><span>疑似误报压力</span></div>
       </div>
-      <div class="placeholder">结论模板：阈值收紧 → 触发减少 X，干净案卷新增命中 Y。Y 必须可见，G0 相关案卷不标红。</div>
+      <div class="placeholder" id="trialNote">拖动 AGE/QTY 滑块会调用 <code>/api/rules/threshold-trial</code>，在 1000 条演示集上计算 before/after diff；统计指标监测仍复用主平台能力。</div>
       <table class="table" aria-label="阈值试算占位表">
-        <thead><tr><th>案卷</th><th>基线</th><th>试算</th><th>变化</th></tr></thead>
-        <tbody>
-          <tr><td>settlements_1000</td><td>待接入</td><td>待接入</td><td>—</td></tr>
-          <tr><td>clean cases</td><td>0</td><td>0</td><td>保持 G0</td></tr>
+        <thead><tr><th>行号</th><th>项目</th><th>金额</th><th>变化 / 说明</th></tr></thead>
+        <tbody id="baselineRows">
+          <tr><td colspan="4">点击“运行阈值试算”或拖动滑块。</td></tr>
         </tbody>
       </table>
     </section>
@@ -68,6 +71,50 @@ for (const input of document.querySelectorAll('input[type="range"]')) {
     input.parentElement.querySelector('.value').textContent = input.value;
   });
 }
+const esc = (v) => String(v ?? '').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+let timer = null;
+function activePayload() {
+  const rule = document.querySelector('#rule').value;
+  if (rule === 'AGE-101') return { rule_id: rule, param_key: 'minor_age', param_value: Number(document.querySelector('#age').value) };
+  return { rule_id: rule, param_key: 'qty_limit', param_value: Number(document.querySelector('#qty').value) };
+}
+async function runTrial() {
+  const rows = document.querySelector('#baselineRows');
+  const note = document.querySelector('#trialNote');
+  note.textContent = '正在试算...';
+  rows.innerHTML = '<tr><td colspan="4">加载中...</td></tr>';
+  try {
+    const r = await fetch('/api/rules/threshold-trial', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(activePayload()),
+    }).then(x => x.json());
+    if (r.error) throw new Error(r.error);
+    document.querySelector('#mDelta').textContent = (r.delta >= 0 ? '+' : '') + r.delta;
+    document.querySelector('#mHits').textContent = `${r.baseline_hits} → ${r.trial_hits}`;
+    document.querySelector('#mFp').textContent = r.new_false_positives;
+    rows.innerHTML = (r.cases_changed || []).slice(0, 12).map(row => `
+      <tr>
+        <td>${esc(row.row_id)}</td>
+        <td>${esc(row.item_name)}<br><span style="color:#8296A9">${esc(row.dept)} · ${esc(row.doctor)}</span></td>
+        <td>¥${esc(row.amount)}</td>
+        <td>${esc(row.change)} · ${esc(row.note)}</td>
+      </tr>`).join('');
+    if (!r.cases_changed?.length) rows.innerHTML = '<tr><td colspan="4">阈值变化未改变当前演示集命中。</td></tr>';
+    note.textContent = r.conclusion;
+  } catch (e) {
+    rows.innerHTML = `<tr><td colspan="4">读取失败：${esc(e.message)}</td></tr>`;
+    note.textContent = '读取失败。请确认本地引擎已启动。';
+  }
+}
+function scheduleTrial() {
+  clearTimeout(timer);
+  timer = setTimeout(runTrial, 180);
+}
+document.querySelector('#btnTrial').addEventListener('click', runTrial);
+document.querySelector('#rule').addEventListener('change', runTrial);
+document.querySelector('#age').addEventListener('input', scheduleTrial);
+document.querySelector('#qty').addEventListener('input', scheduleTrial);
 </script>
 </body>
 </html>

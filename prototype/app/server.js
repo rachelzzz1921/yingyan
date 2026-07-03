@@ -49,6 +49,7 @@ const auditBatch = require('./engine/audit-batch');
 const priorityStore = require('./engine/priority-store');
 const priorityService = require('./engine/priority-service');
 const { buildEvidencePackage } = require('./engine/evidence-package');
+const { buildFieldKit, renderFieldKitMarkdown, renderFieldKitHtml } = require('./engine/field-kit');
 const { buildViolationSummary, renderSummaryMarkdown } = require('./engine/violation-report');
 const checklistStore = require('./engine/checklist-store');
 const examSnapshot = require('./engine/exam-snapshot');
@@ -1035,6 +1036,85 @@ const server = http.createServer(async (req, res) => {
         return res.end(result.markdown);
       }
       return sendJSON(res, result);
+    }
+    if (p === '/api/regulator/field-kit' && req.method === 'POST') {
+      const body = await readBody(req);
+      const store = priorityStore.loadStore();
+      priorityStore.syncCasesFromDb(store, DB.cases);
+      const caseId = body.case_id || body.caseId || 'main';
+      const record = DB.cases[caseId];
+      if (!record) return sendJSON(res, { error: 'case not found' }, 404);
+      const auditReport = runAuditForRecord(record);
+      await priorityService.ensureFindings(store, caseId, record, (rec) => runAuditForRecord(rec));
+      const evidencePackage = buildEvidencePackage({
+        store, record, caseId,
+        findingId: body.finding_id || body.findingId,
+        maskPii: body.mask_pii !== false && store.config?.mask_pii !== false,
+      });
+      if (!evidencePackage.ok) return sendJSON(res, evidencePackage, 404);
+      const kit = buildFieldKit({
+        caseId,
+        record,
+        auditReport,
+        evidencePackage,
+        orgName: body.org_name || body.orgName,
+        period: body.period,
+      });
+      if (body.format === 'html') {
+        res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
+        return res.end(renderFieldKitHtml(kit));
+      }
+      if (body.format === 'markdown') {
+        res.writeHead(200, { 'Content-Type': 'text/markdown; charset=utf-8' });
+        return res.end(renderFieldKitMarkdown(kit));
+      }
+      return sendJSON(res, { ...kit, markdown: renderFieldKitMarkdown(kit) });
+    }
+    if (p === '/api/regulator/trace-lookup') {
+      const body = req.method === 'POST' ? await readBody(req) : {};
+      const code = String(body.trace_code || body.code || url.searchParams.get('code') || '').trim();
+      if (!code) return sendJSON(res, { error: 'trace_code required' }, 400);
+      try {
+        const data = loadJSON(path.join(DATA, 'screening/settlements_1000.json'));
+        const rows = (data.rows || []).filter(r => String(r.trace_code || '').trim() === code);
+        const { screenExternalRows } = require('./engine/screening');
+        const screening = screenExternalRows(rows);
+        const hits = (screening.top20 || []).filter(h => h.rule_id === 'TRACE-101');
+        return sendJSON(res, {
+          ok: true,
+          trace_code: code,
+          source: 'settlements_1000.json',
+          row_count: rows.length,
+          repeated: hits.length > 0,
+          tier: hits.length ? { code: 'A', label: '建议重点核查' } : { code: 'C', label: '建议暂缓 / 观察' },
+          rows,
+          hits,
+          explanation: hits.length
+            ? `追溯码 ${code} 在演示数据中出现 ${rows.length} 次,命中 TRACE-101 重复结算线索。`
+            : (rows.length ? `追溯码 ${code} 仅出现 ${rows.length} 次,暂未命中重复结算。` : `演示数据中未检索到追溯码 ${code}。`),
+        });
+      } catch (e) {
+        return sendJSON(res, { error: '追溯码查询失败: ' + e.message }, 500);
+      }
+    }
+    if (p === '/api/regulator/exposure-cases') {
+      try {
+        const q = String(url.searchParams.get('q') || '').trim();
+        const data = loadJSON(path.join(DATA, 'kb/exposure_cases.json'));
+        const cases = data.cases || [];
+        const filtered = q
+          ? cases.filter(c => [c.case_id, c.behavior, c.violation_type, c.specialty, c.outcome].some(v => String(v || '').includes(q)))
+          : cases;
+        return sendJSON(res, {
+          ok: true,
+          query: q,
+          count: filtered.length,
+          note: '公开案例参照/历史处理区间,最终由监管人员结合事实与程序判断。',
+          cases: filtered,
+        });
+      } catch (e) {
+        return sendJSON(res, { error: '公开案例检索失败: ' + e.message }, 500);
+      }
     }
     // E3 一键稽核报告(领导版):批量筛查结果自动成文,md/html/pdf 三格式
     if (p === '/api/report/leader' && req.method === 'GET') {
@@ -2042,6 +2122,16 @@ const server = http.createServer(async (req, res) => {
         return sendJSON(res, { error: '批量筛查失败:' + e.message + '(先跑 node scripts/gen-settlement-1000.js 生成演示数据)' }, 500);
       }
     }
+    if (p === '/api/rules/threshold-trial' && req.method === 'POST') {
+      try {
+        const body = await readBody(req);
+        const { runThresholdTrial } = require('./engine/screening');
+        const result = runThresholdTrial(body);
+        return sendJSON(res, result, result.ok === false ? 400 : 200);
+      } catch (e) {
+        return sendJSON(res, { error: '阈值试算失败: ' + e.message }, 500);
+      }
+    }
     if (p === '/api/stats-monitoring/run') {
       try {
         const fs = require('fs');
@@ -2690,7 +2780,8 @@ const server = http.createServer(async (req, res) => {
     }
 
     // 静态文件
-    let file = p === '/' ? path.join(PUBLIC, 'index.html') : path.join(PUBLIC, p);
+    // 静态文件 · 根路径 = 三入口 Pitch（home.html）；工作台仍走 /index.html
+    let file = p === '/' ? path.join(PUBLIC, 'home.html') : path.join(PUBLIC, p);
     if (!file.startsWith(PUBLIC)) { res.writeHead(403); return res.end('Forbidden'); }
     return sendFile(res, file);
   } catch (e) {

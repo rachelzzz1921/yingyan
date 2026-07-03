@@ -1,19 +1,19 @@
 'use strict';
-/** 稽核优先通路 · 中英术语与表头说明（priority.html + dashboard 共用） */
+/** 稽核优先队列 · 共享术语与归因说明（priority.html + dashboard 共用） */
 (function (global) {
   const GLOSSARY = [
-    { term: 'api_score', zh: '综合优先指数', tip: '层内排序分。越高 = 越应优先飞检，不是案卷质量分。公式≈100×(EC·AMT·SEV)^(1/3)×历史命中×广度×离群×领域加权。' },
-    { term: 'tier / 层级', zh: '硬分层', tip: 'tier1=含疑点（优先查）· tier2=仅线索 · 疑点永远排在线索前面。' },
-    { term: 'shadow', zh: '规则观察期', tip: '新规则试运行命中：完整展示证据链，但不计入 api_score 与暴露金额。' },
-    { term: 'EC', zh: '证据闭环度', tip: 'Evidence Closure · 三要素（证据+条款+推理）是否齐备。' },
-    { term: 'AMT', zh: '暴露金额因子', tip: 'Amount · 案卷 active 疑点/线索涉及金额 S 的归一化权重。' },
-    { term: 'SEV', zh: '罚则严重度', tip: 'Severity · 违规类型对应条例罚则档位；主观嫌疑会加权。' },
-    { term: 'HistoryPrior', zh: '历史命中率', tip: '该患者/科室/医生过往稽核命中比例，画像加权。' },
-    { term: 'Breadth', zh: '规则广度', tip: '同一案卷命中多少条不同规则，多规则叠加加权。' },
-    { term: 'Outlier', zh: '金额离群', tip: '同科室案卷金额分布中的离群程度；特例单议已批准可抑制。' },
-    { term: 'PII', zh: '个人隐私', tip: 'Personal Identifiable Information · 姓名/证件等，列表可脱敏。' },
-    { term: 'DRG / DIP', zh: '支付方式画像', tip: 'DRG=诊断相关分组 · DIP 辅助目录=病案质量/再入院等辅助维度。' },
-    { term: 'Top violation', zh: '首要违规点', tip: '该案卷 active findings 中对 api_score 贡献最大的违规类型。' },
+    { term: '优先指数', en: 'api_score', tip: '数值越高越应先安排稽核，不是质量评分。' },
+    { term: '风险层', en: 'tier', tip: '有疑点的案卷永远排在仅线索的案卷前面。' },
+    { term: '新规则试运行', en: 'shadow', tip: '试运行期间仅展示证据，不计分不计金额。' },
+    { term: '零误报对照组', en: 'boundary', tip: '用于验证规则不误伤，不进入正式稽核队列。' },
+    { term: '证据完整度', en: 'EC', tip: '证据、条款、推理三要素齐备程度。' },
+    { term: '金额权重', en: 'AMT', tip: '本案疑点与线索涉及金额在排序中的权重。' },
+    { term: '罚则严重度', en: 'SEV', tip: '违规类型对应的罚则档位；主观嫌疑会加权。' },
+    { term: '历史命中加权', en: 'HistoryPrior', tip: '患者、科室、医生过往被查中的比例越高，加权越高。' },
+    { term: '多规则加权', en: 'Breadth', tip: '同一案卷命中多条不同规则时提高优先级。' },
+    { term: '金额离群加权', en: 'Outlier', tip: '金额在同科室分布中明显偏高时提高优先级。' },
+    { term: '隐藏患者姓名', en: 'mask_pii', tip: '列表中隐藏患者姓名等敏感信息。' },
+    { term: '主要问题', en: 'Top violation', tip: '该案卷中对优先指数贡献最大的违规类型。' },
   ];
 
   function esc(s) {
@@ -21,10 +21,9 @@
   }
 
   function scoreHeaderHtml() {
-    const tip = GLOSSARY.find(g => g.term === 'api_score')?.tip || '';
+    const tip = GLOSSARY.find(g => g.en === 'api_score')?.tip || '';
     return `<th class="num pri-th-score" title="${esc(tip)}">
-      <span class="pri-th-main">api_score</span>
-      <span class="pri-th-hint">优先指数 · ↑越高越先查</span>
+      <span class="pri-th-main">优先指数</span>
     </th>`;
   }
 
@@ -40,13 +39,13 @@
 
   function glossaryPanelHtml(compact, context) {
     const items = GLOSSARY.map(g =>
-      `<dt><code>${esc(g.term)}</code></dt><dd><strong>${esc(g.zh)}</strong> — ${esc(g.tip)}</dd>`,
+      `<dt>${esc(g.term)} <code>${esc(g.en)}</code></dt><dd>${esc(g.tip)}</dd>`,
     ).join('');
     const lead = context === 'dashboard'
-      ? '看板摘要：展示当前队首案卷与 KPI。完整筛选、批量入队请打开「稽核优先队列」页。悬停表头可查看英文字段含义。'
+      ? '看板摘要：展示当前排序靠前案卷与关键指标。完整筛选、批量入队请打开「稽核优先队列」页。'
       : compact
-        ? '本页在做什么：导入案卷 → 按风险排序 → 选队首入批量稽核。英文多为内部字段名，悬停表头可看说明。'
-        : '事后飞检排序工具：先分 tier（疑点＞线索），再算 api_score 决定队首。下列术语可在表头悬停查看。';
+        ? '本页把待查案卷按风险排好队，方便优先处理最值得核查的案卷。'
+        : '先看风险层（有疑点 > 仅线索），再按优先指数从高到低排序。';
     const inner = `<details class="pri-glossary"${compact ? '' : ' open'}>
       <summary>这一页在干什么</summary>
       <p class="pri-glossary-lead">${lead}</p>
@@ -58,40 +57,89 @@
   function formatBreakdownText(row) {
     const b = row.breakdown || {};
     return [
-      '【怎么读这个分】分越高 = 越应优先安排飞检，不代表案卷「考得差」。',
+      '这个案卷为什么排在前面？',
       '',
-      `层级 tier ${row.tier}（${row.tier_label}）— 含疑点永远排在仅线索之前`,
-      `api_score ${row.api_score} ≈ round(100 × core × 历史 × 广度 × 离群 × 领域)`,
+      `优先指数 ${row.api_score ?? '—'} = 基础分 ${fmt(b.core_score ?? ((b.core || 0) * 100))} × 历史命中加权 ${fmt(b.hist_prior ?? 1)} × 多规则加权 ${fmt(b.breadth ?? 1)} × 金额离群加权 ${fmt(b.outlier ?? 1)} × 重点领域加权 ${fmt(b.specialty ?? 1)}`,
       '',
-      `EC 证据闭环度: ${b.ec} — 三要素是否齐备`,
-      `AMT 暴露金额因子: ${b.amt} · 本案 S=¥${b.S}`,
-      `SEV 罚则严重度: ${b.sev}`,
-      `core 核心项(几何均值): ${b.core}`,
+      '基础分由三项合成：',
+      `· 证据完整度 ${fmt(b.ec)} —— 证据、条款、推理三要素齐备程度`,
+      `· 金额权重 ${fmt(b.amt)} —— 本案涉及金额 ¥${num(b.S)}`,
+      `· 罚则严重度 ${fmt(b.sev)} —— 违规类型对应的罚则档位`,
       '',
-      `HistoryPrior 历史命中: ${b.hist_prior} · H=${b.H}`,
-      `Breadth 规则广度: ${b.breadth} · 不同规则 ${b.distinct_rules} 条`,
-      `Outlier 金额离群: ${b.outlier}${b.outlier_suppressed ? '（特例单议已抑制加分）' : ''}`,
-      `Specialty 9大领域加权: ${b.specialty ?? 1}`,
-      `risk_tags 重点领域: ${(row.risk_tags || []).join(', ') || '—'}`,
-      `violation_nature 违规性质: ${row.violation_nature || '—'}`,
-      `disposition 处置建议: ${row.disposition || '—'}`,
-      '',
-      `统计：疑点 ${row.suspected_count} · 线索 ${row.clue_count} · shadow ${row.shadow_count}（不计分）`,
+      '加权项：',
+      `· 历史命中加权 ×${fmt(b.hist_prior ?? 1)} —— 患者/科室/医生历史命中情况`,
+      `· 多规则加权 ×${fmt(b.breadth ?? 1)} —— 同案命中 ${b.distinct_rules ?? 0} 条不同规则`,
+      `· 金额离群加权 ×${fmt(b.outlier ?? 1)}${b.outlier_suppressed ? ' —— 特例单议已抑制加分' : ' —— 金额在同科室中明显偏高时加权'}`,
+      `· 重点领域加权 ×${fmt(b.specialty ?? 1)} —— ${(row.risk_tags || []).join('、') || '未命中重点领域'}`,
+      row.violation_nature ? `违规性质：${row.violation_nature}` : '',
+      row.disposition ? `处置建议：${row.disposition}` : '',
+      `统计：疑点 ${row.suspected_count ?? 0} · 线索 ${row.clue_count ?? 0} · 新规则试运行 ${row.shadow_count ?? 0}（不计分）`,
       row.top_violation
-        ? `首要违规：${row.top_violation.rule_id} · ${row.top_violation.violation_type} · ¥${row.top_violation.amount_involved}`
+        ? `主要问题：${row.top_violation.rule_id} · ${row.top_violation.violation_type} · ¥${num(row.top_violation.amount_involved)}`
         : '',
     ].filter(Boolean).join('\n');
   }
 
+  function fmt(v) {
+    const n = Number(v);
+    if (!Number.isFinite(n)) return '—';
+    return n >= 10 ? String(Math.round(n * 10) / 10) : String(Math.round(n * 100) / 100);
+  }
+
+  function num(v) {
+    return Number(v || 0).toLocaleString('zh-CN', { maximumFractionDigits: 0 });
+  }
+
+  function factorRow(name, value, note, max) {
+    const n = Number(value);
+    const pct = Number.isFinite(n) && max ? Math.max(6, Math.min(100, (n / max) * 100)) : 6;
+    return `<div class="pri-bd-factor">
+      <div class="pri-bd-factor-main"><strong>${esc(name)}</strong><span>${esc(fmt(value))}</span></div>
+      <div class="pri-bd-factor-note">${esc(note)}</div>
+      <div class="pri-bd-bar"><i style="width:${pct}%"></i></div>
+    </div>`;
+  }
+
+  function formatBreakdownHtml(row) {
+    const b = row.breakdown || {};
+    const base = b.core_score ?? ((Number(b.core) || 0) * 100);
+    const multipliers = [b.hist_prior ?? 1, b.breadth ?? 1, b.outlier ?? 1, b.specialty ?? 1].map(Number).filter(Number.isFinite);
+    const maxFactor = Math.max(1, Number(b.hist_prior) || 1, Number(b.breadth) || 1, Number(b.outlier) || 1, Number(b.specialty) || 1);
+    return `
+      <div class="pri-breakdown">
+        <div class="pri-bd-equation">
+          <span>基础分 ${esc(fmt(base))}</span>
+          <span>× 历史 ${esc(fmt(b.hist_prior ?? 1))}</span>
+          <span>× 多规则 ${esc(fmt(b.breadth ?? 1))}</span>
+          <span>× 离群 ${esc(fmt(b.outlier ?? 1))}</span>
+          <span>× 领域 ${esc(fmt(b.specialty ?? 1))}</span>
+          <b>= ${esc(fmt(row.api_score))}</b>
+        </div>
+        <div class="pri-bd-grid">
+          ${factorRow('证据完整度', b.ec, '证据、条款、推理三要素齐备程度', 1)}
+          ${factorRow('金额权重', b.amt, `本案涉及金额 ¥${num(b.S)}`, 1)}
+          ${factorRow('罚则严重度', b.sev, '违规类型对应的罚则档位', 1)}
+          ${factorRow('历史命中加权', b.hist_prior ?? 1, `历史命中参考值 ${fmt(b.H)}`, maxFactor)}
+          ${factorRow('多规则加权', b.breadth ?? 1, `同案命中 ${b.distinct_rules ?? 0} 条不同规则`, maxFactor)}
+          ${factorRow('金额离群加权', b.outlier ?? 1, b.outlier_suppressed ? '特例单议已抑制加分' : '金额在同科室中明显偏高时加权', maxFactor)}
+        </div>
+        <div class="pri-bd-foot">
+          <span>风险层：${esc(row.tier === 1 ? '有疑点' : row.tier === 2 ? '仅线索' : '观察')}</span>
+          <span>违规性质：${esc(row.violation_nature || '—')}</span>
+          <span>疑点 ${esc(row.suspected_count ?? 0)} · 线索 ${esc(row.clue_count ?? 0)}</span>
+        </div>
+      </div>`;
+  }
+
   const CONFIG_HINTS = {
-    W_CLUE: '线索在 core 中的权重（相对疑点）',
-    AMT_CAP: '暴露金额归一化上限（元）',
-    beta: 'HistoryPrior 历史命中 β',
-    gamma: 'Breadth 规则广度 γ',
-    delta: 'Outlier 离群 δ',
+    W_CLUE: '仅线索案卷在基础分中的相对权重',
+    AMT_CAP: '金额权重归一化上限（元）',
+    beta: '历史命中加权强度',
+    gamma: '多规则加权强度',
+    delta: '金额离群加权强度',
     R_REF: '广度参考规则数',
-    specialty_weight: '命中9大重点领域时的加权系数',
-    repeat_upgrade_threshold: '同科室同类违规重复次数≥此值 → 升级主观嫌疑',
+    specialty_weight: '命中重点领域时的加权系数',
+    repeat_upgrade_threshold: '同科室同类违规重复次数达到该值后升级提示',
   };
 
   global.PriorityUX = {
@@ -102,7 +150,8 @@
     thColNum,
     glossaryPanelHtml,
     formatBreakdownText,
+    formatBreakdownHtml,
     CONFIG_HINTS,
-    scoreLegend: '排序：疑点层 > 线索层 → api_score 降序 · 分数高 = 飞检优先级高，非质量评分',
+    scoreLegend: '排序规则：先看风险层（有疑点 > 仅线索），层内按优先指数从高到低。指数越高越该先查，不是质量评分。',
   };
 })(typeof window !== 'undefined' ? window : globalThis);

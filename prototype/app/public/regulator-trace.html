@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#F0F4F8">
+<title>追溯码即查 · 鹰眼监管小工具箱</title>
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<style>
+:root{--ink:#0B2A4A;--ink2:#134E72;--muted:#5C7185;--dim:#8296A9;--teal:#14B8A6;--red:#DC4A3D;--bg:#F0F4F8;--surface:#fff;--line:#E2E9F0;--hair:#D3DDE7;--sans:"PingFang SC","Hiragino Sans GB","Noto Sans SC","Microsoft YaHei",-apple-system,sans-serif;--mono:"SF Mono","DM Mono","Roboto Mono",Menlo,monospace}
+*{box-sizing:border-box;margin:0}body{font-family:var(--sans);background:var(--bg);color:var(--ink);line-height:1.65;min-height:100vh}body::before{content:"";position:fixed;inset:0;background-image:radial-gradient(rgba(11,42,74,.055) 1.5px,transparent 1.5px);background-size:26px 26px;pointer-events:none}.wrap{max-width:1040px;margin:0 auto;padding:34px 24px 48px;position:relative}.top{display:flex;justify-content:space-between;gap:16px;align-items:flex-start;margin-bottom:24px}.back{color:var(--ink2);text-decoration:none;border:1px solid var(--line);background:var(--surface);border-radius:10px;padding:9px 14px;font-weight:800;font-size:13px}.eyebrow{font-family:var(--mono);font-size:12px;color:var(--dim);letter-spacing:.12em}h1{font-size:clamp(28px,4vw,42px);line-height:1.25}.lead{color:var(--muted);max-width:820px;margin-top:8px}.panel{border:1px solid var(--line);border-radius:14px;background:var(--surface);padding:20px;box-shadow:0 3px 14px rgba(11,42,74,.05);margin-top:16px}.query{display:grid;grid-template-columns:1fr auto;gap:10px}@media(max-width:680px){.query{grid-template-columns:1fr}}input{width:100%;border:1px solid var(--line);border-radius:10px;padding:12px;background:#F8FAFC;color:var(--ink);font-family:var(--mono);font-weight:700}.btn{border:1px solid transparent;border-radius:10px;background:linear-gradient(90deg,var(--red),#C43F33);color:#fff;font-weight:800;padding:11px 16px;cursor:pointer}.hint{font-size:13px;color:var(--muted);margin-top:8px}.badge{display:inline-flex;border-radius:999px;padding:4px 10px;font-weight:800;font-size:12px}.a{background:#FDEDEC;color:#B42318}.c{background:#EAFBF8;color:#0E756A}.table{width:100%;border-collapse:collapse;font-size:13px;margin-top:12px}.table th,.table td{border-bottom:1px solid var(--line);padding:9px;text-align:left}.table th{color:var(--dim);font-size:12px}.muted{color:var(--muted)}.note{border:1px dashed var(--hair);border-radius:12px;background:#fff;padding:12px;color:var(--muted);margin-top:12px;font-size:13px}
+</style>
+</head>
+<body>
+<main class="wrap">
+  <header class="top">
+    <div>
+      <div class="eyebrow">REGULATOR TOOLKIT · PREVIEW · TRACE</div>
+      <h1>追溯码即查</h1>
+      <p class="lead">复用行级筛查引擎 TRACE-101，用于回流药 / 重复结算线索快查。AI 只提示线索，不作处置认定。</p>
+    </div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap"><a class="back" href="/plugins.html#regulator">← 工具箱</a><a class="back" href="/home.html">← 三入口</a></div>
+  </header>
+
+  <section class="panel">
+    <div class="query">
+      <input id="code" value="85907831160000000214" aria-label="追溯码">
+      <button class="btn" id="lookup" type="button">查询</button>
+    </div>
+    <p class="hint">演示重复码示例：<code>85907831160000000214</code>。生产环境应接真实追溯码库，本页只查演示数据集。</p>
+  </section>
+
+  <section class="panel" id="result">
+    <p class="muted">输入追溯码后查看是否命中重复结算线索。</p>
+  </section>
+</main>
+<script>
+const $ = (s) => document.querySelector(s);
+const esc = (v) => String(v ?? '').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+async function lookup() {
+  const code = $('#code').value.trim();
+  $('#result').innerHTML = '<p class="muted">查询中...</p>';
+  try {
+    const r = await fetch('/api/regulator/trace-lookup?code=' + encodeURIComponent(code)).then(x => x.json());
+    if (r.error) throw new Error(r.error);
+    const badge = r.repeated ? '<span class="badge a">A · 建议重点核查</span>' : '<span class="badge c">C · 建议暂缓 / 观察</span>';
+    $('#result').innerHTML = `
+      <h2>${badge}</h2>
+      <p class="hint">${esc(r.explanation)}</p>
+      <table class="table"><thead><tr><th>行号</th><th>日期</th><th>项目</th><th>金额</th><th>科室/医生</th></tr></thead>
+      <tbody>${(r.rows || []).map(row => `<tr><td>${esc(row.row_id)}</td><td>${esc(row.settle_date)}</td><td>${esc(row.item_name)}</td><td>¥${esc(row.amount)}</td><td>${esc(row.dept)} · ${esc(row.doctor)}</td></tr>`).join('') || '<tr><td colspan="5">未找到演示数据行</td></tr>'}</tbody></table>
+      <div class="note">建议动作：核对首笔结算、退药冲正记录、药品实物流向与参保人购药记录。</div>`;
+  } catch (e) {
+    $('#result').innerHTML = `<p class="muted">查询失败：${esc(e.message)}</p>`;
+  }
+}
+$('#lookup').addEventListener('click', lookup);
+$('#code').addEventListener('keydown', e => { if (e.key === 'Enter') lookup(); });
+</script>
+</body>
+</html>

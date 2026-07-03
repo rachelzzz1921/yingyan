@@ -1156,11 +1156,10 @@ function truncText(s, max = 40) {
 }
 
 function priScoreHeaderHtml() {
-  const tip = window.PriorityUX?.GLOSSARY?.find(g => g.term.startsWith('api_score'))?.tip
-    || '综合优先指数：越高越应先安排飞检，非质量分';
+  const tip = window.PriorityUX?.GLOSSARY?.find(g => g.en === 'api_score')?.tip
+    || '优先指数：越高越应安排稽核，非质量分。内部字段 api_score';
   return `<th class="num pri-th-score" title="${esc(tip)}">
-    <span class="pri-th-main">api_score</span>
-    <span class="pri-th-hint">↑越高越先查</span>
+    <span class="pri-th-main">优先指数</span>
   </th>`;
 }
 
@@ -1170,11 +1169,11 @@ function priorityViewHTML(rank) {
   const tier1 = queue.filter(r => r.tier === 1).length;
   const shadowList = rank.shadow_bucket || [];
   const legend = window.PriorityUX?.scoreLegend
-    || '排序：疑点层 > 线索层 → api_score 降序 · 分数高 = 飞检优先级高';
+    || '排序规则：先看风险层（有疑点 > 仅线索），层内按优先指数从高到低。';
   const rows = top.map((r) => {
     const title = r.case_title || r.case_id;
     return `<tr>
-      <td><span class="pri-tier t${r.tier}" title="tier${r.tier} · ${r.tier === 1 ? '含疑点，优先查' : '仅线索'}">${r.tier === 1 ? '疑点' : r.tier === 2 ? '线索' : '—'}</span></td>
+      <td><span class="pri-tier t${r.tier}" title="${r.tier === 1 ? '有疑点，优先查' : '仅线索'}">${r.tier === 1 ? '有疑点' : r.tier === 2 ? '仅线索' : '—'}</span></td>
       <td class="num"><strong class="pri-score" title="优先指数，非质量分">${r.api_score}</strong></td>
       <td class="pri-case-cell" title="${esc(title)}">
         <span class="pri-case-id">${esc(r.case_id)}</span>
@@ -1186,37 +1185,37 @@ function priorityViewHTML(rank) {
     </tr>`;
   }).join('');
   const shadowChips = shadowList.slice(0, 3).map(r =>
-    `<span class="pri-shadow-chip" title="shadow 观察期：展示证据但不计分">${esc(truncText(r.case_title || r.case_id, 24))} · 观察 ${r.shadow_count ?? 0}条</span>`,
+    `<span class="pri-shadow-chip" title="新规则试运行：展示证据但不计分">${esc(truncText(r.case_title || r.case_id, 24))} · 观察 ${r.shadow_count ?? 0}条</span>`,
   ).join('');
   const glossary = window.PriorityUX ? PriorityUX.glossaryPanelHtml(true, 'dashboard') : '';
   return `
     <div class="doc-toolbar">
       <h2 style="margin:0">🎯 稽核优先队列</h2>
-      <span class="badge-live">先分疑点/线索 · 再按 api_score 排队首 · 观察期不计分</span>
+      <span class="badge-live">先看风险层 · 再按优先指数排序 · 试运行不计分</span>
     </div>
     ${glossary}
     <div class="bench-kpis">
       <div class="bkpi accent"><div class="n">${rank.total ?? queue.length}</div><div class="l">可排序案卷</div></div>
-      <div class="bkpi warn"><div class="n">${tier1}</div><div class="l">含疑点（tier1）</div></div>
-      <div class="bkpi"><div class="n">${shadowList.length}</div><div class="l">观察期桶</div></div>
-      <div class="bkpi green"><div class="n">${queue[0]?.api_score ?? '—'}</div><div class="l">队首优先指数</div></div>
+      <div class="bkpi warn"><div class="n">${tier1}</div><div class="l">有疑点案卷</div></div>
+      <div class="bkpi"><div class="n">${shadowList.length}</div><div class="l">新规则试运行</div></div>
+      <div class="bkpi green"><div class="n">${queue[0]?.api_score ?? '—'}</div><div class="l">最高优先指数</div></div>
     </div>
     <p class="pri-score-legend muted">${esc(legend)}</p>
     <div class="card pri-card-table">
       <div class="card-head">
-        <h2>队首 TOP ${top.length || 0}</h2>
+        <h2>排序靠前 ${top.length || 0} 案</h2>
         <a class="link-sm" href="/priority.html">打开完整队列 →</a>
       </div>
       <div class="pri-table-wrap">
         <table class="bench-table pri-queue-table">
           <thead><tr>
-            <th title="tier：疑点层永远在线索层前">层级</th>${priScoreHeaderHtml()}<th>案卷</th>
+            <th title="有疑点的案卷永远排在仅线索前">风险层</th>${priScoreHeaderHtml()}<th>案卷</th>
             <th class="num" title="疑点 / 线索">疑/线</th><th class="num">暴露金额</th><th></th>
           </tr></thead>
           <tbody>${rows || '<tr><td colspan="6" class="muted" style="padding:16px">暂无排序数据</td></tr>'}</tbody>
         </table>
       </div>
-      ${shadowList.length ? `<div class="pri-shadow-bar"><span class="pri-shadow-label" title="shadow=规则观察期，不计入 api_score">🌓 观察期</span>${shadowChips}</div>` : ''}
+      ${shadowList.length ? `<div class="pri-shadow-bar"><span class="pri-shadow-label" title="新规则试运行，不计入优先指数">新规则试运行</span>${shadowChips}</div>` : ''}
     </div>
     <div class="action-row">
       <a class="action-btn primary" href="/priority.html">🎯 完整队列与批量入队</a>

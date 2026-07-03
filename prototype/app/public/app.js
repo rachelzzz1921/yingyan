@@ -221,10 +221,10 @@ function applyModeUI() {
   const panelTitle = document.querySelector('.panel-right .panel-head h2');
   if (panelTitle) {
     panelTitle.innerHTML = exam
-      ? '<span class="panel-icon">🏥</span> <span id="panelReportTitle">自查体检报告</span>'
-      : '<span class="panel-icon">🛡</span> <span id="panelReportTitle">稽核报告</span>';
+      ? '<span class="panel-icon">🏥</span> <span id="panelReportTitle">自查台</span>'
+      : '<span class="panel-icon">🛡</span> <span id="panelReportTitle">稽核台</span>';
   }
-  const leftTitle = document.querySelector('.panel-left .panel-head h2');
+  const leftTitle = document.querySelector('.panel-source .panel-head h2');
   if (leftTitle && exam) leftTitle.innerHTML = '<span class="panel-icon">📋</span> 自查材料包';
   else if (leftTitle && !exam) leftTitle.innerHTML = '<span class="panel-icon">📁</span> 患者就诊材料包';
 
@@ -259,12 +259,12 @@ function updateEmptyState(exam) {
   if (title) title.textContent = exam ? '就绪 · 飞检前 90 秒完成院端自查初筛' : '就绪 · 把线索到证据的距离，缩短到 90 秒';
   if (steps) {
     steps.innerHTML = exam
-      ? `<li>左侧下拉<strong>选演示案卷</strong>（院端规则子集，不含监管演示规则）</li>
+      ? `<li>左栏下拉<strong>选演示案卷</strong>（院端规则子集，不含监管演示规则）</li>
          <li>点<strong>「开始自查」</strong> — 只跑住院/临床相关规则</li>
-         <li>右侧登记<strong>整改时限与整改状态</strong> → 导出自查清单</li>`
-      : `<li>左侧下拉<strong>选演示案卷</strong>（肿瘤主线含 6 疑点 + 合议层）</li>
+         <li>右栏<strong>自查台</strong>登记整改时限与状态 → 导出自查清单</li>`
+      : `<li>左栏下拉<strong>选演示案卷</strong>（肿瘤主线含 6 疑点 + 合议层）</li>
          <li>点<strong>「开始稽核」</strong> — 文档索引与条款交叉验证</li>
-         <li>右侧查看疑点 → <strong>点证据定位</strong>跳费用行高亮</li>`;
+         <li>右栏<strong>稽核台</strong>看疑点 → 点证据定位跳左栏原文 / 费用行</li>`;
   }
 }
 
@@ -318,6 +318,7 @@ const TABS = [
   { key: 'discharge', label: '出院小结' },
 ];
 let activeTab = 'fee';
+let LEFT_VIEW = 'fee';      // fee | raw — 左栏视图切换
 
 // ---------- 锚视图状态（实现规格 §8） ----------
 let EV_CHAIN = null;        // 证据链完整度（数据侧，resolveEvidence 产物）
@@ -392,6 +393,7 @@ async function loadCase(id) {
   EV_CHAIN = RECORD.evidence_chain || null; LINE_NATURE = {}; ANCHOR_SEL = null;
   renderAnchorView();
   renderTabs(); renderDoc(activeTab);
+  switchSourceView('fee');
   renderCaseMeta();
   setWorkflowStep(1);
   // 重置报告区
@@ -612,6 +614,46 @@ function renderAnchorView() {
     ANCHOR_SEL = (flagged[0] || lines.slice().sort((a, b) => Math.abs(b.amount) - Math.abs(a.amount))[0])?.line_no ?? null;
   }
   renderAnchorList();
+  renderEvChainPanel();
+}
+
+function switchSourceView(view) {
+  LEFT_VIEW = view === 'raw' ? 'raw' : 'fee';
+  $$('.svtab').forEach(b => {
+    const on = b.dataset.view === LEFT_VIEW;
+    b.classList.toggle('active', on);
+    b.setAttribute('aria-selected', on ? 'true' : 'false');
+  });
+  $('#sourcePaneFee')?.classList.toggle('hidden', LEFT_VIEW !== 'fee');
+  $('#sourcePaneRaw')?.classList.toggle('hidden', LEFT_VIEW !== 'raw');
+}
+
+function renderEvChainPanel() {
+  const el = $('#evChainBody');
+  const hint = $('#evChainHint');
+  if (!el) return;
+  if (!EV_CHAIN) {
+    el.innerHTML = '<div class="evc-empty">选择案卷后，点左侧<strong>费用锚</strong>任一行，此处展示钱→行为→指征四层证据链</div>';
+    if (hint) hint.textContent = '未选案卷';
+    return;
+  }
+  if (ANCHOR_SEL == null) {
+    el.innerHTML = '<div class="evc-empty">点左侧<strong>费用锚</strong>任一行，此处展示四层证据链</div>';
+    if (hint) hint.textContent = '未选中费用行';
+    return;
+  }
+  const line = evLineMap()[ANCHOR_SEL];
+  if (!line) {
+    el.innerHTML = '<div class="evc-empty">所选费用行不存在</div>';
+    if (hint) hint.textContent = '—';
+    return;
+  }
+  if (hint) hint.textContent = `第${line.line_no}行 · ${line.item_name}`;
+  el.innerHTML = evChainHTML(line);
+  bindEvNodes(el, line);
+  $$('.evc-missing-detail .md-link[data-autogap]', el).forEach(lk => {
+    lk.onclick = () => { switchReportPage(1); closeModal(); };
+  });
 }
 
 function renderEvCaseHead() {
@@ -646,11 +688,10 @@ function renderAnchorList() {
   const lines = (EV_CHAIN.fee_lines || []).filter(l => !l.is_reversal);
   const rowHTML = (l) => {
     const r = riskOf(l.line_no), c = compOf(l);
-    const expanded = l.line_no === ANCHOR_SEL;
+    const selected = l.line_no === ANCHOR_SEL;
     const reversed = l.reversed_by ? '<span class="chip-reversed">已冲销</span>' : '';
     const sub = `${esc(l.category || '')}${l.class_guessed ? ' <span title="类别未识别（诚实标记）">·类别未识别</span>' : ''}`;
-    let h = `<div class="anchor-row ${expanded ? 'sel' : ''} ${l.reversed_by ? 'reversed' : ''}" data-line="${l.line_no}">
-      <span class="ar-caret">${expanded ? '▾' : '▸'}</span>
+    return `<div class="anchor-row ${selected ? 'sel' : ''} ${l.reversed_by ? 'reversed' : ''}" data-line="${l.line_no}">
       <div class="ar-main">
         <div class="ar-name">${esc(l.item_name)} ${reversed}</div>
         <div class="ar-sub">${sub}</div>
@@ -661,9 +702,6 @@ function renderAnchorList() {
         <span class="cbadge ${c.cls}">${c.label}</span>
       </div>
     </div>`;
-    // 行内手风琴：展开行的证据链直接接在本行下方（单一滚动区，不再另开一栏）
-    if (expanded) h += `<div class="anchor-row-detail" data-detail="${l.line_no}">${evChainHTML(l)}</div>`;
-    return h;
   };
   let html = '';
   if (ANCHOR_SORT === 'risk') {
@@ -685,15 +723,13 @@ function renderAnchorList() {
     html = sorted.map(rowHTML).join('');
   }
   el.innerHTML = html || '<div class="evc-empty">无费用明细行</div>';
-  // 点行 = 展开/收起该行证据链（再点收起）；同一时刻只展开一行
   $$('.anchor-row', el).forEach(row => row.onclick = () => {
     const ln = Number(row.dataset.line);
-    ANCHOR_SEL = (ANCHOR_SEL === ln) ? null : ln;
+    ANCHOR_SEL = ln;
     renderAnchorList();
-    if (ANCHOR_SEL === ln) { const nr = el.querySelector(`.anchor-row[data-line="${ln}"]`); nr?.scrollIntoView({ block: 'nearest', behavior: 'smooth' }); }
+    renderEvChainPanel();
+    row.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
   });
-  // 绑定展开行内证据链节点的点击
-  $$('.anchor-row-detail', el).forEach(det => bindEvNodes(det, evLineMap()[Number(det.dataset.detail)]));
 }
 
 // 证据链四层视图（选中费用锚）
@@ -786,14 +822,8 @@ function openMaterialModal(materialType, line) {
   const rev = `<div class="mat-revindex">📎 反向索引：本材料 <b>${MAT_NAME[materialType] || materialType}</b> 被 <b>${cnt}</b> 笔费用引用${line ? `　·　当前锚定 第${line.line_no}行「${esc(line.item_name)}」` : ''}</div>`;
   openModal('📄 材料原文 · ' + (MAT_NAME[materialType] || materialType), rev + div.innerHTML);
 }
-function toggleRawDrawer() {
-  const d = $('#rawDrawer'); if (!d) return;
-  const open = d.classList.toggle('open');
-  $('#rawDrawerBody').classList.toggle('hidden', !open);
-  if (open && !$('#docTabs').innerHTML) { renderTabs(); renderDoc(activeTab); }
-}
 function bindAnchorControls() {
-  const t = $('#rawDrawerToggle'); if (t) t.onclick = toggleRawDrawer;
+  $$('.svtab').forEach(b => b.onclick = () => switchSourceView(b.dataset.view));
   $$('.asort').forEach(b => b.onclick = () => {
     ANCHOR_SORT = b.dataset.sort;
     $$('.asort').forEach(x => x.classList.toggle('active', x === b));
@@ -1948,6 +1978,7 @@ function jumpToLoc(loc) {
   else if (/检验/.test(loc)) tab = 'lab'; else if (/医嘱/.test(loc)) tab = 'orders';
   else if (/护理/.test(loc)) tab = 'nursing'; else if (/出院/.test(loc)) tab = 'discharge';
   else if (/手术|影像/.test(loc)) tab = 'op';
+  switchSourceView('raw');
   activeTab = tab; renderTabs(); renderDoc(tab);
   const m = loc.match(/第\s*([\d]+)/);
   setTimeout(() => {

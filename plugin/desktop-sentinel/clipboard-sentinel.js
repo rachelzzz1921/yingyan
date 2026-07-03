@@ -128,7 +128,11 @@ function readStdin() {
   });
 }
 
-const nat = { 明确违规: '🟥', 可疑: '🟨' };
+const triageBadge = (nature) => {
+  if (nature === '明确违规') return '🟥 A 建议重点核查';
+  if (nature === '可疑') return '🟨 B 建议补材料后核查';
+  return '🟩 C 建议暂缓/观察';
+};
 async function auditClipboard(sourceText) {
   const text = sourceText != null ? sourceText : await readClipboard();
   if (!isLikelyTable(text)) { if (once) console.log('   ⤷ 剪贴板不是结算表(需多行 tab 分隔),跳过。'); return false; }
@@ -145,11 +149,11 @@ async function auditClipboard(sourceText) {
     }).then(x => x.json());
     if (r.error) { console.log('   ⤷ 引擎:', r.error); return true; }
     const f = r.funnel;
-    console.log(`   🟥 明确违规 ${f.by_nature['明确违规'] || 0} · 🟨 可疑 ${f.by_nature['可疑'] || 0} · 🟩 放行 ${f.clean_rows} · 涉及 ¥${f.hit_amount.toLocaleString()}`);
+    console.log(`   🟥 A重点核查 ${f.by_nature['明确违规'] || 0} · 🟨 B补材料后核查 ${f.by_nature['可疑'] || 0} · 🟩 C暂缓/观察 ${f.clean_rows} · 命中涉及 ¥${f.hit_amount.toLocaleString()}`);
     for (const h of (r.top20 || []).slice(0, 6)) {
-      console.log(`      · ${h.row_id} ${h.rule_id} ${nat[h.nature] || ''} ${h.reason || ''}`);
+      console.log(`      · ${h.row_id} ${h.rule_id} ${triageBadge(h.nature)} ${h.reason || ''}`);
     }
-    console.log(`   ⤷ ${f.total_rows} 行里 ${f.hit_rows} 行命中、${f.clean_rows} 行放行——选区复制即审,人只接手命中行。\n`);
+    console.log(`   ⤷ ${f.total_rows} 行里 ${f.hit_rows} 行进入核查队列、${f.clean_rows} 行建议暂缓/观察——选区复制即审,人只接手需核查行。\n`);
   } catch (e) {
     console.log('   ⤷ 引擎未连接(先 cd prototype/app && node server.js):', e.message, '\n');
   }
