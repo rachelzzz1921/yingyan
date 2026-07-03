@@ -259,12 +259,12 @@ function updateEmptyState(exam) {
   if (title) title.textContent = exam ? '就绪 · 飞检前 90 秒完成院端自查初筛' : '就绪 · 把线索到证据的距离，缩短到 90 秒';
   if (steps) {
     steps.innerHTML = exam
-      ? `<li>左栏下拉<strong>选演示案卷</strong>（院端规则子集，不含监管演示规则）</li>
+      ? `<li>材料包<strong>选演示案卷</strong>（院端规则子集）</li>
          <li>点<strong>「开始自查」</strong> — 只跑住院/临床相关规则</li>
-         <li>右栏<strong>自查台</strong>登记整改时限与状态 → 导出自查清单</li>`
-      : `<li>左栏下拉<strong>选演示案卷</strong>（肿瘤主线含 6 疑点 + 合议层）</li>
+         <li>右栏<strong>自查台</strong>登记整改 → 导出自查清单</li>`
+      : `<li>材料包选案卷 → 费用锚点行看<strong>嵌入证据链</strong></li>
          <li>点<strong>「开始稽核」</strong> — 文档索引与条款交叉验证</li>
-         <li>右栏<strong>稽核台</strong>看疑点 → 点证据定位跳左栏原文 / 费用行</li>`;
+         <li>右栏<strong>稽核台</strong>看疑点 → 点证据定位跳材料包</li>`;
   }
 }
 
@@ -626,6 +626,11 @@ function switchSourceView(view) {
   });
   $('#sourcePaneFee')?.classList.toggle('hidden', LEFT_VIEW !== 'fee');
   $('#sourcePaneRaw')?.classList.toggle('hidden', LEFT_VIEW !== 'raw');
+  const layout = document.querySelector('.layout-two');
+  if (layout) {
+    layout.classList.toggle('view-raw', LEFT_VIEW === 'raw');
+    layout.classList.toggle('view-fee', LEFT_VIEW === 'fee');
+  }
 }
 
 function renderEvChainPanel() {
@@ -633,13 +638,13 @@ function renderEvChainPanel() {
   const hint = $('#evChainHint');
   if (!el) return;
   if (!EV_CHAIN) {
-    el.innerHTML = '<div class="evc-empty">选择案卷后，点左侧<strong>费用锚</strong>任一行，此处展示钱→行为→指征四层证据链</div>';
+    el.innerHTML = '<div class="evc-empty">选择案卷后，点左侧费用行，此处展示<strong>钱→行为→指征</strong>四层证据链</div>';
     if (hint) hint.textContent = '未选案卷';
     return;
   }
   if (ANCHOR_SEL == null) {
-    el.innerHTML = '<div class="evc-empty">点左侧<strong>费用锚</strong>任一行，此处展示四层证据链</div>';
-    if (hint) hint.textContent = '未选中费用行';
+    el.innerHTML = '<div class="evc-empty">点左侧费用行，查看四层证据链</div>';
+    if (hint) hint.textContent = '未选中';
     return;
   }
   const line = evLineMap()[ANCHOR_SEL];
@@ -963,7 +968,11 @@ async function runAudit(opts = {}) {
   const injectVal = opts.injectAttack || (INJECT ? true : false) || (opts.super ? true : false);
   const fastBody = { inject: injectVal, caseId: CURRENT_CASE, rag: !!opts.super || rag };
   const fastTimeout = (opts.super || rag) ? 30000 : 15000;
-  const waitHint = opts.super ? 'RAG + 对抗防护融合' : (rag ? 'RAG 向量检索中' : (opts.llm ? '先出确定性首屏，LLM 后台分析' : '规则引擎'));
+  const waitHint = opts.super
+    ? '广深双增强融合中'
+    : (rag
+      ? '广度增强（RAG）检索中'
+      : (opts.llm ? '先出基础覆盖，深度增强后台补齐' : '基础覆盖档'));
   startScanWaitTicker('已提交稽核任务', waitHint);
   const fastPromise = auditFetch(fastQ, fastBody, fastTimeout);
   try {
@@ -973,9 +982,9 @@ async function runAudit(opts = {}) {
         const d = document.createElement('div'); d.style.animationDelay = '0s'; d.textContent = '› ' + steps[i]; logEl.appendChild(d);
       }
     }
-    if (opts.super) scanAppend('⚡ 超级增强：RAG 召回 + 注入对抗 + 规则合议…');
-    else if (rag) scanAppend('📚 RAG 语义检索：案卷关键词 → pgvector 召回 KB 条目…');
-    if (wantsLLM) scanAppend('🧠 真·LLM 语义分析转入后台影子运行（先看确定性结果，完成后自动合并）…');
+    if (opts.super) scanAppend('⚡ 广深双增强：RAG 召回 + 注入对抗 + 规则合议…');
+    else if (rag) scanAppend('🌐 广度增强：案卷关键词 → pgvector 召回政策上下文…');
+    if (wantsLLM) scanAppend('🧠 深度增强（LLM 语义）转入后台影子运行（先看基础结果，完成后自动合并）…');
     const report = await fastPromise;
     stopScanWaitTicker();
     if (myRunId !== AUDIT_RUN_ID) return;
@@ -999,7 +1008,7 @@ async function runAudit(opts = {}) {
     renderTabs();
     setWorkflowStep(3);
     if (wantsLLM) {
-      setLlmShadowBanner('pending', '🧠 真·LLM 语义分析后台运行中…（通常 1–2 分钟，完成后自动更新报告）');
+      setLlmShadowBanner('pending', '🧠 深度增强（LLM 语义）后台运行中…（通常 1–2 分钟，完成后自动更新报告）');
       launchLlmShadow(myRunId, { inject: fastBody.inject, caseId: CURRENT_CASE, fused: !!opts.super });
     }
   } catch (e) {
@@ -1032,7 +1041,7 @@ async function launchLlmShadow(runId, { inject, caseId, fused }) {
   llmShadowTimer = setInterval(() => {
     if (runId !== AUDIT_RUN_ID) { clearInterval(llmShadowTimer); llmShadowTimer = null; return; }
     const sec = Math.floor((Date.now() - t0) / 1000);
-    setLlmShadowBanner('pending', `🧠 真·LLM 语义分析后台运行中… 已等待 ${sec}s（完成后自动更新报告）`);
+    setLlmShadowBanner('pending', `🧠 深度增强（LLM 语义）后台运行中… 已等待 ${sec}s（完成后自动更新报告）`);
   }, 1000);
   try {
     const llm = await auditFetch('?mode=llm', { inject, caseId }, 180000);
@@ -1040,8 +1049,8 @@ async function launchLlmShadow(runId, { inject, caseId, fused }) {
     if (runId !== AUDIT_RUN_ID) return;
     if (!llm?.report_meta) throw new Error('LLM 返回格式异常');
     if (!llm.report_meta.real_agent) {
-      const why = llm.report_meta.llm_needs_key ? '（需配置 LLM API Key：SiliconFlow / MiniMax，已保留确定性结果）' : '（LLM 路径回退，已保留确定性结果）';
-      setLlmShadowBanner('failed', `⚠ 真·LLM 语义分析未启用${why}`);
+      const why = llm.report_meta.llm_needs_key ? '（需配置 LLM API Key：SiliconFlow / MiniMax，已保留基础结果）' : '（LLM 路径回退，已保留基础结果）';
+      setLlmShadowBanner('failed', `⚠ 深度增强（LLM 语义）未启用${why}`);
       return;
     }
     llm.report_meta.llm_shadow = 'done';
@@ -1053,12 +1062,12 @@ async function launchLlmShadow(runId, { inject, caseId, fused }) {
     FINDING_PAGE = 0;
     renderReport(llm);
     renderTabs();
-    setLlmShadowBanner('done', `✅ 真·LLM 语义分析已完成并合并（耗时 ${Math.round((Date.now() - t0) / 1000)}s · ${esc(llm.report_meta.llm_provider || 'LLM')}）`);
+    setLlmShadowBanner('done', `✅ 深度增强（LLM 语义）已完成并合并（耗时 ${Math.round((Date.now() - t0) / 1000)}s · ${esc(llm.report_meta.llm_provider || 'LLM')}）`);
   } catch (e) {
     if (llmShadowTimer) { clearInterval(llmShadowTimer); llmShadowTimer = null; }
     if (runId !== AUDIT_RUN_ID) return;
     const msg = e.name === 'AbortError' ? '后台分析超时' : e.message;
-    setLlmShadowBanner('failed', `⚠ 真·LLM 语义分析未完成：${esc(msg)}（已保留确定性结果）`);
+    setLlmShadowBanner('failed', `⚠ 深度增强（LLM 语义）未完成：${esc(msg)}（已保留基础稽核结果）`);
   }
 }
 
@@ -1088,7 +1097,9 @@ function collectFlaggedLines(report) {
 // 单行状态面包屑：引擎档位 + 超级增强 + 体检子集 + overlay 合成一行（替代原 3-4 条横幅）
 function statusLineHTML(m, exam) {
   const engCls = m.real_agent ? 'real' : (m.llm_needs_key ? 'warn' : 'det');
-  const eng = m.real_agent ? '🧠 真·LLM 语义' : (m.llm_needs_key ? '⚠ 语义未启用（缺 Key）' : '⚙ 确定性规则引擎');
+  const eng = m.super_fused
+    ? '⚡ 广深双增强'
+    : (m.real_agent ? '🧠 深度增强（LLM）' : (m.llm_needs_key ? '⚠ 深度增强未启用（缺 Key）' : '⚙ 基础覆盖'));
   const chips = [`<span class="sl-chip ${engCls}" title="${esc(m.engine_mode || '')}">${eng}</span>`];
   const superOn = !!(m.super_fused || LAST_RUN_PROFILE === 'super');
   if (superOn) {
@@ -1142,8 +1153,12 @@ function renderReport(report) {
   // 引擎档位回显（4入口收进下拉后，运行后在引擎钮上亮当前档位，保标杆可见性）
   const engBtn = $('#btnEngineMenu');
   if (engBtn) {
-    const tag = m.super_fused ? '⚡超级增强' : (m.real_agent ? '🧠LLM语义' : (/RAG/.test(m.engine_mode || '') ? '🔍RAG增强' : '⚙标准'));
-    engBtn.innerHTML = `引擎·${tag} ▾`;
+    const tag = m.super_fused
+      ? '⚡广深双增强'
+      : (m.real_agent
+        ? '🧠深度增强'
+        : (/RAG/.test(m.engine_mode || '') ? '🌐广度增强' : '⚙基础覆盖'));
+    engBtn.innerHTML = `档位·${tag} ▾`;
   }
 
   const ruleCount = exam
@@ -1978,9 +1993,22 @@ function jumpToLoc(loc) {
   else if (/检验/.test(loc)) tab = 'lab'; else if (/医嘱/.test(loc)) tab = 'orders';
   else if (/护理/.test(loc)) tab = 'nursing'; else if (/出院/.test(loc)) tab = 'discharge';
   else if (/手术|影像/.test(loc)) tab = 'op';
+  const m = loc.match(/第\s*([\d]+)/);
+  if (tab === 'fee' && m) {
+    switchSourceView('fee');
+    ANCHOR_SEL = Number(m[1]);
+    renderAnchorList();
+    renderEvChainPanel();
+    setTimeout(() => {
+      const row = document.querySelector(`.anchor-row[data-line="${ANCHOR_SEL}"]`);
+      row?.scrollIntoView({ block: 'center', behavior: 'smooth' });
+      row?.classList.add('bbox-highlight');
+      setTimeout(() => row?.classList.remove('bbox-highlight'), 2400);
+    }, 60);
+    return;
+  }
   switchSourceView('raw');
   activeTab = tab; renderTabs(); renderDoc(tab);
-  const m = loc.match(/第\s*([\d]+)/);
   setTimeout(() => {
     document.querySelectorAll('.fee-table tr.bbox-highlight').forEach(r => r.classList.remove('bbox-highlight'));
     const row = m && $('#fee-row-' + m[1]);

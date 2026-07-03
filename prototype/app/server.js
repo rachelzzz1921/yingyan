@@ -2587,8 +2587,8 @@ const server = http.createServer(async (req, res) => {
         if (profile === 'deep') {
           const fallback = runAuditForRecord(record);
           fallback.report_meta.engine_mode = e.needsKey
-            ? '⚠ 真·LLM语义分析未启用（需配 SILICONFLOW_API_KEY / MINIMAX_API_KEY / ANTHROPIC_API_KEY）→ 当前为确定性规则引擎（检测=真·规则计算(时间/数量/内涵/合议) · 自然语言推理/控辩裁/CoVe=模板脚本）'
-            : '确定性引擎（LLM路径失败，已回退）：' + e.message;
+            ? '⚠ 深度增强（LLM 语义）未启用（需配 SILICONFLOW_API_KEY / MINIMAX_API_KEY / ANTHROPIC_API_KEY）→ 当前为基础覆盖稽核（检测=真·规则计算 · 语义脚本回退）'
+            : '基础覆盖稽核（LLM 路径失败，已回退）：' + e.message;
           fallback.report_meta.llm_needs_key = !!e.needsKey;
           fallback.report_meta.elapsed_ms = Date.now() - t0;
           annotateNature(fallback);
