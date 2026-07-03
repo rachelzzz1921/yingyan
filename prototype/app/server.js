@@ -2295,6 +2295,23 @@ const server = http.createServer(async (req, res) => {
       } catch (e) { return sendJSON(res, { error: '三阶段自查计算失败:' + e.message }, 500); }
     }
 
+    // 七环节 Agent 编排 · 调用链留痕(白盒审计:每个 Agent 的 harness 显式声明 + 本次调用链)
+    if (p === '/api/orchestrate') {
+      const caseId = url.searchParams.get('case_id') || 'main';
+      const record = DB.cases[caseId] || DB.record;
+      try {
+        const ctx = auditContextForRecord(record);
+        const rules = rulesWithOverlay(DB.rulesDoc.rules);
+        const { orchestrate } = require('./engine/agent-orchestrator');
+        const trace = orchestrate(record, rules, {
+          policyTexts: ctx.policyTexts, policyVerified: ctx.policyVerified,
+          shadowRules: currentShadowRules(), retiredRules: currentRetiredRules(),
+          caseKey: caseId,
+        });
+        return sendJSON(res, trace);
+      } catch (e) { return sendJSON(res, { error: '编排失败:' + e.message }, 500); }
+    }
+
     // 文书化输出：稽核《疑点核查清单》(飞检对质) / 体检《自查整改清单》(院端自查)
     if (p === '/api/export/checklist') {
       const exMode = url.searchParams.get('mode') === 'exam' ? 'exam' : 'audit';

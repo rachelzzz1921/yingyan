@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>鹰眼 · 七环节 Agent 编排 · 调用链留痕</title>
+<meta name="theme-color" content="#0B2A4A">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<style>
+:root{--ink:#0B2A4A;--muted:#5C7185;--dim:#8296A9;--iris:#14B8A6;--amber:#E8A838;--danger:#DC4A3D;--ok:#0D9B6A;--bg:#F0F4F8;--surface:#FFFFFF;--line:#E2E9F0;--hair:#D3DDE7;--mono:"SF Mono","DM Mono",Menlo,monospace;--sans:"PingFang SC","Noto Sans SC","Microsoft YaHei",sans-serif}
+*{box-sizing:border-box;margin:0}
+body{font-family:var(--sans);background:var(--bg);color:var(--ink);line-height:1.55;padding:22px}
+.wrap{max-width:1180px;margin:0 auto}
+.top{display:flex;align-items:center;gap:12px;margin-bottom:4px}
+.mark{width:42px;height:42px}
+h1{font-size:22px;font-weight:800}
+.sub{font-size:13px;color:var(--muted);margin-bottom:16px}
+.home{margin-left:auto;font-size:13px;color:var(--muted);text-decoration:none;border:1px solid var(--line);background:var(--surface);border-radius:18px;padding:6px 14px}
+.bar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:16px}
+select,button{font-size:13px;padding:7px 12px;border:1px solid var(--hair);border-radius:8px;background:var(--surface);cursor:pointer}
+button.primary{background:var(--ink);color:#fff;border:0;font-weight:700}
+.kpis{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:8px}
+.kpi{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:8px 14px}
+.kpi b{font-size:18px;font-family:var(--mono)} .kpi span{font-size:11px;color:var(--dim);display:block}
+.pipe{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin:14px 0}
+.stage{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px 13px;position:relative;overflow:hidden}
+.stage .no{position:absolute;top:8px;right:10px;font-size:26px;font-weight:800;color:#EDF1F6;font-family:var(--mono)}
+.stage .law{font-size:11px;color:var(--dim);letter-spacing:.04em}
+.stage h3{font-size:14px;font-weight:800;margin:2px 0 4px}
+.badge{display:inline-block;font-size:10.5px;font-weight:700;padding:1px 7px;border-radius:5px;margin-bottom:6px}
+.b-det{background:#E7F1FB;color:#185FA5} .b-llm{background:#F3EDFE;color:#5b4ab7} .b-od{background:#FFF4DD;color:#8F6210}
+.stat{font-size:11.5px;color:var(--ink);background:#F7F9FC;border-radius:7px;padding:6px 8px;margin-bottom:6px;line-height:1.5}
+.harness{font-size:11px;color:var(--muted);border-top:1px dashed var(--hair);padding-top:6px}
+.harness div{margin-top:2px} .harness b{color:#41556b;font-weight:700}
+.krefs{margin-top:5px;display:flex;flex-wrap:wrap;gap:3px}
+.krefs code{font-size:10px;background:#EEF2F7;color:#41556b;padding:1px 5px;border-radius:4px;font-family:var(--mono)}
+.chains{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px 16px;margin-top:8px}
+.chains h2{font-size:15px;margin-bottom:4px}
+.chain{border-top:1px solid #EEF2F7;padding:8px 0;font-size:12.5px}
+.chain:first-of-type{border-top:0}
+.chain .head{font-weight:700;margin-bottom:4px}
+.hop{display:inline-flex;align-items:center;gap:4px;font-size:11.5px;background:#F1F5F9;border:1px solid var(--line);border-radius:7px;padding:3px 8px;margin:2px 4px 2px 0}
+.hop.llm{background:#F3EDFE;border-color:#d9cdf5;color:#5b4ab7}
+.hop.flag{background:#FFF4DD;border-color:#f0d488;color:#8F6210}
+.arrow{color:var(--dim);margin:0 1px}
+.tri{display:inline-block;font-size:11px;font-weight:800;padding:1px 7px;border-radius:5px;color:#fff}
+.tri.hard{background:#b91c1c} .tri.suspect{background:#f59e0b} .tri.clean{background:#0a7a4b}
+.note{margin-top:14px;font-size:12px;color:var(--muted);line-height:1.7;border-top:1px solid var(--line);padding-top:12px}
+.note b{color:var(--ink)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <svg class="mark" viewBox="0 0 64 64" role="img" aria-label="鹰眼"><rect width="64" height="64" rx="14" fill="#0B2A4A"/><path d="M12 32 C17 20 47 20 52 32 C47 44 17 44 12 32 Z" stroke="#fff" stroke-width="2.2" fill="none" opacity=".9"/><circle cx="32" cy="32" r="10" fill="#14B8A6"/><circle cx="32" cy="32" r="4.5" fill="#061829"/></svg>
+    <div><h1>七环节 Agent 编排 · 调用链留痕</h1><div class="sub">白盒审计:一次稽核经过哪些 Agent、每个 Agent 的 harness(数据源/知识源/工具)显式声明、本次触达什么。</div></div>
+    <a class="home" href="/">← 返回三入口</a>
+  </div>
+
+  <div class="bar">
+    <label>案卷 <select id="caseSel"><option value="main">main · NSCLC 主案卷</option></select></label>
+    <button class="primary" id="btnRun">▶ 运行编排</button>
+    <span id="meta" class="sub" style="margin:0"></span>
+  </div>
+
+  <div class="kpis" id="kpis"></div>
+  <div class="pipe" id="pipe"></div>
+  <div class="chains" id="chainsWrap" style="display:none"><h2>🔗 逐疑点调用链 <span class="sub" style="margin:0">每条疑点经过哪些 Agent</span></h2><div id="chains"></div></div>
+
+  <div class="note">
+    <b>为什么这条视图重要</b>:回应「多 Agent 不就是套壳?」——编排拓扑 = 部颁智能审核工作规程<b>七个法定环节</b>的 Agent 化;每个 Agent 的知识库与数据源在 harness 显式声明(<b>说给陈猛的 agent 管理平台</b>:账号/编排/知识源可审批),调用链全程留痕(<b>白盒审计</b>)。确定性环节毫秒级打底、LLM 环节(筛查/合议)按需增强;三人格合议结果赛前真实跑出、现场预载。
+  </div>
+</div>
+<script>
+function esc(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function triCls(n){return n==='明确违规'?'hard':n==='干净'?'clean':'suspect';}
+async function loadCases(){
+  try{ var cs=await fetch('/api/cases').then(r=>r.json()); var sel=document.getElementById('caseSel');
+    var arr=cs.cases||cs||[]; if(Array.isArray(arr)&&arr.length){ sel.innerHTML=arr.slice(0,30).map(function(c){var id=c.case_id||c.api_id||c.id||c; var t=c.case_title||c.title||id; return '<option value="'+esc(id)+'">'+esc(String(t).slice(0,40))+'</option>';}).join(''); sel.value='main'; }
+  }catch(e){}
+}
+function badge(kind){ if(/LLM/.test(kind)&&!/确定性/.test(kind)) return '<span class="badge b-llm">LLM</span>'; if(/LLM/.test(kind)) return '<span class="badge b-det">确定性</span><span class="badge b-llm" style="margin-left:3px">+LLM影子</span>'; return '<span class="badge b-det">确定性</span>'; }
+function ranBadge(ran){ if(/预载|LLM/.test(ran)&&/预载/.test(ran)) return '<span class="badge b-llm">'+esc(ran)+'</span>'; if(/按需/.test(ran)) return '<span class="badge b-od">'+esc(ran)+'</span>'; return '<span class="badge b-det">'+esc(ran)+'</span>'; }
+async function run(){
+  var caseId=document.getElementById('caseSel').value;
+  document.getElementById('meta').textContent='编排中…';
+  var t=await fetch('/api/orchestrate?case_id='+encodeURIComponent(caseId)).then(r=>r.json());
+  if(t.error){ document.getElementById('meta').textContent='失败:'+t.error; return; }
+  document.getElementById('meta').innerHTML='编排 '+t.orchestrated_ms+'ms · 三档 <span class="tri '+triCls(t.case_nature)+'">'+esc(t.case_nature||'—')+'</span>';
+  var s=t.summary||{};
+  document.getElementById('kpis').innerHTML=[
+    ['七环节','<b>'+s.total_stages+'</b><span>确定性 '+s.deterministic_stages+' · LLM '+s.llm_stages+'</span>'],
+    ['本次疑点','<b>'+s.findings+'</b><span>经全链处置</span>'],
+    ['两库引用','<b>'+s.kb_refs_cited+'</b><span>条款可溯源</span>'],
+    ['人力对比','<b>'+s.human_baseline_minutes+'′→'+s.agent_seconds+'″</b><span>单案初筛提效</span>'],
+  ].map(function(k){return '<div class="kpi">'+k[1].replace('<b>','<b>').replace('<span>','</b><span>')+'</div>';}).join('');
+  document.getElementById('kpis').innerHTML=[
+    ['<b>'+s.total_stages+'</b><span>七环节 · 确定性 '+s.deterministic_stages+'/LLM '+s.llm_stages+'</span>'],
+    ['<b>'+s.findings+'</b><span>本次疑点 · 经全链处置</span>'],
+    ['<b>'+s.kb_refs_cited+'</b><span>两库引用 · 可溯源</span>'],
+    ['<b>'+s.human_baseline_minutes+'′→'+s.agent_seconds+'″</b><span>人力对比 · 单案初筛</span>'],
+  ].map(function(k){return '<div class="kpi">'+k[0]+'</div>';}).join('');
+
+  document.getElementById('pipe').innerHTML=(t.stages||[]).map(function(st){
+    var h=st.harness||{};
+    return '<div class="stage"><div class="no">'+st.no+'</div>'
+      +'<div class="law">'+esc(st.stage)+'</div><h3>'+esc(st.agent)+'</h3>'
+      +ranBadge(st.ran)
+      +'<div class="stat">'+esc(st.stat)+'</div>'
+      +(st.kb_refs&&st.kb_refs.length?'<div class="krefs">'+st.kb_refs.slice(0,4).map(function(r){return '<code>'+esc(r)+'</code>';}).join('')+'</div>':'')
+      +'<div class="harness"><div><b>输入</b> '+esc(h['输入数据源']||'')+'</div><div><b>知识源</b> '+esc(h['知识源']||'')+'</div><div><b>工具</b> '+esc(h['工具']||'')+'</div><div><b>输出</b> '+esc(h['输出']||'')+'</div></div>'
+      +'</div>';
+  }).join('');
+
+  var chains=t.chains||[];
+  document.getElementById('chainsWrap').style.display=chains.length?'':'none';
+  document.getElementById('chains').innerHTML=chains.map(function(c){
+    var hops=(c.path||[]).map(function(p,i){ var cls='hop'+(p.llm?' llm':'')+(p.flag?' flag':''); return (i>0?'<span class="arrow">→</span>':'')+'<span class="'+cls+'">'+p.no+' '+esc(p.agent)+'<span style="color:#8296A9">·'+esc(p.note)+'</span></span>'; }).join('');
+    return '<div class="chain"><div class="head"><span class="tri '+triCls(c.nature)+'">'+esc(c.nature||'')+'</span> '+esc(c.rule_id)+' '+esc(c.rule_name||'')+(c.amount?' · ¥'+Number(c.amount).toLocaleString():'')+'</div>'+hops+(c.kb_refs&&c.kb_refs.length?'<div class="krefs" style="margin-top:5px">'+c.kb_refs.map(function(r){return '<code>'+esc(r)+'</code>';}).join('')+'</div>':'')+'</div>';
+  }).join('');
+}
+document.getElementById('btnRun').onclick=run;
+loadCases().then(run);
+</script>
+</body>
+</html>
