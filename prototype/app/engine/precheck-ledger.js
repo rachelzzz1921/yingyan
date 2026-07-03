@@ -147,13 +147,17 @@ function summary() {
   };
 }
 
-// 监管回执(双向闭环):对未遵从单登记监管处置(核实违规/驳回误报/已联系院端)
+// 监管回执(双向闭环):对未遵从单登记监管处置=工单起点(核实违规→转正式稽核/追缴;驳回误报→回流规则复核)
+// 只允许处置 overridden 且含命中的未遵从单,拒绝对 heeded/no_hit 写回执
+const NEXT_STEP = { 核实违规: '转入正式稽核案卷/追缴流程', 驳回误报: '回流为规则误报样本,进规则复核队列(E2沉淀门禁)', 已联系院端: '已知会院端经办人,待补充材料' };
 function setSupervisorDisposition(id, verdict, note) {
   const store = load();
   const e = (store.events || []).find(x => x.id === id);
-  if (!e) return { error: 'event 不存在' };
+  if (!e) return { error: 'event 不存在', status: 404 };
+  if (e.action !== 'overridden' || !(e.hits || []).length) return { error: '只能处置"已提醒·未遵从"的单', status: 400 };
   const V = ['核实违规', '驳回误报', '已联系院端'];
-  e.supervisor_disposition = { verdict: V.includes(verdict) ? verdict : '已联系院端', note: String(note || '').slice(0, 200), at: new Date().toISOString() };
+  const vd = V.includes(verdict) ? verdict : '已联系院端';
+  e.supervisor_disposition = { verdict: vd, next_step: NEXT_STEP[vd], note: String(note || '').slice(0, 200), at: new Date().toISOString() };
   save(store);
   return { ok: true, disposition: e.supervisor_disposition };
 }

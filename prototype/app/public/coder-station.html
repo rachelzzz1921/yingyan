@@ -62,7 +62,7 @@ a{color:#2c5788}
     <a href="/plugin-dashboard.html" style="font-size:12px">院端运营看板 →</a>
   </div>
   <div id="result"></div>
-  <div class="note">⚠ 分组结果来自<b>演示子集数据表</b>(CHS-DRG 2.0,仅覆盖肺炎 J12–J18 示范病种,非全量分组器;费率 ¥8500/权重为虚构脱敏演示值)。编码员在提交病案首页编码前校验:主诊断按重症编码但病历无重症依据 → 鹰眼当场提示高套 + 实施细则第三十五条(一)"两病种支付标准差额"(复用 DRG 分组器)。把 D-401 高套从事后翻账前移到编码桌。命中处置(采纳降编/坚持提交)与开单、结算共用<b>同一事前台账</b>,汇入院端看板与监管预警。</div>
+  <div class="note">⚠ 分组结果来自<b>演示子集数据表</b>(CHS-DRG 2.0,仅覆盖肺炎 J12–J18 示范病种,非全量分组器;费率 ¥8500/权重为虚构脱敏演示值)。编码员在提交病案首页编码前校验:主诊断按重症编码但病历无重症依据 → 鹰眼当场提示高套 + 实施细则第三十五条(一)"两病种支付标准差额"(复用 DRG 分组器)。把 D-401 高套从事后翻账前移到编码桌。<b>整改语义</b>:采纳=把编重了的主诊断更正到病历实际支持的组(J15.901→J15.900),差额同步少结、更正事件入台账留痕——不是"改病历首页两个字骗过校验"。真实落地的最终把关仍是病历核验+首页变更留痕。命中处置与开单、结算共用<b>同一事前台账</b>,汇入院端看板与监管预警。</div>
 </div>
 <script src="/plugin/yingyan-disposition.js"></script>
 <script>
@@ -93,12 +93,14 @@ document.getElementById('btnCheck').onclick = async function(){
   var patient = { sex: document.querySelector('[data-field="sex"]').textContent, age: parseInt(document.querySelector('[data-field="age"]').textContent), dept: '病案科', diagnosis: document.getElementById('dxName').value };
   window.YingyanDisposition.renderDisposition('#result', r, {
     engineBase:'', source:'coder', patient: patient,
-    heedLabel:'采纳建议·降编到实际应入组(ES35)',
-    // 整改=降编:主诊断改非重症名+不勾重症依据 → 重校验入 base 组、正确不报(而非替高套背书)
+    heedLabel:'采纳建议·更正编码到病历实际支持组(ES35)',
+    // 整改=更正编码到病历实际支持的组(降编),非改病历蒙混:病案首页主诊断由 J15.901 更正为 J15.900,
+    // 差额同步少结,更正事件入台账留痕(谁/何时/因鹰眼提醒改了什么)
+    correctionSummary: function(hits){ var amt=(hits[0]&&hits[0].amount_involved)||0; return '编码更正:主诊断 J15.901(重症/ES31)→ J15.900(ES35),第35条差额少结 ¥'+amt.toLocaleString(); },
     onHeed: function(){ document.getElementById('dxName').value = '社区获得性肺炎(降编)'; document.getElementById('dxIcd').value = 'J15.900'; document.getElementById('severeEvidence').checked = false; },
-    reCheck: runCoderCheck,        // 采纳后自动重校验:降编后应入 ES35、校验通过
-    submitLabel: '确认提交编码(已合规)',
-    onSubmit: function(){ document.getElementById('funnelHint') && 0; alert('编码已按 ES35 提交(整改后合规)'); }
+    reCheck: runCoderCheck,        // 采纳后自动重校验:更正到 ES35、校验通过
+    submitLabel: '确认提交编码(已更正)',
+    onSubmit: function(){ alert('编码已按 ES35 提交:主诊断更正为病历实际支持组,差额同步少结,更正事件已入台账留痕(非改病历蒙混)'); }
   });
 };
 </script>

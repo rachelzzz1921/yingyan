@@ -54,7 +54,7 @@ a{color:#2c5788}
   </div>
   <div class="funnel" id="funnel"></div>
   <div id="result"></div>
-  <div class="note">结算员在出院结算提交医保前一键把整份费用清单过筛查漏斗(复用与监管侧 1000 条批量同一引擎)。命中行三档呈现,处置(采纳整改/坚持结算)与开单、编码共用同一事前台账。对齐"一切以结算数据为锚"。</div>
+  <div class="note">结算员在出院结算提交医保前一键把整份费用清单过筛查漏斗(复用与监管侧 1000 条批量同一引擎)。<b>整改语义</b>:明确违规行=撤销收费/退费(对应真实的红冲退费),可疑超量行=核减到常规量(可疑属合理使用类、需人工合议,不一删了之);每条整改带金额入事前台账留痕,可回溯"谁在何时因鹰眼提醒退费/核减了哪一行"。与开单、编码共用同一事前台账。对齐"一切以结算数据为锚"。</div>
 </div>
 <script src="/plugin/yingyan-disposition.js"></script>
 <script>
@@ -77,25 +77,31 @@ function renderFee(){
 renderFee();
 document.getElementById('btnSettle').onclick = function(){ alert('已提交医保结算(未经鹰眼自查——演示对照组)'); };
 var RN = {'AGE-101':'未成年用药年龄分层','TRACE-101':'同一追溯码重复结算(回流药)','F-001':'性别—项目冲突','QTY-901':'单日数量超常'};
-var lastHitIdx = []; // 上次命中的 FEE 行下标(采纳整改时移除)
+var lastHits = []; // 上次命中 [{idx,nature,rule_id,item_name}]:明确违规=退费剔除,可疑超量=核减(不删,可疑需合议)
 async function runSettleCheck(){
   var rows = FEE.map(function(f,i){ return { row_id:'R'+(i+1), item_name:f.item_name, qty:f.qty, amount:f.amount, trace_code:f.trace_code, settle_date:f.settle_date, patient_age:AGE, patient_sex:SEX, dept:DEPT }; });
   var r = await fetch('/api/screening/rows', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ rows: rows }) }).then(x=>x.json());
   var f = r.funnel || {by_nature:{}};
   document.getElementById('funnel').innerHTML = '本单 '+f.total_rows+' 行 → <span class="tri" style="background:#b91c1c">明确违规 '+(f.by_nature['明确违规']||0)+'</span> <span class="tri" style="background:#f59e0b">可疑 '+(f.by_nature['可疑']||0)+'</span> <span class="tri" style="background:#0a7a4b">放行 '+f.clean_rows+'</span> · 命中涉及 ¥'+(f.hit_amount||0).toLocaleString();
-  lastHitIdx = [];
-  var hits = (r.top20||[]).map(function(h){ var idx=parseInt(String(h.row_id).replace('R',''))-1; if(idx>=0)lastHitIdx.push(idx); return { rule_id:h.rule_id, rule_name:RN[h.rule_id]||'', nature:h.nature, reasoning:'第'+String(h.row_id).replace('R','')+'行「'+h.item_name+'」:'+h.reason, amount_involved:h.amount, evidence:[], policy:[], disposal_suggestion:'' }; });
+  lastHits = [];
+  var hits = (r.top20||[]).map(function(h){ var idx=parseInt(String(h.row_id).replace('R',''))-1; if(idx>=0)lastHits.push({idx:idx,nature:h.nature,rule_id:h.rule_id,item_name:h.item_name}); return { rule_id:h.rule_id, rule_name:RN[h.rule_id]||'', nature:h.nature, reasoning:'第'+String(h.row_id).replace('R','')+'行「'+h.item_name+'」:'+h.reason, amount_involved:h.amount, evidence:[], policy:[], disposal_suggestion:'' }; });
   return { hits: hits, engine: r.elapsed_ms+'ms · 行级筛查·本地' };
 }
 document.getElementById('btnCheck').onclick = async function(){
   var r = await runSettleCheck();
   window.YingyanDisposition.renderDisposition('#result', r, {
     engineBase:'', source:'settle', patient:{ sex:SEX, age:AGE, dept:DEPT, diagnosis:'社区获得性肺炎' },
-    heedLabel:'采纳建议·整改标注行后结算', overrideLabel:'坚持结算',
-    // 整改=移除命中的费用行(串换/超量/回流药),重校验通过后放行结算
-    onHeed: function(){ var keep=FEE.filter(function(_,i){return lastHitIdx.indexOf(i)<0;}); FEE.length=0; keep.forEach(function(x){FEE.push(x);}); renderFee(); },
+    heedLabel:'采纳·明确违规退费剔除+超量核减', overrideLabel:'坚持结算',
+    // 整改语义:明确违规行=撤销收费/退费(移除);可疑超量行=核减到常规量(可疑需合议,不一删了之)
+    correctionSummary: function(){ var del=lastHits.filter(function(x){return x.nature==='明确违规';}); var cut=lastHits.filter(function(x){return x.nature!=='明确违规';}); return '整改:退费剔除 '+del.length+' 行明确违规('+del.map(function(x){return x.rule_id;}).join('/')+')'+(cut.length?' + 核减 '+cut.length+' 行超量':''); },
+    onHeed: function(){
+      var delIdx = lastHits.filter(function(x){return x.nature==='明确违规';}).map(function(x){return x.idx;});
+      var cutIdx = lastHits.filter(function(x){return x.nature!=='明确违规' && x.rule_id==='QTY-901';}).map(function(x){return x.idx;});
+      FEE.forEach(function(f,i){ if(cutIdx.indexOf(i)>=0){ var unit=f.qty>0?(f.amount/f.qty):0; f.qty=10; f.amount=Math.round(unit*10); } }); // 超量核减到常规10次
+      var keep=FEE.filter(function(_,i){return delIdx.indexOf(i)<0;}); FEE.length=0; keep.forEach(function(x){FEE.push(x);}); renderFee(); // 明确违规行退费剔除
+    },
     reCheck: runSettleCheck, submitLabel:'确认结算(已整改)',
-    onSubmit: function(){ alert('整改后医保结算已提交(命中行已剔除/退费)'); }
+    onSubmit: function(){ alert('整改后医保结算已提交:明确违规行已撤销收费/退费,超量行已核减(每条整改已入事前台账留痕)'); }
   });
 };
 </script>

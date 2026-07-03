@@ -65,6 +65,7 @@ const DATA = path.resolve(__dirname, '../data');
 const PUBLIC = path.resolve(__dirname, 'public');
 const REPO_ROOT = path.resolve(__dirname, '../..');
 const DELIVERABLES = path.join(REPO_ROOT, 'docs/deliverables');
+const MATERIALS = path.join(REPO_ROOT, 'assets/posters');
 const BUNDLE_ROOT = path.resolve(__dirname, 'bundle');
 
 /** Vercel 函数包会忽略 README.md，构建时改名为 overview.md */
@@ -1384,12 +1385,18 @@ const server = http.createServer(async (req, res) => {
       return sendJSON(res, { ok: true, entry });
     }
     // 监管回执(双向闭环):监管员对未遵从单登记处置(核实违规/驳回误报/已联系院端)→ 回执写回院端
-    if (p === '/api/precheck/supervise' && req.method === 'POST') {
+    if (p === '/api/precheck/supervise') {
       res.setHeader('Access-Control-Allow-Origin', '*');
+      res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+      res.setHeader('Access-Control-Allow-Headers', 'Content-Type, X-Yingyan-Token, Authorization');
+      if (req.method === 'OPTIONS') { res.writeHead(204); return res.end(); }
+      if (req.method !== 'POST') return sendJSON(res, { error: 'method not allowed' }, 405);
+      // 回执是监管员核心交互,不 admin-gate(与破坏性的 reset 区分);实质保护=只准处置未遵从单+verdict白名单+note截断。
+      // 演示态 CORS 全开;生产收窄为院内 origin 白名单。
       const body = await readBody(req);
       const { setSupervisorDisposition } = require('./engine/precheck-ledger');
-      const r = setSupervisorDisposition(body.id, body.verdict, body.note);
-      return sendJSON(res, r, r.error ? 404 : 200);
+      const r = setSupervisorDisposition(body.id, body.verdict, body.note); // 内部只允许处置 overridden 未遵从单
+      return sendJSON(res, r, r.error ? (r.status || 404) : 200);
     }
     // F1 闭环·院端看板汇总 + 监管联动清单(未遵从待重点审核)
     if (p === '/api/precheck/ledger') {
@@ -2616,7 +2623,7 @@ const server = http.createServer(async (req, res) => {
       return sendJSON(res, await runL1ProductionCheck());
     }
 
-    if (p === '/api/health') {
+    if (p === '/health' || p === '/api/health') {
       let pp = { reachable: false };
       try { pp = await require('./engine/ppstructure-client').health(); } catch (_) {}
       const hosted = isReadonlyRuntime();
@@ -2641,6 +2648,18 @@ const server = http.createServer(async (req, res) => {
           llm_vision: llmOn,
         },
       });
+    }
+
+    // 现场物料（A4 传单 / 产品白皮书 · 浏览器打开后可直接打印）
+    if (p === '/materials' || p.startsWith('/materials/')) {
+      let rel = p === '/materials' ? 'yingyan-eagleeye-a4-flyer-v1.html' : decodeURIComponent(p.slice('/materials/'.length));
+      if (!rel || rel.endsWith('/')) rel += 'index.html';
+      const mFile = path.normalize(path.join(MATERIALS, rel));
+      if (!mFile.startsWith(MATERIALS)) { res.writeHead(403); return res.end('Forbidden'); }
+      if (fs.existsSync(mFile) && fs.statSync(mFile).isDirectory()) {
+        return sendFile(res, path.join(mFile, 'index.html'));
+      }
+      return sendFile(res, mFile);
     }
 
     // 交付文档包（浏览器渲染 PPT / 架构图，勿在 IDE 里直接打开 .html）
@@ -2678,6 +2697,7 @@ server.listen(PORT, async () => {
   console.log(`\n  鹰眼·稽核工作台已启动`);
   console.log(`  ▸ http://localhost:${PORT}`);
   console.log(`  ▸ 交付文档（PPT/架构图）http://localhost:${PORT}/deliverables/`);
+  console.log(`  ▸ 现场物料（传单/白皮书）http://localhost:${PORT}/materials/`);
   console.log(`  ▸ 规则 ${DB.rulesDoc.rules.length} 条 | KB ${DB.kbSource || 'json'} | LLM ${llmReady() ? providerName() : '未配置(确定性引擎)'}\n`);
 });
 } else {

@@ -146,11 +146,19 @@ document.getElementById('btnSubmit').onclick = () => {
 };
 
 // 采纳整改钩子:医生点"采纳建议"→ 从开单表移除被标注的项(整改可见,消灭在萌芽)
+// 抽全部「」token(证据+推理),排除"区分性别使用/限儿童使用"等条款词——只匹配真实项/药名;
+// 匹配不到则不删(由重校验兜底:仍命中不谎报已整改)
 window.__yingyanOnHeed = function(hits){
-  var flaggedTokens = (hits||[]).map(function(h){ var m=(h.reasoning||'').match(/「([^」]+)」/); return m?m[1]:null; }).filter(Boolean);
+  var CLAUSE = /区分性别使用|限儿童使用|区分年龄|限定支付|支付范围|清单|靶点|检测/;
+  var tokens = [];
+  (hits||[]).forEach(function(h){
+    (h.evidence||[]).forEach(function(e){ var mm=String(e.text||'').match(/「([^」]+)」/g); if(mm) mm.forEach(function(x){tokens.push(x.slice(1,-1));}); });
+    var m=String(h.reasoning||'').match(/「([^」]+)」/g); if(m) m.forEach(function(x){tokens.push(x.slice(1,-1));});
+  });
+  tokens = tokens.filter(function(t){ return t && t.length>=2 && !CLAUSE.test(t); });
   document.querySelectorAll('#orderTable tbody tr').forEach(function(tr){
     var nm=(tr.querySelector('.ord-name')||{}).value||'';
-    if (flaggedTokens.some(function(t){ return nm && t && nm.indexOf(t)>=0; })) { tr.style.transition='opacity .4s'; tr.style.opacity=.3; setTimeout(function(){ tr.remove(); },400); }
+    if (tokens.some(function(t){ return nm && nm.indexOf(t)>=0; })) { tr.style.transition='opacity .4s'; tr.style.opacity=.3; setTimeout(function(){ tr.remove(); },400); }
   });
 };
 

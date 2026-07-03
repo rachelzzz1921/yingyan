@@ -123,7 +123,9 @@
     const override = box.querySelector('#yy-override');
     if (heed) heed.onclick = async () => {
       heed.disabled = true; if (override) override.disabled = true; // 防 await 期间连点重复写台账
-      await logDisposition(ctx, result, 'heeded');
+      // 整改留痕:记录撤销/改开了哪些医嘱行(整改=撤单/改开,非删数据蒙混)
+      const corr = '整改:撤销/改开 ' + (result.hits || []).length + ' 条命中医嘱(' + (result.hits || []).map(h => h.rule_id).join('/') + ')';
+      await logDisposition(ctx, result, 'heeded', corr);
       if (typeof window.__yingyanOnHeed === 'function') { try { window.__yingyanOnHeed(result.hits || []); } catch (_) {} } // 让靶站移除标注行(整改可见)
       // 整改验证闭环:移除标注行后自动重新审方,翻绿放行(开单场景 reCheck=再抓表单重审)
       box.querySelector('#yy-actions').outerHTML = '<div id="yy-recheck" style="padding:14px;text-align:center;color:#0a7a4b;font-weight:600">🟩 已采纳整改 · 正在重新审方…</div>';
@@ -132,8 +134,13 @@
       try { fresh = await run({ engineBase: ctx.engineBase, source: ctx.source, scenario: ctx.scenario, silent: true }); } catch (_) {}
       const slot = box.querySelector('#yy-recheck');
       if (slot) {
-        if (fresh && !((fresh.hits || []).length)) slot.innerHTML = '🟩 已整改 · 重新审方通过 · 违规消灭在萌芽<div style="font-size:11px;color:#5b6d82;font-weight:400;margin-top:4px">监管侧少处理一条 · 已计入院端看板 · 可提交医嘱</div>';
-        else slot.innerHTML = '🟩 已采纳整改 · 违规消灭在萌芽<div style="font-size:11px;color:#5b6d82;font-weight:400;margin-top:4px">监管侧少处理一条 · 已计入院端看板</div>';
+        const remain = (fresh && (fresh.hits || []).length) || 0;
+        if (fresh && !remain) slot.innerHTML = '🟩 已整改 · 重新审方通过 · 违规消灭在萌芽<div style="font-size:11px;color:#5b6d82;font-weight:400;margin-top:4px">监管侧少处理一条 · 已计入院端看板 · 可提交医嘱</div>';
+        else if (remain) {
+          // 诚实:重校验仍有命中,不谎报"已整改"——把新结果重新弹出让医生继续处理或坚持提交
+          slot.outerHTML = '';
+          showOverlay(fresh, ctx);
+        } else slot.innerHTML = '已记录采纳(重校验未完成,请手动复核后再提交)';
       }
     };
     if (override) override.onclick = () => {

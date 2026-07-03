@@ -56,7 +56,9 @@
     const heed = el.querySelector('#yy-d-heed'); const over = el.querySelector('#yy-d-over');
     heed.onclick = async function () {
       heed.disabled = true; over.disabled = true;
-      await logDisposition(ctx, result, 'heeded');
+      // 整改留痕(可审计):记录本次整改把什么改成了什么(降编差额/退费核减),而非只记一句"已采纳"
+      var corr = (typeof ctx.correctionSummary === 'function') ? ctx.correctionSummary(hits) : '';
+      await logDisposition(ctx, result, 'heeded', corr);
       if (typeof ctx.onHeed === 'function') { try { ctx.onHeed(hits); } catch (_) {} }
       // 整改验证闭环:提供 reCheck 时自动重校验,翻绿并放行提交;否则静态"已采纳"
       if (typeof ctx.reCheck === 'function') {

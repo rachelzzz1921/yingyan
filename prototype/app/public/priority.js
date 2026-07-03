@@ -558,9 +558,9 @@ async function loadPreAlerts() {
     const hhmm = (iso) => { try { return new Date(iso).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }); } catch (_) { return String(iso).slice(11, 16); } };
     const dispCell = (e) => {
       if (e.supervisor_disposition) {
-        const v = e.supervisor_disposition.verdict;
+        const sd = e.supervisor_disposition; const v = sd.verdict;
         const bg = v === '核实违规' ? '#fef2f2;color:#b91c1c;border:1px solid #fecaca' : v === '驳回误报' ? '#f1f5f9;color:#475569;border:1px solid #cbd5e1' : '#ecfdf5;color:#0a7a4b;border:1px solid #a7f3d0';
-        return `<span class="nature-badge" style="background:${bg}">监管回执:${esc(v)}</span>`;
+        return `<span class="nature-badge" style="background:${bg}" title="${esc(sd.next_step || '')}">监管回执:${esc(v)}</span>${sd.next_step ? `<div class="muted" style="font-size:11px;margin-top:2px">→ ${esc(sd.next_step)}</div>` : ''}`;
       }
       return `<button class="btn sm secondary sup-btn" data-id="${esc(e.id)}" data-v="核实违规">核实违规</button> <button class="btn sm secondary sup-btn" data-id="${esc(e.id)}" data-v="驳回误报">驳回</button> <button class="btn sm secondary sup-btn" data-id="${esc(e.id)}" data-v="已联系院端">已联系</button>`;
     };

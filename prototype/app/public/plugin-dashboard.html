@@ -48,7 +48,7 @@ button{padding:5px 12px;border:1px solid #cbd5e1;background:#fff;border-radius:6
 
 <div class="cards" id="cards"></div>
 <div class="panel" id="rolePanel" style="display:none"><h2>📍 三角色触点分布 · 逐角色遵从率</h2><div id="byRole" style="display:flex;gap:12px;flex-wrap:wrap"></div></div>
-<div class="panel" id="sigPanel" style="display:none"><h2>📈 未遵从理由 → 规则优化信号</h2><div class="sub" style="margin-bottom:8px">同一规则被同类理由反复未遵从 → 提示接数据源/调阈值,反哺规则库("成熟一条、停用一条")。</div><div id="sigBody"></div></div>
+<div class="panel" id="sigPanel" style="display:none"><h2>📈 未遵从理由 → 规则优化信号</h2><div class="sub" style="margin-bottom:8px">同一规则被同类理由反复未遵从 → 聚合成一条<b>候选建议</b>给规则运营看。<b>仅候选、需人工复核+历史回放门禁(E2)才生效,系统绝不自动改规则/自动接数据源</b>。</div><div id="sigBody"></div></div>
 
 <div class="panel">
   <h2>⚠ 事前已提醒·未遵从 → 监管重点审核清单</h2>
@@ -72,7 +72,7 @@ async function load(){
   document.getElementById('cards').innerHTML = [
     ['今日提醒', t.reminders_fired||0, '', '开单/编码/结算命中提醒次数'],
     ['遵从率', heedRate, 'green', '采纳整改 / 已处置'],
-    ['萌芽拦截', d.budding_intercepts||0, 'green', '采纳的明确违规·消灭在开单环节(院端拦截量)'],
+    ['萌芽拦截', d.budding_intercepts||0, 'green', '院端采纳提醒的次数(拦截动作量,非监管实际减少量/追回金额)'],
     ['未遵从待监管', t.overridden||0, 'amber', '强行提交·转监管重点审核'],
     ['监管已回执', d.supervised_count||0, 'green', '监管侧核实/驳回的未遵从(双向闭环)'],
   ].map(function(c){return '<div class="card"><div class="n '+c[2]+'">'+c[1]+'</div><div class="l">'+c[0]+'</div><div class="hint">'+c[3]+'</div></div>';}).join('');
