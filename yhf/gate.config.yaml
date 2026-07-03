@@ -47,6 +47,11 @@ gates:
     min_workflow: 79
     min_test_anchor: 79
 
+  G6_pipeline_oracle:
+    enabled: true
+    description: "统一管线(runAuditPipeline)包装：干净件零误报、疑点不丢失"
+    layer: pipeline
+
 engine:
   # 与 prototype/server.js /api/bench 对齐：跳过临时导入件
   skip_case_ids: ["uploaded"]

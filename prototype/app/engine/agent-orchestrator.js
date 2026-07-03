@@ -15,6 +15,7 @@
 
 const fs = require('fs');
 const path = require('path');
+const { runAuditPipeline } = require('./audit-pipeline');
 const { runAudit } = require('./audit-engine');
 
 // 七个法定环节的 Agent 静态声明(harness)。kind:确定性 / LLM / 确定性+LLM(影子) / LLM按需
@@ -69,7 +70,25 @@ function loadPreloadedDebate(caseId, ruleId) {
  */
 function orchestrate(record, rulesArray, opts = {}) {
   const t0 = Date.now();
-  const rep = runAudit(record, rulesArray, opts); // 真实执行:环节1-4、6-7 在此确定性跑完
+  const policyMapsRaw = opts.policyMapsRaw || {
+    policyTexts: opts.policyTexts || {},
+    policyVerified: opts.policyVerified || {},
+    policyPending: opts.policyPending || {},
+  };
+  let rep = runAuditPipeline(record, rulesArray, {
+    profile: opts.profile || 'standard',
+    policyMapsRaw,
+    shadowRules: opts.shadowRules,
+    retiredRules: opts.retiredRules,
+    rag: opts.rag !== false,
+  });
+  // 防御回退:L6 流水线迁移在飞,findings 尚未透出时回退稳定引擎(不影响流水线接通后的行为)
+  if (!(rep && Array.isArray(rep.findings) && rep.findings.length) ) {
+    try {
+      const fallback = runAudit(record, rulesArray, { policyTexts: policyMapsRaw.policyTexts, policyVerified: policyMapsRaw.policyVerified, shadowRules: opts.shadowRules, retiredRules: opts.retiredRules });
+      if (fallback && Array.isArray(fallback.findings) && fallback.findings.length) rep = fallback;
+    } catch (_) { /* 保持流水线结果 */ }
+  }
   const m = rep.report_meta || {};
   const findings = rep.findings || [];
   const engineMs = (rep.engine_trace || []).reduce((s, t) => s + (t.ms || 0), 0);
@@ -84,6 +103,8 @@ function orchestrate(record, rulesArray, opts = {}) {
 
   const routing = m.routing || {};
   const cover = m.coverage || {};
+  const llmRan = !!m.layers?.llm_semantic?.ran;
+  const ragRan = !!m.layers?.rag?.ran;
   const per = {
     1: { touched: filledSlots.map(s => ({ front_page: '病案首页', fee_list: '费用清单', long_term_orders: '长期医嘱', temporary_orders: '临时医嘱', nursing_records: '护理记录', lab_reports: '检验报告', pathology_report: '病理报告', gene_test_report: '基因检测', imaging_record: '影像记录', icu_record: '重症记录', anesthesia_record: '麻醉记录', operation_note: '手术记录', discharge_summary: '出院小结' }[s] || s)), stat: `解析并结构化 ${filledSlots.length} 类单据`, kbRefs: [] },
     2: { touched: ['结算费用明细(主锚)'], stat: (() => {
@@ -92,7 +113,7 @@ function orchestrate(record, rulesArray, opts = {}) {
       const feeN = (record.fee_list?.items || []).length;
       return m.evidence_chain ? `以费用明细为主锚跨表 join · 证据链完整度 ${m.evidence_chain.score}/100${csText ? ' · ' + csText : (feeN ? ` · ${feeN} 笔费用` : '')}` : '案卷对象已编译(每条事实带源锚点)';
     })(), kbRefs: [] },
-    3: { touched: ['规则库', '触发路由'], stat: `激活 ${routing.activated_count ?? (routing.activated || []).length} 条规则 · 三档定档「${m.case_nature || '—'}」· 原始命中 ${m.summary?.raw_findings_before_merge ?? findings.length} 条`, kbRefs: [] },
+    3: { touched: ['规则库', '触发路由'], stat: `激活 ${routing.activated_count ?? (routing.activated || []).length} 条规则 · 三档定档「${m.case_nature || '—'}」· 原始命中 ${m.summary?.raw_findings_before_merge ?? findings.length} 条${ragRan ? ' · RAG 知识库增强已启用' : ''}`, kbRefs: [] },
     4: { touched: ['三要素门禁', '合议去重', '定义层仲裁'], stat: `合议合并 ${m.summary?.merged_count || 0} 组 · 覆盖 ${(cover.dimensions || []).filter(d => (d.executed || []).length).length}/${(cover.dimensions || []).length} 维度 · 核验后 ${findings.length} 条`, kbRefs: [] },
     5: { touched: debate ? ['双方陈述书', '弹药库(两库/判例/裁量)'] : [], stat: debate ? `${topSuspect.rule_id} 裁定「${debate.verdict}」${debate.score != null ? ' 评分 ' + debate.score : ''} · 依据 ${(debate.kb_citations || []).length} 条` : '按需触发(点疑点「对抗辩论」启动真·三人格合议;或已预载)', kbRefs: debate ? (debate.kb_citations || []) : [], onDemand: !debate },
     6: { touched: ['处置建议', '罚则/第35条'], stat: `${findings.filter(f => f.status === '疑点').length} 条疑点出处置建议 · 涉及 ¥${m.summary?.suspected_amount || 0}`, kbRefs: kbRefs.filter(r => /第(38|40|35)条/.test(r)).slice(0, 4) },
@@ -101,7 +122,11 @@ function orchestrate(record, rulesArray, opts = {}) {
 
   const stages = STAGE_DEFS.map(d => ({
     ...d,
-    ran: d.no === 5 ? (debate ? 'LLM·预载真实产出' : '按需·未触发') : (d.kind.includes('确定性') ? '确定性·已跑' : 'LLM·可选'),
+    ran: d.no === 5
+      ? (debate ? 'LLM·预载真实产出' : '按需·未触发')
+      : (d.no === 3
+        ? (llmRan ? '确定性+LLM·已跑' : '确定性·已跑')
+        : '确定性·已跑'),
     touched: per[d.no].touched,
     kb_refs: per[d.no].kbRefs,
     stat: per[d.no].stat,

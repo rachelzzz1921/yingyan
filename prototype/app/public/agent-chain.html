@@ -47,6 +47,19 @@ button.primary{background:var(--ink);color:#fff;border:0;font-weight:700}
 .tri.hard{background:#b91c1c} .tri.suspect{background:#f59e0b} .tri.clean{background:#0a7a4b}
 .note{margin-top:14px;font-size:12px;color:var(--muted);line-height:1.7;border-top:1px solid var(--line);padding-top:12px}
 .note b{color:var(--ink)}
+/* —— 对抗分诊 —— */
+.triage{display:inline-flex;align-items:center;gap:5px;font-size:10.5px;font-weight:700;border-radius:6px;padding:2px 8px;margin-left:8px}
+.triage.skip-hard{background:#FBEAEA;color:#9a2c22;border:1px solid #eec6c1}
+.triage.skip-weak{background:#F1F5F9;color:#5C7185;border:1px solid var(--line)}
+.triage.debate{background:#F3EDFE;color:#5b4ab7;border:1px solid #d9cdf5}
+.dbt-btn{font-size:11px;font-weight:700;padding:3px 10px;border-radius:7px;cursor:pointer;margin-left:8px;border:1px solid #d9cdf5;background:#F8F5FF;color:#5b4ab7}
+.dbt-btn.ghost{background:var(--surface);color:var(--dim);border-color:var(--hair)}
+.dbt-btn:disabled{opacity:.55;cursor:default}
+.dbt-res{margin-top:6px;font-size:11.5px;background:#FBFAFF;border:1px dashed #d9cdf5;border-radius:8px;padding:7px 10px;line-height:1.6}
+.dbt-res b{color:#5b4ab7}
+.dbt-res .vd{display:inline-block;font-weight:800;padding:0 7px;border-radius:5px;color:#fff;background:#5b4ab7;margin-right:6px}
+.switch{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;color:var(--muted);cursor:pointer;user-select:none}
+.switch input{accent-color:#5b4ab7}
 </style>
 </head>
 <body>
@@ -60,6 +73,8 @@ button.primary{background:var(--ink);color:#fff;border:0;font-weight:700}
   <div class="bar">
     <label>案卷 <select id="caseSel"><option value="main">main · NSCLC 主案卷</option></select></label>
     <button class="primary" id="btnRun">▶ 运行编排</button>
+    <label class="switch"><input type="checkbox" id="triageOn" checked> ⚔ 对抗分诊(铁证免辩 · 线索不辩 · 中间带对抗)</label>
+    <button id="btnDebateAll" style="display:none">⚔ 一键对抗中间带</button>
     <span id="meta" class="sub" style="margin:0"></span>
   </div>
 
@@ -68,7 +83,8 @@ button.primary{background:var(--ink);color:#fff;border:0;font-weight:700}
   <div class="chains" id="chainsWrap" style="display:none"><h2>🔗 逐疑点调用链 <span class="sub" style="margin:0">每条疑点经过哪些 Agent</span></h2><div id="chains"></div></div>
 
   <div class="note">
-    <b>为什么这条视图重要</b>:回应「多 Agent 不就是套壳?」——编排拓扑 = 部颁智能审核工作规程<b>七个法定环节</b>的 Agent 化;每个 Agent 的知识库与数据源在 harness 显式声明(<b>说给陈猛的 agent 管理平台</b>:账号/编排/知识源可审批),调用链全程留痕(<b>白盒审计</b>)。确定性环节毫秒级打底、LLM 环节(筛查/合议)按需增强;三人格合议结果赛前真实跑出、现场预载。
+    <b>为什么这条视图重要</b>:回应「多 Agent 不就是套壳?」——编排拓扑 = 部颁智能审核工作规程<b>七个法定环节</b>的 Agent 化;每个 Agent 的知识库与数据源在 harness 显式声明(<b>说给陈猛的 agent 管理平台</b>:账号/编排/知识源可审批),调用链全程留痕(<b>白盒审计</b>)。确定性环节毫秒级打底、LLM 环节(筛查/合议)按需增强;三人格合议结果赛前真实跑出、现场预载。<br>
+    <b>⚔ 对抗分诊 = 语义对抗只花在刀刃上</b>:铁证(明确违规)辩方必认账、对抗是浪费;干净/线索级证据太弱、不值得辩;<b>只有中间带(可疑档)才值得控/辩/裁三人格过一遍</b>——LLM 成本按争议度分诊,不是每条疑点都烧一次大模型。每条也可手动「强制对抗」覆盖分诊。
   </div>
 </div>
 <script>
@@ -112,13 +128,60 @@ async function run(){
       +'</div>';
   }).join('');
 
-  var chains=t.chains||[];
-  document.getElementById('chainsWrap').style.display=chains.length?'':'none';
-  document.getElementById('chains').innerHTML=chains.map(function(c){
-    var hops=(c.path||[]).map(function(p,i){ var cls='hop'+(p.llm?' llm':'')+(p.flag?' flag':''); return (i>0?'<span class="arrow">→</span>':'')+'<span class="'+cls+'">'+p.no+' '+esc(p.agent)+'<span style="color:#8296A9">·'+esc(p.note)+'</span></span>'; }).join('');
-    return '<div class="chain"><div class="head"><span class="tri '+triCls(c.nature)+'">'+esc(c.nature||'')+'</span> '+esc(c.rule_id)+' '+esc(c.rule_name||'')+(c.amount?' · ¥'+Number(c.amount).toLocaleString():'')+'</div>'+hops+(c.kb_refs&&c.kb_refs.length?'<div class="krefs" style="margin-top:5px">'+c.kb_refs.map(function(r){return '<code>'+esc(r)+'</code>';}).join('')+'</div>':'')+'</div>';
-  }).join('');
+  CHAINS=t.chains||[]; CASE_ID=caseId;
+  renderChains();
 }
+
+/* —— 对抗分诊:铁证免辩 · 线索/干净不辩 · 中间带(可疑)对抗 —— */
+var CHAINS=[], CASE_ID='main';
+function triage(c){
+  if(c.nature==='明确违规') return {k:'skip-hard',label:'免辩 · 铁证(辩方必认账,省 LLM)',debate:false};
+  if(c.nature==='可疑') return {k:'debate',label:'建议对抗 · 中间带',debate:true};
+  if(c.status==='线索'||(c.path||[]).some(function(p){return p.flag;})) return {k:'skip-weak',label:'不辩 · 线索级/证据弱',debate:false};
+  if(c.status==='疑点') return {k:'debate',label:'建议对抗 · 中间带',debate:true};
+  return {k:'skip-weak',label:'不辩 · 干净',debate:false};
+}
+function renderChains(){
+  var on=document.getElementById('triageOn').checked;
+  document.getElementById('chainsWrap').style.display=CHAINS.length?'':'none';
+  var nDeb=0;
+  document.getElementById('chains').innerHTML=CHAINS.map(function(c,idx){
+    var hops=(c.path||[]).map(function(p,i){ var cls='hop'+(p.llm?' llm':'')+(p.flag?' flag':''); return (i>0?'<span class="arrow">→</span>':'')+'<span class="'+cls+'">'+p.no+' '+esc(p.agent)+'<span style="color:#8296A9">·'+esc(p.note)+'</span></span>'; }).join('');
+    var tr=triage(c); if(tr.debate)nDeb++;
+    var trHtml=on?'<span class="triage '+tr.k+'">'+(tr.debate?'⚔ ':'')+tr.label+'</span>'
+      +'<button class="dbt-btn'+(tr.debate?'':' ghost')+'" data-i="'+idx+'">⚔ '+(tr.debate?'对抗合议':'强制对抗')+'</button>':'';
+    return '<div class="chain" id="chain-'+idx+'"><div class="head"><span class="tri '+triCls(c.nature)+'">'+esc(c.nature||'')+'</span> '+esc(c.rule_id)+' '+esc(c.rule_name||'')+(c.amount?' · ¥'+Number(c.amount).toLocaleString():'')+trHtml+'</div>'+hops+(c.kb_refs&&c.kb_refs.length?'<div class="krefs" style="margin-top:5px">'+c.kb_refs.map(function(r){return '<code>'+esc(r)+'</code>';}).join('')+'</div>':'')+'<div class="dbt-slot" id="dbt-'+idx+'"></div></div>';
+  }).join('');
+  document.getElementById('btnDebateAll').style.display=(on&&nDeb)?'':'none';
+  document.getElementById('btnDebateAll').textContent='⚔ 一键对抗中间带('+nDeb+')';
+  Array.prototype.forEach.call(document.querySelectorAll('.dbt-btn'),function(b){ b.onclick=function(){debateOne(+b.dataset.i,b);}; });
+}
+async function debateOne(idx,btn){
+  var c=CHAINS[idx]; if(!c)return;
+  var slot=document.getElementById('dbt-'+idx);
+  if(btn){btn.disabled=true;btn.textContent='合议中…';}
+  slot.innerHTML='<div class="dbt-res">⚔ 控/辩/裁 三人格合议中(预载优先·实时兜底)…</div>';
+  try{
+    var r=await fetch('/api/debate',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({caseId:CASE_ID,finding:{rule_id:c.rule_id,finding_id:c.finding_id,status:c.status},log_review:false,eval_draft:false})}).then(function(x){return x.json();});
+    if(r.error){slot.innerHTML='<div class="dbt-res">✗ '+esc(r.error)+'</div>';}
+    else{
+      var d=r.debate||{};
+      slot.innerHTML='<div class="dbt-res"><span class="vd">'+esc(d.verdict||'—')+'</span>'
+        +(d.score!=null?'评分 <b>'+esc(d.score)+'</b> · ':'')
+        +'依据 <b>'+((d.kb_citations||[]).length)+'</b> 条'
+        +(r.status&&r.status!==c.status?' · 建议改档 <b>'+esc(c.status)+'→'+esc(r.status)+'</b>':' · 维持「'+esc(c.status)+'」')
+        +(d.defense_summary||d.strongest_point?'<br><b>辩方最强点</b>:'+esc(String(d.defense_summary||d.strongest_point).slice(0,90)):'')
+        +'</div>';
+    }
+  }catch(e){slot.innerHTML='<div class="dbt-res">✗ '+esc(e.message)+'</div>';}
+  if(btn){btn.disabled=false;btn.textContent='⚔ 重新合议';}
+}
+document.getElementById('btnDebateAll').onclick=async function(){
+  var me=this; me.disabled=true;
+  for(var i=0;i<CHAINS.length;i++){ if(triage(CHAINS[i]).debate) await debateOne(i,document.querySelector('.dbt-btn[data-i="'+i+'"]')); }
+  me.disabled=false;
+};
+document.getElementById('triageOn').onchange=renderChains;
 document.getElementById('btnRun').onclick=run;
 loadCases().then(run);
 </script>

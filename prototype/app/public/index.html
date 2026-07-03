@@ -106,8 +106,30 @@
       <h2><span class="panel-icon">📁</span> 患者就诊材料包</h2>
       <select id="caseSelect" class="case-select" title="切换演示案卷"></select>
     </div>
-    <nav class="doc-tabs" id="docTabs"></nav>
-    <div class="doc-body" id="docBody"></div>
+    <!-- 数据侧·案卷完整度头（金额加权 · 与规则覆盖度分开放） -->
+    <div class="ev-casehead" id="evCaseHead"></div>
+    <!-- 锚视图：费用明细行=锚 → 点开行内展开证据链四层（钱→行为→指征） -->
+    <div class="anchor-pane" id="anchorPane">
+      <div class="anchor-col-head">
+        <span class="acol-title">费用明细行 · 锚 <span class="acol-hint">点任一行看四层证据链</span></span>
+        <div class="anchor-sort" id="anchorSort" title="排序">
+          <button type="button" class="asort active" data-sort="risk">疑点档</button>
+          <button type="button" class="asort" data-sort="amount">金额</button>
+          <button type="button" class="asort" data-sort="weak">薄弱优先</button>
+        </div>
+      </div>
+      <div class="anchor-list" id="anchorList"></div>
+    </div>
+    <!-- 原始材料库：原 13 类平铺 tab 收纳于此，仅供顺序翻阅 -->
+    <div class="raw-drawer" id="rawDrawer">
+      <button type="button" class="raw-drawer-toggle" id="rawDrawerToggle">
+        <span class="rd-caret">▸</span> 原始材料库<span class="muted"> · 13 类文书原文，仅供顺序翻阅</span>
+      </button>
+      <div class="raw-drawer-body hidden" id="rawDrawerBody">
+        <nav class="doc-tabs" id="docTabs"></nav>
+        <div class="doc-body" id="docBody"></div>
+      </div>
+    </div>
   </section>
 
   <section class="panel panel-right">

@@ -319,6 +319,12 @@ const TABS = [
 ];
 let activeTab = 'fee';
 
+// ---------- 锚视图状态（实现规格 §8） ----------
+let EV_CHAIN = null;        // 证据链完整度（数据侧，resolveEvidence 产物）
+let ANCHOR_SEL = null;      // 当前选中的费用锚 line_no
+let ANCHOR_SORT = 'risk';   // risk | amount | weak
+let LINE_NATURE = {};       // line_no → { nature, findings[] }（跑稽核后才有）
+
 // ---------- 初始化 ----------
 async function init() {
   try {
@@ -362,6 +368,7 @@ async function init() {
     applyModeUI();
     bindReviewActionDelegation();
     bindRuleLinkDelegation();
+    bindAnchorControls();
   } catch (e) {
     $('#docBody').innerHTML = `<div class="empty">加载失败：${esc(e.message)}<br><span class="muted">请确认已运行 node server.js</span></div>`;
   }
@@ -381,6 +388,9 @@ async function loadCase(id) {
   RECORD = await fetch('/api/case?id=' + encodeURIComponent(id)).then(r => r.json());
   INJECT = false; REPORT = null; FLAGGED_LINES = new Set();
   activeTab = 'fee';
+  // 锚视图：选案卷即渲染（完整度/证据链在跑稽核前就可见；疑点档跑稽核后补齐）
+  EV_CHAIN = RECORD.evidence_chain || null; LINE_NATURE = {}; ANCHOR_SEL = null;
+  renderAnchorView();
   renderTabs(); renderDoc(activeTab);
   renderCaseMeta();
   setWorkflowStep(1);
@@ -401,8 +411,8 @@ function renderTabs() {
 }
 
 // ---------- 文档渲染 ----------
-function renderDoc(key) {
-  const r = RECORD, b = $('#docBody');
+function renderDoc(key, targetEl) {
+  const r = RECORD, b = targetEl || $('#docBody');
   if (key === 'front') {
     const f = r.front_page;
     b.innerHTML = sec('病案首页', `
@@ -547,6 +557,248 @@ function feeTable(r) {
 function ordTable(items) {
   return `<table class="fee-table"><tr><th>编号</th><th>医嘱内容</th><th>起止</th></tr>` + items.map(o =>
     `<tr><td class="ln">${esc(o.order_id)}</td><td>${esc(o.content)}${o.key ? `<span class="row-flag" style="color:var(--amber)">※ ${esc(o.key)}</span>` : ''}</td><td class="muted">${esc(o.start ? o.start.slice(5, 16) : (o.time ? o.time.slice(5, 16) : ''))}${o.stop ? ' ~ ' + o.stop.slice(5, 10) : ''}</td></tr>`).join('') + `</table>`;
+}
+
+// ============================================================================
+// 锚视图（实现规格 §8）：费用明细行=锚 → 证据链四层（钱→行为→指征）
+// 疑点档（红黄绿）与完整度（蓝灰）分列、不同配色、永不并排撞色（验收#5）
+// ============================================================================
+function evLineMap() {
+  const m = {};
+  for (const l of (EV_CHAIN?.fee_lines || [])) m[l.line_no] = l;
+  return m;
+}
+// findings → 每行疑点档（明确违规 > 可疑 > 干净）
+function buildLineNature(report) {
+  const map = {};
+  for (const f of (report?.findings || [])) {
+    const lines = new Set();
+    for (const ev of (f.evidence || [])) {
+      const mm = String(ev.loc || '').match(/第\s*([\d、,，]+)\s*行/);
+      if (mm) mm[1].split(/[、,，]/).forEach(n => { const v = Number(n); if (v) lines.add(v); });
+    }
+    for (const ln of lines) {
+      if (!map[ln]) map[ln] = { nature: f.nature || '可疑', findings: [] };
+      map[ln].findings.push(f);
+      if (f.nature === '明确违规') map[ln].nature = '明确违规';
+    }
+  }
+  return map;
+}
+function riskOf(lineNo) {
+  if (!REPORT) return { cls: 'pending', label: '待稽核', rank: 1 };
+  const n = LINE_NATURE[lineNo];
+  if (n) {
+    if (n.nature === '明确违规') return { cls: 'red', label: '明确违规', rank: 3 };
+    return { cls: 'amber', label: '可疑', rank: 2 };
+  }
+  // 一线规则未命中，但完整度补位生成了管理类可疑（§7 缺失即疑点）→ 归入可疑档
+  if ((EV_CHAIN?.auto_suspects || []).some(a => a.line_no === lineNo)) return { cls: 'amber', label: '可疑·完整度', rank: 2 };
+  return { cls: 'green', label: '干净', rank: 0 };
+}
+function compOf(line) {
+  const c = line?.completeness;
+  if (!c) return { cls: 'na', label: '仅上下文', score: null };
+  const cls = c.tier === '完整' ? 'full' : c.tier === '部分' ? 'partial' : 'weak';
+  return { cls, label: c.tier, score: c.score };
+}
+
+function renderAnchorView() {
+  renderEvCaseHead();
+  // 默认展开金额最大的疑点行（仅在案卷载入/跑稽核时定；排序或收起时不复位）
+  const lines = (EV_CHAIN?.fee_lines || []).filter(l => !l.is_reversal);
+  if (lines.length && (ANCHOR_SEL == null || !lines.some(l => l.line_no === ANCHOR_SEL))) {
+    const flagged = lines.filter(l => riskOf(l.line_no).rank >= 2).sort((a, b) => Math.abs(b.amount) - Math.abs(a.amount));
+    ANCHOR_SEL = (flagged[0] || lines.slice().sort((a, b) => Math.abs(b.amount) - Math.abs(a.amount))[0])?.line_no ?? null;
+  }
+  renderAnchorList();
+}
+
+function renderEvCaseHead() {
+  const el = $('#evCaseHead'); if (!el) return;
+  if (!EV_CHAIN) { el.innerHTML = ''; return; }
+  const s = EV_CHAIN.case_score;
+  const tier = EV_CHAIN.case_tier;
+  const cls = s == null ? 'na' : (tier === '完整' ? 'full' : tier === '部分' ? 'partial' : 'weak');
+  const d = EV_CHAIN.distribution || { 完整: { rows: 0, amount: 0 }, 部分: { rows: 0, amount: 0 }, 薄弱: { rows: 0, amount: 0 } };
+  const totalRows = d.完整.rows + d.部分.rows + d.薄弱.rows || 1;
+  const pct = k => Math.round((d[k].rows / totalRows) * 100);
+  const np = (EV_CHAIN.not_provided_types || []).map(t => MAT_NAME[t] || t);
+  el.innerHTML = `
+    <span class="ch-label">案卷完整度</span>
+    <span class="comp-badge ${cls}">⛓ ${s == null ? '未评估' : Math.round(s * 100) + '/100'} · ${tier}</span>
+    <span class="comp-mini" title="完整/部分/薄弱 行数占比">
+      <i class="f" style="width:${pct('完整')}%"></i><i class="p" style="width:${pct('部分')}%"></i><i class="w" style="width:${pct('薄弱')}%"></i>
+    </span>
+    <span class="ch-hint">数据侧 · 与规则覆盖度分开 ⓘ</span>
+    <div class="ch-pop">
+      <div class="cp-row"><span>金额加权口径（大钱证据链更重要）</span><b>${EV_CHAIN.anchor || '费用明细行为锚'}</b></div>
+      <div class="cp-row"><span style="color:var(--comp-full)">完整 ≥85</span><span>${d.完整.rows} 行 · ¥${fmt(Math.round(d.完整.amount))}</span></div>
+      <div class="cp-row"><span style="color:var(--comp-partial)">部分 50–85</span><span>${d.部分.rows} 行 · ¥${fmt(Math.round(d.部分.amount))}</span></div>
+      <div class="cp-row"><span style="color:var(--comp-weak)">薄弱 &lt;50</span><span>${d.薄弱.rows} 行 · ¥${fmt(Math.round(d.薄弱.amount))}</span></div>
+      ${np.length ? `<div class="cp-row"><span>整卷未提供（不计缺失）</span><span>${np.map(esc).join('、')}</span></div>` : ''}
+    </div>`;
+}
+
+function renderAnchorList() {
+  const el = $('#anchorList'); if (!el) return;
+  if (!EV_CHAIN) { el.innerHTML = '<div class="evc-empty">选择案卷后显示费用锚列表</div>'; return; }
+  const lines = (EV_CHAIN.fee_lines || []).filter(l => !l.is_reversal);
+  const rowHTML = (l) => {
+    const r = riskOf(l.line_no), c = compOf(l);
+    const expanded = l.line_no === ANCHOR_SEL;
+    const reversed = l.reversed_by ? '<span class="chip-reversed">已冲销</span>' : '';
+    const sub = `${esc(l.category || '')}${l.class_guessed ? ' <span title="类别未识别（诚实标记）">·类别未识别</span>' : ''}`;
+    let h = `<div class="anchor-row ${expanded ? 'sel' : ''} ${l.reversed_by ? 'reversed' : ''}" data-line="${l.line_no}">
+      <span class="ar-caret">${expanded ? '▾' : '▸'}</span>
+      <div class="ar-main">
+        <div class="ar-name">${esc(l.item_name)} ${reversed}</div>
+        <div class="ar-sub">${sub}</div>
+      </div>
+      <div class="ar-amt">¥${fmt(l.amount)}</div>
+      <div class="ar-badges">
+        <span class="rbadge ${r.cls === 'pending' ? 'green' : r.cls}">${r.label}</span>
+        <span class="cbadge ${c.cls}">${c.label}</span>
+      </div>
+    </div>`;
+    // 行内手风琴：展开行的证据链直接接在本行下方（单一滚动区，不再另开一栏）
+    if (expanded) h += `<div class="anchor-row-detail" data-detail="${l.line_no}">${evChainHTML(l)}</div>`;
+    return h;
+  };
+  let html = '';
+  if (ANCHOR_SORT === 'risk') {
+    const groups = [
+      { cls: 'red', label: '明确违规', pred: l => riskOf(l.line_no).cls === 'red' },
+      { cls: 'amber', label: REPORT ? '可疑' : '待稽核', pred: l => { const c = riskOf(l.line_no).cls; return c === 'amber' || c === 'pending'; } },
+      { cls: 'green', label: '干净', pred: l => riskOf(l.line_no).cls === 'green' },
+    ];
+    for (const g of groups) {
+      const rows = lines.filter(g.pred).sort((a, b) => Math.abs(b.amount) - Math.abs(a.amount));
+      if (!rows.length) continue;
+      html += `<div class="agroup-head ${g.cls}"><span class="gh-dot"></span>${g.label} <span class="gh-count">· ${rows.length} 行 · ¥${fmt(Math.round(rows.reduce((s, x) => s + Math.abs(x.amount), 0)))}</span></div>`;
+      html += rows.map(rowHTML).join('');
+    }
+  } else {
+    const sorted = lines.slice().sort((a, b) => ANCHOR_SORT === 'weak'
+      ? (compOf(a).score ?? 2) - (compOf(b).score ?? 2)
+      : Math.abs(b.amount) - Math.abs(a.amount));
+    html = sorted.map(rowHTML).join('');
+  }
+  el.innerHTML = html || '<div class="evc-empty">无费用明细行</div>';
+  // 点行 = 展开/收起该行证据链（再点收起）；同一时刻只展开一行
+  $$('.anchor-row', el).forEach(row => row.onclick = () => {
+    const ln = Number(row.dataset.line);
+    ANCHOR_SEL = (ANCHOR_SEL === ln) ? null : ln;
+    renderAnchorList();
+    if (ANCHOR_SEL === ln) { const nr = el.querySelector(`.anchor-row[data-line="${ln}"]`); nr?.scrollIntoView({ block: 'nearest', behavior: 'smooth' }); }
+  });
+  // 绑定展开行内证据链节点的点击
+  $$('.anchor-row-detail', el).forEach(det => bindEvNodes(det, evLineMap()[Number(det.dataset.detail)]));
+}
+
+// 证据链四层视图（选中费用锚）
+const LAYER_DEF = [
+  { key: 1, label: '枢纽层', q: '合法性 · 谁下令花的钱' },
+  { key: 2, label: '执行层', q: '真实性 · 下令的事做没做' },
+  { key: 3, label: '客观层', q: '合理性 · 做这事有没有依据' },
+  { key: 'context', label: '就诊上下文', q: '横切 · 服务整段就诊' },
+];
+// 行内证据链 HTML（紧凑：本行已在上方显示名/额/徽章，这里只给期望类+升级+四层）
+function evChainHTML(line) {
+  if (!line) return '';
+  if (line.is_reversal) return `<div class="evc-empty">负数冲销行，已折叠为原始行「已冲销」，不单独计完整度。</div>`;
+  const c = compOf(line);
+  const nodes = line.nodes || [];
+  if (!nodes.length) return `<div class="evc-empty">本行仅需<b>上下文材料</b>（无行级必需证据），不展开四层骨架。</div>`;
+  let html = `<div class="evc-meta">第${line.line_no}行 · 期望类「${esc(line.expectation_key || 'unclassified')}」 · <span class="cbadge ${c.cls}">${c.label}${c.score != null ? ' ' + c.score.toFixed(2) : ''}</span>${(line.escalations || []).map(e => `<span class="evc-esc">⤴ ${esc(e)}</span>`).join('')}</div>`;
+  for (const L of LAYER_DEF) {
+    const layerNodes = nodes.filter(n => n.layer === L.key);
+    if (!layerNodes.length) continue;
+    const convened = layerNodes.some(n => n.match_type !== 'none' && n.match_type !== 'not_provided');
+    html += `<div class="ev-layer ${convened ? 'has' : ''}">
+      <div class="ev-layer-label">${L.label} <span class="lyr-q">· ${L.q}</span></div>
+      <div class="ev-nodes">${layerNodes.map(n => evNodeHTML(n, line)).join('')}</div>
+    </div>`;
+  }
+  return html;
+}
+function bindEvNodes(scope, line) {
+  if (!scope || !line) return;
+  $$('.ev-node', scope).forEach(nd => {
+    nd.onclick = (e) => {
+      e.stopPropagation();
+      const mt = nd.dataset.mt, mtype = nd.dataset.match;
+      if (mtype === 'not_provided') return;
+      if (mtype === 'none') toggleMissingDetail(nd, line, mt);
+      else openMaterialModal(mt, line);
+    };
+  });
+}
+function evNodeHTML(n, line) {
+  const TAG = { explicit: '实线 L1', inferred: '虚线 L2', contextual: '点线 L3', none: '缺失', not_provided: '未提供' };
+  let cls = n.match_type === 'not_provided' ? 'notprovided'
+    : n.match_type === 'none' ? 'missing'
+      : n.match_type; // explicit|inferred|contextual
+  if (n.kind === 'optional') cls += ' optional';
+  const alt = (n.alternates && n.alternates.length) ? `<span class="en-alt" title="存在多候选医嘱，取时间最近者建链，保持虚线折扣">⚠ ${n.alternates.length} 个多候选</span>` : '';
+  const sub = n.anchor?.text ? `<span class="en-sub" title="${esc(n.anchor.text)}">${esc(n.anchor.text)}</span>` : (n.match_type === 'none' ? '<span class="en-sub">点开看期望依据 ↴</span>' : (n.match_type === 'not_provided' ? '<span class="en-sub">整卷未提供 · 不计缺失</span>' : ''));
+  return `<div class="ev-node ${cls}" data-mt="${esc(n.material_type)}" data-match="${n.match_type}">
+    <span class="en-label">${esc(n.label)}<span class="en-tag">${TAG[n.match_type]}</span></span>
+    ${sub}${alt}
+  </div>`;
+}
+function toggleMissingDetail(nd, line, mt) {
+  const exist = nd.parentElement.parentElement.querySelector('.evc-missing-detail[data-mt="' + mt + '"]');
+  if (exist) { exist.remove(); return; }
+  document.querySelectorAll('.evc-missing-detail').forEach(x => x.remove());
+  const gap = (EV_CHAIN.missing_evidence || []).find(m => m.line_no === line.line_no && m.material_type === mt);
+  const auto = (EV_CHAIN.auto_suspects || []).find(m => m.line_no === line.line_no && m.material_type === mt);
+  const covered = (EV_CHAIN.covered_gaps || []).find(m => m.line_no === line.line_no && m.material_type === mt);
+  const basis = gap?.expected_reason || '本行缺少必需证据';
+  const hint = gap?.rule_hint || '';
+  let linkHTML = '';
+  if (auto) linkHTML = `<div class="md-link" data-autogap="1">⊕ 完整度补位：自动生成管理类可疑「${esc(hint)}」（一线规则未覆盖本行）</div>`;
+  else if (covered) linkHTML = `<div class="md-covered">✓ 已由一线规则覆盖本行「${esc(hint)}」，此处仅联动、不重复计数 —— 点右侧疑点卡查看</div>`;
+  else linkHTML = `<div class="md-covered">缺口口径：${esc(hint)}</div>`;
+  const det = document.createElement('div');
+  det.className = 'evc-missing-detail';
+  det.dataset.mt = mt;
+  det.innerHTML = `<div class="md-h">缺失依据 · 期望「${esc(nd.querySelector('.en-label').childNodes[0].textContent.trim())}」</div>
+    <div class="md-basis">${esc(basis)}</div>${linkHTML}`;
+  nd.closest('.ev-layer').after(det);
+}
+
+// 材料原文 modal（点证据节点 → 打开原文 + 反向索引「本材料被 N 笔费用引用」）
+const MAT_TAB = { order: 'orders', dispense: 'pharm', trace_code: 'pharm', surgery_record: 'op', anesthesia_record: 'anes', nursing_record: 'nursing', icu_record: 'icu', progress_note: 'progress', lab_report: 'lab', pathology_gene_report: 'path', gene_report: 'path', imaging_record: 'op', admission_record: 'admission', discharge_summary: 'discharge', case_front_page: 'front' };
+const MAT_NAME = { order: '医嘱单', dispense: '发药/进销存', trace_code: '追溯码', surgery_record: '手术记录', anesthesia_record: '麻醉记录', nursing_record: '护理记录', icu_record: '重症记录', progress_note: '病程记录', lab_report: '检验报告', pathology_gene_report: '病理/基因', gene_report: '基因检测', imaging_record: '影像记录', admission_record: '入院记录', discharge_summary: '出院小结', case_front_page: '病案首页' };
+function reverseIndexCount(materialType) {
+  let n = 0;
+  for (const l of (EV_CHAIN?.fee_lines || [])) {
+    if ((l.nodes || []).some(nd => nd.material_type === materialType && nd.match_type !== 'none' && nd.match_type !== 'not_provided')) n++;
+  }
+  return n;
+}
+function openMaterialModal(materialType, line) {
+  const tab = MAT_TAB[materialType] || 'fee';
+  const cnt = reverseIndexCount(materialType);
+  const div = document.createElement('div'); div.className = 'doc-body';
+  try { renderDoc(tab, div); } catch (_) { div.innerHTML = '<div class="muted">该材料无结构化原文</div>'; }
+  const rev = `<div class="mat-revindex">📎 反向索引：本材料 <b>${MAT_NAME[materialType] || materialType}</b> 被 <b>${cnt}</b> 笔费用引用${line ? `　·　当前锚定 第${line.line_no}行「${esc(line.item_name)}」` : ''}</div>`;
+  openModal('📄 材料原文 · ' + (MAT_NAME[materialType] || materialType), rev + div.innerHTML);
+}
+function toggleRawDrawer() {
+  const d = $('#rawDrawer'); if (!d) return;
+  const open = d.classList.toggle('open');
+  $('#rawDrawerBody').classList.toggle('hidden', !open);
+  if (open && !$('#docTabs').innerHTML) { renderTabs(); renderDoc(activeTab); }
+}
+function bindAnchorControls() {
+  const t = $('#rawDrawerToggle'); if (t) t.onclick = toggleRawDrawer;
+  $$('.asort').forEach(b => b.onclick = () => {
+    ANCHOR_SORT = b.dataset.sort;
+    $$('.asort').forEach(x => x.classList.toggle('active', x === b));
+    renderAnchorList();
+  });
 }
 
 // 小工具
@@ -702,6 +954,10 @@ async function runAudit(opts = {}) {
     if (wantsLLM) report.report_meta.llm_shadow = 'pending';
     REPORT = report;
     FLAGGED_LINES = collectFlaggedLines(report);
+    // 锚视图：跑稽核后用报告的 evidence_chain（含 auto_suspects/covered_gaps）+ 每行疑点档重绘
+    if (report.report_meta?.evidence_chain) EV_CHAIN = report.report_meta.evidence_chain;
+    LINE_NATURE = buildLineNature(report);
+    renderAnchorView();
     if (MODE === 'exam') await loadRectification(CURRENT_CASE);
     if (MODE === 'exam') await loadPrecipitationData();
     await refreshReviewCache();
@@ -807,8 +1063,10 @@ function statusLineHTML(m, exam) {
   const superOn = !!(m.super_fused || LAST_RUN_PROFILE === 'super');
   if (superOn) {
     const llmOn = m.super_llm === 'ok' || m.real_agent;
-    const ragOn = !!(m.rag?.hits?.length || /RAG/.test(m.engine_mode || ''));
+    const ragOn = !!(m.layers?.rag?.ran || m.rag?.hits?.length || /RAG/.test(m.engine_mode || ''));
     chips.push(`<span class="sl-chip super">⚡ 超级增强 · LLM${llmOn ? '✓' : '—'} RAG${ragOn ? '✓' : '—'} 防护${m.injected ? '✓' : '—'}</span>`);
+  } else if (m.layers?.rag?.ran) {
+    chips.push('<span class="sl-chip">🔍 RAG 知识库增强</span>');
   }
   if (exam) chips.push(`<span class="sl-chip">🏥 院端规则子集 ${m.exam_rule_filter?.used ?? '—'}/${m.exam_rule_filter?.total ?? '—'} 条</span>`);
   if (m.injected_attack) chips.push(`<span class="sl-chip warn" title="目标 ${esc(m.injected_attack.targets)}：${esc(m.injected_attack.goal)}">🎭 对抗注入·${esc(m.injected_attack.technique)}（已防御）</span>`);
@@ -1289,6 +1547,13 @@ function confBadge(f) {
   return `<span class="conf ${cls}" title="置信度=f(三要素完整度·控辩裁·OCR置信·CoVe)"><span class="conf-bar"><i style="width:${f.confidence}%"></i></span>置信${f.confidence}</span>${f._low_ocr ? '<span class="lowocr">⚠OCR低置信</span>' : ''}${parseWarn}`;
 }
 
+function findingSourceChip(f) {
+  const src = f.ran_by || 'deterministic';
+  if (src === 'llm') return '<span class="kind-tag real source-chip" title="此疑点由 LLM 语义分析生成">🧠 LLM</span>';
+  if (src === 'both') return '<span class="kind-tag super source-chip" title="规则命中 + LLM 语义印证">⚙+🧠 融合</span>';
+  return '<span class="kind-tag script source-chip" title="此疑点由确定性规则引擎生成">⚙ 规则</span>';
+}
+
 function renderComplianceFlags(f) {
   const flags = f.compliance_flags;
   if (!flags?.length) return '';
@@ -1296,6 +1561,17 @@ function renderComplianceFlags(f) {
     `<span class="compliance-chip" title="${esc(c.detail || '')}">${esc(c.code)} · ${esc(c.action)}</span>`
   ).join('');
   return `<div class="compliance-foot muted">合规前置：${items}</div>`;
+}
+
+function renderLlmInsights(f) {
+  if (f.ran_by === 'deterministic') return '';
+  const info = f.llm_corroboration || { reasoning: f.reasoning, cove: f.cove };
+  if (!info) return '';
+  const headLabel = f.ran_by === 'llm' ? 'LLM 推理' : 'LLM 语义印证';
+  const verdict = info.cove?.verdict ? ` · ${esc(info.cove.verdict)}` : '';
+  const reasoning = info.reasoning ? `<p class="muted llm-reason">${esc(info.reasoning)}</p>` : '';
+  if (!reasoning) return '';
+  return `<div class="llm-insight"><div class="llm-insight-head">🧠 ${headLabel}${verdict}</div>${reasoning}</div>`;
 }
 function renderCoVe(cove) {
   if (!cove || !cove.items || !cove.items.length) return '';
@@ -1341,8 +1617,15 @@ async function runDebateForFinding(btn) {
     }
     const idx = REPORT.findings.findIndex(x => x.finding_id === fid);
     if (idx >= 0) {
-      REPORT.findings[idx].debate = r.debate;
-      if (r.status && r.status !== REPORT.findings[idx].status) REPORT.findings[idx].status = r.status;
+      if (r.finding_patch) {
+        Object.assign(REPORT.findings[idx], r.finding_patch);
+        if (r.finding_patch.status_after && r.finding_patch.status_after !== REPORT.findings[idx].status) {
+          REPORT.findings[idx].status = r.finding_patch.status_after;
+        }
+      } else {
+        REPORT.findings[idx].debate = r.debate;
+        if (r.status && r.status !== REPORT.findings[idx].status) REPORT.findings[idx].status = r.status;
+      }
       await refreshReviewCache();
       renderReport(REPORT);
     }
@@ -1534,6 +1817,7 @@ function findingCard(f) {
   const needs = (f.needs_more && f.needs_more.length) ? `<div class="needs"><b>${needsLabel}</b><ul>${f.needs_more.map(n => `<li>${esc(n)}</li>`).join('')}</ul></div>` : '';
   const statusLabel = VIEW_EXAM && f.status === '疑点' ? '风险点' : f.status;
   const triCls = f.nature === '明确违规' ? 'tri-hard' : 'tri-suspect';
+  const sourceChip = findingSourceChip(f);
   return `<div class="finding ${esc(f.status)}${f.shadow ? ' shadow' : ''}" data-fid="${esc(f.finding_id)}">
     <div class="f-head">
       ${f.nature ? `<span class="tri-badge ${triCls}" title="${esc(f.nature_basis || '')}">${esc(f.nature)}</span>` : ''}
@@ -1541,6 +1825,7 @@ function findingCard(f) {
       ${f.violation_nature ? `<span class="nature-badge n-${f.violation_nature === '主观嫌疑' ? 'subj' : f.violation_nature === '非主观差错' ? 'obj' : 'tbd'}" title="违规性质（主观嫌疑/非主观差错/待定）${esc(f.nature_upgrade_reason ? '·' + f.nature_upgrade_reason : '')}">${esc(f.violation_nature)}</span>` : ''}
       ${f.shadow ? '<span class="shadow-badge" title="规则因高频驳回转入观察期，暂不计分">🌓 观察期·不计分</span>' : ''}
       <span class="f-title">${ruleLink(f.rule_id)}${f.corroborations && f.corroborations.length ? `<span class="merge-chip" title="合议层合并">🔗合议 ${f._merged_count}→1</span>` : ''}</span>
+      ${sourceChip}
       <span class="f-meta">${confBadge(f)}<span class="risk ${esc(f.risk_level)}">${esc(f.risk_level)}</span><span class="amount">${f.shadow ? '<s>¥' + fmt(f.amount_involved) + '</s>' : '¥' + fmt(f.amount_involved)}</span><span class="chev">▶</span></span>
     </div>
     <div class="f-body">
@@ -1557,6 +1842,7 @@ function findingCard(f) {
         ${f.disposal_suggestion ? `<div class="disposal"><b>${VIEW_EXAM ? '自查整改建议：' : '处置建议：'}</b>${esc(VIEW_EXAM ? examDisposal(f.disposal_suggestion) : f.disposal_suggestion)}</div>` : ''}
         ${renderReconciliation(f)}
         ${renderCoVe(f.cove)}
+        ${renderLlmInsights(f)}
         ${renderDebate(f.debate)}
         ${renderDebateHistory(f)}
         ${renderExamRectification(f)}
@@ -1599,9 +1885,34 @@ function renderDebate(d) {
   return `<div class="debate">${inner}</div>`;
 }
 
-// A1/Q1 证据链完整度(数据侧):费用主锚召集到几张关联表作证——与规则侧覆盖度分开放
+// A1/Q1 证据链完整度(数据侧):以费用明细行为锚的四层证据链完整度——与规则侧覆盖度分开放
 function renderEvidenceChain(ec) {
   if (!ec) return '';
+  // 新版 resolver 产物（version 2）：金额加权案卷完整度 + 三档分布 + 缺失补位疑点
+  if (ec.version === 2) {
+    const s = ec.case_score;
+    const scoreTxt = s == null ? '未评估' : Math.round(s * 100) + '/100';
+    const cls = s == null ? '' : (s >= 0.85 ? 'keep' : s >= 0.5 ? '' : 'down');
+    const d = ec.distribution || { 完整: { rows: 0 }, 部分: { rows: 0 }, 薄弱: { rows: 0 } };
+    const weak = (ec.fee_lines || []).filter(l => l.completeness && l.completeness.tier === '薄弱' && !l.is_reversal)
+      .sort((a, b) => Math.abs(b.amount) - Math.abs(a.amount)).slice(0, 6);
+    const weakRows = weak.map(l => {
+      const miss = (l.missing_required || []).map(m => MAT_NAME[m] || m).join('、');
+      return `<tr><td>${l.line_no}</td><td>${esc(l.item_name)}</td><td class="num">${l.completeness.score.toFixed(2)}</td><td><span style="color:var(--red)">${miss || '—'}</span></td></tr>`;
+    }).join('');
+    const auto = ec.auto_suspect_count || 0;
+    return `<div class="findings-section"><h3 class="sect-title">⛓ 证据链完整度 <span class="verdict ${cls}" style="font-size:13px">${scoreTxt}</span> <span class="muted" style="font-size:11px">数据侧·以费用行为锚的四层证据链 · 与"覆盖度"(规则侧)不同口径</span></h3>
+      <div class="muted" style="font-size:12px;margin:4px 0 8px">${esc(ec.statement)}</div>
+      <div style="display:flex;gap:8px;margin:6px 0 8px;font-size:11.5px">
+        <span class="pill" style="background:var(--comp-full-bg,#EFF4FF);color:#2563EB">完整 ${d.完整.rows} 行</span>
+        <span class="pill" style="background:#EEF2F6;color:#5A7186">部分 ${d.部分.rows} 行</span>
+        <span class="pill" style="background:#F1F4F7;color:#8494A6">薄弱 ${d.薄弱.rows} 行</span>
+        ${auto ? `<span class="pill" style="background:var(--red-bg);color:var(--red)">⊕ 完整度补位疑点 ${auto} 条</span>` : ''}
+      </div>
+      ${weakRows ? `<table class="fee-table"><thead><tr><th>行</th><th>费用项目(主锚)</th><th>完整度</th><th>缺失必需证据</th></tr></thead><tbody>${weakRows}</tbody></table>` : '<div class="muted" style="font-size:11px">无薄弱行</div>'}
+      <div class="muted" style="font-size:11px;margin-top:6px">↖ 左栏「费用明细行·锚」逐行可点看四层证据链 · 缺失即疑点</div></div>`;
+  }
+  // 旧版兜底
   const cls = ec.score >= 80 ? 'keep' : ec.score >= 50 ? '' : 'down';
   const topLines = (ec.lines || []).slice(0, 8).map(l =>
     `<tr><td>${l.line_no}</td><td>${esc(l.item)}</td><td class="num">${l.witness_count}</td><td>${(l.witness_tables || []).join('、') || '<span style="color:var(--red)">无关联表</span>'}</td></tr>`).join('');

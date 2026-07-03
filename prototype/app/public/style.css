@@ -254,6 +254,7 @@ h1,h2,h3{font-weight:700;letter-spacing:-.02em}
 .rchip.hit{background:var(--red-bg);color:var(--red)}
 .rchip:hover,.rchip:focus-visible{filter:brightness(.95);outline:2px solid var(--primary);outline-offset:1px}
 .f-meta{display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+.source-chip{font-size:10px;font-weight:600}
 .risk{font-size:11px;padding:1px 7px;border-radius:5px;background:#eef2f6;color:var(--ink2)}
 .risk.高{background:var(--red-bg);color:var(--red)} .risk.中—高{background:var(--amber-bg);color:var(--amber)}
 .amount{font-weight:800;color:var(--ink);font-size:13.5px;font-variant-numeric:tabular-nums}
@@ -261,6 +262,9 @@ h1,h2,h3{font-weight:700;letter-spacing:-.02em}
 .finding.open .chev{transform:rotate(90deg)}
 .f-body{display:none;padding:0 14px 14px;border-top:1px solid var(--line)}
 .finding.open .f-body{display:block}
+.llm-insight{margin-top:10px;padding:9px 11px;border:1px dashed #d7e7f2;border-radius:8px;background:#f7faff;font-size:12px;color:var(--ink2)}
+.llm-insight-head{font-weight:700;color:var(--primary);font-size:12px;margin-bottom:4px}
+.llm-reason{margin:0;font-size:12px}
 
 .three{margin-top:12px}
 .three-block{margin-bottom:12px}
@@ -760,3 +764,141 @@ body.mode-exam .layout{grid-template-columns:1fr}
 /* 切换工作台链接(顶栏) */
 .role-home{font-size:12.5px;color:#9FB4CC;text-decoration:none;padding:6px 12px;border:1px solid rgba(255,255,255,.18);border-radius:9px;white-space:nowrap;transition:.15s}
 .role-home:hover{color:#fff;border-color:rgba(255,255,255,.4);background:rgba(255,255,255,.08)}
+
+/* ============================================================================
+   锚视图 · 证据链完整度（实现规格 §8）
+   完整度调色板刻意用「蓝/灰阶」，与疑点档「红/黄/绿」永不撞色（§8.2 / 验收#5）
+   ============================================================================ */
+:root{
+  --comp-full:#2563EB; --comp-full-bg:#EFF4FF;
+  --comp-partial:#5A7186; --comp-partial-bg:#EEF2F6;
+  --comp-weak:#8494A6; --comp-weak-bg:#F1F4F7;
+  --ev-explicit:#14B8A6; --ev-inferred:#5A7186; --ev-context:#95A6B6;
+}
+
+/* —— 案卷完整度头（数据侧） —— */
+.ev-casehead{display:flex;align-items:center;gap:10px;padding:9px 16px;border-bottom:1px solid var(--line);
+  background:linear-gradient(180deg,#f7f9fc,#eef3f9);font-size:12px;position:relative;flex-wrap:wrap}
+.ev-casehead .ch-label{color:var(--muted);font-weight:600}
+.ev-casehead .ch-sep{color:var(--line)}
+.comp-badge{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:20px;font-weight:700;
+  font-family:var(--font-num);font-size:12px;line-height:1;border:1.5px solid}
+.comp-badge.full{color:var(--comp-full);background:var(--comp-full-bg);border-color:var(--comp-full)}
+.comp-badge.partial{color:var(--comp-partial);background:var(--comp-partial-bg);border-color:var(--comp-partial)}
+.comp-badge.weak{color:var(--comp-weak);background:var(--comp-weak-bg);border-color:var(--comp-weak);border-style:dashed}
+.comp-badge.na{color:var(--muted);background:#f3f5f8;border-color:var(--line);border-style:dashed}
+.comp-mini{display:flex;height:7px;width:120px;border-radius:4px;overflow:hidden;border:1px solid var(--line)}
+.comp-mini i{display:block;height:100%}
+.comp-mini i.f{background:var(--comp-full)} .comp-mini i.p{background:var(--comp-partial)} .comp-mini i.w{background:var(--comp-weak)}
+.ev-casehead .ch-hint{color:var(--muted);font-size:11px;margin-left:auto;cursor:help}
+.ch-pop{display:none;position:absolute;top:100%;left:16px;right:16px;z-index:20;background:#fff;border:1px solid var(--line);
+  border-radius:10px;box-shadow:var(--shadow-lg);padding:10px 12px;font-size:11.5px;color:var(--ink2)}
+.ev-casehead:hover .ch-pop{display:block}
+.ch-pop .cp-row{display:flex;justify-content:space-between;gap:10px;padding:3px 0;border-bottom:1px dashed var(--line)}
+.ch-pop .cp-row:last-child{border-bottom:0}
+
+/* —— 锚视图布局（单一滚动区 · 行内手风琴展开证据链） —— */
+.anchor-pane{display:flex;flex-direction:column;flex:1;min-height:0}
+.anchor-col-head{display:flex;align-items:center;justify-content:space-between;padding:8px 16px 6px;
+  background:#fbfcfe;border-bottom:1px solid var(--line);flex:0 0 auto}
+.acol-title{font-size:12px;font-weight:700;color:var(--ink)}
+.acol-title::before{content:"⚓";margin-right:5px;opacity:.7}
+.acol-hint{font-size:10.5px;font-weight:500;color:var(--muted);margin-left:4px}
+.anchor-sort{display:flex;gap:3px}
+.asort{font-size:10.5px;padding:3px 8px;border-radius:7px;border:1px solid var(--line);background:#fff;color:var(--muted);cursor:pointer}
+.asort.active{background:var(--primary);color:#fff;border-color:var(--primary)}
+.anchor-list{flex:1;min-height:0;overflow-y:auto;padding:4px 10px 12px}  /* 左栏唯一滚动区 */
+
+.agroup-head{display:flex;align-items:center;gap:6px;font-size:11px;font-weight:700;margin:8px 2px 4px;padding:2px 0}
+.agroup-head .gh-dot{width:8px;height:8px;border-radius:50%}
+.agroup-head.red{color:var(--red)} .agroup-head.red .gh-dot{background:var(--red)}
+.agroup-head.amber{color:var(--amber)} .agroup-head.amber .gh-dot{background:var(--amber)}
+.agroup-head.green{color:var(--green)} .agroup-head.green .gh-dot{background:var(--green)}
+.agroup-head .gh-count{color:var(--muted);font-weight:600}
+
+.anchor-row{display:flex;align-items:center;gap:7px;padding:7px 9px;border-radius:9px;cursor:pointer;
+  border:1px solid transparent;transition:.1s;margin-bottom:2px}
+.anchor-row:hover{background:#f4f8fd;border-color:var(--line)}
+.anchor-row.sel{background:#eaf2fb;border-color:var(--primary);border-bottom-left-radius:0;border-bottom-right-radius:0;margin-bottom:0}
+.ar-caret{color:var(--muted);font-size:10px;width:10px;flex:0 0 auto;transition:.1s}
+.anchor-row.sel .ar-caret{color:var(--primary)}
+.anchor-row .ar-main{flex:1;min-width:0}
+.anchor-row .ar-name{font-size:12.5px;color:var(--ink);font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.anchor-row .ar-sub{font-size:10.5px;color:var(--muted);display:flex;gap:6px}
+.anchor-row .ar-amt{font-family:var(--font-num);font-weight:700;font-size:12px;color:var(--ink);white-space:nowrap}
+.anchor-row.reversed .ar-name{text-decoration:line-through;opacity:.6}
+.ar-badges{display:flex;flex-direction:column;gap:3px;align-items:flex-end}
+
+/* 行徽章 ×2：疑点档（红黄绿）+ 完整度（蓝灰） */
+.rbadge{display:inline-block;font-size:9.5px;font-weight:700;padding:1.5px 6px;border-radius:5px;line-height:1.3;white-space:nowrap}
+.rbadge.red{color:#fff;background:var(--red)} .rbadge.amber{color:#fff;background:var(--amber)} .rbadge.green{color:var(--green);background:var(--green-bg);border:1px solid var(--green)}
+.cbadge{display:inline-block;font-size:9.5px;font-weight:700;padding:1.5px 6px;border-radius:5px;line-height:1.3;white-space:nowrap;border:1px solid}
+.cbadge.full{color:var(--comp-full);background:var(--comp-full-bg);border-color:var(--comp-full)}
+.cbadge.partial{color:var(--comp-partial);background:var(--comp-partial-bg);border-color:var(--comp-partial)}
+.cbadge.weak{color:var(--comp-weak);background:var(--comp-weak-bg);border-color:var(--comp-weak);border-style:dashed}
+.cbadge.na{color:var(--muted);background:#f3f5f8;border-color:var(--line);border-style:dashed}
+.chip-reversed{font-size:9px;color:var(--muted);border:1px dashed var(--line);border-radius:5px;padding:1px 5px}
+
+/* —— 证据链视图（行内手风琴·四层） —— */
+.evc-empty{color:var(--muted);font-size:12px;padding:14px 10px;text-align:center}
+.evc-empty b{color:var(--ink)}
+/* 展开在选中行正下方，视觉上与该行连成一体 */
+.anchor-row-detail{margin:0 0 8px;padding:9px 12px 5px;background:#fcfdff;border:1px solid var(--primary);border-top:0;
+  border-radius:0 0 10px 10px;box-shadow:inset 3px 0 0 rgba(19,78,114,.12)}
+.evc-meta{font-size:11px;color:var(--muted);margin-bottom:7px;display:flex;flex-wrap:wrap;align-items:center;gap:6px}
+.evc-meta .cbadge{vertical-align:middle}
+.evc-esc{font-size:11px;color:var(--comp-full);background:var(--comp-full-bg);border-radius:6px;padding:2px 7px}
+
+.ev-layer{position:relative;padding:2px 0 2px 18px;margin-bottom:3px}
+.ev-layer::before{content:"";position:absolute;left:5px;top:0;bottom:0;width:2px;background:var(--line)}
+.ev-layer.has::before{background:linear-gradient(var(--ev-explicit),var(--ev-inferred))}
+.ev-layer-label{font-size:10.5px;font-weight:700;color:var(--muted);letter-spacing:.02em;margin:4px 0 3px}
+.ev-layer-label .lyr-q{color:var(--ink2)}
+.ev-nodes{display:flex;flex-wrap:wrap;gap:6px}
+
+.ev-node{position:relative;display:inline-flex;flex-direction:column;gap:1px;min-width:96px;padding:6px 9px;border-radius:9px;
+  font-size:11.5px;cursor:pointer;background:#fff;transition:.1s}
+.ev-node .en-label{font-weight:700;color:var(--ink);display:flex;align-items:center;gap:4px}
+.ev-node .en-sub{font-size:10px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:150px}
+.ev-node .en-tag{font-size:9px;font-weight:700;padding:0 4px;border-radius:4px;margin-left:auto}
+/* 匹配方式角标：实线 L1 / 虚线 L2 / 点线 L3（诚实原则 §1.5：推断=虚线，永不伪装实线） */
+.ev-node.explicit{border:2px solid var(--ev-explicit);background:#f0fdfa}
+.ev-node.explicit .en-tag{color:#fff;background:var(--ev-explicit)}
+.ev-node.inferred{border:2px dashed var(--ev-inferred);background:#f8fafc}
+.ev-node.inferred .en-tag{color:#fff;background:var(--ev-inferred)}
+.ev-node.contextual{border:2px dotted var(--ev-context);background:#fafbfc}
+.ev-node.contextual .en-tag{color:#fff;background:var(--ev-context)}
+.ev-node.optional{opacity:.82}
+.ev-node.optional .en-label::after{content:"选";font-size:8.5px;color:var(--muted);border:1px solid var(--line);border-radius:3px;padding:0 3px;margin-left:3px}
+/* 缺失（提供但对不上）：灰色虚框，可点看期望依据 + 联动疑点 */
+.ev-node.missing{border:1.5px dashed #C0492F;background:#fdf3f1;color:var(--red)}
+.ev-node.missing .en-label{color:#B23A22}
+.ev-node.missing .en-tag{color:#fff;background:#C0492F}
+/* 材料未提供：灰底斜纹，不触发疑点（诚实原则 §6.3） */
+.ev-node.notprovided{cursor:default;color:var(--muted);border:1.5px solid var(--line);
+  background:repeating-linear-gradient(45deg,#f4f6f9,#f4f6f9 5px,#eceff3 5px,#eceff3 10px)}
+.ev-node.notprovided .en-tag{color:var(--muted);background:#e6eaef}
+.ev-node .en-alt{font-size:9px;color:var(--amber);margin-top:1px}
+.ev-node:hover{box-shadow:var(--shadow-sm);transform:translateY(-1px)}
+
+/* 缺失节点展开：期望依据 + 联动疑点卡片 */
+.evc-missing-detail{margin-top:8px;background:#fdf3f1;border:1px solid #f0c9bf;border-radius:9px;padding:9px 11px;font-size:11.5px}
+.evc-missing-detail .md-h{font-weight:700;color:#B23A22;margin-bottom:3px}
+.evc-missing-detail .md-basis{color:var(--ink2);margin-bottom:5px}
+.evc-missing-detail .md-link{display:inline-flex;align-items:center;gap:4px;font-size:11px;color:var(--red);cursor:pointer;font-weight:600}
+.evc-missing-detail .md-covered{color:var(--amber);font-size:11px}
+
+/* —— 原始材料库抽屉 —— */
+.raw-drawer{border-top:2px solid var(--line);background:#fbfcfe;flex:0 0 auto}
+.raw-drawer-toggle{width:100%;text-align:left;padding:9px 16px;background:none;border:0;cursor:pointer;
+  font-size:12px;font-weight:600;color:var(--ink2);display:flex;align-items:center;gap:6px}
+.raw-drawer-toggle:hover{background:#f2f6fb}
+.raw-drawer-toggle .rd-caret{display:inline-block;transition:transform .15s}
+.raw-drawer.open .raw-drawer-toggle .rd-caret{transform:rotate(90deg)}
+.raw-drawer-body{max-height:46vh;display:flex;flex-direction:column;border-top:1px solid var(--line)}
+.raw-drawer-body .doc-body{max-height:38vh}
+
+/* 材料原文 modal 内的反向索引 */
+.mat-revindex{background:var(--comp-full-bg);border:1px solid #cdddfb;border-radius:9px;padding:7px 11px;margin-bottom:10px;font-size:12px;color:var(--comp-full)}
+.mat-revindex b{font-weight:700}
+.mat-revindex .ri-line{color:var(--primary);cursor:pointer;text-decoration:underline dotted;margin:0 3px}

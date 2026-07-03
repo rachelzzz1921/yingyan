@@ -8,17 +8,22 @@ const { runShadowHarnessAll } = require('./harness/l4-shadow');
 const { runPromptHarness } = require('./harness/l1-prompt');
 const { runRuleHarness } = require('./harness/l2-rule');
 const { runRagHarnessAsync } = require('./harness/l5-rag');
+const { runPipelineHarness } = require('./harness/l6-pipeline');
 const { runG5Harness } = require('./harness/g5-gz-production');
 const { loadGateConfig } = require('./lib/paths');
 
 async function runYhfGate(opts = {}) {
   const cfg = loadGateConfig();
-  const layers = opts.layers || ['engine', 'rule', 'rag', 'shadow'];
+  const layers = opts.layers || ['engine', 'pipeline', 'rule', 'rag', 'shadow'];
   const report = { generated: new Date().toISOString(), mode: 'oracle', overall_pass: true };
 
   if (layers.includes('engine')) {
     report.engine = runEngineHarness();
     if (!report.engine.gates.G0_clean_zero_fp) report.overall_pass = false;
+  }
+  if (layers.includes('pipeline') || cfg.gates?.G6_pipeline_oracle?.enabled) {
+    report.pipeline = await runPipelineHarness();
+    if (report.pipeline.pass === false) report.overall_pass = false;
   }
   // 独立地面真值层(金标准去自评化):与引擎自生成快照解耦的第二道真值。
   // G0b_clean_zero_fp 阻塞(独立复核零误报);recall_floor 报告态(非阻塞,同既有 recall 口径)。

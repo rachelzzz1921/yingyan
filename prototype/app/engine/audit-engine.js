@@ -6,7 +6,7 @@
  *
  * 设计：本引擎对"可由结构化数据确定判定"的规则做真·计算（非硬编码答案）——
  *       修改材料包（如补入基因检测报告），对应疑点会自动消失。
- *       纯语义规则（需读自由文本病历）由 llm-audit.js 走 LLM 路径，二者互补。
+ *       纯语义规则（需读自由文本病历）由 llm-agent.js 走 LLM 路径，二者互补。
  *
  * 三要素门禁：每条疑点必须给出 ①证据定位 ②政策条款原文 ③推理过程，缺一降级。
  * 存疑转线索·不误报：医学合理性争议出"线索"，证据闭环才出"疑点"。
@@ -18,6 +18,7 @@ const fs = require('fs');
 const path = require('path');
 const { genDebate } = require('./debate');
 const { compileCaseObject } = require('./case-object');
+const { resolveEvidence } = require('./evidence-resolver');
 const { NATURE, NATURE_BASIS, findingNature, caseNature, natureCounts } = require('./nature');
 const { applyComplianceGate } = require('./compliance-gate');
 const { JIANGSU_NURSING_PRICE, REF_ID: JIANGSU_NURSING_REF } = require('../kb/jiangsu-prices');
@@ -1584,7 +1585,21 @@ function reconcile(rawFindings) {
   return { findings: out, reconciliation_log: log };
 }
 
-// ---------- A1/Q1 证据链完整度(数据侧) ----------
+// 从已生效 findings 的 evidence.loc（"费用清单 第7行"）解析被规则命中的费用行号集合，
+// 供 §7 缺失即疑点去重：一线规则已覆盖该行 → 完整度不重复生成管理类疑点卡片。
+function flaggedLineSet(findings) {
+  const s = new Set();
+  for (const f of findings || []) {
+    for (const e of (f.evidence || [])) {
+      const m = String(e.loc || '').match(/第\s*([\d、,，\s]+)\s*行/);
+      if (m) m[1].split(/[、,，\s]+/).forEach(n => { const v = parseInt(n, 10); if (v) s.add(v); });
+    }
+  }
+  return s;
+}
+
+// ---------- A1/Q1 证据链完整度(数据侧) — 旧版兜底 ----------
+// 新版见 evidence-resolver.js（§4–7）。此函数保留为 resolver 抛错时的降级路径。
 // 以结算费用明细为主锚:一笔费用能召集到几张关联表作证(医嘱/护理/检验/手术/影像/追溯码…)。
 // 与"覆盖度"(规则侧:哪些规则维度查过)明确区分,UI 分开放置。
 function evidenceChainCompleteness(record) {
@@ -1770,8 +1785,31 @@ function runAudit(record, rulesArray, options = {}) {
   merged = gov.findings;
   const { suspected, clues, shadowed, summary: govSummary } = gov;
   const coverage = coverageManifest(routing, record, merged); // doc08宏观②
+  // A1/Q1 证据链完整度（数据侧，实现规格 §4–7）：以费用明细行为锚建四层证据链，
+  // 产出行级完整度 + missing_evidence 事件。§7 缺失即疑点：仅对「一线规则未覆盖该费用行」
+  // 的必需证据缺口自动生成管理类可疑卡片（去重、方向单一 完整度→规则，不改 findings[]）。
   let evidence_chain = null;
-  try { evidence_chain = evidenceChainCompleteness(record); } catch (_) { /* 数据侧完整度失败不阻断 */ }
+  try {
+    const ev = resolveEvidence(record);
+    if (ev) {
+      const flagged = flaggedLineSet(merged);
+      const autoSuspects = [], coveredGaps = [];
+      for (const m of ev.missing_evidence) {
+        if (!m.auto_suspect) continue;
+        const entry = { ...m, status: '疑点', nature: '可疑', source: 'evidence_completeness', management_class: true, basis: m.expected_reason };
+        if (flagged.has(m.line_no)) coveredGaps.push({ ...entry, covered_by_rule: true });
+        else autoSuspects.push(entry);
+      }
+      ev.auto_suspects = autoSuspects;      // 未被一线规则覆盖 → 由完整度补位的管理类疑点
+      ev.covered_gaps = coveredGaps;        // 已被规则覆盖 → 仅在证据链视图做联动，不重复计数
+      ev.auto_suspect_count = autoSuspects.length;
+      evidence_chain = ev;
+    } else {
+      evidence_chain = evidenceChainCompleteness(record);
+    }
+  } catch (_) {
+    try { evidence_chain = evidenceChainCompleteness(record); } catch (__) { /* 数据侧完整度失败不阻断 */ }
+  }
 
   // 三档定性(Q4):治理(shadow/合规前置降级)之后定档,保证降级过的 finding 档位正确
   for (const f of merged) {

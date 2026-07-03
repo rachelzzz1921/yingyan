@@ -40,7 +40,7 @@ const { INTAKE_SLOTS } = require('./engine/intake-classifier');
 const { listConnectors, getConnector } = require('./connectors/hospital');
 const { isReady: llmReady, providerName } = require('./engine/llm-provider');
 const { loadPolicyMaps, status: kbStatus, keywordSearch, semanticSearch, loadJsonKB, parseAdmitDate, filterPolicyMaps } = require('./kb/retrieval');
-const { enrichPolicyContext } = require('./kb/analysis-bridge');
+const { runAuditPipeline, buildEnrichedContext, kbFromPolicyTexts } = require('./engine/audit-pipeline');
 const { enrichRulesDoc } = require('./engine/rule-catalog');
 const { bootstrapRegistry, registryStats, syncRegistryFromCases, CASE_ID_ALIAS, loadRegistry, discoverCaseFolders } = require('./engine/case-id');
 const { appendDebateReview, maybeEvalDraftFromDebate } = require('./engine/review-debate');
@@ -896,7 +896,10 @@ const server = http.createServer(async (req, res) => {
       const id = url.searchParams.get('id') || 'main';
       const record = DB.cases[id];
       if (!record) return sendJSON(res, { error: 'case not found', case_id: id }, 404);
-      return sendJSON(res, record);
+      // 附证据链完整度（数据侧，§4–7）：锚视图/完整度在选案卷即可渲染，无需先跑稽核。
+      let evidence_chain = null;
+      try { evidence_chain = require('./engine/evidence-resolver').resolveEvidence(record); } catch (_) { /* 不阻断案卷返回 */ }
+      return sendJSON(res, evidence_chain ? { ...record, evidence_chain } : record);
     }
     if (p === '/api/cases') {
       const detail = url.searchParams.get('detail') === '1' || url.searchParams.has('status') || url.searchParams.has('dept');
@@ -1867,10 +1870,10 @@ const server = http.createServer(async (req, res) => {
       if (!finding?.rule_id) return sendJSON(res, { error: '缺少 finding' }, 400);
       try {
         const { runDebate } = require('./engine/llm-agent');
-        const ctx = auditContextForRecord(record);
-        const filteredKb = {
-          entries: (DB.kb1.entries || []).filter(e => ctx.policyTexts[e.ref_id]),
-        };
+        const rules = rulesWithOverlay(DB.rulesDoc.rules);
+        const enriched = await buildEnrichedContext(record, rules, DB.policyMapsRaw, { rag: true });
+        const ctx = enriched;
+        const kb = kbFromPolicyTexts(enriched.policyTexts, DB.kb1);
         // Q11 预载:合议结果赛前真实跑出、现场默认取预载(界面不标注缓存字样,内部台账留痕);
         // body.force_live=true 或无预载 → 实时跑。这是四级降级梯子的第②级,同时也是默认演示路径。
         let debate = null;
@@ -1885,12 +1888,19 @@ const server = http.createServer(async (req, res) => {
           } catch (_) { /* 无预载文件 → 实时 */ }
         }
         if (!debate) {
-          debate = await runDebate(finding, record, filteredKb.entries.length ? filteredKb : DB.kb1, {
+          debate = await runDebate(finding, record, kb, {
             rules: DB.rulesDoc.rules,
             policyTexts: ctx.policyTexts,
           });
         }
         const status = debate.status_after && debate.status_after !== finding.status ? debate.status_after : finding.status;
+        const finding_patch = {
+          debate,
+          status_after: status,
+          ...( /降级|转人工|证据不足/.test(debate.verdict || '') && status !== finding.status
+            ? { suggested_status: status }
+            : {}),
+        };
         let review_entry = null;
         let eval_draft = null;
         if (body.log_review !== false) {
@@ -1904,7 +1914,7 @@ const server = http.createServer(async (req, res) => {
             evalDraftService.appendEvalDraft,
           );
         }
-        return sendJSON(res, { ok: true, debate, status, finding_id: finding.finding_id, review_entry, eval_draft });
+        return sendJSON(res, { ok: true, debate, status, finding_id: finding.finding_id, finding_patch, review_entry, eval_draft });
       } catch (e) {
         return sendJSON(res, { error: e.needsKey ? '真·对抗辩论需配置 SILICONFLOW_API_KEY / MINIMAX_API_KEY / ANTHROPIC_API_KEY' : e.message, needsKey: !!e.needsKey }, e.needsKey ? 503 : 500);
       }
@@ -2338,8 +2348,12 @@ const server = http.createServer(async (req, res) => {
         const rules = rulesWithOverlay(DB.rulesDoc.rules);
         const { orchestrate } = require('./engine/agent-orchestrator');
         const trace = orchestrate(record, rules, {
-          policyTexts: ctx.policyTexts, policyVerified: ctx.policyVerified,
-          shadowRules: currentShadowRules(), retiredRules: currentRetiredRules(),
+          policyMapsRaw: DB.policyMapsRaw,
+          policyTexts: ctx.policyTexts,
+          policyVerified: ctx.policyVerified,
+          policyPending: ctx.policyPending,
+          shadowRules: currentShadowRules(),
+          retiredRules: currentRetiredRules(),
           caseKey: caseId,
         });
         return sendJSON(res, trace);
@@ -2439,150 +2453,92 @@ const server = http.createServer(async (req, res) => {
     if (p === '/api/audit' && req.method === 'POST') {
       const body = await readBody(req);
       const mode = url.searchParams.get('mode');
-      let record = body.record || DB.cases[body.caseId || 'main'];
-      if (!record) return sendJSON(res, { error: 'case not found', case_id: body.caseId || 'main' }, 404);
-      // 对抗注入演示：注入指定攻击（body.inject 为攻击 id 字符串，或 true=默认第一种）
+      const caseId = body.caseId || 'main';
+      let record = body.record || DB.cases[caseId];
+      if (!record) return sendJSON(res, { error: 'case not found', case_id: caseId }, 404);
       let injectedAttack = null;
       if (body.inject) {
         const out = injectAttack(record, typeof body.inject === 'string' ? body.inject : undefined);
         record = out.rec; injectedAttack = out.atk;
       }
-      const t0 = Date.now();
-
-      if (mode === 'llm') {
-        try {
-          const { llmAgentAudit } = require('./engine/llm-agent');
-          const ctx = auditContextForRecord(record);
-          const filteredKb = {
-            entries: (DB.kb1.entries || []).filter(e => ctx.policyTexts[e.ref_id]),
-          };
-          const report = await llmAgentAudit(record, DB.rulesDoc.rules, {
-            kb: filteredKb.entries.length ? filteredKb : DB.kb1,
-            policyVerified: ctx.policyVerified,
-            policyTexts: ctx.policyTexts,
-            shadowRules: currentShadowRules(),
-            retiredRules: currentRetiredRules(),
-          });
-          report.report_meta.as_of = ctx.as_of;
-          report.report_meta.shadow_governance = true;
-          // LLM 路径不算这些案卷级元数据 → 从确定性引擎补「正确不报 / 触发器路由 / 覆盖度」，
-          // 否则报告页「不报」「详情」标签在真·LLM 模式下空白
-          try {
-            const det = runAuditForRecord(record);
-            if (!(report.correctly_not_flagged || []).length) report.correctly_not_flagged = det.correctly_not_flagged || [];
-            report.report_meta.routing = report.report_meta.routing || det.report_meta.routing;
-            report.report_meta.coverage = report.report_meta.coverage || det.report_meta.coverage;
-            report.report_meta.audit_scope = report.report_meta.audit_scope || det.report_meta.audit_scope;
-            report.report_meta.caseobject_summary = report.report_meta.caseobject_summary || det.report_meta.caseobject_summary;
-          } catch (_) { /* 补充元数据失败不影响主报告 */ }
-          annotateNature(report);
-          report.report_meta.panel = '稽核';
-          const llmOverlayIds = Object.keys(precipService.loadRuleOverlay(DATA).patches || {});
-          if (llmOverlayIds.length) report.report_meta.overlay_rules = llmOverlayIds;
-          report.report_meta.elapsed_ms = Date.now() - t0;
-          return sendJSON(res, report);
-        } catch (e) {
-          // 诚实区分：无 key → 明确告知"真·语义分析需配 key"，并回退确定性引擎(标注其推理为模板)
-          const report = runAuditForRecord(record);
-          report.report_meta.engine_mode = e.needsKey
-            ? '⚠ 真·LLM语义分析未启用（需配 SILICONFLOW_API_KEY / MINIMAX_API_KEY / ANTHROPIC_API_KEY）→ 当前为确定性规则引擎（检测为真·计算，自然语言推理为模板脚本）'
-            : '确定性引擎（LLM路径失败，已回退）：' + e.message;
-          report.report_meta.llm_needs_key = !!e.needsKey;
-          report.report_meta.elapsed_ms = Date.now() - t0;
-          return sendJSON(res, report);
-        }
-      }
-
-      if (mode === 'super') {
-        const caseId = body.caseId || 'main';
-        const rules = rulesWithOverlay(DB.rulesDoc.rules);
-        const overlayIds = Object.keys(precipService.loadRuleOverlay(DATA).patches || {});
-        const ctx = auditContextForRecord(record);
-        let policyTexts = ctx.policyTexts;
-        let policyVerified = ctx.policyVerified;
-        let ragMeta = null;
-        const enriched = await enrichPolicyContext(record, rules, policyTexts, policyVerified);
-        policyTexts = enriched.policyTexts;
-        policyVerified = enriched.policyVerified;
-        ragMeta = { query: enriched.rag_query, hits: enriched.rag_hits };
-        let extraFindings = [];
-        let indicationSemantic = 'sync';
-        if (llmReady()) {
-          try {
-            extraFindings = await buildIndicationLlmFindings(record, rules, policyTexts, policyVerified);
-            if (extraFindings.length) indicationSemantic = 'llm';
-          } catch (_) { /* LLM 适应症层失败回退 sync */ }
-        }
-        const report = runAudit(record, rules, {
-          policyTexts,
-          policyVerified,
-          policyPending: ctx.policyPending,
-          parseQuality: ctx.parseQuality,
-          shadowRules: currentShadowRules(),
-          retiredRules: currentRetiredRules(),
-          extraFindings: indicationSemantic === 'llm' ? extraFindings : [],
-          skipIndicationSync: indicationSemantic === 'llm',
-        });
-        annotateNature(report);
-        if (ragMeta) report.report_meta.rag = ragMeta;
-        report.report_meta.super_fused = true;
-        report.report_meta.indication_semantic = indicationSemantic;
-        report.report_meta.super_llm = llmReady() ? (indicationSemantic === 'llm' ? 'indication+B-201' : 'deferred') : 'fallback';
-        report.report_meta.engine_mode = llmReady()
-          ? (indicationSemantic === 'llm'
-            ? '超级增强：RAG+适应症LLM语义(B-201)+规则合议'
-            : '超级增强：RAG+对抗防护+规则合议（LLM 语义请点「真·语义分析」）')
-          : '超级增强：RAG+对抗防护（LLM 未配置）';
-        report.report_meta.analysis_kind = 'deterministic+template+rag';
-        report.report_meta.real_agent = false;
-        report.report_meta.panel = '稽核';
-        report.report_meta.case_id = caseId;
-        if (overlayIds.length) report.report_meta.overlay_rules = overlayIds;
-        report.report_meta.elapsed_ms = Date.now() - t0;
-        report.report_meta.injected = !!body.inject;
-      if (injectedAttack) report.report_meta.injected_attack = { id: injectedAttack.id, technique: injectedAttack.technique, loc: injectedAttack.loc, targets: injectedAttack.targets, goal: injectedAttack.goal };
-        return sendJSON(res, report);
-      }
-
-      const caseId = body.caseId || 'main';
       let rules = rulesWithOverlay(DB.rulesDoc.rules);
+      let examFilterMeta = null;
       if (mode === 'exam') {
         const filt = filterRulesForExam(rules);
         rules = filt.active;
-        var examFilterMeta = { total: filt.total, used: filt.used, excluded: filt.excluded };
+        examFilterMeta = { total: filt.total, used: filt.used, excluded: filt.excluded };
       }
+
       const overlayIds = Object.keys(precipService.loadRuleOverlay(DATA).patches || {});
-      const useRag = url.searchParams.get('rag') === '1' || body.rag === true;
-      const ctx = auditContextForRecord(record);
-      let policyTexts = ctx.policyTexts;
-      let policyVerified = ctx.policyVerified;
-      let ragMeta = null;
-      if (useRag) {
-        const enriched = await enrichPolicyContext(record, rules, policyTexts, policyVerified);
-        policyTexts = enriched.policyTexts;
-        policyVerified = enriched.policyVerified;
-        ragMeta = { query: enriched.rag_query, hits: enriched.rag_hits };
-      }
-      const report = runAudit(record, rules, {
-        policyTexts,
-        policyVerified,
-        policyPending: ctx.policyPending,
-        parseQuality: ctx.parseQuality,
+      const ragRequested = url.searchParams.get('rag') === '1' || body.rag === true;
+      const profile = mode === 'llm'
+        ? 'deep'
+        : mode === 'super'
+          ? 'super'
+          : mode === 'exam'
+            ? 'exam'
+            : (ragRequested ? 'standard' : 'fast');
+      const useRag = profile === 'deep' || profile === 'super' || ragRequested;
+      const t0 = Date.now();
+
+      const pipelineOpts = {
+        profile,
+        policyMapsRaw: DB.policyMapsRaw,
         shadowRules: currentShadowRules(),
         retiredRules: currentRetiredRules(),
-      });
-      annotateNature(report, { examMode: mode === 'exam' });
-      if (ragMeta) report.report_meta.rag = ragMeta;
-      report.report_meta.engine_mode = mode === 'exam'
-        ? `体检模式（院端自查·${examFilterMeta.used}/${examFilterMeta.total} 条院端规则子集）`
-        : '确定性规则引擎：检测=真·规则计算(时间/数量/内涵/合议) · 自然语言推理/控辩裁/CoVe=模板脚本（真·Agent语义推理请切"真·语义分析(LLM)"）';
-      report.report_meta.analysis_kind = 'deterministic+template';
-      report.report_meta.real_agent = false;
-      report.report_meta.panel = mode === 'exam' ? '体检' : '稽核';
+        rag: useRag,
+        llmShadow: body.llm_shadow,
+      };
+
+      let report;
+      try {
+        report = await runAuditPipeline(record, rules, pipelineOpts);
+      } catch (e) {
+        if (profile === 'deep') {
+          const fallback = runAuditForRecord(record);
+          fallback.report_meta.engine_mode = e.needsKey
+            ? '⚠ 真·LLM语义分析未启用（需配 SILICONFLOW_API_KEY / MINIMAX_API_KEY / ANTHROPIC_API_KEY）→ 当前为确定性规则引擎（检测=真·规则计算(时间/数量/内涵/合议) · 自然语言推理/控辩裁/CoVe=模板脚本）'
+            : '确定性引擎（LLM路径失败，已回退）：' + e.message;
+          fallback.report_meta.llm_needs_key = !!e.needsKey;
+          fallback.report_meta.elapsed_ms = Date.now() - t0;
+          annotateNature(fallback);
+          fallback.report_meta.panel = '稽核';
+          fallback.report_meta.case_id = caseId;
+          if (overlayIds.length) fallback.report_meta.overlay_rules = overlayIds;
+          fallback.report_meta.injected = !!body.inject;
+          if (injectedAttack) {
+            fallback.report_meta.injected_attack = {
+              id: injectedAttack.id,
+              technique: injectedAttack.technique,
+              loc: injectedAttack.loc,
+              targets: injectedAttack.targets,
+              goal: injectedAttack.goal,
+            };
+          }
+          return sendJSON(res, fallback);
+        }
+        return sendJSON(res, { error: e.message }, 500);
+      }
+
+      report.report_meta.elapsed_ms = Date.now() - t0;
       report.report_meta.case_id = caseId;
+      report.report_meta.panel = mode === 'exam' ? '体检' : '稽核';
+      report.report_meta.shadow_governance = true;
+      if (overlayIds.length) report.report_meta.overlay_rules = overlayIds;
+      report.report_meta.injected = !!body.inject;
+      if (injectedAttack) {
+        report.report_meta.injected_attack = {
+          id: injectedAttack.id,
+          technique: injectedAttack.technique,
+          loc: injectedAttack.loc,
+          targets: injectedAttack.targets,
+          goal: injectedAttack.goal,
+        };
+      }
+
       if (mode === 'exam') {
         report.report_meta.exam_rule_filter = examFilterMeta;
-        // 院端口径：医院自查不会"责令"自己 → 处置措辞改为"建议主动退回/整改"(宽严相济从轻),只换措辞不动检测
+        report.report_meta.engine_mode = `体检模式（院端自查·${examFilterMeta.used}/${examFilterMeta.total} 条院端规则子集）`;
         const toHospitalVoice = (s) => typeof s === 'string'
           ? s.replace(/责令退回/g, '主动退回').replace(/责令改正/g, '主动整改').replace(/责令/g, '建议').replace(/拒付/g, '自查核减')
           : s;
@@ -2591,12 +2547,16 @@ const server = http.createServer(async (req, res) => {
           if (fnd.disposal) fnd.disposal = toHospitalVoice(fnd.disposal);
         }
       }
-      if (overlayIds.length) report.report_meta.overlay_rules = overlayIds;
-      report.report_meta.elapsed_ms = Date.now() - t0;
-      report.report_meta.injected = !!body.inject;
-      if (injectedAttack) report.report_meta.injected_attack = { id: injectedAttack.id, technique: injectedAttack.technique, loc: injectedAttack.loc, targets: injectedAttack.targets, goal: injectedAttack.goal };
-      if (body.persistHistory !== false) persistPriorityAudit(caseId, report, body.auditor_id);
-      // 体检模式落自查快照（整改前后复跑对比的留痕基础）；注入演示不入快照
+
+      if (profile === 'fast' && mode !== 'exam') {
+        report.report_meta.engine_mode = '确定性规则引擎：检测=真·规则计算(时间/数量/内涵/合议) · 自然语言推理/控辩裁/CoVe=模板脚本（真·Agent语义推理请切"真·语义分析(LLM)"）';
+      }
+
+      annotateNature(report, { examMode: mode === 'exam' });
+
+      if ((profile === 'fast' || profile === 'standard') && body.persistHistory !== false) {
+        persistPriorityAudit(caseId, report, body.auditor_id);
+      }
       if (mode === 'exam' && !body.inject) {
         try {
           const snap = examSnapshot.recordSnapshot(caseId, report);
@@ -2606,7 +2566,7 @@ const server = http.createServer(async (req, res) => {
             const diff = examSnapshot.diffSnapshots(caseId);
             if (diff.ok) report.report_meta.exam_diff = { from_at: diff.from.at, ...diff.summary };
           }
-        } catch (e) { /* 快照失败不影响主报告 */ }
+        } catch (_) { /* 快照失败不影响主报告 */ }
       }
       return sendJSON(res, report);
     }
