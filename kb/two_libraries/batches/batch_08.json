@@ -1,0 +1,2327 @@
+[
+  {
+    "kp_id": "KP-28d0a2198d6cca08",
+    "rule_class": "医疗服务项目限定频次",
+    "gz_code": "GZ10000102014000",
+    "level1": "政策类",
+    "level2": "医疗服务项目政策限定类",
+    "med_code": "001102000040000",
+    "med_codes": [
+      "001102000040000"
+    ],
+    "med_code_count": 1,
+    "item_name": "门急诊留观诊查费",
+    "constraint": "日",
+    "detect_logic": "使用项目的数量总计超过上限数量",
+    "batch": 8,
+    "batch_tag": "batch_08",
+    "published_at": null,
+    "supersedes": null,
+    "source": {
+      "announcement_url": null,
+      "attachment_file": "第八批-1 “医疗服务项目限定频次”规则对应知识点明细.xlsx",
+      "row": 1,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-75b5317de86e23de",
+    "rule_class": "医疗服务项目限定频次",
+    "gz_code": "GZ10000102014000",
+    "level1": "政策类",
+    "level2": "医疗服务项目政策限定类",
+    "med_code": "001102000050000",
+    "med_codes": [
+      "001102000050000"
+    ],
+    "med_code_count": 1,
+    "item_name": "住院诊查费",
+    "constraint": "日",
+    "detect_logic": "使用项目的数量总计超过上限数量",
+    "batch": 8,
+    "batch_tag": "batch_08",
+    "published_at": null,
+    "supersedes": null,
+    "source": {
+      "announcement_url": null,
+      "attachment_file": "第八批-1 “医疗服务项目限定频次”规则对应知识点明细.xlsx",
+      "row": 2,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-b46b056dff1d9cbd",
+    "rule_class": "医疗服务项目限定频次",
+    "gz_code": "GZ10000102014000",
+    "level1": "政策类",
+    "level2": "医疗服务项目政策限定类",
+    "med_code": "001103000010000",
+    "med_codes": [
+      "001103000010000"
+    ],
+    "med_code_count": 1,
+    "item_name": "急诊监护费",
+    "constraint": "日",
+    "detect_logic": "使用项目的数量总计超过上限数量",
+    "batch": 8,
+    "batch_tag": "batch_08",
+    "published_at": null,
+    "supersedes": null,
+    "source": {
+      "announcement_url": null,
+      "attachment_file": "第八批-1 “医疗服务项目限定频次”规则对应知识点明细.xlsx",
+      "row": 3,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-f6c673de6a3ba519",
+    "rule_class": "医疗服务项目限定频次",
+    "gz_code": "GZ10000102014000",
+    "level1": "政策类",
+    "level2": "医疗服务项目政策限定类",
+    "med_code": "001107000010000",
+    "med_codes": [
+      "001107000010000"
+    ],
+    "med_code_count": 1,
+    "item_name": "病房取暖费",
+    "constraint": "日",
+    "detect_logic": "使用项目的数量总计超过上限数量",
+    "batch": 8,
+    "batch_tag": "batch_08",
+    "published_at": null,
+    "supersedes": null,
+    "source": {
+      "announcement_url": null,
+      "attachment_file": "第八批-1 “医疗服务项目限定频次”规则对应知识点明细.xlsx",
+      "row": 4,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-8b265e48438bc878",
+    "rule_class": "医疗服务项目限定频次",
+    "gz_code": "GZ10000102014000",
+    "level1": "政策类",
+    "level2": "医疗服务项目政策限定类",
+    "med_code": "001108000010000",
+    "med_codes": [
+      "001108000010000"
+    ],
+    "med_code_count": 1,
+    "item_name": "病房空调降温费",
+    "constraint": "日",
+    "detect_logic": "使用项目的数量总计超过上限数量",
+    "batch": 8,
+    "batch_tag": "batch_08",
+    "published_at": null,
+    "supersedes": null,
+    "source": {
+      "announcement_url": null,
+      "attachment_file": "第八批-1 “医疗服务项目限定频次”规则对应知识点明细.xlsx",
+      "row": 5,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-ea234a45c82f34d5",
+    "rule_class": "医疗服务项目限定频次",
+    "gz_code": "GZ10000102014000",
+    "level1": "政策类",
+    "level2": "医疗服务项目政策限定类",
+    "med_code": "001109000010000",
+    "med_codes": [
+      "001109000010000"
+    ],
+    "med_code_count": 1,
+    "item_name": "普通病房床位费",
+    "constraint": "日",
+    "detect_logic": "使用项目的数量总计超过上限数量",
+    "batch": 8,
+    "batch_tag": "batch_08",
+    "published_at": null,
+    "supersedes": null,
+    "source": {
+      "announcement_url": null,
+      "attachment_file": "第八批-1 “医疗服务项目限定频次”规则对应知识点明细.xlsx",
+      "row": 6,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-281d775f4ed57c7f",
+    "rule_class": "医疗服务项目限定频次",
+    "gz_code": "GZ10000102014000",
+    "level1": "政策类",
+    "level2": "医疗服务项目政策限定类",
+    "med_code": "001109000020000",
+    "med_codes": [
+      "001109000020000"
+    ],
+    "med_code_count": 1,
+    "item_name": "层流洁净病房床位费",
+    "constraint": "日",
+    "detect_logic": "使用项目的数量总计超过上限数量",
+    "batch": 8,
+    "batch_tag": "batch_08",
+    "published_at": null,
+    "supersedes": null,
+    "source": {
+      "announcement_url": null,
+      "attachment_file": "第八批-1 “医疗服务项目限定频次”规则对应知识点明细.xlsx",
+      "row": 7,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-b2cebe7052fd7a13",
+    "rule_class": "医疗服务项目限定频次",
+    "gz_code": "GZ10000102014000",
+    "level1": "政策类",
+    "level2": "医疗服务项目政策限定类",
+    "med_code": "001109000030000",
+    "med_codes": [
+      "001109000030000"
+    ],
+    "med_code_count": 1,
+    "item_name": "监护病房床位费",
+    "constraint": "日",
+    "detect_logic": "使用项目的数量总计超过上限数量",
+    "batch": 8,
+    "batch_tag": "batch_08",
+    "published_at": null,
+    "supersedes": null,
+    "source": {
+      "announcement_url": null,
+      "attachment_file": "第八批-1 “医疗服务项目限定频次”规则对应知识点明细.xlsx",
+      "row": 8,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-ae8c9e3fd23684c3",
+    "rule_class": "医疗服务项目限定频次",
+    "gz_code": "GZ10000102014000",
+    "level1": "政策类",
+    "level2": "医疗服务项目政策限定类",
+    "med_code": "001109000040000",
+    "med_codes": [
+      "001109000040000"
+    ],
+    "med_code_count": 1,
+    "item_name": "特殊防护病房床位费",
+    "constraint": "日",
+    "detect_logic": "使用项目的数量总计超过上限数量",
+    "batch": 8,
+    "batch_tag": "batch_08",
+    "published_at": null,
+    "supersedes": null,
+    "source": {
+      "announcement_url": null,
+      "attachment_file": "第八批-1 “医疗服务项目限定频次”规则对应知识点明细.xlsx",
+      "row": 9,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-16929d7e2c287b96",
+    "rule_class": "医疗服务项目限定频次",
+    "gz_code": "GZ10000102014000",
+    "level1": "政策类",
+    "level2": "医疗服务项目政策限定类",
+    "med_code": "001109000050000",
+    "med_codes": [
+      "001109000050000"
+    ],
+    "med_code_count": 1,
+    "item_name": "急诊观察床位费",
+    "constraint": "日",
+    "detect_logic": "使用项目的数量总计超过上限数量",
+    "batch": 8,
+    "batch_tag": "batch_08",
+    "published_at": null,
+    "supersedes": null,
+    "source": {
+      "announcement_url": null,
+      "attachment_file": "第八批-1 “医疗服务项目限定频次”规则对应知识点明细.xlsx",
+      "row": 10,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-2cc4e4e0bce0a236",
+    "rule_class": "医疗服务项目限定频次",
+    "gz_code": "GZ10000102014000",
+    "level1": "政策类",
+    "level2": "医疗服务项目政策限定类",
+    "med_code": "001201000030000",
+    "med_codes": [
+      "001201000030000"
+    ],
+    "med_code_count": 1,
+    "item_name": "Ⅰ级护理",
+    "constraint": "日",
+    "detect_logic": "使用项目的数量总计超过上限数量",
+    "batch": 8,
+    "batch_tag": "batch_08",
+    "published_at": null,
+    "supersedes": null,
+    "source": {
+      "announcement_url": null,
+      "attachment_file": "第八批-1 “医疗服务项目限定频次”规则对应知识点明细.xlsx",
+      "row": 11,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-a75ce2a98d0ab1e3",
+    "rule_class": "医疗服务项目限定频次",
+    "gz_code": "GZ10000102014000",
+    "level1": "政策类",
+    "level2": "医疗服务项目政策限定类",
+    "med_code": "001201000040000",
+    "med_codes": [
+      "001201000040000"
+    ],
+    "med_code_count": 1,
+    "item_name": "Ⅱ级护理",
+    "constraint": "日",
+    "detect_logic": "使用项目的数量总计超过上限数量",
+    "batch": 8,
+    "batch_tag": "batch_08",
+    "published_at": null,
+    "supersedes": null,
+    "source": {
+      "announcement_url": null,
+      "attachment_file": "第八批-1 “医疗服务项目限定频次”规则对应知识点明细.xlsx",
+      "row": 12,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-350d6dfe8b02829e",
+    "rule_class": "医疗服务项目限定频次",
+    "gz_code": "GZ10000102014000",
+    "level1": "政策类",
+    "level2": "医疗服务项目政策限定类",
+    "med_code": "001201000050000",
+    "med_codes": [
+      "001201000050000"
+    ],
+    "med_code_count": 1,
+    "item_name": "Ⅲ级护理",
+    "constraint": "日",
+    "detect_logic": "使用项目的数量总计超过上限数量",
+    "batch": 8,
+    "batch_tag": "batch_08",
+    "published_at": null,
+    "supersedes": null,
+    "source": {
+      "announcement_url": null,
+      "attachment_file": "第八批-1 “医疗服务项目限定频次”规则对应知识点明细.xlsx",
+      "row": 13,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-e1a8f0d8ea2e92d1",
+    "rule_class": "医疗服务项目限定频次",
+    "gz_code": "GZ10000102014000",
+    "level1": "政策类",
+    "level2": "医疗服务项目政策限定类",
+    "med_code": "001201000060000",
+    "med_codes": [
+      "001201000060000"
+    ],
+    "med_code_count": 1,
+    "item_name": "特殊疾病护理",
+    "constraint": "日",
+    "detect_logic": "使用项目的数量总计超过上限数量",
+    "batch": 8,
+    "batch_tag": "batch_08",
+    "published_at": null,
+    "supersedes": null,
+    "source": {
+      "announcement_url": null,
+      "attachment_file": "第八批-1 “医疗服务项目限定频次”规则对应知识点明细.xlsx",
+      "row": 14,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-353801f97b272cad",
+    "rule_class": "医疗服务项目限定频次",
+    "gz_code": "GZ10000102014000",
+    "level1": "政策类",
+    "level2": "医疗服务项目政策限定类",
+    "med_code": "001201000070000",
+    "med_codes": [
+      "001201000070000"
+    ],
+    "med_code_count": 1,
+    "item_name": "新生儿护理",
+    "constraint": "日",
+    "detect_logic": "使用项目的数量总计超过上限数量",
+    "batch": 8,
+    "batch_tag": "batch_08",
+    "published_at": null,
+    "supersedes": null,
+    "source": {
+      "announcement_url": null,
+      "attachment_file": "第八批-1 “医疗服务项目限定频次”规则对应知识点明细.xlsx",
+      "row": 15,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-6dda649af90b11e3",
+    "rule_class": "医疗服务项目限定频次",
+    "gz_code": "GZ10000102014000",
+    "level1": "政策类",
+    "level2": "医疗服务项目政策限定类",
+    "med_code": "001201000090000",
+    "med_codes": [
+      "001201000090000"
+    ],
+    "med_code_count": 1,
+    "item_name": "精神病护理",
+    "constraint": "日",
+    "detect_logic": "使用项目的数量总计超过上限数量",
+    "batch": 8,
+    "batch_tag": "batch_08",
+    "published_at": null,
+    "supersedes": null,
+    "source": {
+      "announcement_url": null,
+      "attachment_file": "第八批-1 “医疗服务项目限定频次”规则对应知识点明细.xlsx",
+      "row": 16,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-7e8a2aa24c5e64ad",
+    "rule_class": "医疗服务项目限定频次",
+    "gz_code": "GZ10000102014000",
+    "level1": "政策类",
+    "level2": "医疗服务项目政策限定类",
+    "med_code": "001201000100000",
+    "med_codes": [
+      "001201000100000"
+    ],
+    "med_code_count": 1,
+    "item_name": "气管切开护理",
+    "constraint": "日",
+    "detect_logic": "使用项目的数量总计超过上限数量",
+    "batch": 8,
+    "batch_tag": "batch_08",
+    "published_at": null,
+    "supersedes": null,
+    "source": {
+      "announcement_url": null,
+      "attachment_file": "第八批-1 “医疗服务项目限定频次”规则对应知识点明细.xlsx",
+      "row": 17,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-c7b3a494314b68e2",
+    "rule_class": "医疗服务项目限定频次",
+    "gz_code": "GZ10000102014000",
+    "level1": "政策类",
+    "level2": "医疗服务项目政策限定类",
+    "med_code": "001201000100100",
+    "med_codes": [
+      "001201000100100"
+    ],
+    "med_code_count": 1,
+    "item_name": "气管切开护理(气管插管护理)",
+    "constraint": "日",
+    "detect_logic": "使用项目的数量总计超过上限数量",
+    "batch": 8,
+    "batch_tag": "batch_08",
+    "published_at": null,
+    "supersedes": null,
+    "source": {
+      "announcement_url": null,
+      "attachment_file": "第八批-1 “医疗服务项目限定频次”规则对应知识点明细.xlsx",
+      "row": 18,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-4d78f4e9b1fa0bb0",
+    "rule_class": "医疗服务项目限定频次",
+    "gz_code": "GZ10000102014000",
+    "level1": "政策类",
+    "level2": "医疗服务项目政策限定类",
+    "med_code": "001201000150000",
+    "med_codes": [
+      "001201000150000"
+    ],
+    "med_code_count": 1,
+    "item_name": "机械辅助排痰",
+    "constraint": "日",
+    "detect_logic": "使用项目的数量总计超过上限数量",
+    "batch": 8,
+    "batch_tag": "batch_08",
+    "published_at": null,
+    "supersedes": null,
+    "source": {
+      "announcement_url": null,
+      "attachment_file": "第八批-1 “医疗服务项目限定频次”规则对应知识点明细.xlsx",
+      "row": 19,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-cba6577cfb7d36f4",
+    "rule_class": "医疗服务项目限定频次",
+    "gz_code": "GZ10000102014000",
+    "level1": "政策类",
+    "level2": "医疗服务项目政策限定类",
+    "med_code": "001209000010000",
+    "med_codes": [
+      "001209000010000"
+    ],
+    "med_code_count": 1,
+    "item_name": "胃肠减压",
+    "constraint": "日",
+    "detect_logic": "使用项目的数量总计超过上限数量",
+    "batch": 8,
+    "batch_tag": "batch_08",
+    "published_at": null,
+    "supersedes": null,
+    "source": {
+      "announcement_url": null,
+      "attachment_file": "第八批-1 “医疗服务项目限定频次”规则对应知识点明细.xlsx",
+      "row": 20,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-0fed292e9345df77",
+    "rule_class": "医疗服务项目限定频次",
+    "gz_code": "GZ10000102014000",
+    "level1": "政策类",
+    "level2": "医疗服务项目政策限定类",
+    "med_code": "001209000010100",
+    "med_codes": [
+      "001209000010100"
+    ],
+    "med_code_count": 1,
+    "item_name": "胃肠减压(负压引流)",
+    "constraint": "日",
+    "detect_logic": "使用项目的数量总计超过上限数量",
+    "batch": 8,
+    "batch_tag": "batch_08",
+    "published_at": null,
+    "supersedes": null,
+    "source": {
+      "announcement_url": null,
+      "attachment_file": "第八批-1 “医疗服务项目限定频次”规则对应知识点明细.xlsx",
+      "row": 21,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-a94dc4c9a260935a",
+    "rule_class": "医疗服务项目限定频次",
+    "gz_code": "GZ10000102014000",
+    "level1": "政策类",
+    "level2": "医疗服务项目政策限定类",
+    "med_code": "001209000010200",
+    "med_codes": [
+      "001209000010200"
+    ],
+    "med_code_count": 1,
+    "item_name": "胃肠减压(引流管引流)",
+    "constraint": "日",
+    "detect_logic": "使用项目的数量总计超过上限数量",
+    "batch": 8,
+    "batch_tag": "batch_08",
+    "published_at": null,
+    "supersedes": null,
+    "source": {
+      "announcement_url": null,
+      "attachment_file": "第八批-1 “医疗服务项目限定频次”规则对应知识点明细.xlsx",
+      "row": 22,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-1d17f8f9a7eddc8a",
+    "rule_class": "医疗服务项目限定频次",
+    "gz_code": "GZ10000102014000",
+    "level1": "政策类",
+    "level2": "医疗服务项目政策限定类",
+    "med_code": "001216000030000",
+    "med_codes": [
+      "001216000030000"
+    ],
+    "med_code_count": 1,
+    "item_name": "持续膀胱冲洗",
+    "constraint": "日",
+    "detect_logic": "使用项目的数量总计超过上限数量",
+    "batch": 8,
+    "batch_tag": "batch_08",
+    "published_at": null,
+    "supersedes": null,
+    "source": {
+      "announcement_url": null,
+      "attachment_file": "第八批-1 “医疗服务项目限定频次”规则对应知识点明细.xlsx",
+      "row": 23,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-e0a2437b18706c58",
+    "rule_class": "医疗服务项目限定频次",
+    "gz_code": "GZ10000102014000",
+    "level1": "政策类",
+    "level2": "医疗服务项目政策限定类",
+    "med_code": "001216000030100",
+    "med_codes": [
+      "001216000030100"
+    ],
+    "med_code_count": 1,
+    "item_name": "持续膀胱冲洗(加压持续冲洗)",
+    "constraint": "日",
+    "detect_logic": "使用项目的数量总计超过上限数量",
+    "batch": 8,
+    "batch_tag": "batch_08",
+    "published_at": null,
+    "supersedes": null,
+    "source": {
+      "announcement_url": null,
+      "attachment_file": "第八批-1 “医疗服务项目限定频次”规则对应知识点明细.xlsx",
+      "row": 24,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-b2c1f0c86accd16b",
+    "rule_class": "医疗服务项目限定频次",
+    "gz_code": "GZ10000102014000",
+    "level1": "政策类",
+    "level2": "医疗服务项目政策限定类",
+    "med_code": "003101000050000",
+    "med_codes": [
+      "003101000050000"
+    ],
+    "med_code_count": 1,
+    "item_name": "脑电图录象监测",
+    "constraint": "小时",
+    "detect_logic": "使用项目的数量总计超过上限数量",
+    "batch": 8,
+    "batch_tag": "batch_08",
+    "published_at": null,
+    "supersedes": null,
+    "source": {
+      "announcement_url": null,
+      "attachment_file": "第八批-1 “医疗服务项目限定频次”规则对应知识点明细.xlsx",
+      "row": 25,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-eb32d5f27f415ae2",
+    "rule_class": "医疗服务项目限定频次",
+    "gz_code": "GZ10000102014000",
+    "level1": "政策类",
+    "level2": "医疗服务项目政策限定类",
+    "med_code": "003101000130000",
+    "med_codes": [
+      "003101000130000"
+    ],
+    "med_code_count": 1,
+    "item_name": "术中颅神经监测",
+    "constraint": "小时",
+    "detect_logic": "使用项目的数量总计超过上限数量",
+    "batch": 8,
+    "batch_tag": "batch_08",
+    "published_at": null,
+    "supersedes": null,
+    "source": {
+      "announcement_url": null,
+      "attachment_file": "第八批-1 “医疗服务项目限定频次”规则对应知识点明细.xlsx",
+      "row": 26,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-bd271f772fde084e",
+    "rule_class": "医疗服务项目限定频次",
+    "gz_code": "GZ10000102014000",
+    "level1": "政策类",
+    "level2": "医疗服务项目政策限定类",
+    "med_code": "003101000140000",
+    "med_codes": [
+      "003101000140000"
+    ],
+    "med_code_count": 1,
+    "item_name": "颅内压监测",
+    "constraint": "小时",
+    "detect_logic": "使用项目的数量总计超过上限数量",
+    "batch": 8,
+    "batch_tag": "batch_08",
+    "published_at": null,
+    "supersedes": null,
+    "source": {
+      "announcement_url": null,
+      "attachment_file": "第八批-1 “医疗服务项目限定频次”规则对应知识点明细.xlsx",
+      "row": 27,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-13f0b2da137c4d70",
+    "rule_class": "医疗服务项目限定频次",
+    "gz_code": "GZ10000102014000",
+    "level1": "政策类",
+    "level2": "医疗服务项目政策限定类",
+    "med_code": "003101000220000",
+    "med_codes": [
+      "003101000220000"
+    ],
+    "med_code_count": 1,
+    "item_name": "多功能神经肌肉功能监测",
+    "constraint": "小时",
+    "detect_logic": "使用项目的数量总计超过上限数量",
+    "batch": 8,
+    "batch_tag": "batch_08",
+    "published_at": null,
+    "supersedes": null,
+    "source": {
+      "announcement_url": null,
+      "attachment_file": "第八批-1 “医疗服务项目限定频次”规则对应知识点明细.xlsx",
+      "row": 28,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-68a4d30ae362b28b",
+    "rule_class": "医疗服务项目限定频次",
+    "gz_code": "GZ10000102014000",
+    "level1": "政策类",
+    "level2": "医疗服务项目政策限定类",
+    "med_code": "003101000220100",
+    "med_codes": [
+      "003101000220100"
+    ],
+    "med_code_count": 1,
+    "item_name": "多功能神经肌肉功能监测(表面肌电测定)",
+    "constraint": "小时",
+    "detect_logic": "使用项目的数量总计超过上限数量",
+    "batch": 8,
+    "batch_tag": "batch_08",
+    "published_at": null,
+    "supersedes": null,
+    "source": {
+      "announcement_url": null,
+      "attachment_file": "第八批-1 “医疗服务项目限定频次”规则对应知识点明细.xlsx",
+      "row": 29,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-27b81ab8acb5254c",
+    "rule_class": "医疗服务项目限定频次",
+    "gz_code": "GZ10000102014000",
+    "level1": "政策类",
+    "level2": "医疗服务项目政策限定类",
+    "med_code": "003101000250000",
+    "med_codes": [
+      "003101000250000"
+    ],
+    "med_code_count": 1,
+    "item_name": "肌电图监测",
+    "constraint": "小时",
+    "detect_logic": "使用项目的数量总计超过上限数量",
+    "batch": 8,
+    "batch_tag": "batch_08",
+    "published_at": null,
+    "supersedes": null,
+    "source": {
+      "announcement_url": null,
+      "attachment_file": "第八批-1 “医疗服务项目限定频次”规则对应知识点明细.xlsx",
+      "row": 30,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-7028c4a32acfd6bc",
+    "rule_class": "医疗服务项目限定频次",
+    "gz_code": "GZ10000102014000",
+    "level1": "政策类",
+    "level2": "医疗服务项目政策限定类",
+    "med_code": "003106020050000",
+    "med_codes": [
+      "003106020050000"
+    ],
+    "med_code_count": 1,
+    "item_name": "持续呼吸功能检测",
+    "constraint": "小时",
+    "detect_logic": "使用项目的数量总计超过上限数量",
+    "batch": 8,
+    "batch_tag": "batch_08",
+    "published_at": null,
+    "supersedes": null,
+    "source": {
+      "announcement_url": null,
+      "attachment_file": "第八批-1 “医疗服务项目限定频次”规则对应知识点明细.xlsx",
+      "row": 31,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-95bd9a1c6b12d7d5",
+    "rule_class": "医疗服务项目限定频次",
+    "gz_code": "GZ10000102014000",
+    "level1": "政策类",
+    "level2": "医疗服务项目政策限定类",
+    "med_code": "003106030010000",
+    "med_codes": [
+      "003106030010000"
+    ],
+    "med_code_count": 1,
+    "item_name": "呼吸机辅助呼吸",
+    "constraint": "小时",
+    "detect_logic": "使用项目的数量总计超过上限数量",
+    "batch": 8,
+    "batch_tag": "batch_08",
+    "published_at": null,
+    "supersedes": null,
+    "source": {
+      "announcement_url": null,
+      "attachment_file": "第八批-1 “医疗服务项目限定频次”规则对应知识点明细.xlsx",
+      "row": 32,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-c1d4b3e186b314df",
+    "rule_class": "医疗服务项目限定频次",
+    "gz_code": "GZ10000102014000",
+    "level1": "政策类",
+    "level2": "医疗服务项目政策限定类",
+    "med_code": "003106030020000",
+    "med_codes": [
+      "003106030020000"
+    ],
+    "med_code_count": 1,
+    "item_name": "无创辅助通气",
+    "constraint": "小时",
+    "detect_logic": "使用项目的数量总计超过上限数量",
+    "batch": 8,
+    "batch_tag": "batch_08",
+    "published_at": null,
+    "supersedes": null,
+    "source": {
+      "announcement_url": null,
+      "attachment_file": "第八批-1 “医疗服务项目限定频次”规则对应知识点明细.xlsx",
+      "row": 33,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-7779b838bdd4cb0b",
+    "rule_class": "医疗服务项目限定频次",
+    "gz_code": "GZ10000102014000",
+    "level1": "政策类",
+    "level2": "医疗服务项目政策限定类",
+    "med_code": "003106030020100",
+    "med_codes": [
+      "003106030020100"
+    ],
+    "med_code_count": 1,
+    "item_name": "无创辅助通气(持续气道正压(CPAP))",
+    "constraint": "小时",
+    "detect_logic": "使用项目的数量总计超过上限数量",
+    "batch": 8,
+    "batch_tag": "batch_08",
+    "published_at": null,
+    "supersedes": null,
+    "source": {
+      "announcement_url": null,
+      "attachment_file": "第八批-1 “医疗服务项目限定频次”规则对应知识点明细.xlsx",
+      "row": 34,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-90dbd31810d1b19f",
+    "rule_class": "医疗服务项目限定频次",
+    "gz_code": "GZ10000102014000",
+    "level1": "政策类",
+    "level2": "医疗服务项目政策限定类",
+    "med_code": "003106030020200",
+    "med_codes": [
+      "003106030020200"
+    ],
+    "med_code_count": 1,
+    "item_name": "无创辅助通气(双水平气道正压(BIPAP))",
+    "constraint": "小时",
+    "detect_logic": "使用项目的数量总计超过上限数量",
+    "batch": 8,
+    "batch_tag": "batch_08",
+    "published_at": null,
+    "supersedes": null,
+    "source": {
+      "announcement_url": null,
+      "attachment_file": "第八批-1 “医疗服务项目限定频次”规则对应知识点明细.xlsx",
+      "row": 35,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-f4fa6e17db23c8e5",
+    "rule_class": "医疗服务项目限定频次",
+    "gz_code": "GZ10000102014000",
+    "level1": "政策类",
+    "level2": "医疗服务项目政策限定类",
+    "med_code": "003107010080000",
+    "med_codes": [
+      "003107010080000"
+    ],
+    "med_code_count": 1,
+    "item_name": "遥测心电监护",
+    "constraint": "小时",
+    "detect_logic": "使用项目的数量总计超过上限数量",
+    "batch": 8,
+    "batch_tag": "batch_08",
+    "published_at": null,
+    "supersedes": null,
+    "source": {
+      "announcement_url": null,
+      "attachment_file": "第八批-1 “医疗服务项目限定频次”规则对应知识点明细.xlsx",
+      "row": 36,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-d9aeadad0956ccac",
+    "rule_class": "医疗服务项目限定频次",
+    "gz_code": "GZ10000102014000",
+    "level1": "政策类",
+    "level2": "医疗服务项目政策限定类",
+    "med_code": "003107010210000",
+    "med_codes": [
+      "003107010210000"
+    ],
+    "med_code_count": 1,
+    "item_name": "动态血压监测",
+    "constraint": "小时",
+    "detect_logic": "使用项目的数量总计超过上限数量",
+    "batch": 8,
+    "batch_tag": "batch_08",
+    "published_at": null,
+    "supersedes": null,
+    "source": {
+      "announcement_url": null,
+      "attachment_file": "第八批-1 “医疗服务项目限定频次”规则对应知识点明细.xlsx",
+      "row": 37,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-a1041a852b807636",
+    "rule_class": "医疗服务项目限定频次",
+    "gz_code": "GZ10000102014000",
+    "level1": "政策类",
+    "level2": "医疗服务项目政策限定类",
+    "med_code": "003107010210100",
+    "med_codes": [
+      "003107010210100"
+    ],
+    "med_code_count": 1,
+    "item_name": "动态血压监测(运动血压监测)",
+    "constraint": "小时",
+    "detect_logic": "使用项目的数量总计超过上限数量",
+    "batch": 8,
+    "batch_tag": "batch_08",
+    "published_at": null,
+    "supersedes": null,
+    "source": {
+      "announcement_url": null,
+      "attachment_file": "第八批-1 “医疗服务项目限定频次”规则对应知识点明细.xlsx",
+      "row": 38,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-0db951ad2405e179",
+    "rule_class": "医疗服务项目限定频次",
+    "gz_code": "GZ10000102014000",
+    "level1": "政策类",
+    "level2": "医疗服务项目政策限定类",
+    "med_code": "003107010220000",
+    "med_codes": [
+      "003107010220000"
+    ],
+    "med_code_count": 1,
+    "item_name": "心电监测",
+    "constraint": "小时",
+    "detect_logic": "使用项目的数量总计超过上限数量",
+    "batch": 8,
+    "batch_tag": "batch_08",
+    "published_at": null,
+    "supersedes": null,
+    "source": {
+      "announcement_url": null,
+      "attachment_file": "第八批-1 “医疗服务项目限定频次”规则对应知识点明细.xlsx",
+      "row": 39,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-4efdcbd5873251e0",
+    "rule_class": "医疗服务项目限定频次",
+    "gz_code": "GZ10000102014000",
+    "level1": "政策类",
+    "level2": "医疗服务项目政策限定类",
+    "med_code": "003107010240000",
+    "med_codes": [
+      "003107010240000"
+    ],
+    "med_code_count": 1,
+    "item_name": "肺动脉压和右心房压力监测",
+    "constraint": "小时",
+    "detect_logic": "使用项目的数量总计超过上限数量",
+    "batch": 8,
+    "batch_tag": "batch_08",
+    "published_at": null,
+    "supersedes": null,
+    "source": {
+      "announcement_url": null,
+      "attachment_file": "第八批-1 “医疗服务项目限定频次”规则对应知识点明细.xlsx",
+      "row": 40,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-6ef2d5d9d16f2144",
+    "rule_class": "医疗服务项目限定频次",
+    "gz_code": "GZ10000102014000",
+    "level1": "政策类",
+    "level2": "医疗服务项目政策限定类",
+    "med_code": "003107010250000",
+    "med_codes": [
+      "003107010250000"
+    ],
+    "med_code_count": 1,
+    "item_name": "动脉内压力监测",
+    "constraint": "小时",
+    "detect_logic": "使用项目的数量总计超过上限数量",
+    "batch": 8,
+    "batch_tag": "batch_08",
+    "published_at": null,
+    "supersedes": null,
+    "source": {
+      "announcement_url": null,
+      "attachment_file": "第八批-1 “医疗服务项目限定频次”规则对应知识点明细.xlsx",
+      "row": 41,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-69ff42a264e0fa1a",
+    "rule_class": "医疗服务项目限定频次",
+    "gz_code": "GZ10000102014000",
+    "level1": "政策类",
+    "level2": "医疗服务项目政策限定类",
+    "med_code": "003107010270000",
+    "med_codes": [
+      "003107010270000"
+    ],
+    "med_code_count": 1,
+    "item_name": "指脉氧监测",
+    "constraint": "小时",
+    "detect_logic": "使用项目的数量总计超过上限数量",
+    "batch": 8,
+    "batch_tag": "batch_08",
+    "published_at": null,
+    "supersedes": null,
+    "source": {
+      "announcement_url": null,
+      "attachment_file": "第八批-1 “医疗服务项目限定频次”规则对应知识点明细.xlsx",
+      "row": 42,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-c5b411337beb7535",
+    "rule_class": "医疗服务项目限定频次",
+    "gz_code": "GZ10000102014000",
+    "level1": "政策类",
+    "level2": "医疗服务项目政策限定类",
+    "med_code": "003107010280000",
+    "med_codes": [
+      "003107010280000"
+    ],
+    "med_code_count": 1,
+    "item_name": "血氧饱和度监测",
+    "constraint": "小时",
+    "detect_logic": "使用项目的数量总计超过上限数量",
+    "batch": 8,
+    "batch_tag": "batch_08",
+    "published_at": null,
+    "supersedes": null,
+    "source": {
+      "announcement_url": null,
+      "attachment_file": "第八批-1 “医疗服务项目限定频次”规则对应知识点明细.xlsx",
+      "row": 43,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-c51e62c492850973",
+    "rule_class": "医疗服务项目限定频次",
+    "gz_code": "GZ10000102014000",
+    "level1": "政策类",
+    "level2": "医疗服务项目政策限定类",
+    "med_code": "003107020020000",
+    "med_codes": [
+      "003107020020000"
+    ],
+    "med_code_count": 1,
+    "item_name": "持续有创性血压监测",
+    "constraint": "小时",
+    "detect_logic": "使用项目的数量总计超过上限数量",
+    "batch": 8,
+    "batch_tag": "batch_08",
+    "published_at": null,
+    "supersedes": null,
+    "source": {
+      "announcement_url": null,
+      "attachment_file": "第八批-1 “医疗服务项目限定频次”规则对应知识点明细.xlsx",
+      "row": 44,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-68775074167e49a6",
+    "rule_class": "医疗服务项目限定频次",
+    "gz_code": "GZ10000102014000",
+    "level1": "政策类",
+    "level2": "医疗服务项目政策限定类",
+    "med_code": "003107020060000",
+    "med_codes": [
+      "003107020060000"
+    ],
+    "med_code_count": 1,
+    "item_name": "临时起搏器应用",
+    "constraint": "小时",
+    "detect_logic": "使用项目的数量总计超过上限数量",
+    "batch": 8,
+    "batch_tag": "batch_08",
+    "published_at": null,
+    "supersedes": null,
+    "source": {
+      "announcement_url": null,
+      "attachment_file": "第八批-1 “医疗服务项目限定频次”规则对应知识点明细.xlsx",
+      "row": 45,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-ae9b7e73f23e2552",
+    "rule_class": "医疗服务项目限定频次",
+    "gz_code": "GZ10000102014000",
+    "level1": "政策类",
+    "level2": "医疗服务项目政策限定类",
+    "med_code": "003110000020000",
+    "med_codes": [
+      "003110000020000"
+    ],
+    "med_code_count": 1,
+    "item_name": "腹透机自动腹膜透析",
+    "constraint": "小时",
+    "detect_logic": "使用项目的数量总计超过上限数量",
+    "batch": 8,
+    "batch_tag": "batch_08",
+    "published_at": null,
+    "supersedes": null,
+    "source": {
+      "announcement_url": null,
+      "attachment_file": "第八批-1 “医疗服务项目限定频次”规则对应知识点明细.xlsx",
+      "row": 46,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-11555d40e0c28618",
+    "rule_class": "医疗服务项目限定频次",
+    "gz_code": "GZ10000102014000",
+    "level1": "政策类",
+    "level2": "医疗服务项目政策限定类",
+    "med_code": "003110000110000",
+    "med_codes": [
+      "003110000110000"
+    ],
+    "med_code_count": 1,
+    "item_name": "连续性血液净化",
+    "constraint": "小时",
+    "detect_logic": "使用项目的数量总计超过上限数量",
+    "batch": 8,
+    "batch_tag": "batch_08",
+    "published_at": null,
+    "supersedes": null,
+    "source": {
+      "announcement_url": null,
+      "attachment_file": "第八批-1 “医疗服务项目限定频次”规则对应知识点明细.xlsx",
+      "row": 47,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-43f092a7a6cccf7f",
+    "rule_class": "医疗服务项目限定频次",
+    "gz_code": "GZ10000102014000",
+    "level1": "政策类",
+    "level2": "医疗服务项目政策限定类",
+    "med_code": "003110000110001",
+    "med_codes": [
+      "003110000110001"
+    ],
+    "med_code_count": 1,
+    "item_name": "连续性血液净化(机器法加收)",
+    "constraint": "小时",
+    "detect_logic": "使用项目的数量总计超过上限数量",
+    "batch": 8,
+    "batch_tag": "batch_08",
+    "published_at": null,
+    "supersedes": null,
+    "source": {
+      "announcement_url": null,
+      "attachment_file": "第八批-1 “医疗服务项目限定频次”规则对应知识点明细.xlsx",
+      "row": 48,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-298402897de7bdff",
+    "rule_class": "医疗服务项目限定频次",
+    "gz_code": "GZ10000102014000",
+    "level1": "政策类",
+    "level2": "医疗服务项目政策限定类",
+    "med_code": "003110000110100",
+    "med_codes": [
+      "003110000110100"
+    ],
+    "med_code_count": 1,
+    "item_name": "连续性血液净化(人工法)",
+    "constraint": "小时",
+    "detect_logic": "使用项目的数量总计超过上限数量",
+    "batch": 8,
+    "batch_tag": "batch_08",
+    "published_at": null,
+    "supersedes": null,
+    "source": {
+      "announcement_url": null,
+      "attachment_file": "第八批-1 “医疗服务项目限定频次”规则对应知识点明细.xlsx",
+      "row": 49,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-1b317e160fcf8d88",
+    "rule_class": "医疗服务项目限定频次",
+    "gz_code": "GZ10000102014000",
+    "level1": "政策类",
+    "level2": "医疗服务项目政策限定类",
+    "med_code": "003110000110200",
+    "med_codes": [
+      "003110000110200"
+    ],
+    "med_code_count": 1,
+    "item_name": "连续性血液净化(机器法)",
+    "constraint": "小时",
+    "detect_logic": "使用项目的数量总计超过上限数量",
+    "batch": 8,
+    "batch_tag": "batch_08",
+    "published_at": null,
+    "supersedes": null,
+    "source": {
+      "announcement_url": null,
+      "attachment_file": "第八批-1 “医疗服务项目限定频次”规则对应知识点明细.xlsx",
+      "row": 50,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-c9d996651aca019d",
+    "rule_class": "医疗服务项目限定频次",
+    "gz_code": "GZ10000102014000",
+    "level1": "政策类",
+    "level2": "医疗服务项目政策限定类",
+    "med_code": "003114000520000",
+    "med_codes": [
+      "003114000520000"
+    ],
+    "med_code_count": 1,
+    "item_name": "悬浮床治疗",
+    "constraint": "日",
+    "detect_logic": "使用项目的数量总计超过上限数量",
+    "batch": 8,
+    "batch_tag": "batch_08",
+    "published_at": null,
+    "supersedes": null,
+    "source": {
+      "announcement_url": null,
+      "attachment_file": "第八批-1 “医疗服务项目限定频次”规则对应知识点明细.xlsx",
+      "row": 51,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-d5ffcf0c09b4615c",
+    "rule_class": "医疗服务项目限定频次",
+    "gz_code": "GZ10000102014000",
+    "level1": "政策类",
+    "level2": "医疗服务项目政策限定类",
+    "med_code": "003114000530000",
+    "med_codes": [
+      "003114000530000"
+    ],
+    "med_code_count": 1,
+    "item_name": "翻身床治疗",
+    "constraint": "日",
+    "detect_logic": "使用项目的数量总计超过上限数量",
+    "batch": 8,
+    "batch_tag": "batch_08",
+    "published_at": null,
+    "supersedes": null,
+    "source": {
+      "announcement_url": null,
+      "attachment_file": "第八批-1 “医疗服务项目限定频次”规则对应知识点明细.xlsx",
+      "row": 52,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-5497a12a6aaccabe",
+    "rule_class": "医疗服务项目限定频次",
+    "gz_code": "GZ10000102014000",
+    "level1": "政策类",
+    "level2": "医疗服务项目政策限定类",
+    "med_code": "003114000540000",
+    "med_codes": [
+      "003114000540000"
+    ],
+    "med_code_count": 1,
+    "item_name": "烧伤功能训练床治疗",
+    "constraint": "日",
+    "detect_logic": "使用项目的数量总计超过上限数量",
+    "batch": 8,
+    "batch_tag": "batch_08",
+    "published_at": null,
+    "supersedes": null,
+    "source": {
+      "announcement_url": null,
+      "attachment_file": "第八批-1 “医疗服务项目限定频次”规则对应知识点明细.xlsx",
+      "row": 53,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-2dd6eca55dc9cf24",
+    "rule_class": "医疗服务项目限定频次",
+    "gz_code": "GZ10000102014000",
+    "level1": "政策类",
+    "level2": "医疗服务项目政策限定类",
+    "med_code": "003115030010000",
+    "med_codes": [
+      "003115030010000"
+    ],
+    "med_code_count": 1,
+    "item_name": "抗精神病药物治疗监测",
+    "constraint": "日",
+    "detect_logic": "使用项目的数量总计超过上限数量",
+    "batch": 8,
+    "batch_tag": "batch_08",
+    "published_at": null,
+    "supersedes": null,
+    "source": {
+      "announcement_url": null,
+      "attachment_file": "第八批-1 “医疗服务项目限定频次”规则对应知识点明细.xlsx",
+      "row": 54,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-523dd599af5adfce",
+    "rule_class": "医疗服务项目限定频次",
+    "gz_code": "GZ10000102014000",
+    "level1": "政策类",
+    "level2": "医疗服务项目政策限定类",
+    "med_code": "003115030160000",
+    "med_codes": [
+      "003115030160000"
+    ],
+    "med_code_count": 1,
+    "item_name": "工娱治疗",
+    "constraint": "日",
+    "detect_logic": "使用项目的数量总计超过上限数量",
+    "batch": 8,
+    "batch_tag": "batch_08",
+    "published_at": null,
+    "supersedes": null,
+    "source": {
+      "announcement_url": null,
+      "attachment_file": "第八批-1 “医疗服务项目限定频次”规则对应知识点明细.xlsx",
+      "row": 55,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-7bc96a2f8bb5c58e",
+    "rule_class": "医疗服务项目限定频次",
+    "gz_code": "GZ10000102014000",
+    "level1": "政策类",
+    "level2": "医疗服务项目政策限定类",
+    "med_code": "003115030280000",
+    "med_codes": [
+      "003115030280000"
+    ],
+    "med_code_count": 1,
+    "item_name": "行为矫正治疗",
+    "constraint": "日",
+    "detect_logic": "使用项目的数量总计超过上限数量",
+    "batch": 8,
+    "batch_tag": "batch_08",
+    "published_at": null,
+    "supersedes": null,
+    "source": {
+      "announcement_url": null,
+      "attachment_file": "第八批-1 “医疗服务项目限定频次”规则对应知识点明细.xlsx",
+      "row": 56,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-a18959bec6dabc59",
+    "rule_class": "医疗服务项目限定频次",
+    "gz_code": "GZ10000102014000",
+    "level1": "政策类",
+    "level2": "医疗服务项目政策限定类",
+    "med_code": "003205000090000",
+    "med_codes": [
+      "003205000090000"
+    ],
+    "med_code_count": 1,
+    "item_name": "经皮主动脉气囊反搏动术(IABP)",
+    "constraint": "小时",
+    "detect_logic": "使用项目的数量总计超过上限数量",
+    "batch": 8,
+    "batch_tag": "batch_08",
+    "published_at": null,
+    "supersedes": null,
+    "source": {
+      "announcement_url": null,
+      "attachment_file": "第八批-1 “医疗服务项目限定频次”规则对应知识点明细.xlsx",
+      "row": 57,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-e6b2db0dc5b75551",
+    "rule_class": "医疗服务项目限定频次",
+    "gz_code": "GZ10000102014000",
+    "level1": "政策类",
+    "level2": "医疗服务项目政策限定类",
+    "med_code": "003301000060000",
+    "med_codes": [
+      "003301000060000"
+    ],
+    "med_code_count": 1,
+    "item_name": "血液加温治疗",
+    "constraint": "小时",
+    "detect_logic": "使用项目的数量总计超过上限数量",
+    "batch": 8,
+    "batch_tag": "batch_08",
+    "published_at": null,
+    "supersedes": null,
+    "source": {
+      "announcement_url": null,
+      "attachment_file": "第八批-1 “医疗服务项目限定频次”规则对应知识点明细.xlsx",
+      "row": 58,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-bce26d348b84b02a",
+    "rule_class": "医疗服务项目限定频次",
+    "gz_code": "GZ10000102014000",
+    "level1": "政策类",
+    "level2": "医疗服务项目政策限定类",
+    "med_code": "003301000060100",
+    "med_codes": [
+      "003301000060100"
+    ],
+    "med_code_count": 1,
+    "item_name": "血液加温治疗(术中加温)",
+    "constraint": "小时",
+    "detect_logic": "使用项目的数量总计超过上限数量",
+    "batch": 8,
+    "batch_tag": "batch_08",
+    "published_at": null,
+    "supersedes": null,
+    "source": {
+      "announcement_url": null,
+      "attachment_file": "第八批-1 “医疗服务项目限定频次”规则对应知识点明细.xlsx",
+      "row": 59,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-9f250d80d9f0ecb7",
+    "rule_class": "医疗服务项目限定频次",
+    "gz_code": "GZ10000102014000",
+    "level1": "政策类",
+    "level2": "医疗服务项目政策限定类",
+    "med_code": "003301000060200",
+    "med_codes": [
+      "003301000060200"
+    ],
+    "med_code_count": 1,
+    "item_name": "血液加温治疗(体外加温)",
+    "constraint": "小时",
+    "detect_logic": "使用项目的数量总计超过上限数量",
+    "batch": 8,
+    "batch_tag": "batch_08",
+    "published_at": null,
+    "supersedes": null,
+    "source": {
+      "announcement_url": null,
+      "attachment_file": "第八批-1 “医疗服务项目限定频次”规则对应知识点明细.xlsx",
+      "row": 60,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-096ca1b316c20299",
+    "rule_class": "医疗服务项目限定频次",
+    "gz_code": "GZ10000102014000",
+    "level1": "政策类",
+    "level2": "医疗服务项目政策限定类",
+    "med_code": "003301000090000",
+    "med_codes": [
+      "003301000090000"
+    ],
+    "med_code_count": 1,
+    "item_name": "侧脑室连续镇痛",
+    "constraint": "天",
+    "detect_logic": "使用项目的数量总计超过上限数量",
+    "batch": 8,
+    "batch_tag": "batch_08",
+    "published_at": null,
+    "supersedes": null,
+    "source": {
+      "announcement_url": null,
+      "attachment_file": "第八批-1 “医疗服务项目限定频次”规则对应知识点明细.xlsx",
+      "row": 61,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-c73565a8e2e1bb4a",
+    "rule_class": "医疗服务项目限定频次",
+    "gz_code": "GZ10000102014000",
+    "level1": "政策类",
+    "level2": "医疗服务项目政策限定类",
+    "med_code": "003301000100000",
+    "med_codes": [
+      "003301000100000"
+    ],
+    "med_code_count": 1,
+    "item_name": "硬膜外连续镇痛",
+    "constraint": "天",
+    "detect_logic": "使用项目的数量总计超过上限数量",
+    "batch": 8,
+    "batch_tag": "batch_08",
+    "published_at": null,
+    "supersedes": null,
+    "source": {
+      "announcement_url": null,
+      "attachment_file": "第八批-1 “医疗服务项目限定频次”规则对应知识点明细.xlsx",
+      "row": 62,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-69e4425a2ee40960",
+    "rule_class": "医疗服务项目限定频次",
+    "gz_code": "GZ10000102014000",
+    "level1": "政策类",
+    "level2": "医疗服务项目政策限定类",
+    "med_code": "003301000150000",
+    "med_codes": [
+      "003301000150000"
+    ],
+    "med_code_count": 1,
+    "item_name": "麻醉中监测",
+    "constraint": "小时",
+    "detect_logic": "使用项目的数量总计超过上限数量",
+    "batch": 8,
+    "batch_tag": "batch_08",
+    "published_at": null,
+    "supersedes": null,
+    "source": {
+      "announcement_url": null,
+      "attachment_file": "第八批-1 “医疗服务项目限定频次”规则对应知识点明细.xlsx",
+      "row": 63,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-ff96da8a1a83ebb6",
+    "rule_class": "医疗服务项目限定频次",
+    "gz_code": "GZ10000102014000",
+    "level1": "政策类",
+    "level2": "医疗服务项目政策限定类",
+    "med_code": "003306090180000",
+    "med_codes": [
+      "003306090180000"
+    ],
+    "med_code_count": 1,
+    "item_name": "牵张器加力调整",
+    "constraint": "日",
+    "detect_logic": "使用项目的数量总计超过上限数量",
+    "batch": 8,
+    "batch_tag": "batch_08",
+    "published_at": null,
+    "supersedes": null,
+    "source": {
+      "announcement_url": null,
+      "attachment_file": "第八批-1 “医疗服务项目限定频次”规则对应知识点明细.xlsx",
+      "row": 64,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-353193212f7c5be1",
+    "rule_class": "医疗服务项目限定频次",
+    "gz_code": "GZ10000102014000",
+    "level1": "政策类",
+    "level2": "医疗服务项目政策限定类",
+    "med_code": "003308030250000",
+    "med_codes": [
+      "003308030250000"
+    ],
+    "med_code_count": 1,
+    "item_name": "体外人工膜肺(ECOM)",
+    "constraint": "小时",
+    "detect_logic": "使用项目的数量总计超过上限数量",
+    "batch": 8,
+    "batch_tag": "batch_08",
+    "published_at": null,
+    "supersedes": null,
+    "source": {
+      "announcement_url": null,
+      "attachment_file": "第八批-1 “医疗服务项目限定频次”规则对应知识点明细.xlsx",
+      "row": 65,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-29abe29072172ed7",
+    "rule_class": "医疗服务项目限定频次",
+    "gz_code": "GZ10000102014000",
+    "level1": "政策类",
+    "level2": "医疗服务项目政策限定类",
+    "med_code": "003308030260000",
+    "med_codes": [
+      "003308030260000"
+    ],
+    "med_code_count": 1,
+    "item_name": "左右心室辅助循环",
+    "constraint": "小时",
+    "detect_logic": "使用项目的数量总计超过上限数量",
+    "batch": 8,
+    "batch_tag": "batch_08",
+    "published_at": null,
+    "supersedes": null,
+    "source": {
+      "announcement_url": null,
+      "attachment_file": "第八批-1 “医疗服务项目限定频次”规则对应知识点明细.xlsx",
+      "row": 66,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-e1184bd720cf3a1d",
+    "rule_class": "医疗服务项目限定频次",
+    "gz_code": "GZ10000102014000",
+    "level1": "政策类",
+    "level2": "医疗服务项目政策限定类",
+    "med_code": "004200000100000",
+    "med_codes": [
+      "004200000100000"
+    ],
+    "med_code_count": 1,
+    "item_name": "外固定架使用",
+    "constraint": "日",
+    "detect_logic": "使用项目的数量总计超过上限数量",
+    "batch": 8,
+    "batch_tag": "batch_08",
+    "published_at": null,
+    "supersedes": null,
+    "source": {
+      "announcement_url": null,
+      "attachment_file": "第八批-1 “医疗服务项目限定频次”规则对应知识点明细.xlsx",
+      "row": 67,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-f102932ae2793bef",
+    "rule_class": "医疗服务项目限年龄",
+    "gz_code": null,
+    "level1": null,
+    "level2": null,
+    "med_code": "003402000320000",
+    "med_codes": [
+      "003402000320000"
+    ],
+    "med_code_count": 1,
+    "item_name": "职业功能训练",
+    "constraint": "限法定就业年龄段患者",
+    "detect_logic": "参保人年龄超出法定就业年龄限制",
+    "batch": 8,
+    "batch_tag": "batch_08",
+    "published_at": null,
+    "supersedes": null,
+    "source": {
+      "announcement_url": null,
+      "attachment_file": "第八批-2 “医疗服务项目限年龄” 规则对应知识点明细.xlsx",
+      "row": 1,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-6977109cf9517c5d",
+    "rule_class": "医疗服务项目限支付疗程",
+    "gz_code": "GZ10000102010000",
+    "level1": "政策类",
+    "level2": "医疗服务项目政策限定类",
+    "med_code": "003402000050000",
+    "med_codes": [
+      "003402000050000"
+    ],
+    "med_code_count": 1,
+    "item_name": "手功能评定",
+    "constraint": "总时间不超过90天，评定间隔时间不短于14天。",
+    "detect_logic": "使用项目的日期总计超过限制天数",
+    "batch": 8,
+    "batch_tag": "batch_08",
+    "published_at": null,
+    "supersedes": null,
+    "source": {
+      "announcement_url": null,
+      "attachment_file": "第八批-3 “医疗服务项目限支付疗程” 规则对应知识点明细.xlsx",
+      "row": 1,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-7901ca2a17ea323d",
+    "rule_class": "医疗服务项目限支付疗程",
+    "gz_code": "GZ10000102010000",
+    "level1": "政策类",
+    "level2": "医疗服务项目政策限定类",
+    "med_code": "003402000050100",
+    "med_codes": [
+      "003402000050100"
+    ],
+    "med_code_count": 1,
+    "item_name": "手功能评定(徒手)",
+    "constraint": "总时间不超过90天，评定间隔时间不短于14天。",
+    "detect_logic": "使用项目的日期总计超过限制天数",
+    "batch": 8,
+    "batch_tag": "batch_08",
+    "published_at": null,
+    "supersedes": null,
+    "source": {
+      "announcement_url": null,
+      "attachment_file": "第八批-3 “医疗服务项目限支付疗程” 规则对应知识点明细.xlsx",
+      "row": 2,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-b381ab9d919cf6bc",
+    "rule_class": "医疗服务项目限支付疗程",
+    "gz_code": "GZ10000102010000",
+    "level1": "政策类",
+    "level2": "医疗服务项目政策限定类",
+    "med_code": "003402000050200",
+    "med_codes": [
+      "003402000050200"
+    ],
+    "med_code_count": 1,
+    "item_name": "手功能评定(仪器)",
+    "constraint": "总时间不超过90天，评定间隔时间不短于14天。",
+    "detect_logic": "使用项目的日期总计超过限制天数",
+    "batch": 8,
+    "batch_tag": "batch_08",
+    "published_at": null,
+    "supersedes": null,
+    "source": {
+      "announcement_url": null,
+      "attachment_file": "第八批-3 “医疗服务项目限支付疗程” 规则对应知识点明细.xlsx",
+      "row": 3,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-18042d638d9108a3",
+    "rule_class": "医疗服务项目限支付疗程",
+    "gz_code": "GZ10000102010000",
+    "level1": "政策类",
+    "level2": "医疗服务项目政策限定类",
+    "med_code": "003402000210000",
+    "med_codes": [
+      "003402000210000"
+    ],
+    "med_code_count": 1,
+    "item_name": "减重支持系统训练",
+    "constraint": "支付不超过30天。",
+    "detect_logic": "使用项目的日期总计超过限制天数",
+    "batch": 8,
+    "batch_tag": "batch_08",
+    "published_at": null,
+    "supersedes": null,
+    "source": {
+      "announcement_url": null,
+      "attachment_file": "第八批-3 “医疗服务项目限支付疗程” 规则对应知识点明细.xlsx",
+      "row": 4,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-1c83f471603bd088",
+    "rule_class": "医疗服务项目限支付疗程",
+    "gz_code": "GZ10000102010000",
+    "level1": "政策类",
+    "level2": "医疗服务项目政策限定类",
+    "med_code": "003402000220000",
+    "med_codes": [
+      "003402000220000"
+    ],
+    "med_code_count": 1,
+    "item_name": "轮椅功能训练",
+    "constraint": "支付不超过30天。",
+    "detect_logic": "使用项目的日期总计超过限制天数",
+    "batch": 8,
+    "batch_tag": "batch_08",
+    "published_at": null,
+    "supersedes": null,
+    "source": {
+      "announcement_url": null,
+      "attachment_file": "第八批-3 “医疗服务项目限支付疗程” 规则对应知识点明细.xlsx",
+      "row": 5,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-5a7923924414456b",
+    "rule_class": "医疗服务项目限支付疗程",
+    "gz_code": "GZ10000102010000",
+    "level1": "政策类",
+    "level2": "医疗服务项目政策限定类",
+    "med_code": "003402000230000",
+    "med_codes": [
+      "003402000230000"
+    ],
+    "med_code_count": 1,
+    "item_name": "电动起立床训练",
+    "constraint": "支付不超过30天。",
+    "detect_logic": "使用项目的日期总计超过限制天数",
+    "batch": 8,
+    "batch_tag": "batch_08",
+    "published_at": null,
+    "supersedes": null,
+    "source": {
+      "announcement_url": null,
+      "attachment_file": "第八批-3 “医疗服务项目限支付疗程” 规则对应知识点明细.xlsx",
+      "row": 6,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-f3d0eef4fb671feb",
+    "rule_class": "医疗服务项目限支付疗程",
+    "gz_code": "GZ10000102010000",
+    "level1": "政策类",
+    "level2": "医疗服务项目政策限定类",
+    "med_code": "003402000240000",
+    "med_codes": [
+      "003402000240000"
+    ],
+    "med_code_count": 1,
+    "item_name": "平衡功能训练",
+    "constraint": "一个疾病过程支付不超过90天。",
+    "detect_logic": "使用项目的日期总计超过限制天数",
+    "batch": 8,
+    "batch_tag": "batch_08",
+    "published_at": null,
+    "supersedes": null,
+    "source": {
+      "announcement_url": null,
+      "attachment_file": "第八批-3 “医疗服务项目限支付疗程” 规则对应知识点明细.xlsx",
+      "row": 7,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-4ab4bbf04a87a822",
+    "rule_class": "医疗服务项目限支付疗程",
+    "gz_code": "GZ10000102010000",
+    "level1": "政策类",
+    "level2": "医疗服务项目政策限定类",
+    "med_code": "003402000250000",
+    "med_codes": [
+      "003402000250000"
+    ],
+    "med_code_count": 1,
+    "item_name": "手功能训练",
+    "constraint": "一个疾病过程支付不超过90天。",
+    "detect_logic": "使用项目的日期总计超过限制天数",
+    "batch": 8,
+    "batch_tag": "batch_08",
+    "published_at": null,
+    "supersedes": null,
+    "source": {
+      "announcement_url": null,
+      "attachment_file": "第八批-3 “医疗服务项目限支付疗程” 规则对应知识点明细.xlsx",
+      "row": 8,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-ec93e35f05b00ef2",
+    "rule_class": "医疗服务项目限支付疗程",
+    "gz_code": "GZ10000102010000",
+    "level1": "政策类",
+    "level2": "医疗服务项目政策限定类",
+    "med_code": "003402000260200",
+    "med_codes": [
+      "003402000260200"
+    ],
+    "med_code_count": 1,
+    "item_name": "关节松动训练(大关节)",
+    "constraint": "一个疾病过程支付不超过90天。",
+    "detect_logic": "使用项目的日期总计超过限制天数",
+    "batch": 8,
+    "batch_tag": "batch_08",
+    "published_at": null,
+    "supersedes": null,
+    "source": {
+      "announcement_url": null,
+      "attachment_file": "第八批-3 “医疗服务项目限支付疗程” 规则对应知识点明细.xlsx",
+      "row": 9,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-af5869d0830fb368",
+    "rule_class": "医疗服务项目限支付疗程",
+    "gz_code": "GZ10000102010000",
+    "level1": "政策类",
+    "level2": "医疗服务项目政策限定类",
+    "med_code": "003402000320000",
+    "med_codes": [
+      "003402000320000"
+    ],
+    "med_code_count": 1,
+    "item_name": "职业功能训练",
+    "constraint": "支付不超过90天。",
+    "detect_logic": "使用项目的日期总计超过限制天数",
+    "batch": 8,
+    "batch_tag": "batch_08",
+    "published_at": null,
+    "supersedes": null,
+    "source": {
+      "announcement_url": null,
+      "attachment_file": "第八批-3 “医疗服务项目限支付疗程” 规则对应知识点明细.xlsx",
+      "row": 10,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-d96b221f3dc81fce",
+    "rule_class": "医疗服务项目限支付疗程",
+    "gz_code": "GZ10000102010000",
+    "level1": "政策类",
+    "level2": "医疗服务项目政策限定类",
+    "med_code": "003402000350000",
+    "med_codes": [
+      "003402000350000"
+    ],
+    "med_code_count": 1,
+    "item_name": "儿童听力障碍语言训练",
+    "constraint": "支付不超过一年，每周最多支付一次。",
+    "detect_logic": "使用项目的日期总计超过限制天数",
+    "batch": 8,
+    "batch_tag": "batch_08",
+    "published_at": null,
+    "supersedes": null,
+    "source": {
+      "announcement_url": null,
+      "attachment_file": "第八批-3 “医疗服务项目限支付疗程” 规则对应知识点明细.xlsx",
+      "row": 11,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-08f8e7f401ce799d",
+    "rule_class": "医疗服务项目周期超频次",
+    "gz_code": null,
+    "level1": null,
+    "level2": null,
+    "med_code": "002503020020000",
+    "med_codes": [
+      "002503020020000"
+    ],
+    "med_code_count": 1,
+    "item_name": "血清果糖胺测定",
+    "constraint": "诊疗规范：血清果糖胺（糖化清蛋白）水平反映近2-3周的平均血糖水平。",
+    "detect_logic": "在设定的周期内超出限定支付数量",
+    "batch": 8,
+    "batch_tag": "batch_08",
+    "published_at": null,
+    "supersedes": null,
+    "source": {
+      "announcement_url": null,
+      "attachment_file": "第八批-4 “医疗服务项目周期超频次” 规则对应知识点明细.xlsx",
+      "row": 1,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-16086718019bcd4a",
+    "rule_class": "医疗服务项目周期超频次",
+    "gz_code": null,
+    "level1": null,
+    "level2": null,
+    "med_code": "002503020030000",
+    "med_codes": [
+      "002503020030000"
+    ],
+    "med_code_count": 1,
+    "item_name": "糖化血红蛋白测定",
+    "constraint": "诊疗规范：糖化血红蛋白水平反映近2-3个月的平均血糖水平。",
+    "detect_logic": "在设定的周期内超出限定支付数量",
+    "batch": 8,
+    "batch_tag": "batch_08",
+    "published_at": null,
+    "supersedes": null,
+    "source": {
+      "announcement_url": null,
+      "attachment_file": "第八批-4 “医疗服务项目周期超频次” 规则对应知识点明细.xlsx",
+      "row": 2,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-b024473d63163a72",
+    "rule_class": "医疗服务项目周期超频次",
+    "gz_code": null,
+    "level1": null,
+    "level2": null,
+    "med_code": "002503020030100",
+    "med_codes": [
+      "002503020030100"
+    ],
+    "med_code_count": 1,
+    "item_name": "糖化血红蛋白测定(色谱法)",
+    "constraint": "诊疗规范：糖化血红蛋白水平反映近2-3个月的平均血糖水平。",
+    "detect_logic": "在设定的周期内超出限定支付数量",
+    "batch": 8,
+    "batch_tag": "batch_08",
+    "published_at": null,
+    "supersedes": null,
+    "source": {
+      "announcement_url": null,
+      "attachment_file": "第八批-4 “医疗服务项目周期超频次” 规则对应知识点明细.xlsx",
+      "row": 3,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-f3d21528d21cc5d9",
+    "rule_class": "医疗服务项目周期超频次",
+    "gz_code": null,
+    "level1": null,
+    "level2": null,
+    "med_code": "002503020030200",
+    "med_codes": [
+      "002503020030200"
+    ],
+    "med_code_count": 1,
+    "item_name": "糖化血红蛋白测定(各种免疫学方法)",
+    "constraint": "诊疗规范：糖化血红蛋白水平反映近2-3个月的平均血糖水平。",
+    "detect_logic": "在设定的周期内超出限定支付数量",
+    "batch": 8,
+    "batch_tag": "batch_08",
+    "published_at": null,
+    "supersedes": null,
+    "source": {
+      "announcement_url": null,
+      "attachment_file": "第八批-4 “医疗服务项目周期超频次” 规则对应知识点明细.xlsx",
+      "row": 4,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-a99c6cfab5d611ab",
+    "rule_class": "医疗服务项目周期超频次",
+    "gz_code": null,
+    "level1": null,
+    "level2": null,
+    "med_code": "003104010220000",
+    "med_codes": [
+      "003104010220000"
+    ],
+    "med_code_count": 1,
+    "item_name": "平衡试验",
+    "constraint": "评定间隔时间不短于14天。（人社部发〔2016〕23号）",
+    "detect_logic": "在设定的周期内超出限定支付数量",
+    "batch": 8,
+    "batch_tag": "batch_08",
+    "published_at": null,
+    "supersedes": null,
+    "source": {
+      "announcement_url": null,
+      "attachment_file": "第八批-4 “医疗服务项目周期超频次” 规则对应知识点明细.xlsx",
+      "row": 5,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-7503246d023fdf72",
+    "rule_class": "医疗服务项目周期超频次",
+    "gz_code": null,
+    "level1": null,
+    "level2": null,
+    "med_code": "003104010220100",
+    "med_codes": [
+      "003104010220100"
+    ],
+    "med_code_count": 1,
+    "item_name": "平衡试验(平板试验)",
+    "constraint": "评定间隔时间不短于14天。（人社部发〔2016〕23号）",
+    "detect_logic": "在设定的周期内超出限定支付数量",
+    "batch": 8,
+    "batch_tag": "batch_08",
+    "published_at": null,
+    "supersedes": null,
+    "source": {
+      "announcement_url": null,
+      "attachment_file": "第八批-4 “医疗服务项目周期超频次” 规则对应知识点明细.xlsx",
+      "row": 6,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-d712b2e12708b5f2",
+    "rule_class": "医疗服务项目周期超频次",
+    "gz_code": null,
+    "level1": null,
+    "level2": null,
+    "med_code": "003104010220200",
+    "med_codes": [
+      "003104010220200"
+    ],
+    "med_code_count": 1,
+    "item_name": "平衡试验(视动试验)",
+    "constraint": "评定间隔时间不短于14天。（人社部发〔2016〕23号）",
+    "detect_logic": "在设定的周期内超出限定支付数量",
+    "batch": 8,
+    "batch_tag": "batch_08",
+    "published_at": null,
+    "supersedes": null,
+    "source": {
+      "announcement_url": null,
+      "attachment_file": "第八批-4 “医疗服务项目周期超频次” 规则对应知识点明细.xlsx",
+      "row": 7,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-1cf78da4c6947156",
+    "rule_class": "医疗服务项目周期超频次",
+    "gz_code": null,
+    "level1": null,
+    "level2": null,
+    "med_code": "003104010220300",
+    "med_codes": [
+      "003104010220300"
+    ],
+    "med_code_count": 1,
+    "item_name": "平衡试验(旋转试验)",
+    "constraint": "评定间隔时间不短于14天。（人社部发〔2016〕23号）",
+    "detect_logic": "在设定的周期内超出限定支付数量",
+    "batch": 8,
+    "batch_tag": "batch_08",
+    "published_at": null,
+    "supersedes": null,
+    "source": {
+      "announcement_url": null,
+      "attachment_file": "第八批-4 “医疗服务项目周期超频次” 规则对应知识点明细.xlsx",
+      "row": 8,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-fb347ee25e258d00",
+    "rule_class": "医疗服务项目周期超频次",
+    "gz_code": null,
+    "level1": null,
+    "level2": null,
+    "med_code": "003104010220400",
+    "med_codes": [
+      "003104010220400"
+    ],
+    "med_code_count": 1,
+    "item_name": "平衡试验(甘油试验)",
+    "constraint": "评定间隔时间不短于14天。（人社部发〔2016〕23号）",
+    "detect_logic": "在设定的周期内超出限定支付数量",
+    "batch": 8,
+    "batch_tag": "batch_08",
+    "published_at": null,
+    "supersedes": null,
+    "source": {
+      "announcement_url": null,
+      "attachment_file": "第八批-4 “医疗服务项目周期超频次” 规则对应知识点明细.xlsx",
+      "row": 9,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-11dedb41b0862934",
+    "rule_class": "医疗服务项目周期超频次",
+    "gz_code": null,
+    "level1": null,
+    "level2": null,
+    "med_code": "003402000050000",
+    "med_codes": [
+      "003402000050000"
+    ],
+    "med_code_count": 1,
+    "item_name": "手功能评定",
+    "constraint": "评定间隔时间不短于14天。（人社部发〔2016〕23号）",
+    "detect_logic": "在设定的周期内超出限定支付数量",
+    "batch": 8,
+    "batch_tag": "batch_08",
+    "published_at": null,
+    "supersedes": null,
+    "source": {
+      "announcement_url": null,
+      "attachment_file": "第八批-4 “医疗服务项目周期超频次” 规则对应知识点明细.xlsx",
+      "row": 10,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-ee94a89cac9a4935",
+    "rule_class": "医疗服务项目周期超频次",
+    "gz_code": null,
+    "level1": null,
+    "level2": null,
+    "med_code": "003402000050100",
+    "med_codes": [
+      "003402000050100"
+    ],
+    "med_code_count": 1,
+    "item_name": "手功能评定(徒手)",
+    "constraint": "评定间隔时间不短于14天。（人社部发〔2016〕23号）",
+    "detect_logic": "在设定的周期内超出限定支付数量",
+    "batch": 8,
+    "batch_tag": "batch_08",
+    "published_at": null,
+    "supersedes": null,
+    "source": {
+      "announcement_url": null,
+      "attachment_file": "第八批-4 “医疗服务项目周期超频次” 规则对应知识点明细.xlsx",
+      "row": 11,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-d00b012d7ecd000e",
+    "rule_class": "医疗服务项目周期超频次",
+    "gz_code": null,
+    "level1": null,
+    "level2": null,
+    "med_code": "003402000050200",
+    "med_codes": [
+      "003402000050200"
+    ],
+    "med_code_count": 1,
+    "item_name": "手功能评定(仪器)",
+    "constraint": "评定间隔时间不短于14天。（人社部发〔2016〕23号）",
+    "detect_logic": "在设定的周期内超出限定支付数量",
+    "batch": 8,
+    "batch_tag": "batch_08",
+    "published_at": null,
+    "supersedes": null,
+    "source": {
+      "announcement_url": null,
+      "attachment_file": "第八批-4 “医疗服务项目周期超频次” 规则对应知识点明细.xlsx",
+      "row": 12,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-c0af10da87f452bc",
+    "rule_class": "医疗服务项目周期超频次",
+    "gz_code": null,
+    "level1": null,
+    "level2": null,
+    "med_code": "003402000350000",
+    "med_codes": [
+      "003402000350000"
+    ],
+    "med_code_count": 1,
+    "item_name": "儿童听力障碍语言训练",
+    "constraint": "每周最多支付一次。（人社部发〔2016〕23号）",
+    "detect_logic": "在设定的周期内超出限定支付数量",
+    "batch": 8,
+    "batch_tag": "batch_08",
+    "published_at": null,
+    "supersedes": null,
+    "source": {
+      "announcement_url": null,
+      "attachment_file": "第八批-4 “医疗服务项目周期超频次” 规则对应知识点明细.xlsx",
+      "row": 13,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-181abab50230ad8c",
+    "rule_class": "医疗服务项目周期超频次",
+    "gz_code": null,
+    "level1": null,
+    "level2": null,
+    "med_code": "003402000390000",
+    "med_codes": [
+      "003402000390000"
+    ],
+    "med_code_count": 1,
+    "item_name": "康复评定",
+    "constraint": "两次评定间隔时间不短于14天。（人社部发〔2016〕23号）",
+    "detect_logic": "在设定的周期内超出限定支付数量",
+    "batch": 8,
+    "batch_tag": "batch_08",
+    "published_at": null,
+    "supersedes": null,
+    "source": {
+      "announcement_url": null,
+      "attachment_file": "第八批-4 “医疗服务项目周期超频次” 规则对应知识点明细.xlsx",
+      "row": 14,
+      "pdf_page": null
+    }
+  }
+]

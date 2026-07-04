@@ -1,0 +1,3243 @@
+[
+  {
+    "kp_id": "KP-b5fc82f6cfef23b8",
+    "rule_class": "药品限二线使用",
+    "gz_code": "GZ10000101005000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "XL01ELA387E001010184513",
+    "med_codes": [
+      "XL01ELA387E001010184513"
+    ],
+    "med_code_count": 1,
+    "item_name": "阿可替尼胶囊",
+    "constraint": "限：1.既往至少接受过一种治疗的成人慢性淋巴细胞白血病(CLL)/小淋巴细胞淋巴瘤(SLL)患者；2.既往至少接受过一种治疗的成人套细胞淋巴瘤(MCL)患者。",
+    "detect_logic": "使用了该药品，但没有一线药品使用无效或不能耐受的证据。",
+    "batch": 9,
+    "batch_tag": "batch_09",
+    "published_at": "2026-04-21",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/4/21/art_109_20277.html",
+      "attachment_file": "第九批“药品限二线使用”规则对应知识点明细.xlsx",
+      "row": 1,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-95b3e2cd2d3beb0f",
+    "rule_class": "药品限二线使用",
+    "gz_code": "GZ10000101005000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "XM01AXA267A001010101522",
+    "med_codes": [
+      "XM01AXA267A001010101522",
+      "XM01AXA267A001010101749",
+      "XM01AXA267A001010105849",
+      "XM01AXA267A001010109568",
+      "XM01AXA267A001010180937",
+      "XM01AXA267A001010183830",
+      "XM01AXA267A001010201522",
+      "XM01AXA267A001010205849",
+      "XM01AXA267A001010209568",
+      "XM01AXA267A001010280937",
+      "XM01AXA267A001010301522",
+      "XM01AXA267A001010305849",
+      "XM01AXA267A001010309568",
+      "XM01AXA267A001010401522",
+      "XM01AXA267A001010405849",
+      "XM01AXA267A001010409568",
+      "XM01AXA267A001010505849",
+      "XM01AXA267A001010509568",
+      "XM01AXA267A001010609568",
+      "XM01AXA267A001010709568"
+    ],
+    "med_code_count": 20,
+    "item_name": "艾拉莫德片",
+    "constraint": "限活动性类风湿关节炎患者的二线治疗。",
+    "detect_logic": "使用了该药品，但没有一线药品使用无效或不能耐受的证据。",
+    "batch": 9,
+    "batch_tag": "batch_09",
+    "published_at": "2026-04-21",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/4/21/art_109_20277.html",
+      "attachment_file": "第九批“药品限二线使用”规则对应知识点明细.xlsx",
+      "row": 2,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-8bfd07852e574cbd",
+    "rule_class": "药品限二线使用",
+    "gz_code": "GZ10000101005000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "XL01FFA409B002010104021",
+    "med_codes": [
+      "XL01FFA409B002010104021"
+    ],
+    "med_code_count": 1,
+    "item_name": "艾帕洛利托沃瑞利单抗注射液",
+    "constraint": "限既往接受含铂化疗治疗失败的复发或转移性宫颈癌患者。",
+    "detect_logic": "使用了该药品，但没有一线药品使用无效或不能耐受的证据。",
+    "batch": 9,
+    "batch_tag": "batch_09",
+    "published_at": "2026-04-21",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/4/21/art_109_20277.html",
+      "attachment_file": "第九批“药品限二线使用”规则对应知识点明细.xlsx",
+      "row": 3,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-dc13efbedbcdf5d3",
+    "rule_class": "药品限二线使用",
+    "gz_code": "GZ10000101005000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "XA02BCA084A012010100453",
+    "med_codes": [
+      "XA02BCA084A012010100453",
+      "XA02BCA084A012010102777",
+      "XA02BCA084A012010200453",
+      "XA02BCA084A012010202777",
+      "XA02BCA084A012010300453",
+      "XA02BCA084A012010400453"
+    ],
+    "med_code_count": 6,
+    "item_name": "艾普拉唑肠溶片",
+    "constraint": "限有十二指肠溃疡、反流性食管炎诊断患者的二线用药。",
+    "detect_logic": "使用了该药品，但没有一线药品使用无效或不能耐受的证据。",
+    "batch": 9,
+    "batch_tag": "batch_09",
+    "published_at": "2026-04-21",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/4/21/art_109_20277.html",
+      "attachment_file": "第九批“药品限二线使用”规则对应知识点明细.xlsx",
+      "row": 4,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-3c9cbe6e88232f39",
+    "rule_class": "药品限二线使用",
+    "gz_code": "GZ10000101005000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "XB02BXA307A001010101397",
+    "med_codes": [
+      "XB02BXA307A001010101397",
+      "XB02BXA307A001010101425",
+      "XB02BXA307A001010101523",
+      "XB02BXA307A001010102180",
+      "XB02BXA307A001010104021",
+      "XB02BXA307A001010104111",
+      "XB02BXA307A001010104565",
+      "XB02BXA307A001010104641",
+      "XB02BXA307A001010178679",
+      "XB02BXA307A001010183383",
+      "XB02BXA307A001010184183",
+      "XB02BXA307A001010184393",
+      "XB02BXA307A001010201397",
+      "XB02BXA307A001010201425",
+      "XB02BXA307A001010201523",
+      "XB02BXA307A001010202180",
+      "XB02BXA307A001010204021",
+      "XB02BXA307A001010204111",
+      "XB02BXA307A001010278679",
+      "XB02BXA307A001010283383",
+      "XB02BXA307A001010284183",
+      "XB02BXA307A001010284393",
+      "XB02BXA307A001010301425",
+      "XB02BXA307A001010304111"
+    ],
+    "med_code_count": 24,
+    "item_name": "艾曲泊帕乙醇胺片",
+    "constraint": "限：1.既往对糖皮质激素、免疫球蛋白等治疗反应不佳的成人和6岁及以上儿童慢性免疫性(特发性)血小板减少症(ITP)患者；2.既往对免疫抑制治疗缓解不充分的重型再生障碍性贫血(SAA)患者。",
+    "detect_logic": "使用了该药品，但没有一线药品使用无效或不能耐受的证据。",
+    "batch": 9,
+    "batch_tag": "batch_09",
+    "published_at": "2026-04-21",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/4/21/art_109_20277.html",
+      "attachment_file": "第九批“药品限二线使用”规则对应知识点明细.xlsx",
+      "row": 5,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-73b2edf121a845e5",
+    "rule_class": "药品限二线使用",
+    "gz_code": "GZ10000101005000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "XA10BKA338A001010580716",
+    "med_codes": [
+      "XA10BKA338A001010580716",
+      "XA10BKA338A001010680716"
+    ],
+    "med_code_count": 2,
+    "item_name": "艾托格列净片",
+    "constraint": "限二线用药。",
+    "detect_logic": "使用了该药品，但没有一线药品使用无效或不能耐受的证据。",
+    "batch": 9,
+    "batch_tag": "batch_09",
+    "published_at": "2026-04-21",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/4/21/art_109_20277.html",
+      "attachment_file": "第九批“药品限二线使用”规则对应知识点明细.xlsx",
+      "row": 6,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-500d84340c8b56d2",
+    "rule_class": "药品限二线使用",
+    "gz_code": "GZ10000101005000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "XR03DXA305B002010178672",
+    "med_codes": [
+      "XR03DXA305B002010178672"
+    ],
+    "med_code_count": 1,
+    "item_name": "奥马珠单抗注射液",
+    "constraint": "限：1.经吸入型糖皮质激素和长效吸入型β2-肾上腺素受体激动剂治疗后，仍不能有效控制症状的中至重度持续性过敏性哮喘的6岁及以上患者，并需IgE(免疫球蛋白E)介导确诊证据；2.H1抗组胺药治疗后仍有症状的成人和青少年(12岁及以上)慢性自发性荨麻疹患者。",
+    "detect_logic": "使用了该药品，但没有一线药品使用无效或不能耐受的证据。",
+    "batch": 9,
+    "batch_tag": "batch_09",
+    "published_at": "2026-04-21",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/4/21/art_109_20277.html",
+      "attachment_file": "第九批“药品限二线使用”规则对应知识点明细.xlsx",
+      "row": 7,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-2e5e49fc60269076",
+    "rule_class": "药品限二线使用",
+    "gz_code": "GZ10000101005000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "XL04AAB233A001010104494",
+    "med_codes": [
+      "XL04AAB233A001010104494",
+      "XL04AAB233A001010178403",
+      "XL04AAB233A001010180537",
+      "XL04AAB233A001010180542",
+      "XL04AAB233A001010183034",
+      "XL04AAB233A001010278403",
+      "XL04AAB233A001010283034",
+      "XL04AAB233A001010378403",
+      "XL04AAB233A001010383034",
+      "XL04AAB233A001010478403",
+      "XL04AAB233A001010483034",
+      "XL04AAB233A001020178403",
+      "XL04AAB233A001020278403",
+      "XL04AAB233A001020378403",
+      "XL04AAB233A001020478403"
+    ],
+    "med_code_count": 15,
+    "item_name": "巴瑞替尼片",
+    "constraint": "限：1.诊断明确的类风湿关节炎经传统DMARDs治疗3-6个月疾病活动度下降低于50%者；2.对一种或多种既往传统合成或生物DMARDs应答不佳或不耐受的2岁及以上活动性幼年特发性关节炎患者，包括：(1)多关节型幼年特发性关节炎(多关节型类风湿因子阳性[RF+]或阴性[RF-]，扩展型少关节炎),(2)附着点炎相关关节炎,(3)幼年银屑病关节炎。可单药使用或与甲氨蝶呤联合用药。",
+    "detect_logic": "使用了该药品，但没有一线药品使用无效或不能耐受的证据。",
+    "batch": 9,
+    "batch_tag": "batch_09",
+    "published_at": "2026-04-21",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/4/21/art_109_20277.html",
+      "attachment_file": "第九批“药品限二线使用”规则对应知识点明细.xlsx",
+      "row": 8,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-9ebacbd12e8adfee",
+    "rule_class": "药品限二线使用",
+    "gz_code": "GZ10000101005000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "XS01EEB032G010010101967",
+    "med_codes": [
+      "XS01EEB032G010010101967",
+      "XS01EEB032G010010178204",
+      "XS01EEB032G010010181835",
+      "XS01EEB032G010010183124",
+      "XS01EEB032G010010281835"
+    ],
+    "med_code_count": 5,
+    "item_name": "贝美前列素滴眼液",
+    "constraint": "限二线用药。",
+    "detect_logic": "使用了该药品，但没有一线药品使用无效或不能耐受的证据。",
+    "batch": 9,
+    "batch_tag": "batch_09",
+    "published_at": "2026-04-21",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/4/21/art_109_20277.html",
+      "attachment_file": "第九批“药品限二线使用”规则对应知识点明细.xlsx",
+      "row": 9,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-4f009b2503a9d48a",
+    "rule_class": "药品限二线使用",
+    "gz_code": "GZ10000101005000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "XD11AXB099F002010105781",
+    "med_codes": [
+      "XD11AXB099F002010105781",
+      "XD11AXB099F002010178626",
+      "XD11AXB099F002010181475",
+      "XD11AXB099F002010184633",
+      "XD11AXB099F002020178626",
+      "XD11AXB099F002020181475",
+      "XD11AXB099F002030178626"
+    ],
+    "med_code_count": 7,
+    "item_name": "吡美莫司乳膏",
+    "constraint": "限轻中度特应性皮炎患者的二线用药。",
+    "detect_logic": "使用了该药品，但没有一线药品使用无效或不能耐受的证据。",
+    "batch": 9,
+    "batch_tag": "batch_09",
+    "published_at": "2026-04-21",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/4/21/art_109_20277.html",
+      "attachment_file": "第九批“药品限二线使用”规则对应知识点明细.xlsx",
+      "row": 10,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-a4c2fea72ecf56ed",
+    "rule_class": "药品限二线使用",
+    "gz_code": "GZ10000101005000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "XS01EDB212G010010178672",
+    "med_codes": [
+      "XS01EDB212G010010178672"
+    ],
+    "med_code_count": 1,
+    "item_name": "布林佐胺噻吗洛尔滴眼液",
+    "constraint": "限二线用药。",
+    "detect_logic": "使用了该药品，但没有一线药品使用无效或不能耐受的证据。",
+    "batch": 9,
+    "batch_tag": "batch_09",
+    "published_at": "2026-04-21",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/4/21/art_109_20277.html",
+      "attachment_file": "第九批“药品限二线使用”规则对应知识点明细.xlsx",
+      "row": 11,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-8c59ef8784ee8632",
+    "rule_class": "药品限二线使用",
+    "gz_code": "GZ10000101005000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "XS01ECB234G010010178672",
+    "med_codes": [
+      "XS01ECB234G010010178672"
+    ],
+    "med_code_count": 1,
+    "item_name": "布林佐胺溴莫尼定滴眼液",
+    "constraint": "限二线用药。",
+    "detect_logic": "使用了该药品，但没有一线药品使用无效或不能耐受的证据。",
+    "batch": 9,
+    "batch_tag": "batch_09",
+    "published_at": "2026-04-21",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/4/21/art_109_20277.html",
+      "attachment_file": "第九批“药品限二线使用”规则对应知识点明细.xlsx",
+      "row": 12,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-b14561d538089261",
+    "rule_class": "药品限二线使用",
+    "gz_code": "GZ10000101005000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "XR01ADD361L025010181450",
+    "med_codes": [
+      "XR01ADD361L025010181450",
+      "XR01ADD361L025010184822"
+    ],
+    "med_code_count": 2,
+    "item_name": "氮䓬斯汀氟替卡松鼻喷雾剂",
+    "constraint": "限12岁及以上单一鼻用抗组胺药或糖皮质激素治疗效果不佳的中至重度季节性过敏性鼻炎和常年性过敏性鼻炎患者。",
+    "detect_logic": "使用了该药品，但没有一线药品使用无效或不能耐受的证据。",
+    "batch": 9,
+    "batch_tag": "batch_09",
+    "published_at": "2026-04-21",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/4/21/art_109_20277.html",
+      "attachment_file": "第九批“药品限二线使用”规则对应知识点明细.xlsx",
+      "row": 13,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-6a7a82fb2af20a94",
+    "rule_class": "药品限二线使用",
+    "gz_code": "GZ10000101005000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "XL02BBD378E002010184539",
+    "med_codes": [
+      "XL02BBD378E002010184539"
+    ],
+    "med_code_count": 1,
+    "item_name": "氘恩扎鲁胺软胶囊",
+    "constraint": "限接受醋酸阿比特龙及化疗后出现疾病进展，且既往未接受新型雄激素受体抑制剂的转移性去势抵抗性前列腺癌(mCRPC)成人患者。",
+    "detect_logic": "使用了该药品，但没有一线药品使用无效或不能耐受的证据。",
+    "batch": 9,
+    "batch_tag": "batch_09",
+    "published_at": "2026-04-21",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/4/21/art_109_20277.html",
+      "attachment_file": "第九批“药品限二线使用”规则对应知识点明细.xlsx",
+      "row": 14,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-b6fd11f2e58279b8",
+    "rule_class": "药品限二线使用",
+    "gz_code": "GZ10000101005000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "XA10ADD335B002010107103",
+    "med_codes": [
+      "XA10ADD335B002010107103",
+      "XA10ADD335B002010182963",
+      "XA10ADD335B002010307103",
+      "XA10ADD335B002020107103",
+      "XA10ADD335B002020182963",
+      "XA10ADD335B002020207103",
+      "XA10ADD335B002020307103"
+    ],
+    "med_code_count": 7,
+    "item_name": "德谷门冬双胰岛素注射液",
+    "constraint": "限其他胰岛素或口服药难以控制的2型糖尿病患者。",
+    "detect_logic": "使用了该药品，但没有一线药品使用无效或不能耐受的证据。",
+    "batch": 9,
+    "batch_tag": "batch_09",
+    "published_at": "2026-04-21",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/4/21/art_109_20277.html",
+      "attachment_file": "第九批“药品限二线使用”规则对应知识点明细.xlsx",
+      "row": 15,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-bbe343d01d006424",
+    "rule_class": "药品限二线使用",
+    "gz_code": "GZ10000101005000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "XM09AXD370B002010181788",
+    "med_codes": [
+      "XM09AXD370B002010181788"
+    ],
+    "med_code_count": 1,
+    "item_name": "丁甘交联玻璃酸钠注射液",
+    "constraint": "限对非药物保守治疗及单纯止痛药物治疗(如对乙酰氨基酚)疼痛缓解效果欠佳的膝骨关节炎(OA)成人患者。",
+    "detect_logic": "使用了该药品，但没有一线药品使用无效或不能耐受的证据。",
+    "batch": 9,
+    "batch_tag": "batch_09",
+    "published_at": "2026-04-21",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/4/21/art_109_20277.html",
+      "attachment_file": "第九批“药品限二线使用”规则对应知识点明细.xlsx",
+      "row": 16,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-61dd0b03938b57aa",
+    "rule_class": "药品限二线使用",
+    "gz_code": "GZ10000101005000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "XA10BJD332B002010178403",
+    "med_codes": [
+      "XA10BJD332B002010178403",
+      "XA10BJD332B002010183013",
+      "XA10BJD332B002010278403",
+      "XA10BJD332B002010378403",
+      "XA10BJD332B002020178403",
+      "XA10BJD332B002020183013",
+      "XA10BJD332B002020278403",
+      "XA10BJD332B002020283013",
+      "XA10BJD332B002020378403"
+    ],
+    "med_code_count": 9,
+    "item_name": "度拉糖肽注射液",
+    "constraint": "限二甲双胍等口服降糖药或胰岛素控制效果不佳的BMI≥25的患者，首次处方时需由二级及以上医疗机构专科医师开具处方。",
+    "detect_logic": "使用了该药品，但没有一线药品使用无效或不能耐受的证据。",
+    "batch": 9,
+    "batch_tag": "batch_09",
+    "published_at": "2026-04-21",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/4/21/art_109_20277.html",
+      "attachment_file": "第九批“药品限二线使用”规则对应知识点明细.xlsx",
+      "row": 17,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-462e9c8c65dfcfa0",
+    "rule_class": "药品限二线使用",
+    "gz_code": "GZ10000101005000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "XD11AHD344B002010182507",
+    "med_codes": [
+      "XD11AHD344B002010182507",
+      "XD11AHD344B002010282507",
+      "XD11AHD344B002020182507",
+      "XD11AHD344B002020282507",
+      "XD11AHD344B002030182507",
+      "XD11AHD344B002030282507"
+    ],
+    "med_code_count": 6,
+    "item_name": "度普利尤单抗注射液",
+    "constraint": "限对传统治疗无效、有禁忌或不耐受的中重度特应性皮炎患者，需按说明书用药。",
+    "detect_logic": "使用了该药品，但没有一线药品使用无效或不能耐受的证据。",
+    "batch": 9,
+    "batch_tag": "batch_09",
+    "published_at": "2026-04-21",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/4/21/art_109_20277.html",
+      "attachment_file": "第九批“药品限二线使用”规则对应知识点明细.xlsx",
+      "row": 18,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-54376dd0f9919008",
+    "rule_class": "药品限二线使用",
+    "gz_code": "GZ10000101005000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "XL01FFE099B002010183422",
+    "med_codes": [
+      "XL01FFE099B002010183422"
+    ],
+    "med_code_count": 1,
+    "item_name": "恩朗苏拜单抗注射液",
+    "constraint": "限既往接受含铂化疗治疗失败的PD-L1表达阳性(CPS≥1)的复发或转移性宫颈癌患者。",
+    "detect_logic": "使用了该药品，但没有一线药品使用无效或不能耐受的证据。",
+    "batch": 9,
+    "batch_tag": "batch_09",
+    "published_at": "2026-04-21",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/4/21/art_109_20277.html",
+      "attachment_file": "第九批“药品限二线使用”规则对应知识点明细.xlsx",
+      "row": 19,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-60988eb48ad00e58",
+    "rule_class": "药品限二线使用",
+    "gz_code": "GZ10000101005000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "XN04BXE012A001010102763",
+    "med_codes": [
+      "XN04BXE012A001010102763",
+      "XN04BXE012A001010106988",
+      "XN04BXE012A001010179252",
+      "XN04BXE012A001010181686",
+      "XN04BXE012A001010279252"
+    ],
+    "med_code_count": 5,
+    "item_name": "恩他卡朋片",
+    "constraint": "限二线用药。",
+    "detect_logic": "使用了该药品，但没有一线药品使用无效或不能耐受的证据。",
+    "batch": 9,
+    "batch_tag": "batch_09",
+    "published_at": "2026-04-21",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/4/21/art_109_20277.html",
+      "attachment_file": "第九批“药品限二线使用”规则对应知识点明细.xlsx",
+      "row": 20,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-c6b39f3af6958b23",
+    "rule_class": "药品限二线使用",
+    "gz_code": "GZ10000101005000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "XN04BXE067A001010178700",
+    "med_codes": [
+      "XN04BXE067A001010178700"
+    ],
+    "med_code_count": 1,
+    "item_name": "恩他卡朋双多巴片",
+    "constraint": "限二线用药。",
+    "detect_logic": "使用了该药品，但没有一线药品使用无效或不能耐受的证据。",
+    "batch": 9,
+    "batch_tag": "batch_09",
+    "published_at": "2026-04-21",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/4/21/art_109_20277.html",
+      "attachment_file": "第九批“药品限二线使用”规则对应知识点明细.xlsx",
+      "row": 21,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-76f167f5fcbd436e",
+    "rule_class": "药品限二线使用",
+    "gz_code": "GZ10000101005000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "XN04BXE068A001010102763",
+    "med_codes": [
+      "XN04BXE068A001010102763",
+      "XN04BXE068A001010104021",
+      "XN04BXE068A001010178700"
+    ],
+    "med_code_count": 3,
+    "item_name": "恩他卡朋双多巴片(Ⅱ)",
+    "constraint": "限二线用药。",
+    "detect_logic": "使用了该药品，但没有一线药品使用无效或不能耐受的证据。",
+    "batch": 9,
+    "batch_tag": "batch_09",
+    "published_at": "2026-04-21",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/4/21/art_109_20277.html",
+      "attachment_file": "第九批“药品限二线使用”规则对应知识点明细.xlsx",
+      "row": 22,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-10d39bc0c453b04c",
+    "rule_class": "药品限二线使用",
+    "gz_code": "GZ10000101005000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "XN04BXE069A001010178700",
+    "med_codes": [
+      "XN04BXE069A001010178700"
+    ],
+    "med_code_count": 1,
+    "item_name": "恩他卡朋双多巴片(Ⅲ)",
+    "constraint": "限二线用药。",
+    "detect_logic": "使用了该药品，但没有一线药品使用无效或不能耐受的证据。",
+    "batch": 9,
+    "batch_tag": "batch_09",
+    "published_at": "2026-04-21",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/4/21/art_109_20277.html",
+      "attachment_file": "第九批“药品限二线使用”规则对应知识点明细.xlsx",
+      "row": 23,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-11c9ba389830309e",
+    "rule_class": "药品限二线使用",
+    "gz_code": "GZ10000101005000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "XN04BXE073A001010178700",
+    "med_codes": [
+      "XN04BXE073A001010178700"
+    ],
+    "med_code_count": 1,
+    "item_name": "恩他卡朋双多巴片(Ⅳ)",
+    "constraint": "限二线用药。",
+    "detect_logic": "使用了该药品，但没有一线药品使用无效或不能耐受的证据。",
+    "batch": 9,
+    "batch_tag": "batch_09",
+    "published_at": "2026-04-21",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/4/21/art_109_20277.html",
+      "attachment_file": "第九批“药品限二线使用”规则对应知识点明细.xlsx",
+      "row": 24,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-0e9d90425c9d4357",
+    "rule_class": "药品限二线使用",
+    "gz_code": "GZ10000101005000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "XL01XHE098A001010110093",
+    "med_codes": [
+      "XL01XHE098A001010110093",
+      "XL01XHE098A001020110093"
+    ],
+    "med_code_count": 2,
+    "item_name": "恩替司他片",
+    "constraint": "限联合芳香化酶抑制剂用于治疗激素受体(HR)阳性、人类表皮生长因子受体-2(HER-2)阴性，经内分泌治疗复发或进展的局部晚期或转移性乳腺癌患者。",
+    "detect_logic": "使用了该药品，但没有一线药品使用无效或不能耐受的证据。",
+    "batch": 9,
+    "batch_tag": "batch_09",
+    "published_at": "2026-04-21",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/4/21/art_109_20277.html",
+      "attachment_file": "第九批“药品限二线使用”规则对应知识点明细.xlsx",
+      "row": 25,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-035eac62fdd2305f",
+    "rule_class": "药品限二线使用",
+    "gz_code": "GZ10000101005000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "XL01EKF709E001010110171",
+    "med_codes": [
+      "XL01EKF709E001010110171",
+      "XL01EKF709E001020110171"
+    ],
+    "med_code_count": 2,
+    "item_name": "呋喹替尼胶囊",
+    "constraint": "限：1.既往接受过氟尿嘧啶类、奥沙利铂和伊立替康为基础的化疗，以及既往接受过或不适合接受抗血管内皮生长因子(VEGF)治疗、抗表皮生长因子受体(EGFR)治疗(RAS野生型)的转移性结直肠癌(mCRC)患者；2.联合信迪利单抗注射液用于既往系统性抗肿瘤治疗后失败且不适合进行根治性手术治疗或根治性放疗的晚期错配修复完整(pMMR)子宫内膜癌患者。",
+    "detect_logic": "使用了该药品，但没有一线药品使用无效或不能耐受的证据。",
+    "batch": 9,
+    "batch_tag": "batch_09",
+    "published_at": "2026-04-21",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/4/21/art_109_20277.html",
+      "attachment_file": "第九批“药品限二线使用”规则对应知识点明细.xlsx",
+      "row": 26,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-ec8a211c6407ee48",
+    "rule_class": "药品限二线使用",
+    "gz_code": "GZ10000101005000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "XL01EKF736A001010104611",
+    "med_codes": [
+      "XL01EKF736A001010104611"
+    ],
+    "med_code_count": 1,
+    "item_name": "伏罗尼布片",
+    "constraint": "限既往接受过酪氨酸激酶抑制剂治疗失败的晚期肾细胞癌(RCC)患者。",
+    "detect_logic": "使用了该药品，但没有一线药品使用无效或不能耐受的证据。",
+    "batch": 9,
+    "batch_tag": "batch_09",
+    "published_at": "2026-04-21",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/4/21/art_109_20277.html",
+      "attachment_file": "第九批“药品限二线使用”规则对应知识点明细.xlsx",
+      "row": 27,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-5f603ac79a52ce89",
+    "rule_class": "药品限二线使用",
+    "gz_code": "GZ10000101005000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "XL01EXF745A001010185200",
+    "med_codes": [
+      "XL01EXF745A001010185200"
+    ],
+    "med_code_count": 1,
+    "item_name": "氟泽雷塞片",
+    "constraint": "限至少接受过一种系统性治疗的鼠类肉瘤病毒癌基因(KRAS)G12C突变型的晚期非小细胞肺癌(NSCLC)成人患者。",
+    "detect_logic": "使用了该药品，但没有一线药品使用无效或不能耐受的证据。",
+    "batch": 9,
+    "batch_tag": "batch_09",
+    "published_at": "2026-04-21",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/4/21/art_109_20277.html",
+      "attachment_file": "第九批“药品限二线使用”规则对应知识点明细.xlsx",
+      "row": 28,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-5e656175c6990f33",
+    "rule_class": "药品限二线使用",
+    "gz_code": "GZ10000101005000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "XL01XXF723E001010101445",
+    "med_codes": [
+      "XL01XXF723E001010101445",
+      "XL01XXF723E001010201445"
+    ],
+    "med_code_count": 2,
+    "item_name": "氟唑帕利胶囊",
+    "constraint": "限：1.既往经过二线及以上化疗的伴有胚系BRCA突变(gBRCAm)的铂敏感复发性卵巢癌、输卵管癌或原发性腹膜癌的患者；2.铂敏感的复发性上皮性卵巢癌、输卵管癌或原发性腹膜癌成人患者在含铂化疗达到完全缓解或部分缓解后的维持治疗；3.晚期上皮性卵巢癌、输卵管癌或原发性腹膜癌成人患者在一线含铂化疗达到完全缓解或部分缓解后的维持治疗；4.单药或联合甲磺酸阿帕替尼用于新辅助、辅助或转移阶段接受过化疗治疗的伴有胚系BRCA突变(gBRCAm)的人表皮生长因子受体(HER2)阴性转移性乳腺癌成年患者。激素受体(HR)阳性乳腺癌患者既往需接受过内分泌治疗或被认为不适合接受内分泌治疗。",
+    "detect_logic": "使用了该药品，但没有一线药品使用无效或不能耐受的证据。",
+    "batch": 9,
+    "batch_tag": "batch_09",
+    "published_at": "2026-04-21",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/4/21/art_109_20277.html",
+      "attachment_file": "第九批“药品限二线使用”规则对应知识点明细.xlsx",
+      "row": 29,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-23710e10132937aa",
+    "rule_class": "药品限二线使用",
+    "gz_code": "GZ10000101005000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "XR06AXY072E003010181575",
+    "med_codes": [
+      "XR06AXY072E003010181575",
+      "XR06AXY072E003010281575"
+    ],
+    "med_code_count": 2,
+    "item_name": "富马酸依美斯汀缓释胶囊",
+    "constraint": "限二线用药。",
+    "detect_logic": "使用了该药品，但没有一线药品使用无效或不能耐受的证据。",
+    "batch": 9,
+    "batch_tag": "batch_09",
+    "published_at": "2026-04-21",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/4/21/art_109_20277.html",
+      "attachment_file": "第九批“药品限二线使用”规则对应知识点明细.xlsx",
+      "row": 30,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-860d6f0417a78ae6",
+    "rule_class": "药品限二线使用",
+    "gz_code": "GZ10000101005000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "XL04ABG180B002020178323",
+    "med_codes": [
+      "XL04ABG180B002020178323",
+      "XL04ABG180B002030178323"
+    ],
+    "med_code_count": 2,
+    "item_name": "戈利木单抗注射液",
+    "constraint": "限以下情况方可支付：1.诊断明确的类风湿关节炎经传统DMARDs治疗3-6个月疾病活动度下降低于50%者；2.诊断明确的强直性脊柱炎(不含放射学前期中轴性脊柱关节炎)NSAIDs充分治疗3个月疾病活动度下降低于50%者。",
+    "detect_logic": "使用了该药品，但没有一线药品使用无效或不能耐受的证据。",
+    "batch": 9,
+    "batch_tag": "batch_09",
+    "published_at": "2026-04-21",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/4/21/art_109_20277.html",
+      "attachment_file": "第九批“药品限二线使用”规则对应知识点明细.xlsx",
+      "row": 31,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-65bfa33d25567fe3",
+    "rule_class": "药品限二线使用",
+    "gz_code": "GZ10000101005000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "XL01EJG196E001010184411",
+    "med_codes": [
+      "XL01EJG196E001010184411"
+    ],
+    "med_code_count": 1,
+    "item_name": "戈利昔替尼胶囊",
+    "constraint": "限既往至少接受过一线系统性治疗的复发或难治的外周T细胞淋巴瘤(r/r PTCL)成人患者。",
+    "detect_logic": "使用了该药品，但没有一线药品使用无效或不能耐受的证据。",
+    "batch": 9,
+    "batch_tag": "batch_09",
+    "published_at": "2026-04-21",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/4/21/art_109_20277.html",
+      "attachment_file": "第九批“药品限二线使用”规则对应知识点明细.xlsx",
+      "row": 32,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-f92af58ae934681e",
+    "rule_class": "药品限二线使用",
+    "gz_code": "GZ10000101005000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "XL01XXG197A001010185361",
+    "med_codes": [
+      "XL01XXG197A001010185361"
+    ],
+    "med_code_count": 1,
+    "item_name": "格索雷塞片",
+    "constraint": "限至少接受过一种系统性治疗的鼠类肉瘤病毒癌基因(KRAS)G12C突变型的晚期非小细胞肺癌(NSCLC)成人患者。",
+    "detect_logic": "使用了该药品，但没有一线药品使用无效或不能耐受的证据。",
+    "batch": 9,
+    "batch_tag": "batch_09",
+    "published_at": "2026-04-21",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/4/21/art_109_20277.html",
+      "attachment_file": "第九批“药品限二线使用”规则对应知识点明细.xlsx",
+      "row": 33,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-ffd8f013165dd999",
+    "rule_class": "药品限二线使用",
+    "gz_code": "GZ10000101005000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "XL01EFF758E001010101190",
+    "med_codes": [
+      "XL01EFF758E001010101190",
+      "XL01EFF758E001010201190",
+      "XL01EFF758E001020101190",
+      "XL01EFF758E001020201190"
+    ],
+    "med_code_count": 4,
+    "item_name": "枸橼酸伏维西利胶囊",
+    "constraint": "限联合氟维司群用于既往接受内分泌治疗后出现疾病进展的激素受体(HR)阳性、人表皮生长因子2(HER2)阴性的复发或转移性成年乳腺癌患者。",
+    "detect_logic": "使用了该药品，但没有一线药品使用无效或不能耐受的证据。",
+    "batch": 9,
+    "batch_tag": "batch_09",
+    "published_at": "2026-04-21",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/4/21/art_109_20277.html",
+      "attachment_file": "第九批“药品限二线使用”规则对应知识点明细.xlsx",
+      "row": 34,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-09e457c234ca4b89",
+    "rule_class": "药品限二线使用",
+    "gz_code": "GZ10000101005000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "XL01EXG199A001010183134",
+    "med_codes": [
+      "XL01EXG199A001010183134",
+      "XL01EXG199A001010283134"
+    ],
+    "med_code_count": 2,
+    "item_name": "枸橼酸戈来雷塞片",
+    "constraint": "限至少接受过一种系统性治疗的鼠类肉瘤病毒癌基因(KRAS)G12C突变型的晚期非小细胞肺癌(NSCLC)成人患者。",
+    "detect_logic": "使用了该药品，但没有一线药品使用无效或不能耐受的证据。",
+    "batch": 9,
+    "batch_tag": "batch_09",
+    "published_at": "2026-04-21",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/4/21/art_109_20277.html",
+      "attachment_file": "第九批“药品限二线使用”规则对应知识点明细.xlsx",
+      "row": 35,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-0e9f7eb1e2c800aa",
+    "rule_class": "药品限二线使用",
+    "gz_code": "GZ10000101005000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "XL01XGY306E001010179422",
+    "med_codes": [
+      "XL01XGY306E001010179422",
+      "XL01XGY306E001020179422",
+      "XL01XGY306E001030179422"
+    ],
+    "med_code_count": 3,
+    "item_name": "枸橼酸伊沙佐米胶囊",
+    "constraint": "限治疗已接受过至少一种既往治疗的多发性骨髓瘤成人患者。",
+    "detect_logic": "使用了该药品，但没有一线药品使用无效或不能耐受的证据。",
+    "batch": 9,
+    "batch_tag": "batch_09",
+    "published_at": "2026-04-21",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/4/21/art_109_20277.html",
+      "attachment_file": "第九批“药品限二线使用”规则对应知识点明细.xlsx",
+      "row": 36,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-a6a02789cbe11502",
+    "rule_class": "药品限二线使用",
+    "gz_code": "GZ10000101005000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "XL04ACG186B002030178537",
+    "med_codes": [
+      "XL04ACG186B002030178537"
+    ],
+    "med_code_count": 1,
+    "item_name": "古塞奇尤单抗注射液(静脉输注)",
+    "constraint": "限：1.对传统治疗或生物制剂应答不充分、失应答或不耐受的中度至重度活动性克罗恩病成人患者的诱导治疗；2.对传统治疗或生物制剂应答不充分、失应答或不耐受的中度至重度活动性溃疡性结肠炎成人患者的诱导治疗。",
+    "detect_logic": "使用了该药品，但没有一线药品使用无效或不能耐受的证据。",
+    "batch": 9,
+    "batch_tag": "batch_09",
+    "published_at": "2026-04-21",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/4/21/art_109_20277.html",
+      "attachment_file": "第九批“药品限二线使用”规则对应知识点明细.xlsx",
+      "row": 37,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-92610c47665ab424",
+    "rule_class": "药品限二线使用",
+    "gz_code": "GZ10000101005000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "XB02BXH117A001010101445",
+    "med_codes": [
+      "XB02BXH117A001010101445",
+      "XB02BXH117A001020101445",
+      "XB02BXH117A001030101445"
+    ],
+    "med_code_count": 3,
+    "item_name": "海曲泊帕乙醇胺片",
+    "constraint": "限：1.既往对糖皮质激素、免疫球蛋白等治疗反应不佳的慢性原发免疫性血小板减少症(ITP)成人患者；2.对免疫抑制治疗(IST)疗效不佳的重型再生障碍性贫血(SAA)成人患者。",
+    "detect_logic": "使用了该药品，但没有一线药品使用无效或不能耐受的证据。",
+    "batch": 9,
+    "batch_tag": "batch_09",
+    "published_at": "2026-04-21",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/4/21/art_109_20277.html",
+      "attachment_file": "第九批“药品限二线使用”规则对应知识点明细.xlsx",
+      "row": 38,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-e1d6ad53a5061709",
+    "rule_class": "药品限二线使用",
+    "gz_code": "GZ10000101005000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "XB01AFA319A001010101748",
+    "med_codes": [
+      "XB01AFA319A001010101748",
+      "XB01AFA319A001010104021",
+      "XB01AFA319A001010104127",
+      "XB01AFA319A001010104188",
+      "XB01AFA319A001010105849",
+      "XB01AFA319A001010182561",
+      "XB01AFA319A001010183521",
+      "XB01AFA319A001010184134",
+      "XB01AFA319A001010184212",
+      "XB01AFA319A001010201748",
+      "XB01AFA319A001010204127",
+      "XB01AFA319A001010204188",
+      "XB01AFA319A001010283521",
+      "XB01AFA319A001010284134",
+      "XB01AFA319A001010284212",
+      "XB01AFA319A001010304127",
+      "XB01AFA319A001010304188",
+      "XB01AFA319A001010383521",
+      "XB01AFA319A001010384134",
+      "XB01AFA319A001010404127",
+      "XB01AFA319A001010483521",
+      "XB01AFA319A001010484134",
+      "XB01AFA319A001010504127",
+      "XB01AFA319A001010583521",
+      "XB01AFA319A001010604127",
+      "XB01AFA319A001010683521",
+      "XB01AFA319A001010704127",
+      "XB01AFA319A001010783521",
+      "XB01AFA319A001010804127",
+      "XB01AFA319A001010883521",
+      "XB01AFA319A001010904127",
+      "XB01AFA319A001010983521",
+      "XB01AFA319A001011004127",
+      "XB01AFA319A001011083521",
+      "XB01AFA319A001011104127",
+      "XB01AFA319A001011183521",
+      "XB01AFA319A001011204127",
+      "XB01AFA319A001011283521",
+      "XB01AFA319A001011304127",
+      "XB01AFA319A001011383521",
+      "XB01AFA319A001011404127",
+      "XB01AFA319A001011483521",
+      "XB01AFA319A001011504127",
+      "XB01AFA319A001011583521",
+      "XB01AFA319A001011683521",
+      "XB01AFA319A001011783521",
+      "XB01AFA319A001011883521",
+      "XB01AFA319A001011983521",
+      "XB01AFA319A001012083521",
+      "XB01AFA319A001012183521",
+      "XB01AFA319A001012283521",
+      "XB01AFA319A001012383521",
+      "XB01AFA319A001012483521",
+      "XB01AFA319A001012583521",
+      "XB01AFA319A001012683521",
+      "XB01AFA319A001012783521",
+      "XB01AFA319A001012883521",
+      "XB01AFA319A001020101748",
+      "XB01AFA319A001020104021",
+      "XB01AFA319A001020104188",
+      "XB01AFA319A001020105849",
+      "XB01AFA319A001020182561",
+      "XB01AFA319A001020183521",
+      "XB01AFA319A001020184134",
+      "XB01AFA319A001020184212",
+      "XB01AFA319A001020201748",
+      "XB01AFA319A001020204188",
+      "XB01AFA319A001020282561",
+      "XB01AFA319A001020283521",
+      "XB01AFA319A001020284134",
+      "XB01AFA319A001020284212",
+      "XB01AFA319A001020304188",
+      "XB01AFA319A001020382561",
+      "XB01AFA319A001020383521",
+      "XB01AFA319A001020384134",
+      "XB01AFA319A001020404188",
+      "XB01AFA319A001020483521",
+      "XB01AFA319A001020484134",
+      "XB01AFA319A001020504188",
+      "XB01AFA319A001020583521",
+      "XB01AFA319A001020683521",
+      "XB01AFA319A001020783521",
+      "XB01AFA319A001020883521",
+      "XB01AFA319A001020983521",
+      "XB01AFA319A001021083521",
+      "XB01AFA319A001021183521",
+      "XB01AFA319A001021283521",
+      "XB01AFA319A001021383521",
+      "XB01AFA319A001021483521",
+      "XB01AFA319A001021583521",
+      "XB01AFA319A001021683521",
+      "XB01AFA319A001021783521",
+      "XB01AFA319A001021883521",
+      "XB01AFA319A001021983521",
+      "XB01AFA319A001022083521",
+      "XB01AFA319A001022183521",
+      "XB01AFA319A001022283521",
+      "XB01AFA319A001022383521",
+      "XB01AFA319A001022483521",
+      "XB01AFA319A001022583521",
+      "XB01AFA319A001022683521",
+      "XB01AFA319A001030104021",
+      "XB01AFA319A001030104188",
+      "XB01AFA319A001030105849",
+      "XB01AFA319A001030182561",
+      "XB01AFA319A001030183521",
+      "XB01AFA319A001030204188",
+      "XB01AFA319A001030282561",
+      "XB01AFA319A001030283521",
+      "XB01AFA319A001030304188",
+      "XB01AFA319A001030382561",
+      "XB01AFA319A001030383521",
+      "XB01AFA319A001030404188",
+      "XB01AFA319A001030483521",
+      "XB01AFA319A001030504188",
+      "XB01AFA319A001030583521",
+      "XB01AFA319A001030683521",
+      "XB01AFA319A001030783521",
+      "XB01AFA319A001030883521",
+      "XB01AFA319A001030983521",
+      "XB01AFA319A001031083521",
+      "XB01AFA319A001031183521",
+      "XB01AFA319A001031283521",
+      "XB01AFA319A001031383521",
+      "XB01AFA319A001031483521",
+      "XB01AFA319A001031583521",
+      "XB01AFA319A001031683521",
+      "XB01AFA319A001031783521",
+      "XB01AFA319A001031883521",
+      "XB01AFA319A001031983521",
+      "XB01AFA319A001032083521",
+      "XB01AFA319A001032183521",
+      "XB01AFA319A001032283521",
+      "XB01AFA319A001032383521",
+      "XB01AFA319A001032483521",
+      "XB01AFA319A001032583521",
+      "XB01AFA319A001032683521",
+      "XB01AFA319A001032783521",
+      "XB01AFA319A001032883521"
+    ],
+    "med_code_count": 139,
+    "item_name": "甲苯磺酸艾多沙班片",
+    "constraint": "限华法林治疗控制不良或出血高危的非瓣膜性房颤、深静脉血栓、肺栓塞患者。",
+    "detect_logic": "使用了该药品，但没有一线药品使用无效或不能耐受的证据。",
+    "batch": 9,
+    "batch_tag": "batch_09",
+    "published_at": "2026-04-21",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/4/21/art_109_20277.html",
+      "attachment_file": "第九批“药品限二线使用”规则对应知识点明细.xlsx",
+      "row": 39,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-378e2996fe57ded6",
+    "rule_class": "药品限二线使用",
+    "gz_code": "GZ10000101005000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "XL01XKN118E001010182136",
+    "med_codes": [
+      "XL01XKN118E001010182136",
+      "XL01XKN118E001010282136"
+    ],
+    "med_code_count": 2,
+    "item_name": "甲苯磺酸尼拉帕利胶囊",
+    "constraint": "限：1.晚期上皮性卵巢癌、输卵管癌或原发性腹膜癌成人患者对一线含铂化疗达到完全缓解或部分缓解后的维持治疗；2.铂敏感的复发性上皮性卵巢癌、输卵管癌或原发性腹膜癌成人患者在含铂化疗达到完全缓解或部分缓解后的维持治疗。",
+    "detect_logic": "使用了该药品，但没有一线药品使用无效或不能耐受的证据。",
+    "batch": 9,
+    "batch_tag": "batch_09",
+    "published_at": "2026-04-21",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/4/21/art_109_20277.html",
+      "attachment_file": "第九批“药品限二线使用”规则对应知识点明细.xlsx",
+      "row": 40,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-5a168d93522b96e8",
+    "rule_class": "药品限二线使用",
+    "gz_code": "GZ10000101005000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "XL01XXA322B002010101523",
+    "med_codes": [
+      "XL01XXA322B002010101523",
+      "XL01XXA322B002010180081",
+      "XL01XXA322B002010182465",
+      "XL01XXA322B002010184541"
+    ],
+    "med_code_count": 4,
+    "item_name": "甲磺酸艾立布林注射液",
+    "constraint": "限既往接受过至少两种化疗方案的局部晚期或转移性乳腺癌患者。既往的化疗方案应包含一种蒽环类和一种紫杉烷类药物。",
+    "detect_logic": "使用了该药品，但没有一线药品使用无效或不能耐受的证据。",
+    "batch": 9,
+    "batch_tag": "batch_09",
+    "published_at": "2026-04-21",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/4/21/art_109_20277.html",
+      "attachment_file": "第九批“药品限二线使用”规则对应知识点明细.xlsx",
+      "row": 41,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-e31a061ec111c0b1",
+    "rule_class": "药品限二线使用",
+    "gz_code": "GZ10000101005000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "XL04AAB259A001010284830",
+    "med_codes": [
+      "XL04AAB259A001010284830"
+    ],
+    "med_code_count": 1,
+    "item_name": "甲磺酸贝舒地尔片",
+    "constraint": "限对糖皮质激素或其他系统治疗应答不充分的12岁及以上慢性移植物抗宿主病患者。",
+    "detect_logic": "使用了该药品，但没有一线药品使用无效或不能耐受的证据。",
+    "batch": 9,
+    "batch_tag": "batch_09",
+    "published_at": "2026-04-21",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/4/21/art_109_20277.html",
+      "attachment_file": "第九批“药品限二线使用”规则对应知识点明细.xlsx",
+      "row": 42,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-63f0c80ae7198f0f",
+    "rule_class": "药品限二线使用",
+    "gz_code": "GZ10000101005000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "XJ01MAJ009A001010100453",
+    "med_codes": [
+      "XJ01MAJ009A001010100453",
+      "XJ01MAJ009A001010181788"
+    ],
+    "med_code_count": 2,
+    "item_name": "甲磺酸吉米沙星片",
+    "constraint": "限二线用药。",
+    "detect_logic": "使用了该药品，但没有一线药品使用无效或不能耐受的证据。",
+    "batch": 9,
+    "batch_tag": "batch_09",
+    "published_at": "2026-04-21",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/4/21/art_109_20277.html",
+      "attachment_file": "第九批“药品限二线使用”规则对应知识点明细.xlsx",
+      "row": 43,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-201bfcd133a41646",
+    "rule_class": "药品限二线使用",
+    "gz_code": "GZ10000101005000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "XB03XAJ236B002010179436",
+    "med_codes": [
+      "XB03XAJ236B002010179436",
+      "XB03XAJ236B002020179436",
+      "XB03XAJ236B002030179436"
+    ],
+    "med_code_count": 3,
+    "item_name": "甲氧聚二醇重组人促红素注射液",
+    "constraint": "限因慢性肾脏病引起的贫血，且正在接受红细胞生成刺激剂类药品治疗的患者。",
+    "detect_logic": "使用了该药品，但没有一线药品使用无效或不能耐受的证据。",
+    "batch": 9,
+    "batch_tag": "batch_09",
+    "published_at": "2026-04-21",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/4/21/art_109_20277.html",
+      "attachment_file": "第九批“药品限二线使用”规则对应知识点明细.xlsx",
+      "row": 44,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-6b466422c6aaf272",
+    "rule_class": "药品限二线使用",
+    "gz_code": "GZ10000101005000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "XB05BAJ113B002010101415",
+    "med_codes": [
+      "XB05BAJ113B002010101415",
+      "XB05BAJ113B002010102180",
+      "XB05BAJ113B002010109556",
+      "XB05BAJ113B002010178432",
+      "XB05BAJ113B002010201415"
+    ],
+    "med_code_count": 5,
+    "item_name": "结构脂肪乳注射液(C6～24)",
+    "constraint": "限肝功能不全(严重肝功能不全者除外)患者的二线用药。需经营养风险筛查,明确具有营养风险,且不能经饮食或使用\"肠内营养剂\"补充足够营养的住院患者方予支付。",
+    "detect_logic": "使用了该药品，但没有一线药品使用无效或不能耐受的证据。",
+    "batch": 9,
+    "batch_tag": "batch_09",
+    "published_at": "2026-04-21",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/4/21/art_109_20277.html",
+      "attachment_file": "第九批“药品限二线使用”规则对应知识点明细.xlsx",
+      "row": 45,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-876a046eb5cf344b",
+    "rule_class": "药品限二线使用",
+    "gz_code": "GZ10000101005000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "XA10BJJ237B002010101444",
+    "med_codes": [
+      "XA10BJJ237B002010101444",
+      "XA10BJJ237B002010201444",
+      "XA10BJJ237B002020101444",
+      "XA10BJJ237B002020201444",
+      "XA10BJJ237B002020301444",
+      "XA10BJJ237B002030101444",
+      "XA10BJJ237B002030201444"
+    ],
+    "med_code_count": 7,
+    "item_name": "聚乙二醇洛塞那肽注射液",
+    "constraint": "限二甲双胍等口服降糖药或胰岛素控制效果不佳的BMI≥25的患者，首次处方时需由二级及以上医疗机构专科医师开具处方。",
+    "detect_logic": "使用了该药品，但没有一线药品使用无效或不能耐受的证据。",
+    "batch": 9,
+    "batch_tag": "batch_09",
+    "published_at": "2026-04-21",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/4/21/art_109_20277.html",
+      "attachment_file": "第九批“药品限二线使用”规则对应知识点明细.xlsx",
+      "row": 46,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-29febd902f1cd8d0",
+    "rule_class": "药品限二线使用",
+    "gz_code": "GZ10000101005000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "XL01EXK153A001010178241",
+    "med_codes": [
+      "XL01EXK153A001010178241",
+      "XL01EXK153A001020178241"
+    ],
+    "med_code_count": 2,
+    "item_name": "卡匹色替片",
+    "constraint": "限联合氟维司群用于转移性阶段至少接受过一种内分泌治疗后疾病进展，或在辅助治疗期间或完成辅助治疗后12个月内复发的激素受体(HR)阳性、人表皮生长因子受体2(HER2)阴性且伴有一种或多种PIK3CA/AKT1/PTEN改变的局部晚期或转移性乳腺癌成人患者。",
+    "detect_logic": "使用了该药品，但没有一线药品使用无效或不能耐受的证据。",
+    "batch": 9,
+    "batch_tag": "batch_09",
+    "published_at": "2026-04-21",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/4/21/art_109_20277.html",
+      "attachment_file": "第九批“药品限二线使用”规则对应知识点明细.xlsx",
+      "row": 47,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-8d73f629607d9a71",
+    "rule_class": "药品限二线使用",
+    "gz_code": "GZ10000101005000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "XS01EEL010G010010100225",
+    "med_codes": [
+      "XS01EEL010G010010100225",
+      "XS01EEL010G010010102031",
+      "XS01EEL010G010010104010",
+      "XS01EEL010G010010178729",
+      "XS01EEL010G010010179576",
+      "XS01EEL010G010010181835",
+      "XS01EEL010G010010184838"
+    ],
+    "med_code_count": 7,
+    "item_name": "拉坦前列素滴眼液",
+    "constraint": "限二线用药。",
+    "detect_logic": "使用了该药品，但没有一线药品使用无效或不能耐受的证据。",
+    "batch": 9,
+    "batch_tag": "batch_09",
+    "published_at": "2026-04-21",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/4/21/art_109_20277.html",
+      "attachment_file": "第九批“药品限二线使用”规则对应知识点明细.xlsx",
+      "row": 48,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-2e0c347fcb2b52b6",
+    "rule_class": "药品限二线使用",
+    "gz_code": "GZ10000101005000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "XL04ACL435B002010183266",
+    "med_codes": [
+      "XL04ACL435B002010183266"
+    ],
+    "med_code_count": 1,
+    "item_name": "利生奇珠单抗注射液",
+    "constraint": "限对传统治疗或生物制剂治疗应答不足、失应答或不耐受的中重度活动性克罗恩病成年患者。",
+    "detect_logic": "使用了该药品，但没有一线药品使用无效或不能耐受的证据。",
+    "batch": 9,
+    "batch_tag": "batch_09",
+    "published_at": "2026-04-21",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/4/21/art_109_20277.html",
+      "attachment_file": "第九批“药品限二线使用”规则对应知识点明细.xlsx",
+      "row": 49,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-1aba3459c02af4e1",
+    "rule_class": "药品限二线使用",
+    "gz_code": "GZ10000101005000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "XL04ACL435B002020183266",
+    "med_codes": [
+      "XL04ACL435B002020183266"
+    ],
+    "med_code_count": 1,
+    "item_name": "利生奇珠单抗注射液(皮下注射)",
+    "constraint": "限对传统治疗或生物制剂治疗应答不足、失应答或不耐受的中重度活动性克罗恩病成年患者。",
+    "detect_logic": "使用了该药品，但没有一线药品使用无效或不能耐受的证据。",
+    "batch": 9,
+    "batch_tag": "batch_09",
+    "published_at": "2026-04-21",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/4/21/art_109_20277.html",
+      "attachment_file": "第九批“药品限二线使用”规则对应知识点明细.xlsx",
+      "row": 50,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-3760956e4b0d5a22",
+    "rule_class": "药品限二线使用",
+    "gz_code": "GZ10000101005000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "XA10BJL366B002010181708",
+    "med_codes": [
+      "XA10BJL366B002010181708",
+      "XA10BJL366B002010182160",
+      "XA10BJL366B002020181708",
+      "XA10BJL366B002020182160"
+    ],
+    "med_code_count": 4,
+    "item_name": "利司那肽注射液",
+    "constraint": "限二甲双胍等口服降糖药或胰岛素控制效果不佳的BMI≥25的患者，首次处方时需由二级及以上医疗机构专科医师开具处方。",
+    "detect_logic": "使用了该药品，但没有一线药品使用无效或不能耐受的证据。",
+    "batch": 9,
+    "batch_tag": "batch_09",
+    "published_at": "2026-04-21",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/4/21/art_109_20277.html",
+      "attachment_file": "第九批“药品限二线使用”规则对应知识点明细.xlsx",
+      "row": 51,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-91e58456ee369df0",
+    "rule_class": "药品限二线使用",
+    "gz_code": "GZ10000101005000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "XL01EJA420A001010101445",
+    "med_codes": [
+      "XL01EJA420A001010101445",
+      "XL01EJA420A001010201445"
+    ],
+    "med_code_count": 2,
+    "item_name": "硫酸艾玛昔替尼片",
+    "constraint": "限：1.对局部外用治疗或其他系统性治疗应答不充分或不耐受的中重度特应性皮炎成人患者；2.对一种或多种TNF抑制剂疗效不佳或不耐受的中重度活动性类风湿关节炎成人患者；3.对一种或多种TNF抑制剂疗效不佳或不耐受的活动性强直性脊柱炎成人患者。",
+    "detect_logic": "使用了该药品，但没有一线药品使用无效或不能耐受的证据。",
+    "batch": 9,
+    "batch_tag": "batch_09",
+    "published_at": "2026-04-21",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/4/21/art_109_20277.html",
+      "attachment_file": "第九批“药品限二线使用”规则对应知识点明细.xlsx",
+      "row": 52,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-9303bd727c5cd272",
+    "rule_class": "药品限二线使用",
+    "gz_code": "GZ10000101005000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "XR03ACY268L031010178672",
+    "med_codes": [
+      "XR03ACY268L031010178672",
+      "XR03ACY268L031010278672",
+      "XR03ACY268L031010378672",
+      "XR03ACY268L031020178672",
+      "XR03ACY268L031020278672"
+    ],
+    "med_code_count": 5,
+    "item_name": "马来酸茚达特罗吸入粉雾剂",
+    "constraint": "限二线用药。",
+    "detect_logic": "使用了该药品，但没有一线药品使用无效或不能耐受的证据。",
+    "batch": 9,
+    "batch_tag": "batch_09",
+    "published_at": "2026-04-21",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/4/21/art_109_20277.html",
+      "attachment_file": "第九批“药品限二线使用”规则对应知识点明细.xlsx",
+      "row": 53,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-26e376d4048ee623",
+    "rule_class": "药品限二线使用",
+    "gz_code": "GZ10000101005000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "XJ05AXM184A001010184503",
+    "med_codes": [
+      "XJ05AXM184A001010184503",
+      "XJ05AXM184A001010284503"
+    ],
+    "med_code_count": 2,
+    "item_name": "马立巴韦片",
+    "constraint": "限治疗造血干细胞移植或实体器官移植后巨细胞病毒(CMV)感染和/或疾病，且对一种或多种既往治疗(更昔洛韦、缬更昔洛韦、西多福韦或膦甲酸钠)难治(伴或不伴基因型耐药)的成人患者。",
+    "detect_logic": "使用了该药品，但没有一线药品使用无效或不能耐受的证据。",
+    "batch": 9,
+    "batch_tag": "batch_09",
+    "published_at": "2026-04-21",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/4/21/art_109_20277.html",
+      "attachment_file": "第九批“药品限二线使用”规则对应知识点明细.xlsx",
+      "row": 54,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-022e489a59b3dfd6",
+    "rule_class": "药品限二线使用",
+    "gz_code": "GZ10000101005000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "XJ01XDM152B002010100318",
+    "med_codes": [
+      "XJ01XDM152B002010100318",
+      "XJ01XDM152B002010101227",
+      "XJ01XDM152B002010101444",
+      "XJ01XDM152B002010102013",
+      "XJ01XDM152B002010102317",
+      "XJ01XDM152B002010102763",
+      "XJ01XDM152B002010103745",
+      "XJ01XDM152B002010104145",
+      "XJ01XDM152B002010105759",
+      "XJ01XDM152B002010109568",
+      "XJ01XDM152B002010109910",
+      "XJ01XDM152B002010110242",
+      "XJ01XDM152B002010181979",
+      "XJ01XDM152B002010183033",
+      "XJ01XDM152B002010183302",
+      "XJ01XDM152B002010184044",
+      "XJ01XDM152B002010184221",
+      "XJ01XDM152B002010201227",
+      "XJ01XDM152B002010283033"
+    ],
+    "med_code_count": 19,
+    "item_name": "吗啉硝唑氯化钠注射液",
+    "constraint": "限二线用药。",
+    "detect_logic": "使用了该药品，但没有一线药品使用无效或不能耐受的证据。",
+    "batch": 9,
+    "batch_tag": "batch_09",
+    "published_at": "2026-04-21",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/4/21/art_109_20277.html",
+      "attachment_file": "第九批“药品限二线使用”规则对应知识点明细.xlsx",
+      "row": 55,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-8933bd4aab05a4ce",
+    "rule_class": "药品限二线使用",
+    "gz_code": "GZ10000101005000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "XL01XKP142E001010182282",
+    "med_codes": [
+      "XL01XKP142E001010182282"
+    ],
+    "med_code_count": 1,
+    "item_name": "帕米帕利胶囊",
+    "constraint": "限既往经过二线及以上化疗的伴有胚系BRCA(gBRCA)突变的复发性晚期卵巢癌、输卵管癌或原发性腹膜癌患者。",
+    "detect_logic": "使用了该药品，但没有一线药品使用无效或不能耐受的证据。",
+    "batch": 9,
+    "batch_tag": "batch_09",
+    "published_at": "2026-04-21",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/4/21/art_109_20277.html",
+      "attachment_file": "第九批“药品限二线使用”规则对应知识点明细.xlsx",
+      "row": 56,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-17047c90309cd8ac",
+    "rule_class": "药品限二线使用",
+    "gz_code": "GZ10000101005000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "XL01ELP156A001010178403",
+    "med_codes": [
+      "XL01ELP156A001010178403",
+      "XL01ELP156A001020178403"
+    ],
+    "med_code_count": 2,
+    "item_name": "匹妥布替尼片",
+    "constraint": "限既往接受过至少两种系统性治疗(含布鲁顿氏酪氨酸激酶[BTK]抑制剂)的复发或难治性套细胞淋巴瘤(MCL)成人患者。",
+    "detect_logic": "使用了该药品，但没有一线药品使用无效或不能耐受的证据。",
+    "batch": 9,
+    "batch_tag": "batch_09",
+    "published_at": "2026-04-21",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/4/21/art_109_20277.html",
+      "attachment_file": "第九批“药品限二线使用”规则对应知识点明细.xlsx",
+      "row": 57,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-cb17901322595217",
+    "rule_class": "药品限二线使用",
+    "gz_code": "GZ10000101005000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "XL01EKF756E001010101445",
+    "med_codes": [
+      "XL01EKF756E001010101445"
+    ],
+    "med_code_count": 1,
+    "item_name": "苹果酸法米替尼胶囊",
+    "constraint": "限联合注射用卡瑞利珠单抗用于既往接受含铂化疗治疗失败但未接受过贝伐珠单抗治疗的复发或转移性宫颈癌患者。",
+    "detect_logic": "使用了该药品，但没有一线药品使用无效或不能耐受的证据。",
+    "batch": 9,
+    "batch_tag": "batch_09",
+    "published_at": "2026-04-21",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/4/21/art_109_20277.html",
+      "attachment_file": "第九批“药品限二线使用”规则对应知识点明细.xlsx",
+      "row": 58,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-6ffc983d109969c0",
+    "rule_class": "药品限二线使用",
+    "gz_code": "GZ10000101005000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "XJ01MBN102E001010107968",
+    "med_codes": [
+      "XJ01MBN102E001010107968",
+      "XJ01MBN102E001010207968"
+    ],
+    "med_code_count": 2,
+    "item_name": "苹果酸奈诺沙星胶囊",
+    "constraint": "限二线用药。",
+    "detect_logic": "使用了该药品，但没有一线药品使用无效或不能耐受的证据。",
+    "batch": 9,
+    "batch_tag": "batch_09",
+    "published_at": "2026-04-21",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/4/21/art_109_20277.html",
+      "attachment_file": "第九批“药品限二线使用”规则对应知识点明细.xlsx",
+      "row": 59,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-e8058946ba3931dc",
+    "rule_class": "药品限二线使用",
+    "gz_code": "GZ10000101005000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "XL04AXB245E001010101523",
+    "med_codes": [
+      "XL04AXB245E001010101523",
+      "XL04AXB245E001010101749",
+      "XL04AXB245E001010104021",
+      "XL04AXB245E001010201523",
+      "XL04AXB245E001010301523",
+      "XL04AXB245E001020101523",
+      "XL04AXB245E001020101749",
+      "XL04AXB245E001020104021",
+      "XL04AXB245E001020201523",
+      "XL04AXB245E001020301523",
+      "XL04AXB245E001030104021",
+      "XL04AXB245E001040104021"
+    ],
+    "med_code_count": 12,
+    "item_name": "泊马度胺胶囊",
+    "constraint": "限既往接受过至少两种治疗(包括来那度胺和一种蛋白酶体抑制剂)，且在最后一次治疗期间或治疗结束后60天内发生疾病进展的成年多发性骨髓瘤患者。",
+    "detect_logic": "使用了该药品，但没有一线药品使用无效或不能耐受的证据。",
+    "batch": 9,
+    "batch_tag": "batch_09",
+    "published_at": "2026-04-21",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/4/21/art_109_20277.html",
+      "attachment_file": "第九批“药品限二线使用”规则对应知识点明细.xlsx",
+      "row": 60,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-51ae9112315f3ef3",
+    "rule_class": "药品限二线使用",
+    "gz_code": "GZ10000101005000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "XS01EEQ092G010010101322",
+    "med_codes": [
+      "XS01EEQ092G010010101322",
+      "XS01EEQ092G010010101652",
+      "XS01EEQ092G010010101967",
+      "XS01EEQ092G010010109920",
+      "XS01EEQ092G010010178195",
+      "XS01EEQ092G010010183191",
+      "XS01EEQ092G010010183383"
+    ],
+    "med_code_count": 7,
+    "item_name": "曲伏前列素滴眼液",
+    "constraint": "限二线用药。",
+    "detect_logic": "使用了该药品，但没有一线药品使用无效或不能耐受的证据。",
+    "batch": 9,
+    "batch_tag": "batch_09",
+    "published_at": "2026-04-21",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/4/21/art_109_20277.html",
+      "attachment_file": "第九批“药品限二线使用”规则对应知识点明细.xlsx",
+      "row": 61,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-c468c30be16b3608",
+    "rule_class": "药品限二线使用",
+    "gz_code": "GZ10000101005000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "XL01BCQ174A001010101425",
+    "med_codes": [
+      "XL01BCQ174A001010101425",
+      "XL01BCQ174A001010101523",
+      "XL01BCQ174A001010103458",
+      "XL01BCQ174A001010104021",
+      "XL01BCQ174A001010104188",
+      "XL01BCQ174A001010182736",
+      "XL01BCQ174A001010201523",
+      "XL01BCQ174A001010204188",
+      "XL01BCQ174A001010282736",
+      "XL01BCQ174A001010301523",
+      "XL01BCQ174A001010304188",
+      "XL01BCQ174A001010401523",
+      "XL01BCQ174A001020101425",
+      "XL01BCQ174A001020103458",
+      "XL01BCQ174A001020104021",
+      "XL01BCQ174A001020104188",
+      "XL01BCQ174A001020204188",
+      "XL01BCQ174A001020304188"
+    ],
+    "med_code_count": 18,
+    "item_name": "曲氟尿苷替匹嘧啶片",
+    "constraint": "限：既往接受过氟嘧啶类、奥沙利铂和伊立替康为基础的化疗，以及既往接受过或不适合接受抗血管内皮生长因子(VEGF)治疗、抗表皮生长因子受体(EGFR)治疗(RAS野生型)的转移性结直肠癌(mCRC)患者 。",
+    "detect_logic": "使用了该药品，但没有一线药品使用无效或不能耐受的证据。",
+    "batch": 9,
+    "batch_tag": "batch_09",
+    "published_at": "2026-04-21",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/4/21/art_109_20277.html",
+      "attachment_file": "第九批“药品限二线使用”规则对应知识点明细.xlsx",
+      "row": 62,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-338852557374b02c",
+    "rule_class": "药品限二线使用",
+    "gz_code": "GZ10000101005000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "XN04BAQ156E001010101034",
+    "med_codes": [
+      "XN04BAQ156E001010101034",
+      "XN04BAQ156E001010201034",
+      "XN04BAQ156E001010301034"
+    ],
+    "med_code_count": 3,
+    "item_name": "屈昔多巴胶囊",
+    "constraint": "限二线用药。",
+    "detect_logic": "使用了该药品，但没有一线药品使用无效或不能耐受的证据。",
+    "batch": 9,
+    "batch_tag": "batch_09",
+    "published_at": "2026-04-21",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/4/21/art_109_20277.html",
+      "attachment_file": "第九批“药品限二线使用”规则对应知识点明细.xlsx",
+      "row": 63,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-5f332f490532cea5",
+    "rule_class": "药品限二线使用",
+    "gz_code": "GZ10000101005000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "XL01EXR081A001010100148",
+    "med_codes": [
+      "XL01EXR081A001010100148",
+      "XL01EXR081A001010100647",
+      "XL01EXR081A001010101066",
+      "XL01EXR081A001010101606",
+      "XL01EXR081A001010101749",
+      "XL01EXR081A001010102770",
+      "XL01EXR081A001010104021",
+      "XL01EXR081A001010104522",
+      "XL01EXR081A001010104948",
+      "XL01EXR081A001010178262",
+      "XL01EXR081A001010181966",
+      "XL01EXR081A001010184736",
+      "XL01EXR081A001010185391",
+      "XL01EXR081A001010284736"
+    ],
+    "med_code_count": 14,
+    "item_name": "瑞戈非尼片",
+    "constraint": "限：1.肝细胞癌二线治疗；2.转移性结直肠癌三线治疗；3.胃肠道间质瘤三线治疗。",
+    "detect_logic": "使用了该药品，但没有一线药品使用无效或不能耐受的证据。",
+    "batch": 9,
+    "batch_tag": "batch_09",
+    "published_at": "2026-04-21",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/4/21/art_109_20277.html",
+      "attachment_file": "第九批“药品限二线使用”规则对应知识点明细.xlsx",
+      "row": 64,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-bef530d36632ea5c",
+    "rule_class": "药品限二线使用",
+    "gz_code": "GZ10000101005000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "XL01EXR114A001010183506",
+    "med_codes": [
+      "XL01EXR114A001010183506",
+      "XL01EXR114A001010283506"
+    ],
+    "med_code_count": 2,
+    "item_name": "瑞派替尼片",
+    "constraint": "限既往接受过3种或以上激酶抑制剂(包括伊马替尼)的晚期胃肠间质瘤(GIST)成人患者。",
+    "detect_logic": "使用了该药品，但没有一线药品使用无效或不能耐受的证据。",
+    "batch": 9,
+    "batch_tag": "batch_09",
+    "published_at": "2026-04-21",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/4/21/art_109_20277.html",
+      "attachment_file": "第九批“药品限二线使用”规则对应知识点明细.xlsx",
+      "row": 65,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-0d0ec2e5c3d9207b",
+    "rule_class": "药品限二线使用",
+    "gz_code": "GZ10000101005000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "XL01XXS286A001010183951",
+    "med_codes": [
+      "XL01XXS286A001010183951",
+      "XL01XXS286A001010283951"
+    ],
+    "med_code_count": 2,
+    "item_name": "塞利尼索片",
+    "constraint": "限：1.既往接受过治疗且对至少一种蛋白酶体抑制剂，一种免疫调节剂以及一种抗CD38单抗难治的复发或难治性多发性骨髓瘤成人患者；2.既往接受过至少两线系统性治疗的复发或难治性弥漫性大B细胞淋巴瘤(DLBCL)成人患者。",
+    "detect_logic": "使用了该药品，但没有一线药品使用无效或不能耐受的证据。",
+    "batch": 9,
+    "batch_tag": "batch_09",
+    "published_at": "2026-04-21",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/4/21/art_109_20277.html",
+      "attachment_file": "第九批“药品限二线使用”规则对应知识点明细.xlsx",
+      "row": 66,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-9150efd113f793c4",
+    "rule_class": "药品限二线使用",
+    "gz_code": "GZ10000101005000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "XL01XKS305E001010185390",
+    "med_codes": [
+      "XL01XKS305E001010185390"
+    ],
+    "med_code_count": 1,
+    "item_name": "塞纳帕利胶囊",
+    "constraint": "限晚期上皮性卵巢癌、输卵管癌或原发性腹膜癌成人患者在一线含铂化疗达到完全缓解或部分缓解后的维持治疗。",
+    "detect_logic": "使用了该药品，但没有一线药品使用无效或不能耐受的证据。",
+    "batch": 9,
+    "batch_tag": "batch_09",
+    "published_at": "2026-04-21",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/4/21/art_109_20277.html",
+      "attachment_file": "第九批“药品限二线使用”规则对应知识点明细.xlsx",
+      "row": 67,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-4cc593e0b901a1a6",
+    "rule_class": "药品限二线使用",
+    "gz_code": "GZ10000101005000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "XL01FFS284B002010181453",
+    "med_codes": [
+      "XL01FFS284B002010181453"
+    ],
+    "med_code_count": 1,
+    "item_name": "赛帕利单抗注射液",
+    "constraint": "限：1.既往接受含铂化疗治疗失败的复发或转移性且PD-L1表达阳性(CPS≥1)的宫颈癌患者；2.至少经过二线系统化疗的复发或难治性经典型霍奇金淋巴瘤成人患者。",
+    "detect_logic": "使用了该药品，但没有一线药品使用无效或不能耐受的证据。",
+    "batch": 9,
+    "batch_tag": "batch_09",
+    "published_at": "2026-04-21",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/4/21/art_109_20277.html",
+      "attachment_file": "第九批“药品限二线使用”规则对应知识点明细.xlsx",
+      "row": 68,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-e837c7dc46bfff6f",
+    "rule_class": "药品限二线使用",
+    "gz_code": "GZ10000101005000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "XL01EXS282A001010182407",
+    "med_codes": [
+      "XL01EXS282A001010182407",
+      "XL01EXS282A001020282407"
+    ],
+    "med_code_count": 2,
+    "item_name": "赛沃替尼片",
+    "constraint": "限携带间质-上皮转化因子(MET)外显子14跳变的局部晚期或转移性非小细胞肺癌(NSCLC)成人患者。",
+    "detect_logic": "使用了该药品，但没有一线药品使用无效或不能耐受的证据。",
+    "batch": 9,
+    "batch_tag": "batch_09",
+    "published_at": "2026-04-21",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/4/21/art_109_20277.html",
+      "attachment_file": "第九批“药品限二线使用”规则对应知识点明细.xlsx",
+      "row": 69,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-0e82b0dde1ccea2a",
+    "rule_class": "药品限二线使用",
+    "gz_code": "GZ10000101005000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "XL01EBS297A001010182407",
+    "med_codes": [
+      "XL01EBS297A001010182407",
+      "XL01EBS297A001020182407"
+    ],
+    "med_code_count": 2,
+    "item_name": "舒沃替尼片",
+    "constraint": "限既往经含铂化疗治疗时或治疗后出现疾病进展，或不耐受含铂化疗，并且检测确认存在表皮生长因子受体(EGFR)20号外显子插入突变的局部晚期或转移性非小细胞肺癌(NSCLC)的成人患者。",
+    "detect_logic": "使用了该药品，但没有一线药品使用无效或不能耐受的证据。",
+    "batch": 9,
+    "batch_tag": "batch_09",
+    "published_at": "2026-04-21",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/4/21/art_109_20277.html",
+      "attachment_file": "第九批“药品限二线使用”规则对应知识点明细.xlsx",
+      "row": 70,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-dc915c5ce221b705",
+    "rule_class": "药品限二线使用",
+    "gz_code": "GZ10000101005000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "XJ05APS275A001010182156",
+    "med_codes": [
+      "XJ05APS275A001010182156"
+    ],
+    "med_code_count": 1,
+    "item_name": "索磷维伏片",
+    "constraint": "限既往接受过含直接抗病毒药物(DAA)方案、无肝硬化或伴代偿性肝硬化(Child-Pugh A)的成人慢性丙型肝炎病毒(HCV)感染。",
+    "detect_logic": "使用了该药品，但没有一线药品使用无效或不能耐受的证据。",
+    "batch": 9,
+    "batch_tag": "batch_09",
+    "published_at": "2026-04-21",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/4/21/art_109_20277.html",
+      "attachment_file": "第九批“药品限二线使用”规则对应知识点明细.xlsx",
+      "row": 71,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-f4feb3b85b3ed155",
+    "rule_class": "药品限二线使用",
+    "gz_code": "GZ10000101005000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "XD11AXT002F001010101313",
+    "med_codes": [
+      "XD11AXT002F001010101313",
+      "XD11AXT002F001010101808",
+      "XD11AXT002F001010102195",
+      "XD11AXT002F001010103869",
+      "XD11AXT002F001010104021",
+      "XD11AXT002F001010104121",
+      "XD11AXT002F001010104726",
+      "XD11AXT002F001010105356",
+      "XD11AXT002F001010105781",
+      "XD11AXT002F001010109579",
+      "XD11AXT002F001010109920",
+      "XD11AXT002F001010179051",
+      "XD11AXT002F001010180651",
+      "XD11AXT002F001010180999",
+      "XD11AXT002F001010181475",
+      "XD11AXT002F001010181917",
+      "XD11AXT002F001010183549",
+      "XD11AXT002F001010209920",
+      "XD11AXT002F001020101313",
+      "XD11AXT002F001020101808",
+      "XD11AXT002F001020102195",
+      "XD11AXT002F001020103869",
+      "XD11AXT002F001020104021",
+      "XD11AXT002F001020104121",
+      "XD11AXT002F001020104726",
+      "XD11AXT002F001020105356",
+      "XD11AXT002F001020109579",
+      "XD11AXT002F001020109920",
+      "XD11AXT002F001020179051",
+      "XD11AXT002F001020179406",
+      "XD11AXT002F001020180651",
+      "XD11AXT002F001020180999",
+      "XD11AXT002F001020181475",
+      "XD11AXT002F001020181917",
+      "XD11AXT002F001020183549",
+      "XD11AXT002F001020204121",
+      "XD11AXT002F001020209920",
+      "XD11AXT002F001030180999",
+      "XD11AXT002F001030181475",
+      "XD11AXT002F001040180999",
+      "XD11AXT002F001040181475",
+      "XD11AXT002F001050181475",
+      "XD11AXT002F001060181475"
+    ],
+    "med_code_count": 43,
+    "item_name": "他克莫司软膏",
+    "constraint": "限中重度特应性皮炎患者的二线用药。",
+    "detect_logic": "使用了该药品，但没有一线药品使用无效或不能耐受的证据。",
+    "batch": 9,
+    "batch_tag": "batch_09",
+    "published_at": "2026-04-21",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/4/21/art_109_20277.html",
+      "attachment_file": "第九批“药品限二线使用”规则对应知识点明细.xlsx",
+      "row": 72,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-8a928a670e04ba26",
+    "rule_class": "药品限二线使用",
+    "gz_code": "GZ10000101005000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "XL04AAT180A001010104127",
+    "med_codes": [
+      "XL04AAT180A001010104127",
+      "XL04AAT180A001010178242",
+      "XL04AAT180A001010180537",
+      "XL04AAT180A001010182431",
+      "XL04AAT180A001010185346",
+      "XL04AAT180A001010204127",
+      "XL04AAT180A001010278242",
+      "XL04AAT180A001020178242",
+      "XL04AAT180A001020278242"
+    ],
+    "med_code_count": 9,
+    "item_name": "特立氟胺片",
+    "constraint": "限常规治疗无效的多发性硬化患者。",
+    "detect_logic": "使用了该药品，但没有一线药品使用无效或不能耐受的证据。",
+    "batch": 9,
+    "batch_tag": "batch_09",
+    "published_at": "2026-04-21",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/4/21/art_109_20277.html",
+      "attachment_file": "第九批“药品限二线使用”规则对应知识点明细.xlsx",
+      "row": 73,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-1acfd460e29f7124",
+    "rule_class": "药品限二线使用",
+    "gz_code": "GZ10000101005000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "XC10AXT212B002010181451",
+    "med_codes": [
+      "XC10AXT212B002010181451"
+    ],
+    "med_code_count": 1,
+    "item_name": "托莱西单抗注射液",
+    "constraint": "限在接受中等剂量或中等剂量以上他汀类药物治疗，仍无法达到低密度脂蛋白胆固醇(LDL-C)目标的原发性高胆固醇血症(包括杂合子型家族性和非家族性高胆固醇血症)和混合型血脂异常的成人患者。",
+    "detect_logic": "使用了该药品，但没有一线药品使用无效或不能耐受的证据。",
+    "batch": 9,
+    "batch_tag": "batch_09",
+    "published_at": "2026-04-21",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/4/21/art_109_20277.html",
+      "attachment_file": "第九批“药品限二线使用”规则对应知识点明细.xlsx",
+      "row": 74,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-13f37eecb60bc3d5",
+    "rule_class": "药品限二线使用",
+    "gz_code": "GZ10000101005000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "XL04ACT156B002010179436",
+    "med_codes": [
+      "XL04ACT156B002010179436",
+      "XL04ACT156B002010182114",
+      "XL04ACT156B002010182116",
+      "XL04ACT156B002010184297",
+      "XL04ACT156B002010184648",
+      "XL04ACT156B002020182116",
+      "XL04ACT156B002030182116"
+    ],
+    "med_code_count": 7,
+    "item_name": "托珠单抗注射液",
+    "constraint": "限：1.全身型幼年特发性关节炎的二线治疗；2.限诊断明确的类风湿关节炎经传统DMARDs治疗3-6个月疾病活动度下降低于50%者。",
+    "detect_logic": "使用了该药品，但没有一线药品使用无效或不能耐受的证据。",
+    "batch": 9,
+    "batch_tag": "batch_09",
+    "published_at": "2026-04-21",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/4/21/art_109_20277.html",
+      "attachment_file": "第九批“药品限二线使用”规则对应知识点明细.xlsx",
+      "row": 75,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-ad13bf4c04b810ba",
+    "rule_class": "药品限二线使用",
+    "gz_code": "GZ10000101005000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "XL01EET220E001010184591",
+    "med_codes": [
+      "XL01EET220E001010184591",
+      "XL01EET220E001020184591"
+    ],
+    "med_code_count": 2,
+    "item_name": "妥拉美替尼胶囊",
+    "constraint": "限含抗PD-1/PD-L1治疗失败的NRAS基因突变的晚期黑色素瘤患者。",
+    "detect_logic": "使用了该药品，但没有一线药品使用无效或不能耐受的证据。",
+    "batch": 9,
+    "batch_tag": "batch_09",
+    "published_at": "2026-04-21",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/4/21/art_109_20277.html",
+      "attachment_file": "第九批“药品限二线使用”规则对应知识点明细.xlsx",
+      "row": 76,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-19b7bd94612535b9",
+    "rule_class": "药品限二线使用",
+    "gz_code": "GZ10000101005000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "XL04AAW126A010010182925",
+    "med_codes": [
+      "XL04AAW126A010010182925",
+      "XL04AAW126A010010282925",
+      "XL04AAW126A010020182925",
+      "XL04AAW126A010020282925",
+      "XL04AFW126A010010182925",
+      "XL04AFW126A010010282925"
+    ],
+    "med_code_count": 6,
+    "item_name": "乌帕替尼缓释片",
+    "constraint": "限：1.12岁及以上患者难治性、中重度特应性皮炎的二线治疗；2.活动性银屑病关节炎成人患者的二线治疗；3.中重度活动性类风湿关节炎成人患者的二线治疗；4.对一种或多种TNF抑制剂应答不佳或不耐受或禁忌的中度至重度活动性溃疡性结肠炎成人患者；5.对一种或多种TNF抑制剂应答不佳或不耐受或禁忌的中度至重度活动性克罗恩病成人患者；6.对非甾体抗炎药(NSAID)应答不佳且存在客观炎症征象(表现为C反应蛋白[CRP]升高和/或磁共振成像[MRI]异常)的活动性放射学阴性中轴型脊柱关节炎(nr-axSpA)成人患者；7.对一种或多种TNF抑制剂应答不佳或不耐受的活动性强直性脊柱炎(AS，放射学阳性中轴型脊柱关节炎)成人患者。",
+    "detect_logic": "使用了该药品，但没有一线药品使用无效或不能耐受的证据。",
+    "batch": 9,
+    "batch_tag": "batch_09",
+    "published_at": "2026-04-21",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/4/21/art_109_20277.html",
+      "attachment_file": "第九批“药品限二线使用”规则对应知识点明细.xlsx",
+      "row": 77,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-58bab493bcfe1fd6",
+    "rule_class": "药品限二线使用",
+    "gz_code": "GZ10000101005000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "XL04ACW114B002010104520",
+    "med_codes": [
+      "XL04ACW114B002010104520",
+      "XL04ACW114B002010178537",
+      "XL04ACW114B002020178537",
+      "XL04ACW114B002040178537"
+    ],
+    "med_code_count": 4,
+    "item_name": "乌司奴单抗注射液",
+    "constraint": "限：1.对环孢素、甲氨喋呤(MTX)等其他系统性治疗或PUVA(补骨脂素和紫外线A)不应答、有禁忌或无法耐受的成年中重度斑块状银屑病患者；2.对其他系统性治疗或光疗应答不足或无法耐受的6岁及以上儿童和青少年中重度斑块状银屑病患者；3.对传统治疗或肿瘤坏死因子α(TNFα)拮抗剂应答不足、失应答或无法耐受的成年中重度活动性克罗恩病患者。",
+    "detect_logic": "使用了该药品，但没有一线药品使用无效或不能耐受的证据。",
+    "batch": 9,
+    "batch_tag": "batch_09",
+    "published_at": "2026-04-21",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/4/21/art_109_20277.html",
+      "attachment_file": "第九批“药品限二线使用”规则对应知识点明细.xlsx",
+      "row": 78,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-a7255799503aa2cc",
+    "rule_class": "药品限二线使用",
+    "gz_code": "GZ10000101005000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "XL04ACW114B002030178537",
+    "med_codes": [
+      "XL04ACW114B002030178537"
+    ],
+    "med_code_count": 1,
+    "item_name": "乌司奴单抗注射液(静脉输注)",
+    "constraint": "限对传统治疗或肿瘤坏死因子α(TNF-α)拮抗剂应答不足、失应答或无法耐受的成年中重度活动性克罗恩病患者。",
+    "detect_logic": "使用了该药品，但没有一线药品使用无效或不能耐受的证据。",
+    "batch": 9,
+    "batch_tag": "batch_09",
+    "published_at": "2026-04-21",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/4/21/art_109_20277.html",
+      "attachment_file": "第九批“药品限二线使用”规则对应知识点明细.xlsx",
+      "row": 79,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-7b9933895b43a225",
+    "rule_class": "药品限二线使用",
+    "gz_code": "GZ10000101005000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "XN04BCL337A010010101565",
+    "med_codes": [
+      "XN04BCL337A010010101565",
+      "XN04BCL337A010010109642",
+      "XN04BCL337A010010178477",
+      "XN04BCL337A010010184206",
+      "XN04BCL337A010010278477",
+      "XN04BCL337A010020178477",
+      "XN04BCL337A010020278477"
+    ],
+    "med_code_count": 7,
+    "item_name": "盐酸罗匹尼罗缓释片",
+    "constraint": "限二线用药。",
+    "detect_logic": "使用了该药品，但没有一线药品使用无效或不能耐受的证据。",
+    "batch": 9,
+    "batch_tag": "batch_09",
+    "published_at": "2026-04-21",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/4/21/art_109_20277.html",
+      "attachment_file": "第九批“药品限二线使用”规则对应知识点明细.xlsx",
+      "row": 80,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-23e0d46c37c826a0",
+    "rule_class": "药品限二线使用",
+    "gz_code": "GZ10000101005000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "XN04BCL337A001010109642",
+    "med_codes": [
+      "XN04BCL337A001010109642",
+      "XN04BCL337A001020109642"
+    ],
+    "med_code_count": 2,
+    "item_name": "盐酸罗匹尼罗片",
+    "constraint": "限二线用药。",
+    "detect_logic": "使用了该药品，但没有一线药品使用无效或不能耐受的证据。",
+    "batch": 9,
+    "batch_tag": "batch_09",
+    "published_at": "2026-04-21",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/4/21/art_109_20277.html",
+      "attachment_file": "第九批“药品限二线使用”规则对应知识点明细.xlsx",
+      "row": 81,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-9197c6e557072640",
+    "rule_class": "药品限二线使用",
+    "gz_code": "GZ10000101005000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "XL01DBM109B018010102777",
+    "med_codes": [
+      "XL01DBM109B018010102777"
+    ],
+    "med_code_count": 1,
+    "item_name": "盐酸米托蒽醌脂质体注射液",
+    "constraint": "限既往至少经过一线标准治疗的复发或难治的外周T细胞淋巴瘤(PTCL)成人患者。",
+    "detect_logic": "使用了该药品，但没有一线药品使用无效或不能耐受的证据。",
+    "batch": 9,
+    "batch_tag": "batch_09",
+    "published_at": "2026-04-21",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/4/21/art_109_20277.html",
+      "attachment_file": "第九批“药品限二线使用”规则对应知识点明细.xlsx",
+      "row": 82,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-b1ce717a62843c1d",
+    "rule_class": "药品限二线使用",
+    "gz_code": "GZ10000101005000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "XV03AXN130A022010102181",
+    "med_codes": [
+      "XV03AXN130A022010102181",
+      "XV03AXN130A022010104948",
+      "XV03AXN130A022010184364",
+      "XV03AXN130A022010204948"
+    ],
+    "med_code_count": 4,
+    "item_name": "盐酸纳呋拉啡口崩片",
+    "constraint": "限现有治疗疗效不理想的血液透析患者的瘙痒症。",
+    "detect_logic": "使用了该药品，但没有一线药品使用无效或不能耐受的证据。",
+    "batch": 9,
+    "batch_tag": "batch_09",
+    "published_at": "2026-04-21",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/4/21/art_109_20277.html",
+      "attachment_file": "第九批“药品限二线使用”规则对应知识点明细.xlsx",
+      "row": 83,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-a4fc237493b2e164",
+    "rule_class": "药品限二线使用",
+    "gz_code": "GZ10000101005000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "XL01CEY057B018010101697",
+    "med_codes": [
+      "XL01CEY057B018010101697",
+      "XL01CEY057B018010102770",
+      "XL01CEY057B018010179020"
+    ],
+    "med_code_count": 3,
+    "item_name": "盐酸伊立替康脂质体注射液",
+    "constraint": "限接受吉西他滨治疗后进展的转移性胰腺癌患者。",
+    "detect_logic": "使用了该药品，但没有一线药品使用无效或不能耐受的证据。",
+    "batch": 9,
+    "batch_tag": "batch_09",
+    "published_at": "2026-04-21",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/4/21/art_109_20277.html",
+      "attachment_file": "第九批“药品限二线使用”规则对应知识点明细.xlsx",
+      "row": 84,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-3cd8bf2fca8625ae",
+    "rule_class": "药品限二线使用",
+    "gz_code": "GZ10000101005000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "XL01CEY351B018010101445",
+    "med_codes": [
+      "XL01CEY351B018010101445"
+    ],
+    "med_code_count": 1,
+    "item_name": "盐酸伊立替康脂质体注射液(Ⅱ)",
+    "constraint": "限既往经吉西他滨为基础的化疗治疗失败的不可切除的局部晚期或转移性胰腺癌患者的治疗。",
+    "detect_logic": "使用了该药品，但没有一线药品使用无效或不能耐受的证据。",
+    "batch": 9,
+    "batch_tag": "batch_09",
+    "published_at": "2026-04-21",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/4/21/art_109_20277.html",
+      "attachment_file": "第九批“药品限二线使用”规则对应知识点明细.xlsx",
+      "row": 85,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-f2fb8db1ca7ad591",
+    "rule_class": "药品限二线使用",
+    "gz_code": "GZ10000101005000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "XL01EMY365A001010181735",
+    "med_codes": [
+      "XL01EMY365A001010181735",
+      "XL01EMY365A001020181735"
+    ],
+    "med_code_count": 2,
+    "item_name": "伊那利塞片",
+    "constraint": "限联合哌柏西利和氟维司群，用于内分泌治疗耐药(包括在辅助内分泌治疗期间或之后出现复发)、PIK3CA突变、激素受体(HR)阳性、人表皮生长因子受体2(HER2)阴性的局部晚期或转移性乳腺癌成人患者。",
+    "detect_logic": "使用了该药品，但没有一线药品使用无效或不能耐受的证据。",
+    "batch": 9,
+    "batch_tag": "batch_09",
+    "published_at": "2026-04-21",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/4/21/art_109_20277.html",
+      "attachment_file": "第九批“药品限二线使用”规则对应知识点明细.xlsx",
+      "row": 86,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-08e23d6add05e5f0",
+    "rule_class": "药品限二线使用",
+    "gz_code": "GZ10000101005000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "XA10AEY357B002010178997",
+    "med_codes": [
+      "XA10AEY357B002010178997",
+      "XA10AEY357B002020178997",
+      "XA10AEY357B002030178997"
+    ],
+    "med_code_count": 3,
+    "item_name": "依柯胰岛素注射液",
+    "constraint": "限其他胰岛素或口服药难以控制的2型糖尿病患者。",
+    "detect_logic": "使用了该药品，但没有一线药品使用无效或不能耐受的证据。",
+    "batch": 9,
+    "batch_tag": "batch_09",
+    "published_at": "2026-04-21",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/4/21/art_109_20277.html",
+      "attachment_file": "第九批“药品限二线使用”规则对应知识点明细.xlsx",
+      "row": 87,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-ec211d440490600f",
+    "rule_class": "药品限二线使用",
+    "gz_code": "GZ10000101005000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "XL04ABY251B002010178724",
+    "med_codes": [
+      "XL04ABY251B002010178724",
+      "XL04ABY251B002010278724",
+      "XL04ABY251B002020178724"
+    ],
+    "med_code_count": 3,
+    "item_name": "依那西普注射液",
+    "constraint": "限诊断明确的类风湿关节炎经传统DMARDs治疗3-6个月疾病活动度下降低于50%者；诊断明确的强直性脊柱炎(不含放射学前期中轴性脊柱关节炎)NSAIDs充分治疗3个月疾病活动度下降低于50%者。",
+    "detect_logic": "使用了该药品，但没有一线药品使用无效或不能耐受的证据。",
+    "batch": 9,
+    "batch_tag": "batch_09",
+    "published_at": "2026-04-21",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/4/21/art_109_20277.html",
+      "attachment_file": "第九批“药品限二线使用”规则对应知识点明细.xlsx",
+      "row": 88,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-5ee95d736aee8c5b",
+    "rule_class": "药品限二线使用",
+    "gz_code": "GZ10000101005000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "XL04ACY366B002010182957",
+    "med_codes": [
+      "XL04ACY366B002010182957"
+    ],
+    "med_code_count": 1,
+    "item_name": "依若奇单抗注射液",
+    "constraint": "限对环孢素、甲氨蝶呤(MTX)等其他系统性治疗或PUVA(补骨脂素和紫外线A)不应答、有禁忌或无法耐受的中度至重度斑块状银屑病的成年患者。",
+    "detect_logic": "使用了该药品，但没有一线药品使用无效或不能耐受的证据。",
+    "batch": 9,
+    "batch_tag": "batch_09",
+    "published_at": "2026-04-21",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/4/21/art_109_20277.html",
+      "attachment_file": "第九批“药品限二线使用”规则对应知识点明细.xlsx",
+      "row": 89,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-4dfecd173b199534",
+    "rule_class": "药品限二线使用",
+    "gz_code": "GZ10000101005000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "XL01DCY324B002010182183",
+    "med_codes": [
+      "XL01DCY324B002010182183",
+      "XL01DCY324B002020182183"
+    ],
+    "med_code_count": 2,
+    "item_name": "优替德隆注射液",
+    "constraint": "限既往接受过至少一种化疗方案的复发或转移性乳腺癌患者。",
+    "detect_logic": "使用了该药品，但没有一线药品使用无效或不能耐受的证据。",
+    "batch": 9,
+    "batch_tag": "batch_09",
+    "published_at": "2026-04-21",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/4/21/art_109_20277.html",
+      "attachment_file": "第九批“药品限二线使用”规则对应知识点明细.xlsx",
+      "row": 90,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-beca28bd6d887649",
+    "rule_class": "药品限二线使用",
+    "gz_code": "GZ10000101005000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "XL01XXA398B001010101938",
+    "med_codes": [
+      "XL01XXA398B001010101938"
+    ],
+    "med_code_count": 1,
+    "item_name": "注射用埃普奈明",
+    "constraint": "限既往接受过至少2种系统性治疗方案的复发或难治性多发性骨髓瘤成人患者，既往含免疫调节剂方案难治的患者不宜接受本联合方案治疗。",
+    "detect_logic": "使用了该药品，但没有一线药品使用无效或不能耐受的证据。",
+    "batch": 9,
+    "batch_tag": "batch_09",
+    "published_at": "2026-04-21",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/4/21/art_109_20277.html",
+      "attachment_file": "第九批“药品限二线使用”规则对应知识点明细.xlsx",
+      "row": 91,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-e1f6fbb336f3ee26",
+    "rule_class": "药品限二线使用",
+    "gz_code": "GZ10000101005000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "XR03DXA305B001010178672",
+    "med_codes": [
+      "XR03DXA305B001010178672",
+      "XR03DXA305B001010183422",
+      "XR03DXA305B001010278672",
+      "XR03DXA305B001010378672"
+    ],
+    "med_code_count": 4,
+    "item_name": "注射用奥马珠单抗",
+    "constraint": "限：1.经吸入型糖皮质激素和长效吸入型β2-肾上腺素受体激动剂治疗后，仍不能有效控制症状的中至重度持续性过敏性哮喘的6岁及以上患者，并需IgE(免疫球蛋白E)介导确诊证据；2.H1抗组胺药治疗后仍有症状的成人和青少年(12岁及以上)慢性自发性荨麻疹患者。",
+    "detect_logic": "使用了该药品，但没有一线药品使用无效或不能耐受的证据。",
+    "batch": 9,
+    "batch_tag": "batch_09",
+    "published_at": "2026-04-21",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/4/21/art_109_20277.html",
+      "attachment_file": "第九批“药品限二线使用”规则对应知识点明细.xlsx",
+      "row": 92,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-fb6d38c83ebf7a76",
+    "rule_class": "药品限二线使用",
+    "gz_code": "GZ10000101005000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "XR03DXA392B001010181463",
+    "med_codes": [
+      "XR03DXA392B001010181463",
+      "XR03DXA392B001020181463"
+    ],
+    "med_code_count": 2,
+    "item_name": "注射用奥马珠单抗α",
+    "constraint": "限经吸入型糖皮质激素和长效吸入型β2-肾上腺素受体激动剂治疗后，仍不能有效控制症状的中至重度持续性过敏性哮喘的15岁及以上患者，并需IgE(免疫球蛋白E)介导确诊证据。",
+    "detect_logic": "使用了该药品，但没有一线药品使用无效或不能耐受的证据。",
+    "batch": 9,
+    "batch_tag": "batch_09",
+    "published_at": "2026-04-21",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/4/21/art_109_20277.html",
+      "attachment_file": "第九批“药品限二线使用”规则对应知识点明细.xlsx",
+      "row": 93,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-5ec0386bc0c17fa0",
+    "rule_class": "药品限二线使用",
+    "gz_code": "GZ10000101005000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "XL01FDD365B001010182561",
+    "med_codes": [
+      "XL01FDD365B001010182561"
+    ],
+    "med_code_count": 1,
+    "item_name": "注射用德曲妥珠单抗",
+    "constraint": "限：1.既往接受过一种或一种以上抗HER2药物治疗的不可切除或转移性HER2阳性成人乳腺癌患者；2.既往在转移性疾病阶段接受过至少一种系统治疗的，或在辅助化疗期间或完成辅助化疗之后6个月内复发的，不可切除或转移性HER2低表达(IHC 1+或IHC 2+/ISH-)成人乳腺癌患者。",
+    "detect_logic": "使用了该药品，但没有一线药品使用无效或不能耐受的证据。",
+    "batch": 9,
+    "batch_tag": "batch_09",
+    "published_at": "2026-04-21",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/4/21/art_109_20277.html",
+      "attachment_file": "第九批“药品限二线使用”规则对应知识点明细.xlsx",
+      "row": 94,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-8a6187f0722e190b",
+    "rule_class": "药品限二线使用",
+    "gz_code": "GZ10000101005000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "XL01FDE090B001010181735",
+    "med_codes": [
+      "XL01FDE090B001010181735",
+      "XL01FDE090B001020181735"
+    ],
+    "med_code_count": 2,
+    "item_name": "注射用恩美曲妥珠单抗",
+    "constraint": "限：1.接受了紫杉烷类联合曲妥珠单抗为基础的新辅助治疗后仍残存侵袭性病灶的HER2阳性早期乳腺癌患者的辅助治疗；2.限接受了紫杉烷类和曲妥珠单抗治疗的HER2阳性、不可切除局部晚期或转移性乳腺癌患者。",
+    "detect_logic": "使用了该药品，但没有一线药品使用无效或不能耐受的证据。",
+    "batch": 9,
+    "batch_tag": "batch_09",
+    "published_at": "2026-04-21",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/4/21/art_109_20277.html",
+      "attachment_file": "第九批“药品限二线使用”规则对应知识点明细.xlsx",
+      "row": 95,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-d149f72838818f02",
+    "rule_class": "药品限二线使用",
+    "gz_code": "GZ10000101005000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "XL01XGK141B001010101444",
+    "med_codes": [
+      "XL01XGK141B001010101444",
+      "XL01XGK141B001010105847",
+      "XL01XGK141B001010183680"
+    ],
+    "med_code_count": 3,
+    "item_name": "注射用卡非佐米",
+    "constraint": "限与地塞米松联合适用于治疗复发或难治性多发性骨髓瘤成人患者，患者既往至少接受过2种治疗，包括蛋白酶体抑制剂和免疫调节剂。",
+    "detect_logic": "使用了该药品，但没有一线药品使用无效或不能耐受的证据。",
+    "batch": 9,
+    "batch_tag": "batch_09",
+    "published_at": "2026-04-21",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/4/21/art_109_20277.html",
+      "attachment_file": "第九批“药品限二线使用”规则对应知识点明细.xlsx",
+      "row": 96,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-f8314420893d6617",
+    "rule_class": "药品限二线使用",
+    "gz_code": "GZ10000101005000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "XL01BBF066B001010100310",
+    "med_codes": [
+      "XL01BBF066B001010100310",
+      "XL01BBF066B001010101017",
+      "XL01BBF066B001010101736",
+      "XL01BBF066B001010102918",
+      "XL01BBF066B001010104188",
+      "XL01BBF066B001010104641",
+      "XL01BBF066B001010178450",
+      "XL01BBF066B001010179280",
+      "XL01BBF066B001010204127",
+      "XL01BBF066B001010204188",
+      "XL01BBF066B001010204641",
+      "XL01BBF066B001010304127",
+      "XL01BBF066B001010304188",
+      "XL01BBF066B001010378450",
+      "XL01BBF066B001010404127",
+      "XL01BBF066B001020100310"
+    ],
+    "med_code_count": 16,
+    "item_name": "注射用磷酸氟达拉滨",
+    "constraint": "限接受过至少一个标准的含烷化剂方案治疗的B细胞性慢性淋巴细胞白血病(CLL)患者。",
+    "detect_logic": "使用了该药品，但没有一线药品使用无效或不能耐受的证据。",
+    "batch": 9,
+    "batch_tag": "batch_09",
+    "published_at": "2026-04-21",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/4/21/art_109_20277.html",
+      "attachment_file": "第九批“药品限二线使用”规则对应知识点明细.xlsx",
+      "row": 97,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-840f6090f8dea9ff",
+    "rule_class": "药品限二线使用",
+    "gz_code": "GZ10000101005000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "XL01FXL426B001010182635",
+    "med_codes": [
+      "XL01FXL426B001010182635",
+      "XL01FXL426B001020182635"
+    ],
+    "med_code_count": 2,
+    "item_name": "注射用芦康沙妥珠单抗",
+    "constraint": "限：1.既往至少接受过2种系统治疗 (其中至少1种治疗针对晚期或转移性阶段)的不可切除的局部晚期或转移性三阴性乳腺癌成人患者；2.经表皮生长因子受体(EGFR)酪氨酸激酶抑制剂(TKI)和含铂化疗治疗后进展的EGFR基因突变阳性的局部晚期或转移性非鳞状非小细胞肺癌(NSCLC)成人患者。",
+    "detect_logic": "使用了该药品，但没有一线药品使用无效或不能耐受的证据。",
+    "batch": 9,
+    "batch_tag": "batch_09",
+    "published_at": "2026-04-21",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/4/21/art_109_20277.html",
+      "attachment_file": "第九批“药品限二线使用”规则对应知识点明细.xlsx",
+      "row": 98,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-f9192eda54c5ee6a",
+    "rule_class": "药品限二线使用",
+    "gz_code": "GZ10000101005000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "XB02BXL399B001010182988",
+    "med_codes": [
+      "XB02BXL399B001010182988"
+    ],
+    "med_code_count": 1,
+    "item_name": "注射用罗普司亭",
+    "constraint": "限对其他治疗(例如皮质类固醇、免疫球蛋白)治疗反应不佳的成人(≥18周岁)慢性原发免疫性血小板减少症(ITP)患者。",
+    "detect_logic": "使用了该药品，但没有一线药品使用无效或不能耐受的证据。",
+    "batch": 9,
+    "batch_tag": "batch_09",
+    "published_at": "2026-04-21",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/4/21/art_109_20277.html",
+      "attachment_file": "第九批“药品限二线使用”规则对应知识点明细.xlsx",
+      "row": 99,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-6f9f445a6ac6ed22",
+    "rule_class": "药品限二线使用",
+    "gz_code": "GZ10000101005000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "XB02BXL422B001010104021",
+    "med_codes": [
+      "XB02BXL422B001010104021",
+      "XB02BXL422B001020104021"
+    ],
+    "med_code_count": 2,
+    "item_name": "注射用罗普司亭N01",
+    "constraint": "限对其他治疗(例如皮质类固醇、免疫球蛋白)治疗反应不佳的成人(≥18周岁)慢性原发免疫性血小板减少症(ITP)患者。",
+    "detect_logic": "使用了该药品，但没有一线药品使用无效或不能耐受的证据。",
+    "batch": 9,
+    "batch_tag": "batch_09",
+    "published_at": "2026-04-21",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/4/21/art_109_20277.html",
+      "attachment_file": "第九批“药品限二线使用”规则对应知识点明细.xlsx",
+      "row": 100,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-0c92f146c44c6f64",
+    "rule_class": "药品限二线使用",
+    "gz_code": "GZ10000101005000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "XL01FDR138B001010181825",
+    "med_codes": [
+      "XL01FDR138B001010181825"
+    ],
+    "med_code_count": 1,
+    "item_name": "注射用瑞康曲妥珠单抗",
+    "constraint": "限存在HER2(ERBB2)激活突变且既往接受过至少一种系统治疗的不可切除的局部晚期或转移性非小细胞肺癌(NSCLC)成人患者。",
+    "detect_logic": "使用了该药品，但没有一线药品使用无效或不能耐受的证据。",
+    "batch": 9,
+    "batch_tag": "batch_09",
+    "published_at": "2026-04-21",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/4/21/art_109_20277.html",
+      "attachment_file": "第九批“药品限二线使用”规则对应知识点明细.xlsx",
+      "row": 101,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-2c62d404ae544d2a",
+    "rule_class": "药品限二线使用",
+    "gz_code": "GZ10000101005000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "XL01FGS310B001010183106",
+    "med_codes": [
+      "XL01FGS310B001010183106"
+    ],
+    "med_code_count": 1,
+    "item_name": "注射用苏维西塔单抗",
+    "constraint": "限铂耐药后接受过不超过1种系统治疗的成人复发性卵巢癌、输卵管癌或原发性腹膜癌的治疗。",
+    "detect_logic": "使用了该药品，但没有一线药品使用无效或不能耐受的证据。",
+    "batch": 9,
+    "batch_tag": "batch_09",
+    "published_at": "2026-04-21",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/4/21/art_109_20277.html",
+      "attachment_file": "第九批“药品限二线使用”规则对应知识点明细.xlsx",
+      "row": 102,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-d0679783a6c1a540",
+    "rule_class": "药品限二线使用",
+    "gz_code": "GZ10000101005000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "XJ01XAT037B001010101066",
+    "med_codes": [
+      "XJ01XAT037B001010101066",
+      "XJ01XAT037B001010102317",
+      "XJ01XAT037B001010102697",
+      "XJ01XAT037B001010104251",
+      "XJ01XAT037B001010104641",
+      "XJ01XAT037B001010104747",
+      "XJ01XAT037B001010105791",
+      "XJ01XAT037B001010107968",
+      "XJ01XAT037B001010182032",
+      "XJ01XAT037B001010182922",
+      "XJ01XAT037B001010184135",
+      "XJ01XAT037B001010184294",
+      "XJ01XAT037B001010184606",
+      "XJ01XAT037B001010281683",
+      "XJ01XAT037B001010282922",
+      "XJ01XAT037B001010284294",
+      "XJ01XAT037B001010284606",
+      "XJ01XAT037B001020102317",
+      "XJ01XAT037B001020102697"
+    ],
+    "med_code_count": 19,
+    "item_name": "注射用替考拉宁",
+    "constraint": "限甲氧西林耐药阳性球菌感染的二线治疗。",
+    "detect_logic": "使用了该药品，但没有一线药品使用无效或不能耐受的证据。",
+    "batch": 9,
+    "batch_tag": "batch_09",
+    "published_at": "2026-04-21",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/4/21/art_109_20277.html",
+      "attachment_file": "第九批“药品限二线使用”规则对应知识点明细.xlsx",
+      "row": 103,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-cb32fca5876f63d3",
+    "rule_class": "药品限二线使用",
+    "gz_code": "GZ10000101005000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "XL04AAW118B001010179422",
+    "med_codes": [
+      "XL04AAW118B001010179422"
+    ],
+    "med_code_count": 1,
+    "item_name": "注射用维得利珠单抗",
+    "constraint": "限：1.对传统治疗或肿瘤坏死因子α(TNFα)抑制剂应答不充分、失应答或不耐受的中度至重度活动性溃疡性结肠炎的成年患者；2.对传统治疗或TNFα抑制剂应答不充分、失应答或不耐受的中度至重度活动性克罗恩病的成年患者。",
+    "detect_logic": "使用了该药品，但没有一线药品使用无效或不能耐受的证据。",
+    "batch": 9,
+    "batch_tag": "batch_09",
+    "published_at": "2026-04-21",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/4/21/art_109_20277.html",
+      "attachment_file": "第九批“药品限二线使用”规则对应知识点明细.xlsx",
+      "row": 104,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-ad4918817f8a6632",
+    "rule_class": "药品限二线使用",
+    "gz_code": "GZ10000101005000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "XL01EHW124B001010180949",
+    "med_codes": [
+      "XL01EHW124B001010180949"
+    ],
+    "med_code_count": 1,
+    "item_name": "注射用维迪西妥单抗",
+    "constraint": "限：1.至少接受过2个系统化疗的HER2过表达局部晚期或转移性胃癌(包括胃食管结合部腺癌)；2.既往接受过含铂化疗且HER2过表达局部晚期或转移性尿路上皮癌。",
+    "detect_logic": "使用了该药品，但没有一线药品使用无效或不能耐受的证据。",
+    "batch": 9,
+    "batch_tag": "batch_09",
+    "published_at": "2026-04-21",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/4/21/art_109_20277.html",
+      "attachment_file": "第九批“药品限二线使用”规则对应知识点明细.xlsx",
+      "row": 105,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-c16a4d3fae43fdf9",
+    "rule_class": "药品限二线使用",
+    "gz_code": "GZ10000101005000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "XL01FDY321B001010181272",
+    "med_codes": [
+      "XL01FDY321B001010181272",
+      "XL01FDY321B001020181272"
+    ],
+    "med_code_count": 2,
+    "item_name": "注射用伊尼妥单抗",
+    "constraint": "限接受过1个或多个化疗方案的HER2阳性转移性乳腺癌患者。",
+    "detect_logic": "使用了该药品，但没有一线药品使用无效或不能耐受的证据。",
+    "batch": 9,
+    "batch_tag": "batch_09",
+    "published_at": "2026-04-21",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/4/21/art_109_20277.html",
+      "attachment_file": "第九批“药品限二线使用”规则对应知识点明细.xlsx",
+      "row": 106,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-bb81353dc352824f",
+    "rule_class": "药品限二线使用",
+    "gz_code": "GZ10000101005000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "XL01CDZ046X001010185351",
+    "med_codes": [
+      "XL01CDZ046X001010185351"
+    ],
+    "med_code_count": 1,
+    "item_name": "紫杉醇口服溶液",
+    "constraint": "限一线含氟尿嘧啶类方案治疗期间或治疗后出现疾病进展的晚期胃癌患者。",
+    "detect_logic": "使用了该药品，但没有一线药品使用无效或不能耐受的证据。",
+    "batch": 9,
+    "batch_tag": "batch_09",
+    "published_at": "2026-04-21",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/4/21/art_109_20277.html",
+      "attachment_file": "第九批“药品限二线使用”规则对应知识点明细.xlsx",
+      "row": 107,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-fed67843113f8e5d",
+    "rule_class": "药品限二线使用",
+    "gz_code": "GZ10000101005000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "XN05AXZ101B002010182023",
+    "med_codes": [
+      "XN05AXZ101B002010182023",
+      "XN05AXZ101B002020182023",
+      "XN05AXZ101B002030182023",
+      "XN05AXZ101B002040182023"
+    ],
+    "med_code_count": 4,
+    "item_name": "棕榈帕利哌酮酯注射液(3M)",
+    "constraint": "限接受过棕榈酸帕利哌酮注射液(1个月剂型)至少4个月充分治疗的精神分裂症患者。",
+    "detect_logic": "使用了该药品，但没有一线药品使用无效或不能耐受的证据。",
+    "batch": 9,
+    "batch_tag": "batch_09",
+    "published_at": "2026-04-21",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/4/21/art_109_20277.html",
+      "attachment_file": "第九批“药品限二线使用”规则对应知识点明细.xlsx",
+      "row": 108,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-679dacae8a450533",
+    "rule_class": "药品限二线使用",
+    "gz_code": "GZ10000101005000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "XN05AXZ114B002010178537",
+    "med_codes": [
+      "XN05AXZ114B002010178537",
+      "XN05AXZ114B002020178537"
+    ],
+    "med_code_count": 2,
+    "item_name": "棕榈帕利哌酮酯注射液(6M)",
+    "constraint": "限接受过棕榈帕利哌酮酯注射液(3M)至少3个月充分治疗的成人精神分裂症患者。",
+    "detect_logic": "使用了该药品，但没有一线药品使用无效或不能耐受的证据。",
+    "batch": 9,
+    "batch_tag": "batch_09",
+    "published_at": "2026-04-21",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/4/21/art_109_20277.html",
+      "attachment_file": "第九批“药品限二线使用”规则对应知识点明细.xlsx",
+      "row": 109,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-8fa87813405a2af7",
+    "rule_class": "药品限二线使用",
+    "gz_code": "GZ10000101005000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "XJ01XDZ082B002010101583",
+    "med_codes": [
+      "XJ01XDZ082B002010101583",
+      "XJ01XDZ082B002010102763",
+      "XJ01XDZ082B002010183307",
+      "XJ01XDZ082B002010202763",
+      "XJ01XDZ082B002010283307",
+      "XJ01XDZ082B002020101583",
+      "XJ01XDZ082B002020201583"
+    ],
+    "med_code_count": 7,
+    "item_name": "左奥硝唑氯化钠注射液",
+    "constraint": "限二线用药。",
+    "detect_logic": "使用了该药品，但没有一线药品使用无效或不能耐受的证据。",
+    "batch": 9,
+    "batch_tag": "batch_09",
+    "published_at": "2026-04-21",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/4/21/art_109_20277.html",
+      "attachment_file": "第九批“药品限二线使用”规则对应知识点明细.xlsx",
+      "row": 110,
+      "pdf_page": null
+    }
+  }
+]

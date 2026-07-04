@@ -82,6 +82,17 @@ function pickDrugCodes(row) {
   return [v];
 }
 
+/** 医疗服务项目类附件的编码列为「项目代码」，值为纯数字长码(如 003310010140000)，
+ *  pickDrugCodes 的 /^\d+$/ 守卫会误弃，故单列识别，允许数字型、按长度门槛过滤数量/序号。 */
+function pickItemCodes(row) {
+  const keys = Object.keys(row);
+  const hit = keys.find((k) => /项目代码|服务项目代码|项目编码/.test(k) && !/数量|名称|序号/.test(k));
+  if (!hit) return [];
+  const v = String(row[hit] ?? '').trim();
+  if (!v) return [];
+  return v.split(/[、,\s;；/]+/).map((s) => s.trim()).filter((x) => /^[0-9A-Za-z]{6,}$/.test(x));
+}
+
 /** 解析「知识点对应药品代码」sheet，按 对应知识点序号|药品通用名 聚合编码 */
 function buildCodeMap(wb) {
   const map = new Map();
@@ -114,7 +125,7 @@ function formatPolicyText({ name, logic, basis, codes }) {
   return parts.join(' · ').slice(0, 2000);
 }
 
-function readLiangkuWorkbook(filePath) {
+function readLiangkuWorkbook(filePath, meta = {}) {
   const wb = XLSX.readFile(filePath, { cellDates: true });
   const codeMap = buildCodeMap(wb);
   const detailSheets = [];
@@ -124,11 +135,24 @@ function readLiangkuWorkbook(filePath) {
     const parsed = sheetToObjects(wb, name);
     if (parsed.rows.length) detailSheets.push({ name, ...parsed });
   }
+  // 兜底：部分附件明细页名为通用 Sheet1（如第二批手术折价），按名过滤会整表漏掉。
+  // 若上面一无所获，则遍历所有非编码页，凡能识别出表头且有数据行者纳入，
+  // 规则类从附件标题(meta.title)提取，避免落成 "Sheet1"。
+  if (detailSheets.length === 0) {
+    const titleCategory = ruleCategoryFromSheet(String(meta.title || meta.batch || ''));
+    for (const name of wb.SheetNames) {
+      if (/药品代码|编码/.test(name) && !/知识点明细/.test(name)) continue;
+      const parsed = sheetToObjects(wb, name);
+      if (!parsed.rows.length) continue;
+      const category = /^Sheet\d*$/i.test(name) || !parsed.category ? titleCategory : parsed.category;
+      detailSheets.push({ name, category, rows: parsed.rows });
+    }
+  }
   return { detailSheets, codeMap };
 }
 
 export function parseLiangkuXlsx(filePath, meta = {}) {
-  const { detailSheets, codeMap } = readLiangkuWorkbook(filePath);
+  const { detailSheets, codeMap } = readLiangkuWorkbook(filePath, meta);
   const batch = slugPart(meta.batch || meta.title || '批次', 16);
   const policies = [];
   let rejected = 0;
@@ -204,7 +228,8 @@ export function parseLiangkuXlsx(filePath, meta = {}) {
       if (!name && !logic && !detail) continue;
 
       const codeKey = `${rowSeq}|${name}`;
-      const codes = codeMap.get(codeKey) || pickDrugCodes(row);
+      let codes = codeMap.get(codeKey) || pickDrugCodes(row);
+      if (!codes.length) codes = pickItemCodes(row); // 医疗服务项目类：项目代码(数字长码)兜底
       const paymentBasis = basis || detail;
 
       const text = formatPolicyText({ name, logic, basis: paymentBasis, codes });

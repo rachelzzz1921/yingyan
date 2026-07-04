@@ -1,0 +1,12 @@
+{
+  "codeset_id": "CS-医疗服务项目限年龄",
+  "name": "医疗服务项目限年龄·编码集",
+  "rule_class": "医疗服务项目限年龄",
+  "gz_code": null,
+  "version": "2026-07-04",
+  "knowledge_points": 1,
+  "code_count": 1,
+  "codes": [
+    "003402000320000"
+  ]
+}

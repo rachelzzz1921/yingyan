@@ -1,0 +1,3827 @@
+[
+  {
+    "kp_id": "KP-b7a6cb75963a64c5",
+    "rule_class": "中药饮片单方使用不予支付",
+    "gz_code": "GZ10000101004000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "T000700200",
+    "med_codes": [
+      "T000700200"
+    ],
+    "med_code_count": 1,
+    "item_name": "丁香",
+    "constraint": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "detect_logic": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "batch": 11,
+    "batch_tag": "batch_11",
+    "published_at": "2026-05-11",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/5/11/art_109_20462.html",
+      "attachment_file": "第十一批“中药饮片单复方均不予支付”规则对应知识点明细.xlsx",
+      "row": 1,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-e92bbe4102954aa3",
+    "rule_class": "中药饮片单方使用不予支付",
+    "gz_code": "GZ10000101004000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "T001700643",
+    "med_codes": [
+      "T001700643"
+    ],
+    "med_code_count": 1,
+    "item_name": "人参片",
+    "constraint": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "detect_logic": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "batch": 11,
+    "batch_tag": "batch_11",
+    "published_at": "2026-05-11",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/5/11/art_109_20462.html",
+      "attachment_file": "第十一批“中药饮片单复方均不予支付”规则对应知识点明细.xlsx",
+      "row": 2,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-ba1660496a3a87bc",
+    "rule_class": "中药饮片单方使用不予支付",
+    "gz_code": "GZ10000101004000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "T000700035",
+    "med_codes": [
+      "T000700035"
+    ],
+    "med_code_count": 1,
+    "item_name": "八角茴香",
+    "constraint": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "detect_logic": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "batch": 11,
+    "batch_tag": "batch_11",
+    "published_at": "2026-05-11",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/5/11/art_109_20462.html",
+      "attachment_file": "第十一批“中药饮片单复方均不予支付”规则对应知识点明细.xlsx",
+      "row": 3,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-f2adb6f0757d1ba4",
+    "rule_class": "中药饮片单方使用不予支付",
+    "gz_code": "GZ10000101004000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "T000800179",
+    "med_codes": [
+      "T000800179"
+    ],
+    "med_code_count": 1,
+    "item_name": "刀豆",
+    "constraint": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "detect_logic": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "batch": 11,
+    "batch_tag": "batch_11",
+    "published_at": "2026-05-11",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/5/11/art_109_20462.html",
+      "attachment_file": "第十一批“中药饮片单复方均不予支付”规则对应知识点明细.xlsx",
+      "row": 4,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-799a65f038a07cd6",
+    "rule_class": "中药饮片单方使用不予支付",
+    "gz_code": "GZ10000101004000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "T001100659",
+    "med_codes": [
+      "T001100659"
+    ],
+    "med_code_count": 1,
+    "item_name": "三七粉",
+    "constraint": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "detect_logic": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "batch": 11,
+    "batch_tag": "batch_11",
+    "published_at": "2026-05-11",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/5/11/art_109_20462.html",
+      "attachment_file": "第十一批“中药饮片单复方均不予支付”规则对应知识点明细.xlsx",
+      "row": 5,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-1045492c556cc2a8",
+    "rule_class": "中药饮片单方使用不予支付",
+    "gz_code": "GZ10000101004000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "T001700280",
+    "med_codes": [
+      "T001700280"
+    ],
+    "med_code_count": 1,
+    "item_name": "干石斛",
+    "constraint": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "detect_logic": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "batch": 11,
+    "batch_tag": "batch_11",
+    "published_at": "2026-05-11",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/5/11/art_109_20462.html",
+      "attachment_file": "第十一批“中药饮片单复方均不予支付”规则对应知识点明细.xlsx",
+      "row": 6,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-5657f752be9aa1a7",
+    "rule_class": "中药饮片单方使用不予支付",
+    "gz_code": "GZ10000101004000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "T000700278",
+    "med_codes": [
+      "T000700278"
+    ],
+    "med_code_count": 1,
+    "item_name": "干姜",
+    "constraint": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "detect_logic": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "batch": 11,
+    "batch_tag": "batch_11",
+    "published_at": "2026-05-11",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/5/11/art_109_20462.html",
+      "attachment_file": "第十一批“中药饮片单复方均不予支付”规则对应知识点明细.xlsx",
+      "row": 7,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-fc29c8ae85fba828",
+    "rule_class": "中药饮片单方使用不予支付",
+    "gz_code": "GZ10000101004000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "T001700186",
+    "med_codes": [
+      "T001700186"
+    ],
+    "med_code_count": 1,
+    "item_name": "大枣",
+    "constraint": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "detect_logic": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "batch": 11,
+    "batch_tag": "batch_11",
+    "published_at": "2026-05-11",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/5/11/art_109_20462.html",
+      "attachment_file": "第十一批“中药饮片单复方均不予支付”规则对应知识点明细.xlsx",
+      "row": 8,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-15893512862d58d7",
+    "rule_class": "中药饮片单方使用不予支付",
+    "gz_code": "GZ10000101004000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "T001500736",
+    "med_codes": [
+      "T001500736"
+    ],
+    "med_code_count": 1,
+    "item_name": "天麻",
+    "constraint": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "detect_logic": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "batch": 11,
+    "batch_tag": "batch_11",
+    "published_at": "2026-05-11",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/5/11/art_109_20462.html",
+      "attachment_file": "第十一批“中药饮片单复方均不予支付”规则对应知识点明细.xlsx",
+      "row": 9,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-ccb4d682c995a560",
+    "rule_class": "中药饮片单方使用不予支付",
+    "gz_code": "GZ10000101004000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "T001200858",
+    "med_codes": [
+      "T001200858"
+    ],
+    "med_code_count": 1,
+    "item_name": "月季花",
+    "constraint": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "detect_logic": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "batch": 11,
+    "batch_tag": "batch_11",
+    "published_at": "2026-05-11",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/5/11/art_109_20462.html",
+      "attachment_file": "第十一批“中药饮片单复方均不予支付”规则对应知识点明细.xlsx",
+      "row": 10,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-8d04c0ef01399e4f",
+    "rule_class": "中药饮片单方使用不予支付",
+    "gz_code": "GZ10000101004000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "T000400769",
+    "med_codes": [
+      "T000400769"
+    ],
+    "med_code_count": 1,
+    "item_name": "乌梢蛇",
+    "constraint": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "detect_logic": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "batch": 11,
+    "batch_tag": "batch_11",
+    "published_at": "2026-05-11",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/5/11/art_109_20462.html",
+      "attachment_file": "第十一批“中药饮片单复方均不予支付”规则对应知识点明细.xlsx",
+      "row": 11,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-e319fa92f857288b",
+    "rule_class": "中药饮片单方使用不予支付",
+    "gz_code": "GZ10000101004000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "T000400770",
+    "med_codes": [
+      "T000400770"
+    ],
+    "med_code_count": 1,
+    "item_name": "乌梢蛇肉",
+    "constraint": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "detect_logic": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "batch": 11,
+    "batch_tag": "batch_11",
+    "published_at": "2026-05-11",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/5/11/art_109_20462.html",
+      "attachment_file": "第十一批“中药饮片单复方均不予支付”规则对应知识点明细.xlsx",
+      "row": 12,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-42bce08b3c59191a",
+    "rule_class": "中药饮片单方使用不予支付",
+    "gz_code": "GZ10000101004000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "T001800764",
+    "med_codes": [
+      "T001800764"
+    ],
+    "med_code_count": 1,
+    "item_name": "乌梅",
+    "constraint": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "detect_logic": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "batch": 11,
+    "batch_tag": "batch_11",
+    "published_at": "2026-05-11",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/5/11/art_109_20462.html",
+      "attachment_file": "第十一批“中药饮片单复方均不予支付”规则对应知识点明细.xlsx",
+      "row": 13,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-1bc113d4ad9cdb4e",
+    "rule_class": "中药饮片单方使用不予支付",
+    "gz_code": "GZ10000101004000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "T001800765",
+    "med_codes": [
+      "T001800765"
+    ],
+    "med_code_count": 1,
+    "item_name": "乌梅肉",
+    "constraint": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "detect_logic": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "batch": 11,
+    "batch_tag": "batch_11",
+    "published_at": "2026-05-11",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/5/11/art_109_20462.html",
+      "attachment_file": "第十一批“中药饮片单复方均不予支付”规则对应知识点明细.xlsx",
+      "row": 14,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-81bb7d056ed478bb",
+    "rule_class": "中药饮片单方使用不予支付",
+    "gz_code": "GZ10000101004000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "T000100683",
+    "med_codes": [
+      "T000100683"
+    ],
+    "med_code_count": 1,
+    "item_name": "生姜",
+    "constraint": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "detect_logic": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "batch": 11,
+    "batch_tag": "batch_11",
+    "published_at": "2026-05-11",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/5/11/art_109_20462.html",
+      "attachment_file": "第十一批“中药饮片单复方均不予支付”规则对应知识点明细.xlsx",
+      "row": 15,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-a58d95a0a9560008",
+    "rule_class": "中药饮片单方使用不予支付",
+    "gz_code": "GZ10000101004000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "T001300011",
+    "med_codes": [
+      "T001300011"
+    ],
+    "med_code_count": 1,
+    "item_name": "白果仁",
+    "constraint": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "detect_logic": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "batch": 11,
+    "batch_tag": "batch_11",
+    "published_at": "2026-05-11",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/5/11/art_109_20462.html",
+      "attachment_file": "第十一批“中药饮片单复方均不予支付”规则对应知识点明细.xlsx",
+      "row": 16,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-6cb200413634c4cb",
+    "rule_class": "中药饮片单方使用不予支付",
+    "gz_code": "GZ10000101004000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "T000700014",
+    "med_codes": [
+      "T000700014"
+    ],
+    "med_code_count": 1,
+    "item_name": "白胡椒",
+    "constraint": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "detect_logic": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "batch": 11,
+    "batch_tag": "batch_11",
+    "published_at": "2026-05-11",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/5/11/art_109_20462.html",
+      "attachment_file": "第十一批“中药饮片单复方均不予支付”规则对应知识点明细.xlsx",
+      "row": 17,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-07c3cfbae8a73bf6",
+    "rule_class": "中药饮片单方使用不予支付",
+    "gz_code": "GZ10000101004000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "T001700353",
+    "med_codes": [
+      "T001700353"
+    ],
+    "med_code_count": 1,
+    "item_name": "红参",
+    "constraint": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "detect_logic": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "batch": 11,
+    "batch_tag": "batch_11",
+    "published_at": "2026-05-11",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/5/11/art_109_20462.html",
+      "attachment_file": "第十一批“中药饮片单复方均不予支付”规则对应知识点明细.xlsx",
+      "row": 18,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-20a003639ba3bff1",
+    "rule_class": "中药饮片单方使用不予支付",
+    "gz_code": "GZ10000101004000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "T001700354",
+    "med_codes": [
+      "T001700354"
+    ],
+    "med_code_count": 1,
+    "item_name": "红参片",
+    "constraint": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "detect_logic": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "batch": 11,
+    "batch_tag": "batch_11",
+    "published_at": "2026-05-11",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/5/11/art_109_20462.html",
+      "attachment_file": "第十一批“中药饮片单复方均不予支付”规则对应知识点明细.xlsx",
+      "row": 19,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-96d6d5d25a07fb1f",
+    "rule_class": "中药饮片单方使用不予支付",
+    "gz_code": "GZ10000101004000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "T001700351",
+    "med_codes": [
+      "T001700351"
+    ],
+    "med_code_count": 1,
+    "item_name": "红景天",
+    "constraint": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "detect_logic": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "batch": 11,
+    "batch_tag": "batch_11",
+    "published_at": "2026-05-11",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/5/11/art_109_20462.html",
+      "attachment_file": "第十一批“中药饮片单复方均不予支付”规则对应知识点明细.xlsx",
+      "row": 20,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-d24d759687ea657c",
+    "rule_class": "中药饮片单方使用不予支付",
+    "gz_code": "GZ10000101004000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "T000900536",
+    "med_codes": [
+      "T000900536"
+    ],
+    "med_code_count": 1,
+    "item_name": "麦芽",
+    "constraint": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "detect_logic": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "batch": 11,
+    "batch_tag": "batch_11",
+    "published_at": "2026-05-11",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/5/11/art_109_20462.html",
+      "attachment_file": "第十一批“中药饮片单复方均不予支付”规则对应知识点明细.xlsx",
+      "row": 21,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-f3f954a93bd16802",
+    "rule_class": "中药饮片单方使用不予支付",
+    "gz_code": "GZ10000101004000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "T000600118",
+    "med_codes": [
+      "T000600118"
+    ],
+    "med_code_count": 1,
+    "item_name": "赤小豆",
+    "constraint": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "detect_logic": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "batch": 11,
+    "batch_tag": "batch_11",
+    "published_at": "2026-05-11",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/5/11/art_109_20462.html",
+      "attachment_file": "第十一批“中药饮片单复方均不予支付”规则对应知识点明细.xlsx",
+      "row": 22,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-6b3c873f024994e4",
+    "rule_class": "中药饮片单方使用不予支付",
+    "gz_code": "GZ10000101004000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "T000700362",
+    "med_codes": [
+      "T000700362"
+    ],
+    "med_code_count": 1,
+    "item_name": "花椒",
+    "constraint": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "detect_logic": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "batch": 11,
+    "batch_tag": "batch_11",
+    "published_at": "2026-05-11",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/5/11/art_109_20462.html",
+      "attachment_file": "第十一批“中药饮片单复方均不予支付”规则对应知识点明细.xlsx",
+      "row": 23,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-018a6fea85dc5403",
+    "rule_class": "中药饮片单方使用不予支付",
+    "gz_code": "GZ10000101004000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "T001800622",
+    "med_codes": [
+      "T001800622"
+    ],
+    "med_code_count": 1,
+    "item_name": "芡实",
+    "constraint": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "detect_logic": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "batch": 11,
+    "batch_tag": "batch_11",
+    "published_at": "2026-05-11",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/5/11/art_109_20462.html",
+      "attachment_file": "第十一批“中药饮片单复方均不予支付”规则对应知识点明细.xlsx",
+      "row": 24,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-f77e212462cce7e4",
+    "rule_class": "中药饮片单方使用不予支付",
+    "gz_code": "GZ10000101004000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "T000300515",
+    "med_codes": [
+      "T000300515"
+    ],
+    "med_code_count": 1,
+    "item_name": "芦荟",
+    "constraint": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "detect_logic": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "batch": 11,
+    "batch_tag": "batch_11",
+    "published_at": "2026-05-11",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/5/11/art_109_20462.html",
+      "attachment_file": "第十一批“中药饮片单复方均不予支付”规则对应知识点明细.xlsx",
+      "row": 25,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-2a01a44eac3c0996",
+    "rule_class": "中药饮片单方使用不予支付",
+    "gz_code": "GZ10000101004000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "T001700768",
+    "med_codes": [
+      "T001700768"
+    ],
+    "med_code_count": 1,
+    "item_name": "巫山淫羊藿",
+    "constraint": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "detect_logic": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "batch": 11,
+    "batch_tag": "batch_11",
+    "published_at": "2026-05-11",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/5/11/art_109_20462.html",
+      "attachment_file": "第十一批“中药饮片单复方均不予支付”规则对应知识点明细.xlsx",
+      "row": 26,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-c675dd7a4d98b141",
+    "rule_class": "中药饮片单方使用不予支付",
+    "gz_code": "GZ10000101004000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "T000800547",
+    "med_codes": [
+      "T000800547"
+    ],
+    "med_code_count": 1,
+    "item_name": "玫瑰花",
+    "constraint": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "detect_logic": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "batch": 11,
+    "batch_tag": "batch_11",
+    "published_at": "2026-05-11",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/5/11/art_109_20462.html",
+      "attachment_file": "第十一批“中药饮片单复方均不予支付”规则对应知识点明细.xlsx",
+      "row": 27,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-b53cbe3089156dac",
+    "rule_class": "中药饮片单方使用不予支付",
+    "gz_code": "GZ10000101004000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "T000300863",
+    "med_codes": [
+      "T000300863"
+    ],
+    "med_code_count": 1,
+    "item_name": "郁李仁",
+    "constraint": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "detect_logic": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "batch": 11,
+    "batch_tag": "batch_11",
+    "published_at": "2026-05-11",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/5/11/art_109_20462.html",
+      "attachment_file": "第十一批“中药饮片单复方均不予支付”规则对应知识点明细.xlsx",
+      "row": 28,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-a325a957ee017a09",
+    "rule_class": "中药饮片单方使用不予支付",
+    "gz_code": "GZ10000101004000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "T001300477",
+    "med_codes": [
+      "T001300477"
+    ],
+    "med_code_count": 1,
+    "item_name": "昆布",
+    "constraint": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "detect_logic": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "batch": 11,
+    "batch_tag": "batch_11",
+    "published_at": "2026-05-11",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/5/11/art_109_20462.html",
+      "attachment_file": "第十一批“中药饮片单复方均不予支付”规则对应知识点明细.xlsx",
+      "row": 29,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-d31c7a07332c7ea0",
+    "rule_class": "中药饮片单方使用不予支付",
+    "gz_code": "GZ10000101004000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "T001300521",
+    "med_codes": [
+      "T001300521"
+    ],
+    "med_code_count": 1,
+    "item_name": "罗汉果",
+    "constraint": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "detect_logic": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "batch": 11,
+    "batch_tag": "batch_11",
+    "published_at": "2026-05-11",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/5/11/art_109_20462.html",
+      "attachment_file": "第十一批“中药饮片单复方均不予支付”规则对应知识点明细.xlsx",
+      "row": 30,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-720739aeed2a0dc5",
+    "rule_class": "中药饮片单方使用不予支付",
+    "gz_code": "GZ10000101004000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "T001400876",
+    "med_codes": [
+      "T001400876"
+    ],
+    "med_code_count": 1,
+    "item_name": "珍珠粉",
+    "constraint": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "detect_logic": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "batch": 11,
+    "batch_tag": "batch_11",
+    "published_at": "2026-05-11",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/5/11/art_109_20462.html",
+      "attachment_file": "第十一批“中药饮片单复方均不予支付”规则对应知识点明细.xlsx",
+      "row": 31,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-f871dd86d31f0774",
+    "rule_class": "中药饮片单方使用不予支付",
+    "gz_code": "GZ10000101004000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "T000500063",
+    "med_codes": [
+      "T000500063"
+    ],
+    "med_code_count": 1,
+    "item_name": "草豆蔻",
+    "constraint": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "detect_logic": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "batch": 11,
+    "batch_tag": "batch_11",
+    "published_at": "2026-05-11",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/5/11/art_109_20462.html",
+      "attachment_file": "第十一批“中药饮片单复方均不予支付”规则对应知识点明细.xlsx",
+      "row": 32,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-bcb037ea8c5560b2",
+    "rule_class": "中药饮片单方使用不予支付",
+    "gz_code": "GZ10000101004000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "T000800381",
+    "med_codes": [
+      "T000800381"
+    ],
+    "med_code_count": 1,
+    "item_name": "茴香",
+    "constraint": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "detect_logic": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "batch": 11,
+    "batch_tag": "batch_11",
+    "published_at": "2026-05-11",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/5/11/art_109_20462.html",
+      "attachment_file": "第十一批“中药饮片单复方均不予支付”规则对应知识点明细.xlsx",
+      "row": 33,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-f420d8d3a8972be3",
+    "rule_class": "中药饮片单方使用不予支付",
+    "gz_code": "GZ10000101004000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "T000600266",
+    "med_codes": [
+      "T000600266"
+    ],
+    "med_code_count": 1,
+    "item_name": "茯苓",
+    "constraint": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "detect_logic": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "batch": 11,
+    "batch_tag": "batch_11",
+    "published_at": "2026-05-11",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/5/11/art_109_20462.html",
+      "attachment_file": "第十一批“中药饮片单复方均不予支付”规则对应知识点明细.xlsx",
+      "row": 34,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-8a43e134b20fb633",
+    "rule_class": "中药饮片单方使用不予支付",
+    "gz_code": "GZ10000101004000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "T000900480",
+    "med_codes": [
+      "T000900480"
+    ],
+    "med_code_count": 1,
+    "item_name": "莱菔子",
+    "constraint": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "detect_logic": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "batch": 11,
+    "batch_tag": "batch_11",
+    "published_at": "2026-05-11",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/5/11/art_109_20462.html",
+      "attachment_file": "第十一批“中药饮片单复方均不予支付”规则对应知识点明细.xlsx",
+      "row": 35,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-150b9b5e73bd8f99",
+    "rule_class": "中药饮片单方使用不予支付",
+    "gz_code": "GZ10000101004000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "T001800493",
+    "med_codes": [
+      "T001800493"
+    ],
+    "med_code_count": 1,
+    "item_name": "莲子",
+    "constraint": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "detect_logic": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "batch": 11,
+    "batch_tag": "batch_11",
+    "published_at": "2026-05-11",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/5/11/art_109_20462.html",
+      "attachment_file": "第十一批“中药饮片单复方均不予支付”规则对应知识点明细.xlsx",
+      "row": 36,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-eb0d25fab7d975b0",
+    "rule_class": "中药饮片单方使用不予支付",
+    "gz_code": "GZ10000101004000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "T001400494",
+    "med_codes": [
+      "T001400494"
+    ],
+    "med_code_count": 1,
+    "item_name": "莲子心",
+    "constraint": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "detect_logic": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "batch": 11,
+    "batch_tag": "batch_11",
+    "published_at": "2026-05-11",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/5/11/art_109_20462.html",
+      "attachment_file": "第十一批“中药饮片单复方均不予支付”规则对应知识点明细.xlsx",
+      "row": 37,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-c532a266a2f9ea92",
+    "rule_class": "中药饮片单方使用不予支付",
+    "gz_code": "GZ10000101004000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "T000200342",
+    "med_codes": [
+      "T000200342"
+    ],
+    "med_code_count": 1,
+    "item_name": "荷叶",
+    "constraint": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "detect_logic": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "batch": 11,
+    "batch_tag": "batch_11",
+    "published_at": "2026-05-11",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/5/11/art_109_20462.html",
+      "attachment_file": "第十一批“中药饮片单复方均不予支付”规则对应知识点明细.xlsx",
+      "row": 38,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-d08adcfacec7c1cc",
+    "rule_class": "中药饮片单方使用不予支付",
+    "gz_code": "GZ10000101004000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "T001700654",
+    "med_codes": [
+      "T001700654"
+    ],
+    "med_code_count": 1,
+    "item_name": "桑椹",
+    "constraint": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "detect_logic": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "batch": 11,
+    "batch_tag": "batch_11",
+    "published_at": "2026-05-11",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/5/11/art_109_20462.html",
+      "attachment_file": "第十一批“中药饮片单复方均不予支付”规则对应知识点明细.xlsx",
+      "row": 39,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-f76b975ee64074ac",
+    "rule_class": "中药饮片单方使用不予支付",
+    "gz_code": "GZ10000101004000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "T001700368",
+    "med_codes": [
+      "T001700368"
+    ],
+    "med_code_count": 1,
+    "item_name": "黄芪",
+    "constraint": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "detect_logic": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "batch": 11,
+    "batch_tag": "batch_11",
+    "published_at": "2026-05-11",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/5/11/art_109_20462.html",
+      "attachment_file": "第十一批“中药饮片单复方均不予支付”规则对应知识点明细.xlsx",
+      "row": 40,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-8b97d6584e071690",
+    "rule_class": "中药饮片单方使用不予支付",
+    "gz_code": "GZ10000101004000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "T000100467",
+    "med_codes": [
+      "T000100467"
+    ],
+    "med_code_count": 1,
+    "item_name": "菊花",
+    "constraint": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "detect_logic": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "batch": 11,
+    "batch_tag": "batch_11",
+    "published_at": "2026-05-11",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/5/11/art_109_20462.html",
+      "attachment_file": "第十一批“中药饮片单复方均不予支付”规则对应知识点明细.xlsx",
+      "row": 41,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-1fa9b026dfd95076",
+    "rule_class": "中药饮片单方使用不予支付",
+    "gz_code": "GZ10000101004000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "T001700288",
+    "med_codes": [
+      "T001700288"
+    ],
+    "med_code_count": 1,
+    "item_name": "蛤蚧",
+    "constraint": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "detect_logic": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "batch": 11,
+    "batch_tag": "batch_11",
+    "published_at": "2026-05-11",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/5/11/art_109_20462.html",
+      "attachment_file": "第十一批“中药饮片单复方均不予支付”规则对应知识点明细.xlsx",
+      "row": 42,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-432375faca2c2fd8",
+    "rule_class": "中药饮片单方使用不予支付",
+    "gz_code": "GZ10000101004000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "T001700338",
+    "med_codes": [
+      "T001700338"
+    ],
+    "med_code_count": 1,
+    "item_name": "黑芝麻",
+    "constraint": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "detect_logic": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "batch": 11,
+    "batch_tag": "batch_11",
+    "published_at": "2026-05-11",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/5/11/art_109_20462.html",
+      "attachment_file": "第十一批“中药饮片单复方均不予支付”规则对应知识点明细.xlsx",
+      "row": 43,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-1f9bbb80502f8972",
+    "rule_class": "中药饮片单方使用不予支付",
+    "gz_code": "GZ10000101004000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "T000600336",
+    "med_codes": [
+      "T000600336"
+    ],
+    "med_code_count": 1,
+    "item_name": "黑豆",
+    "constraint": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "detect_logic": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "batch": 11,
+    "batch_tag": "batch_11",
+    "published_at": "2026-05-11",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/5/11/art_109_20462.html",
+      "attachment_file": "第十一批“中药饮片单复方均不予支付”规则对应知识点明细.xlsx",
+      "row": 44,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-e24c0f213680c94b",
+    "rule_class": "中药饮片单方使用不予支付",
+    "gz_code": "GZ10000101004000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "T000700337",
+    "med_codes": [
+      "T000700337"
+    ],
+    "med_code_count": 1,
+    "item_name": "黑胡椒",
+    "constraint": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "detect_logic": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "batch": 11,
+    "batch_tag": "batch_11",
+    "published_at": "2026-05-11",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/5/11/art_109_20462.html",
+      "attachment_file": "第十一批“中药饮片单复方均不予支付”规则对应知识点明细.xlsx",
+      "row": 45,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-559438d6a1a0e41f",
+    "rule_class": "中药饮片单方使用不予支付",
+    "gz_code": "GZ10000101004000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "T001700310",
+    "med_codes": [
+      "T001700310"
+    ],
+    "med_code_count": 1,
+    "item_name": "管花肉苁蓉片",
+    "constraint": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "detect_logic": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "batch": 11,
+    "batch_tag": "batch_11",
+    "published_at": "2026-05-11",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/5/11/art_109_20462.html",
+      "attachment_file": "第十一批“中药饮片单复方均不予支付”规则对应知识点明细.xlsx",
+      "row": 46,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-d872eb3a7ff5882f",
+    "rule_class": "中药饮片单方使用不予支付",
+    "gz_code": "GZ10000101004000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "T000200781",
+    "med_codes": [
+      "T000200781"
+    ],
+    "med_code_count": 1,
+    "item_name": "鲜芦根",
+    "constraint": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "detect_logic": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "batch": 11,
+    "batch_tag": "batch_11",
+    "published_at": "2026-05-11",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/5/11/art_109_20462.html",
+      "attachment_file": "第十一批“中药饮片单复方均不予支付”规则对应知识点明细.xlsx",
+      "row": 47,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-649b430ec1c2d5f8",
+    "rule_class": "中药饮片单方使用不予支付",
+    "gz_code": "GZ10000101004000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "T000200785",
+    "med_codes": [
+      "T000200785"
+    ],
+    "med_code_count": 1,
+    "item_name": "鲜鱼腥草",
+    "constraint": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "detect_logic": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "batch": 11,
+    "batch_tag": "batch_11",
+    "published_at": "2026-05-11",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/5/11/art_109_20462.html",
+      "attachment_file": "第十一批“中药饮片单复方均不予支付”规则对应知识点明细.xlsx",
+      "row": 48,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-0bd9bd7471e639b4",
+    "rule_class": "中药饮片单方使用不予支付",
+    "gz_code": "GZ10000101004000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "T000700481",
+    "med_codes": [
+      "T000700481"
+    ],
+    "med_code_count": 1,
+    "item_name": "辣椒",
+    "constraint": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "detect_logic": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "batch": 11,
+    "batch_tag": "batch_11",
+    "published_at": "2026-05-11",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/5/11/art_109_20462.html",
+      "attachment_file": "第十一批“中药饮片单复方均不予支付”规则对应知识点明细.xlsx",
+      "row": 49,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-81f20cfd118054fb",
+    "rule_class": "中药饮片单方使用不予支付",
+    "gz_code": "GZ10000101004000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "T001700554",
+    "med_codes": [
+      "T001700554"
+    ],
+    "med_code_count": 1,
+    "item_name": "蜜百合",
+    "constraint": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "detect_logic": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "batch": 11,
+    "batch_tag": "batch_11",
+    "published_at": "2026-05-11",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/5/11/art_109_20462.html",
+      "attachment_file": "第十一批“中药饮片单复方均不予支付”规则对应知识点明细.xlsx",
+      "row": 50,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-789a0dcb2e21eda8",
+    "rule_class": "中药饮片单方使用不予支付",
+    "gz_code": "GZ10000101004000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "T001800569",
+    "med_codes": [
+      "T001800569"
+    ],
+    "med_code_count": 1,
+    "item_name": "蜜罂粟壳",
+    "constraint": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "detect_logic": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "batch": 11,
+    "batch_tag": "batch_11",
+    "published_at": "2026-05-11",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/5/11/art_109_20462.html",
+      "attachment_file": "第十一批“中药饮片单复方均不予支付”规则对应知识点明细.xlsx",
+      "row": 51,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-ea965970c6368a15",
+    "rule_class": "中药饮片单方使用不予支付",
+    "gz_code": "GZ10000101004000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "T001500800",
+    "med_codes": [
+      "T001500800"
+    ],
+    "med_code_count": 1,
+    "item_name": "熊胆粉",
+    "constraint": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "detect_logic": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "batch": 11,
+    "batch_tag": "batch_11",
+    "published_at": "2026-05-11",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/5/11/art_109_20462.html",
+      "attachment_file": "第十一批“中药饮片单复方均不予支付”规则对应知识点明细.xlsx",
+      "row": 52,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-e7738f3f04b28ebd",
+    "rule_class": "中药饮片单方使用不予支付",
+    "gz_code": "GZ10000101004000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "T000400636",
+    "med_codes": [
+      "T000400636"
+    ],
+    "med_code_count": 1,
+    "item_name": "蕲蛇",
+    "constraint": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "detect_logic": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "batch": 11,
+    "batch_tag": "batch_11",
+    "published_at": "2026-05-11",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/5/11/art_109_20462.html",
+      "attachment_file": "第十一批“中药饮片单复方均不予支付”规则对应知识点明细.xlsx",
+      "row": 53,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-bc536e87322ae453",
+    "rule_class": "中药饮片单方使用不予支付",
+    "gz_code": "GZ10000101004000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "T000400637",
+    "med_codes": [
+      "T000400637"
+    ],
+    "med_code_count": 1,
+    "item_name": "蕲蛇肉",
+    "constraint": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "detect_logic": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "batch": 11,
+    "batch_tag": "batch_11",
+    "published_at": "2026-05-11",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/5/11/art_109_20462.html",
+      "attachment_file": "第十一批“中药饮片单复方均不予支付”规则对应知识点明细.xlsx",
+      "row": 54,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-5ab69bb4e7c33c99",
+    "rule_class": "中药饮片单方使用不予支付",
+    "gz_code": "GZ10000101004000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "T000700788",
+    "med_codes": [
+      "T000700788"
+    ],
+    "med_code_count": 1,
+    "item_name": "小茴香",
+    "constraint": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "detect_logic": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "batch": 11,
+    "batch_tag": "batch_11",
+    "published_at": "2026-05-11",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/5/11/art_109_20462.html",
+      "attachment_file": "第十一批“中药饮片单复方均不予支付”规则对应知识点明细.xlsx",
+      "row": 55,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-610d2d79033ca941",
+    "rule_class": "中药饮片单方使用不予支付",
+    "gz_code": "GZ10000101004000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "T001700667",
+    "med_codes": [
+      "T001700667"
+    ],
+    "med_code_count": 1,
+    "item_name": "山药",
+    "constraint": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "detect_logic": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "batch": 11,
+    "batch_tag": "batch_11",
+    "published_at": "2026-05-11",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/5/11/art_109_20462.html",
+      "attachment_file": "第十一批“中药饮片单复方均不予支付”规则对应知识点明细.xlsx",
+      "row": 56,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-fa88821c3ade468c",
+    "rule_class": "中药饮片单方使用不予支付",
+    "gz_code": "GZ10000101004000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "T001700668",
+    "med_codes": [
+      "T001700668"
+    ],
+    "med_code_count": 1,
+    "item_name": "山药片",
+    "constraint": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "detect_logic": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "batch": 11,
+    "batch_tag": "batch_11",
+    "published_at": "2026-05-11",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/5/11/art_109_20462.html",
+      "attachment_file": "第十一批“中药饮片单复方均不予支付”规则对应知识点明细.xlsx",
+      "row": 57,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-5296c581afbac1f4",
+    "rule_class": "中药饮片单方使用不予支付",
+    "gz_code": "GZ10000101004000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "T001300123",
+    "med_codes": [
+      "T001300123"
+    ],
+    "med_code_count": 1,
+    "item_name": "川贝母",
+    "constraint": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "detect_logic": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "batch": 11,
+    "batch_tag": "batch_11",
+    "published_at": "2026-05-11",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/5/11/art_109_20462.html",
+      "attachment_file": "第十一批“中药饮片单复方均不予支付”规则对应知识点明细.xlsx",
+      "row": 58,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-4bc44df076777697",
+    "rule_class": "中药饮片单方使用不予支付",
+    "gz_code": "GZ10000101004000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "T000500305",
+    "med_codes": [
+      "T000500305"
+    ],
+    "med_code_count": 1,
+    "item_name": "广藿香",
+    "constraint": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "detect_logic": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "batch": 11,
+    "batch_tag": "batch_11",
+    "published_at": "2026-05-11",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/5/11/art_109_20462.html",
+      "attachment_file": "第十一批“中药饮片单复方均不予支付”规则对应知识点明细.xlsx",
+      "row": 59,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-d204ffee17845908",
+    "rule_class": "中药饮片单方使用不予支付",
+    "gz_code": "GZ10000101004000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "T001700869",
+    "med_codes": [
+      "T001700869"
+    ],
+    "med_code_count": 1,
+    "item_name": "玉竹",
+    "constraint": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "detect_logic": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "batch": 11,
+    "batch_tag": "batch_11",
+    "published_at": "2026-05-11",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/5/11/art_109_20462.html",
+      "attachment_file": "第十一批“中药饮片单复方均不予支付”规则对应知识点明细.xlsx",
+      "row": 60,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-b2dec89efeeb230c",
+    "rule_class": "中药饮片单方使用不予支付",
+    "gz_code": "GZ10000101004000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "T001100003",
+    "med_codes": [
+      "T001100003"
+    ],
+    "med_code_count": 1,
+    "item_name": "艾叶",
+    "constraint": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "detect_logic": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "batch": 11,
+    "batch_tag": "batch_11",
+    "published_at": "2026-05-11",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/5/11/art_109_20462.html",
+      "attachment_file": "第十一批“中药饮片单复方均不予支付”规则对应知识点明细.xlsx",
+      "row": 61,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-212ec423d67c3903",
+    "rule_class": "中药饮片单方使用不予支付",
+    "gz_code": "GZ10000101004000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "T001700510",
+    "med_codes": [
+      "T001700510"
+    ],
+    "med_code_count": 1,
+    "item_name": "龙眼肉",
+    "constraint": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "detect_logic": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "batch": 11,
+    "batch_tag": "batch_11",
+    "published_at": "2026-05-11",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/5/11/art_109_20462.html",
+      "attachment_file": "第十一批“中药饮片单复方均不予支付”规则对应知识点明细.xlsx",
+      "row": 62,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-f589005625fdad05",
+    "rule_class": "中药饮片单方使用不予支付",
+    "gz_code": "GZ10000101004000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "T001700012",
+    "med_codes": [
+      "T001700012"
+    ],
+    "med_code_count": 1,
+    "item_name": "百合",
+    "constraint": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "detect_logic": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "batch": 11,
+    "batch_tag": "batch_11",
+    "published_at": "2026-05-11",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/5/11/art_109_20462.html",
+      "attachment_file": "第十一批“中药饮片单复方均不予支付”规则对应知识点明细.xlsx",
+      "row": 63,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-053194c2453bac5f",
+    "rule_class": "中药饮片单方使用不予支付",
+    "gz_code": "GZ10000101004000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "T001700173",
+    "med_codes": [
+      "T001700173"
+    ],
+    "med_code_count": 1,
+    "item_name": "当归",
+    "constraint": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "detect_logic": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "batch": 11,
+    "batch_tag": "batch_11",
+    "published_at": "2026-05-11",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/5/11/art_109_20462.html",
+      "attachment_file": "第十一批“中药饮片单复方均不予支付”规则对应知识点明细.xlsx",
+      "row": 64,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-ac86d3e7f3d6d6c0",
+    "rule_class": "中药饮片单方使用不予支付",
+    "gz_code": "GZ10000101004000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "T001700645",
+    "med_codes": [
+      "T001700645"
+    ],
+    "med_code_count": 1,
+    "item_name": "肉苁蓉片",
+    "constraint": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "detect_logic": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "batch": 11,
+    "batch_tag": "batch_11",
+    "published_at": "2026-05-11",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/5/11/art_109_20462.html",
+      "attachment_file": "第十一批“中药饮片单复方均不予支付”规则对应知识点明细.xlsx",
+      "row": 65,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-3865a1d583671d97",
+    "rule_class": "中药饮片单方使用不予支付",
+    "gz_code": "GZ10000101004000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "T001800646",
+    "med_codes": [
+      "T001800646"
+    ],
+    "med_code_count": 1,
+    "item_name": "肉豆蔻",
+    "constraint": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "detect_logic": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "batch": 11,
+    "batch_tag": "batch_11",
+    "published_at": "2026-05-11",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/5/11/art_109_20462.html",
+      "attachment_file": "第十一批“中药饮片单复方均不予支付”规则对应知识点明细.xlsx",
+      "row": 66,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-7746f4de9103b267",
+    "rule_class": "中药饮片单方使用不予支付",
+    "gz_code": "GZ10000101004000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "T001700647",
+    "med_codes": [
+      "T001700647"
+    ],
+    "med_code_count": 1,
+    "item_name": "肉桂",
+    "constraint": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "detect_logic": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "batch": 11,
+    "batch_tag": "batch_11",
+    "published_at": "2026-05-11",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/5/11/art_109_20462.html",
+      "attachment_file": "第十一批“中药饮片单复方均不予支付”规则对应知识点明细.xlsx",
+      "row": 67,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-aa0515c7d0315ddb",
+    "rule_class": "中药饮片单方使用不予支付",
+    "gz_code": "GZ10000101004000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "T001500639",
+    "med_codes": [
+      "T001500639"
+    ],
+    "med_code_count": 1,
+    "item_name": "全蝎",
+    "constraint": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "detect_logic": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "batch": 11,
+    "batch_tag": "batch_11",
+    "published_at": "2026-05-11",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/5/11/art_109_20462.html",
+      "attachment_file": "第十一批“中药饮片单复方均不予支付”规则对应知识点明细.xlsx",
+      "row": 68,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-d85214ad664fc0f7",
+    "rule_class": "中药饮片单方使用不予支付",
+    "gz_code": "GZ10000101004000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "T000200464",
+    "med_codes": [
+      "T000200464"
+    ],
+    "med_code_count": 1,
+    "item_name": "决明子",
+    "constraint": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "detect_logic": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "batch": 11,
+    "batch_tag": "batch_11",
+    "published_at": "2026-05-11",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/5/11/art_109_20462.html",
+      "attachment_file": "第十一批“中药饮片单复方均不予支付”规则对应知识点明细.xlsx",
+      "row": 69,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-78f3f4bfa14a7d2e",
+    "rule_class": "中药饮片单方使用不予支付",
+    "gz_code": "GZ10000101004000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "T000800255",
+    "med_codes": [
+      "T000800255"
+    ],
+    "med_code_count": 1,
+    "item_name": "佛手",
+    "constraint": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "detect_logic": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "batch": 11,
+    "batch_tag": "batch_11",
+    "published_at": "2026-05-11",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/5/11/art_109_20462.html",
+      "attachment_file": "第十一批“中药饮片单复方均不予支付”规则对应知识点明细.xlsx",
+      "row": 70,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-93d2da6ee4887670",
+    "rule_class": "中药饮片单方使用不予支付",
+    "gz_code": "GZ10000101004000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "T000200859",
+    "med_codes": [
+      "T000200859"
+    ],
+    "med_code_count": 1,
+    "item_name": "余甘子",
+    "constraint": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "detect_logic": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "batch": 11,
+    "batch_tag": "batch_11",
+    "published_at": "2026-05-11",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/5/11/art_109_20462.html",
+      "attachment_file": "第十一批“中药饮片单复方均不予支付”规则对应知识点明细.xlsx",
+      "row": 71,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-1932d51dac4e9e6e",
+    "rule_class": "中药饮片单方使用不予支付",
+    "gz_code": "GZ10000101004000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "T001700314",
+    "med_codes": [
+      "T001700314"
+    ],
+    "med_code_count": 1,
+    "item_name": "龟板胶",
+    "constraint": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "detect_logic": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "batch": 11,
+    "batch_tag": "batch_11",
+    "published_at": "2026-05-11",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/5/11/art_109_20462.html",
+      "attachment_file": "第十一批“中药饮片单复方均不予支付”规则对应知识点明细.xlsx",
+      "row": 72,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-fd953ab366a6b261",
+    "rule_class": "中药饮片单方使用不予支付",
+    "gz_code": "GZ10000101004000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "T001700316",
+    "med_codes": [
+      "T001700316"
+    ],
+    "med_code_count": 1,
+    "item_name": "龟甲胶",
+    "constraint": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "detect_logic": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "batch": 11,
+    "batch_tag": "batch_11",
+    "published_at": "2026-05-11",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/5/11/art_109_20462.html",
+      "attachment_file": "第十一批“中药饮片单复方均不予支付”规则对应知识点明细.xlsx",
+      "row": 73,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-42154bf09701de49",
+    "rule_class": "中药饮片单方使用不予支付",
+    "gz_code": "GZ10000101004000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "T001700660",
+    "med_codes": [
+      "T001700660"
+    ],
+    "med_code_count": 1,
+    "item_name": "沙棘",
+    "constraint": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "detect_logic": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "batch": 11,
+    "batch_tag": "batch_11",
+    "published_at": "2026-05-11",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/5/11/art_109_20462.html",
+      "attachment_file": "第十一批“中药饮片单复方均不予支付”规则对应知识点明细.xlsx",
+      "row": 74,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-16b595b985b69eea",
+    "rule_class": "中药饮片单方使用不予支付",
+    "gz_code": "GZ10000101004000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "T000800113",
+    "med_codes": [
+      "T000800113"
+    ],
+    "med_code_count": 1,
+    "item_name": "沉香",
+    "constraint": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "detect_logic": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "batch": 11,
+    "batch_tag": "batch_11",
+    "published_at": "2026-05-11",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/5/11/art_109_20462.html",
+      "attachment_file": "第十一批“中药饮片单复方均不予支付”规则对应知识点明细.xlsx",
+      "row": 75,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-d81a85fa724f57b2",
+    "rule_class": "中药饮片单方使用不予支付",
+    "gz_code": "GZ10000101004000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "T001400501",
+    "med_codes": [
+      "T001400501"
+    ],
+    "med_code_count": 1,
+    "item_name": "灵芝",
+    "constraint": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "detect_logic": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "batch": 11,
+    "batch_tag": "batch_11",
+    "published_at": "2026-05-11",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/5/11/art_109_20462.html",
+      "attachment_file": "第十一批“中药饮片单复方均不予支付”规则对应知识点明细.xlsx",
+      "row": 76,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-01d905b05f87f42d",
+    "rule_class": "中药饮片单方使用不予支付",
+    "gz_code": "GZ10000101004000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "T001700234",
+    "med_codes": [
+      "T001700234"
+    ],
+    "med_code_count": 1,
+    "item_name": "阿胶珠",
+    "constraint": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "detect_logic": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "batch": 11,
+    "batch_tag": "batch_11",
+    "published_at": "2026-05-11",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/5/11/art_109_20462.html",
+      "attachment_file": "第十一批“中药饮片单复方均不予支付”规则对应知识点明细.xlsx",
+      "row": 77,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-5e87c3b677eb6df8",
+    "rule_class": "中药饮片单方使用不予支付",
+    "gz_code": "GZ10000101004000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "T000800112",
+    "med_codes": [
+      "T000800112"
+    ],
+    "med_code_count": 1,
+    "item_name": "陈皮",
+    "constraint": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "detect_logic": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "batch": 11,
+    "batch_tag": "batch_11",
+    "published_at": "2026-05-11",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/5/11/art_109_20462.html",
+      "attachment_file": "第十一批“中药饮片单复方均不予支付”规则对应知识点明细.xlsx",
+      "row": 78,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-7b87f9716b9a38f8",
+    "rule_class": "中药饮片单方使用不予支付",
+    "gz_code": "GZ10000101004000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "T000200627",
+    "med_codes": [
+      "T000200627"
+    ],
+    "med_code_count": 1,
+    "item_name": "青果",
+    "constraint": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "detect_logic": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "batch": 11,
+    "batch_tag": "batch_11",
+    "published_at": "2026-05-11",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/5/11/art_109_20462.html",
+      "attachment_file": "第十一批“中药饮片单复方均不予支付”规则对应知识点明细.xlsx",
+      "row": 79,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-5f55e90c35de5c5c",
+    "rule_class": "中药饮片单方使用不予支付",
+    "gz_code": "GZ10000101004000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "T000400428",
+    "med_codes": [
+      "T000400428"
+    ],
+    "med_code_count": 1,
+    "item_name": "金钱白花蛇",
+    "constraint": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "detect_logic": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "batch": 11,
+    "batch_tag": "batch_11",
+    "published_at": "2026-05-11",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/5/11/art_109_20462.html",
+      "attachment_file": "第十一批“中药饮片单复方均不予支付”规则对应知识点明细.xlsx",
+      "row": 80,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-63db03d70a87d916",
+    "rule_class": "中药饮片单方使用不予支付",
+    "gz_code": "GZ10000101004000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "T000200433",
+    "med_codes": [
+      "T000200433"
+    ],
+    "med_code_count": 1,
+    "item_name": "金银花",
+    "constraint": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "detect_logic": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "batch": 11,
+    "batch_tag": "batch_11",
+    "published_at": "2026-05-11",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/5/11/art_109_20462.html",
+      "attachment_file": "第十一批“中药饮片单复方均不予支付”规则对应知识点明细.xlsx",
+      "row": 81,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-4070e1f2126be2cf",
+    "rule_class": "中药饮片单方使用不予支付",
+    "gz_code": "GZ10000101004000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "T001700894",
+    "med_codes": [
+      "T001700894"
+    ],
+    "med_code_count": 1,
+    "item_name": "炙巫山淫羊藿",
+    "constraint": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "detect_logic": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "batch": 11,
+    "batch_tag": "batch_11",
+    "published_at": "2026-05-11",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/5/11/art_109_20462.html",
+      "attachment_file": "第十一批“中药饮片单复方均不予支付”规则对应知识点明细.xlsx",
+      "row": 82,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-7e1672ced283641b",
+    "rule_class": "中药饮片单方使用不予支付",
+    "gz_code": "GZ10000101004000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "T001700886",
+    "med_codes": [
+      "T001700886"
+    ],
+    "med_code_count": 1,
+    "item_name": "炙黄芪",
+    "constraint": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "detect_logic": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "batch": 11,
+    "batch_tag": "batch_11",
+    "published_at": "2026-05-11",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/5/11/art_109_20462.html",
+      "attachment_file": "第十一批“中药饮片单复方均不予支付”规则对应知识点明细.xlsx",
+      "row": 83,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-743529c903ca8781",
+    "rule_class": "中药饮片单方使用不予支付",
+    "gz_code": "GZ10000101004000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "T001700896",
+    "med_codes": [
+      "T001700896"
+    ],
+    "med_code_count": 1,
+    "item_name": "炙淫羊藿",
+    "constraint": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "detect_logic": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "batch": 11,
+    "batch_tag": "batch_11",
+    "published_at": "2026-05-11",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/5/11/art_109_20462.html",
+      "attachment_file": "第十一批“中药饮片单复方均不予支付”规则对应知识点明细.xlsx",
+      "row": 84,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-935d64e303adddd5",
+    "rule_class": "中药饮片单方使用不予支付",
+    "gz_code": "GZ10000101004000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "T000900421",
+    "med_codes": [
+      "T000900421"
+    ],
+    "med_code_count": 1,
+    "item_name": "净山楂",
+    "constraint": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "detect_logic": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "batch": 11,
+    "batch_tag": "batch_11",
+    "published_at": "2026-05-11",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/5/11/art_109_20462.html",
+      "attachment_file": "第十一批“中药饮片单复方均不予支付”规则对应知识点明细.xlsx",
+      "row": 85,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-39fb76fdc6d04bde",
+    "rule_class": "中药饮片单方使用不予支付",
+    "gz_code": "GZ10000101004000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "T001300075",
+    "med_codes": [
+      "T001300075"
+    ],
+    "med_code_count": 1,
+    "item_name": "炒白果仁",
+    "constraint": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "detect_logic": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "batch": 11,
+    "batch_tag": "batch_11",
+    "published_at": "2026-05-11",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/5/11/art_109_20462.html",
+      "attachment_file": "第十一批“中药饮片单复方均不予支付”规则对应知识点明细.xlsx",
+      "row": 86,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-88a6902e21573d88",
+    "rule_class": "中药饮片单方使用不予支付",
+    "gz_code": "GZ10000101004000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "T000200094",
+    "med_codes": [
+      "T000200094"
+    ],
+    "med_code_count": 1,
+    "item_name": "炒决明子",
+    "constraint": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "detect_logic": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "batch": 11,
+    "batch_tag": "batch_11",
+    "published_at": "2026-05-11",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/5/11/art_109_20462.html",
+      "attachment_file": "第十一批“中药饮片单复方均不予支付”规则对应知识点明细.xlsx",
+      "row": 87,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-a65029f0e7bcc793",
+    "rule_class": "中药饮片单方使用不予支付",
+    "gz_code": "GZ10000101004000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "T000700087",
+    "med_codes": [
+      "T000700087"
+    ],
+    "med_code_count": 1,
+    "item_name": "炒花椒",
+    "constraint": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "detect_logic": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "batch": 11,
+    "batch_tag": "batch_11",
+    "published_at": "2026-05-11",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/5/11/art_109_20462.html",
+      "attachment_file": "第十一批“中药饮片单复方均不予支付”规则对应知识点明细.xlsx",
+      "row": 88,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-ff77af88f5f9fdbd",
+    "rule_class": "中药饮片单方使用不予支付",
+    "gz_code": "GZ10000101004000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "T000700382",
+    "med_codes": [
+      "T000700382"
+    ],
+    "med_code_count": 1,
+    "item_name": "胡椒",
+    "constraint": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "detect_logic": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "batch": 11,
+    "batch_tag": "batch_11",
+    "published_at": "2026-05-11",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/5/11/art_109_20462.html",
+      "attachment_file": "第十一批“中药饮片单复方均不予支付”规则对应知识点明细.xlsx",
+      "row": 89,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-e6541e4b11e58628",
+    "rule_class": "中药饮片单方使用不予支付",
+    "gz_code": "GZ10000101004000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "T000200899",
+    "med_codes": [
+      "T000200899"
+    ],
+    "med_code_count": 1,
+    "item_name": "栀子",
+    "constraint": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "detect_logic": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "batch": 11,
+    "batch_tag": "batch_11",
+    "published_at": "2026-05-11",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/5/11/art_109_20462.html",
+      "attachment_file": "第十一批“中药饮片单复方均不予支付”规则对应知识点明细.xlsx",
+      "row": 90,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-da2ff8d1fb2fb2e5",
+    "rule_class": "中药饮片单方使用不予支付",
+    "gz_code": "GZ10000101004000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "T001700294",
+    "med_codes": [
+      "T001700294"
+    ],
+    "med_code_count": 1,
+    "item_name": "枸杞子",
+    "constraint": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "detect_logic": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "batch": 11,
+    "batch_tag": "batch_11",
+    "published_at": "2026-05-11",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/5/11/art_109_20462.html",
+      "attachment_file": "第十一批“中药饮片单复方均不予支付”规则对应知识点明细.xlsx",
+      "row": 91,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-4f9d11e18a0caf54",
+    "rule_class": "中药饮片单方使用不予支付",
+    "gz_code": "GZ10000101004000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "T000500672",
+    "med_codes": [
+      "T000500672"
+    ],
+    "med_code_count": 1,
+    "item_name": "砂仁",
+    "constraint": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "detect_logic": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "batch": 11,
+    "batch_tag": "batch_11",
+    "published_at": "2026-05-11",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/5/11/art_109_20462.html",
+      "attachment_file": "第十一批“中药饮片单复方均不予支付”规则对应知识点明细.xlsx",
+      "row": 92,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-c9fab40d5feb4cbf",
+    "rule_class": "中药饮片单方使用不予支付",
+    "gz_code": "GZ10000101004000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "T000800779",
+    "med_codes": [
+      "T000800779"
+    ],
+    "med_code_count": 1,
+    "item_name": "香橼",
+    "constraint": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "detect_logic": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "batch": 11,
+    "batch_tag": "batch_11",
+    "published_at": "2026-05-11",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/5/11/art_109_20462.html",
+      "attachment_file": "第十一批“中药饮片单复方均不予支付”规则对应知识点明细.xlsx",
+      "row": 93,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-123e01d6217ec39b",
+    "rule_class": "中药饮片单方使用不予支付",
+    "gz_code": "GZ10000101004000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "T001300602",
+    "med_codes": [
+      "T001300602"
+    ],
+    "med_code_count": 1,
+    "item_name": "胖大海",
+    "constraint": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "detect_logic": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "batch": 11,
+    "batch_tag": "batch_11",
+    "published_at": "2026-05-11",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/5/11/art_109_20462.html",
+      "attachment_file": "第十一批“中药饮片单复方均不予支付”规则对应知识点明细.xlsx",
+      "row": 94,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-274d666b4e4c9a52",
+    "rule_class": "中药饮片单方使用不予支付",
+    "gz_code": "GZ10000101004000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "T001700341",
+    "med_codes": [
+      "T001700341"
+    ],
+    "med_code_count": 1,
+    "item_name": "核桃仁",
+    "constraint": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "detect_logic": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "batch": 11,
+    "batch_tag": "batch_11",
+    "published_at": "2026-05-11",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/5/11/art_109_20462.html",
+      "attachment_file": "第十一批“中药饮片单复方均不予支付”规则对应知识点明细.xlsx",
+      "row": 95,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-20994ca419f1d339",
+    "rule_class": "中药饮片单方使用不予支付",
+    "gz_code": "GZ10000101004000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "T000100246",
+    "med_codes": [
+      "T000100246"
+    ],
+    "med_code_count": 1,
+    "item_name": "粉葛",
+    "constraint": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "detect_logic": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "batch": 11,
+    "batch_tag": "batch_11",
+    "published_at": "2026-05-11",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/5/11/art_109_20462.html",
+      "attachment_file": "第十一批“中药饮片单复方均不予支付”规则对应知识点明细.xlsx",
+      "row": 96,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-7ce7be97809eee26",
+    "rule_class": "中药饮片单方使用不予支付",
+    "gz_code": "GZ10000101004000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "T000400453",
+    "med_codes": [
+      "T000400453"
+    ],
+    "med_code_count": 1,
+    "item_name": "酒乌梢蛇",
+    "constraint": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "detect_logic": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "batch": 11,
+    "batch_tag": "batch_11",
+    "published_at": "2026-05-11",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/5/11/art_109_20462.html",
+      "attachment_file": "第十一批“中药饮片单复方均不予支付”规则对应知识点明细.xlsx",
+      "row": 97,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-1b0b03458bf8e7b0",
+    "rule_class": "中药饮片单方使用不予支付",
+    "gz_code": "GZ10000101004000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "T001700439",
+    "med_codes": [
+      "T001700439"
+    ],
+    "med_code_count": 1,
+    "item_name": "酒苁蓉",
+    "constraint": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "detect_logic": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "batch": 11,
+    "batch_tag": "batch_11",
+    "published_at": "2026-05-11",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/5/11/art_109_20462.html",
+      "attachment_file": "第十一批“中药饮片单复方均不予支付”规则对应知识点明细.xlsx",
+      "row": 98,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-8f3cd6bec058caa4",
+    "rule_class": "中药饮片单方使用不予支付",
+    "gz_code": "GZ10000101004000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "T001700441",
+    "med_codes": [
+      "T001700441"
+    ],
+    "med_code_count": 1,
+    "item_name": "酒当归",
+    "constraint": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "detect_logic": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "batch": 11,
+    "batch_tag": "batch_11",
+    "published_at": "2026-05-11",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/5/11/art_109_20462.html",
+      "attachment_file": "第十一批“中药饮片单复方均不予支付”规则对应知识点明细.xlsx",
+      "row": 99,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-af5582ff223dec42",
+    "rule_class": "中药饮片单方使用不予支付",
+    "gz_code": "GZ10000101004000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "T001700443",
+    "med_codes": [
+      "T001700443"
+    ],
+    "med_code_count": 1,
+    "item_name": "酒蛤蚧",
+    "constraint": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "detect_logic": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "batch": 11,
+    "batch_tag": "batch_11",
+    "published_at": "2026-05-11",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/5/11/art_109_20462.html",
+      "attachment_file": "第十一批“中药饮片单复方均不予支付”规则对应知识点明细.xlsx",
+      "row": 100,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-dc2eb26116d21a78",
+    "rule_class": "中药饮片单方使用不予支付",
+    "gz_code": "GZ10000101004000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "T000400451",
+    "med_codes": [
+      "T000400451"
+    ],
+    "med_code_count": 1,
+    "item_name": "酒蕲蛇",
+    "constraint": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "detect_logic": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "batch": 11,
+    "batch_tag": "batch_11",
+    "published_at": "2026-05-11",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/5/11/art_109_20462.html",
+      "attachment_file": "第十一批“中药饮片单复方均不予支付”规则对应知识点明细.xlsx",
+      "row": 101,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-81a92c4d75ca3c8c",
+    "rule_class": "中药饮片单方使用不予支付",
+    "gz_code": "GZ10000101004000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "T001700517",
+    "med_codes": [
+      "T001700517"
+    ],
+    "med_code_count": 1,
+    "item_name": "鹿角胶",
+    "constraint": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "detect_logic": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "batch": 11,
+    "batch_tag": "batch_11",
+    "published_at": "2026-05-11",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/5/11/art_109_20462.html",
+      "attachment_file": "第十一批“中药饮片单复方均不予支付”规则对应知识点明细.xlsx",
+      "row": 102,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-7bff1e60323bd29a",
+    "rule_class": "中药饮片单方使用不予支付",
+    "gz_code": "GZ10000101004000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "T001700518",
+    "med_codes": [
+      "T001700518"
+    ],
+    "med_code_count": 1,
+    "item_name": "鹿角霜",
+    "constraint": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "detect_logic": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "batch": 11,
+    "batch_tag": "batch_11",
+    "published_at": "2026-05-11",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/5/11/art_109_20462.html",
+      "attachment_file": "第十一批“中药饮片单复方均不予支付”规则对应知识点明细.xlsx",
+      "row": 103,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-649b84453e029b87",
+    "rule_class": "中药饮片单方使用不予支付",
+    "gz_code": "GZ10000101004000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "T001700850",
+    "med_codes": [
+      "T001700850"
+    ],
+    "med_code_count": 1,
+    "item_name": "淫羊藿",
+    "constraint": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "detect_logic": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "batch": 11,
+    "batch_tag": "batch_11",
+    "published_at": "2026-05-11",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/5/11/art_109_20462.html",
+      "attachment_file": "第十一批“中药饮片单复方均不予支付”规则对应知识点明细.xlsx",
+      "row": 104,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-16458fb5c06d84b5",
+    "rule_class": "中药饮片单方使用不予支付",
+    "gz_code": "GZ10000101004000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "T000100170",
+    "med_codes": [
+      "T000100170"
+    ],
+    "med_code_count": 1,
+    "item_name": "淡豆豉",
+    "constraint": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "detect_logic": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "batch": 11,
+    "batch_tag": "batch_11",
+    "published_at": "2026-05-11",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/5/11/art_109_20462.html",
+      "attachment_file": "第十一批“中药饮片单复方均不予支付”规则对应知识点明细.xlsx",
+      "row": 105,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-46b4f9e165b2b76e",
+    "rule_class": "中药饮片单方使用不予支付",
+    "gz_code": "GZ10000101004000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "T001400387",
+    "med_codes": [
+      "T001400387"
+    ],
+    "med_code_count": 1,
+    "item_name": "琥珀",
+    "constraint": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "detect_logic": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "batch": 11,
+    "batch_tag": "batch_11",
+    "published_at": "2026-05-11",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/5/11/art_109_20462.html",
+      "attachment_file": "第十一批“中药饮片单复方均不予支付”规则对应知识点明细.xlsx",
+      "row": 106,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-7e220ebdfe790d62",
+    "rule_class": "中药饮片单方使用不予支付",
+    "gz_code": "GZ10000101004000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "T001000244",
+    "med_codes": [
+      "T001000244"
+    ],
+    "med_code_count": 1,
+    "item_name": "榧子",
+    "constraint": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "detect_logic": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "batch": 11,
+    "batch_tag": "batch_11",
+    "published_at": "2026-05-11",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/5/11/art_109_20462.html",
+      "attachment_file": "第十一批“中药饮片单复方均不予支付”规则对应知识点明细.xlsx",
+      "row": 107,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-95ab5d64c97e9af4",
+    "rule_class": "中药饮片单方使用不予支付",
+    "gz_code": "GZ10000101004000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "T001800847",
+    "med_codes": [
+      "T001800847"
+    ],
+    "med_code_count": 1,
+    "item_name": "罂粟壳",
+    "constraint": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "detect_logic": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "batch": 11,
+    "batch_tag": "batch_11",
+    "published_at": "2026-05-11",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/5/11/art_109_20462.html",
+      "attachment_file": "第十一批“中药饮片单复方均不予支付”规则对应知识点明细.xlsx",
+      "row": 108,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-242d9ceca6a93c18",
+    "rule_class": "中药饮片单方使用不予支付",
+    "gz_code": "GZ10000101004000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "T000600852",
+    "med_codes": [
+      "T000600852"
+    ],
+    "med_code_count": 1,
+    "item_name": "薏苡仁",
+    "constraint": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "detect_logic": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "batch": 11,
+    "batch_tag": "batch_11",
+    "published_at": "2026-05-11",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/5/11/art_109_20462.html",
+      "attachment_file": "第十一批“中药饮片单复方均不予支付”规则对应知识点明细.xlsx",
+      "row": 109,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-021393d189f78df9",
+    "rule_class": "中药饮片单方使用不予支付",
+    "gz_code": "GZ10000101004000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "T000100057",
+    "med_codes": [
+      "T000100057"
+    ],
+    "med_code_count": 1,
+    "item_name": "薄荷",
+    "constraint": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "detect_logic": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "batch": 11,
+    "batch_tag": "batch_11",
+    "published_at": "2026-05-11",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/5/11/art_109_20462.html",
+      "attachment_file": "第十一批“中药饮片单复方均不予支付”规则对应知识点明细.xlsx",
+      "row": 110,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-4f742d15a62c26c4",
+    "rule_class": "中药饮片单方使用不予支付",
+    "gz_code": "GZ10000101004000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "T000800728",
+    "med_codes": [
+      "T000800728"
+    ],
+    "med_code_count": 1,
+    "item_name": "檀香",
+    "constraint": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "detect_logic": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "batch": 11,
+    "batch_tag": "batch_11",
+    "published_at": "2026-05-11",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/5/11/art_109_20462.html",
+      "attachment_file": "第十一批“中药饮片单复方均不予支付”规则对应知识点明细.xlsx",
+      "row": 111,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-0fc363b68fc5783e",
+    "rule_class": "中药饮片单方使用不予支付",
+    "gz_code": "GZ10000101004000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "T000800466",
+    "med_codes": [
+      "T000800466"
+    ],
+    "med_code_count": 1,
+    "item_name": "橘红",
+    "constraint": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "detect_logic": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "batch": 11,
+    "batch_tag": "batch_11",
+    "published_at": "2026-05-11",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/5/11/art_109_20462.html",
+      "attachment_file": "第十一批“中药饮片单复方均不予支付”规则对应知识点明细.xlsx",
+      "row": 112,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-108c3906f605105f",
+    "rule_class": "中药饮片单方使用不予支付",
+    "gz_code": "GZ10000101004000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "T000500386",
+    "med_codes": [
+      "T000500386"
+    ],
+    "med_code_count": 1,
+    "item_name": "藿香",
+    "constraint": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "detect_logic": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "batch": 11,
+    "batch_tag": "batch_11",
+    "published_at": "2026-05-11",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/5/11/art_109_20462.html",
+      "attachment_file": "第十一批“中药饮片单复方均不予支付”规则对应知识点明细.xlsx",
+      "row": 113,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-e5afa187dddc2867",
+    "rule_class": "中药饮片单方使用不予支付",
+    "gz_code": "GZ10000101004000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "T001700053",
+    "med_codes": [
+      "T001700053"
+    ],
+    "med_code_count": 1,
+    "item_name": "鳖甲胶",
+    "constraint": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "detect_logic": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "batch": 11,
+    "batch_tag": "batch_11",
+    "published_at": "2026-05-11",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/5/11/art_109_20462.html",
+      "attachment_file": "第十一批“中药饮片单复方均不予支付”规则对应知识点明细.xlsx",
+      "row": 114,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-fca527eef9131c45",
+    "rule_class": "中药饮片单方使用不予支付",
+    "gz_code": "GZ10000101004000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "T000600468",
+    "med_codes": [
+      "T000600468"
+    ],
+    "med_code_count": 1,
+    "item_name": "菊苣",
+    "constraint": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "detect_logic": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "batch": 11,
+    "batch_tag": "batch_11",
+    "published_at": "2026-05-11",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/5/11/art_109_20462.html",
+      "attachment_file": "第十一批“中药饮片单复方均不予支付”规则对应知识点明细.xlsx",
+      "row": 115,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-f488aee8d11291b4",
+    "rule_class": "中药饮片单方使用不予支付",
+    "gz_code": "GZ10000101004000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "T001700085",
+    "med_codes": [
+      "T001700085"
+    ],
+    "med_code_count": 1,
+    "item_name": "炒黑芝麻",
+    "constraint": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "detect_logic": "单独使用时统筹基金不予支付，且全部由这些饮片组成的处方统筹基金也不予支付。",
+    "batch": 11,
+    "batch_tag": "batch_11",
+    "published_at": "2026-05-11",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/5/11/art_109_20462.html",
+      "attachment_file": "第十一批“中药饮片单复方均不予支付”规则对应知识点明细.xlsx",
+      "row": 116,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-ecd7aabb56fb23c1",
+    "rule_class": "中药饮片单复方均不予支付",
+    "gz_code": "GZ10000101003000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "T001700233",
+    "med_codes": [
+      "T001700233"
+    ],
+    "med_code_count": 1,
+    "item_name": "阿胶",
+    "constraint": "不得纳入基金支付范围的中药饮片",
+    "detect_logic": "不得纳入基金支付范围的中药饮片",
+    "batch": 11,
+    "batch_tag": "batch_11",
+    "published_at": "2026-05-11",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/5/11/art_109_20462.html",
+      "attachment_file": "第十一批“中药饮片单方使用不予支付” 规则对应知识点明细.xlsx",
+      "row": 1,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-32e541f67e46263d",
+    "rule_class": "中药饮片单复方均不予支付",
+    "gz_code": "GZ10000101003000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "T001700024",
+    "med_codes": [
+      "T001700024"
+    ],
+    "med_code_count": 1,
+    "item_name": "白糖参",
+    "constraint": "不得纳入基金支付范围的中药饮片",
+    "detect_logic": "不得纳入基金支付范围的中药饮片",
+    "batch": 11,
+    "batch_tag": "batch_11",
+    "published_at": "2026-05-11",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/5/11/art_109_20462.html",
+      "attachment_file": "第十一批“中药饮片单方使用不予支付” 规则对应知识点明细.xlsx",
+      "row": 2,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-bc355fcfc316c1f4",
+    "rule_class": "中药饮片单复方均不予支付",
+    "gz_code": "GZ10000101003000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "T001700109",
+    "med_codes": [
+      "T001700109"
+    ],
+    "med_code_count": 1,
+    "item_name": "朝鲜红参",
+    "constraint": "不得纳入基金支付范围的中药饮片",
+    "detect_logic": "不得纳入基金支付范围的中药饮片",
+    "batch": 11,
+    "batch_tag": "batch_11",
+    "published_at": "2026-05-11",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/5/11/art_109_20462.html",
+      "attachment_file": "第十一批“中药饮片单方使用不予支付” 规则对应知识点明细.xlsx",
+      "row": 3,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-b832c845b6079b7f",
+    "rule_class": "中药饮片单复方均不予支付",
+    "gz_code": "GZ10000101003000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "T001200128",
+    "med_codes": [
+      "T001200128"
+    ],
+    "med_code_count": 1,
+    "item_name": "穿山甲",
+    "constraint": "不得纳入基金支付范围的中药饮片",
+    "detect_logic": "不得纳入基金支付范围的中药饮片",
+    "batch": 11,
+    "batch_tag": "batch_11",
+    "published_at": "2026-05-11",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/5/11/art_109_20462.html",
+      "attachment_file": "第十一批“中药饮片单方使用不予支付” 规则对应知识点明细.xlsx",
+      "row": 4,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-ba97030c6741bc0b",
+    "rule_class": "中药饮片单复方均不予支付",
+    "gz_code": "GZ10000101003000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "T001200156",
+    "med_codes": [
+      "T001200156"
+    ],
+    "med_code_count": 1,
+    "item_name": "醋山甲",
+    "constraint": "不得纳入基金支付范围的中药饮片",
+    "detect_logic": "不得纳入基金支付范围的中药饮片",
+    "batch": 11,
+    "batch_tag": "batch_11",
+    "published_at": "2026-05-11",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/5/11/art_109_20462.html",
+      "attachment_file": "第十一批“中药饮片单方使用不予支付” 规则对应知识点明细.xlsx",
+      "row": 5,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-2e1dfba19c6375aa",
+    "rule_class": "中药饮片单复方均不予支付",
+    "gz_code": "GZ10000101003000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "T001200605",
+    "med_codes": [
+      "T001200605"
+    ],
+    "med_code_count": 1,
+    "item_name": "炮山甲",
+    "constraint": "不得纳入基金支付范围的中药饮片",
+    "detect_logic": "不得纳入基金支付范围的中药饮片",
+    "batch": 11,
+    "batch_tag": "batch_11",
+    "published_at": "2026-05-11",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/5/11/art_109_20462.html",
+      "attachment_file": "第十一批“中药饮片单方使用不予支付” 规则对应知识点明细.xlsx",
+      "row": 6,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-a8dcf1819d3beca7",
+    "rule_class": "中药饮片单复方均不予支付",
+    "gz_code": "GZ10000101003000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "T001500167",
+    "med_codes": [
+      "T001500167"
+    ],
+    "med_code_count": 1,
+    "item_name": "玳瑁",
+    "constraint": "不得纳入基金支付范围的中药饮片",
+    "detect_logic": "不得纳入基金支付范围的中药饮片",
+    "batch": 11,
+    "batch_tag": "batch_11",
+    "published_at": "2026-05-11",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/5/11/art_109_20462.html",
+      "attachment_file": "第十一批“中药饮片单方使用不予支付” 规则对应知识点明细.xlsx",
+      "row": 7,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-79b8c44e6756f24d",
+    "rule_class": "中药饮片单复方均不予支付",
+    "gz_code": "GZ10000101003000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "T001700203",
+    "med_codes": [
+      "T001700203"
+    ],
+    "med_code_count": 1,
+    "item_name": "冬虫夏草",
+    "constraint": "不得纳入基金支付范围的中药饮片",
+    "detect_logic": "不得纳入基金支付范围的中药饮片",
+    "batch": 11,
+    "batch_tag": "batch_11",
+    "published_at": "2026-05-11",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/5/11/art_109_20462.html",
+      "attachment_file": "第十一批“中药饮片单方使用不予支付” 规则对应知识点明细.xlsx",
+      "row": 8,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-7e8e9cdbc01ba095",
+    "rule_class": "中药饮片单复方均不予支付",
+    "gz_code": "GZ10000101003000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "T001700251",
+    "med_codes": [
+      "T001700251"
+    ],
+    "med_code_count": 1,
+    "item_name": "蜂蜜",
+    "constraint": "不得纳入基金支付范围的中药饮片",
+    "detect_logic": "不得纳入基金支付范围的中药饮片",
+    "batch": 11,
+    "batch_tag": "batch_11",
+    "published_at": "2026-05-11",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/5/11/art_109_20462.html",
+      "attachment_file": "第十一批“中药饮片单方使用不予支付” 规则对应知识点明细.xlsx",
+      "row": 9,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-77b8b5321d5d74bd",
+    "rule_class": "中药饮片单复方均不予支付",
+    "gz_code": "GZ10000101003000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "T000800291",
+    "med_codes": [
+      "T000800291"
+    ],
+    "med_code_count": 1,
+    "item_name": "狗宝",
+    "constraint": "不得纳入基金支付范围的中药饮片",
+    "detect_logic": "不得纳入基金支付范围的中药饮片",
+    "batch": 11,
+    "batch_tag": "batch_11",
+    "published_at": "2026-05-11",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/5/11/art_109_20462.html",
+      "attachment_file": "第十一批“中药饮片单方使用不予支付” 规则对应知识点明细.xlsx",
+      "row": 10,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-c290d4185c8f7bb3",
+    "rule_class": "中药饮片单复方均不予支付",
+    "gz_code": "GZ10000101003000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "T001700318",
+    "med_codes": [
+      "T001700318"
+    ],
+    "med_code_count": 1,
+    "item_name": "龟鹿二仙胶",
+    "constraint": "不得纳入基金支付范围的中药饮片",
+    "detect_logic": "不得纳入基金支付范围的中药饮片",
+    "batch": 11,
+    "batch_tag": "batch_11",
+    "published_at": "2026-05-11",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/5/11/art_109_20462.html",
+      "attachment_file": "第十一批“中药饮片单方使用不予支付” 规则对应知识点明细.xlsx",
+      "row": 11,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-e6faf0ca06f24c59",
+    "rule_class": "中药饮片单复方均不予支付",
+    "gz_code": "GZ10000101003000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "T001700331",
+    "med_codes": [
+      "T001700331"
+    ],
+    "med_code_count": 1,
+    "item_name": "哈蟆油",
+    "constraint": "不得纳入基金支付范围的中药饮片",
+    "detect_logic": "不得纳入基金支付范围的中药饮片",
+    "batch": 11,
+    "batch_tag": "batch_11",
+    "published_at": "2026-05-11",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/5/11/art_109_20462.html",
+      "attachment_file": "第十一批“中药饮片单方使用不予支付” 规则对应知识点明细.xlsx",
+      "row": 12,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-84858d96fa9b1d69",
+    "rule_class": "中药饮片单复方均不予支付",
+    "gz_code": "GZ10000101003000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "T001700326",
+    "med_codes": [
+      "T001700326"
+    ],
+    "med_code_count": 1,
+    "item_name": "海龙",
+    "constraint": "不得纳入基金支付范围的中药饮片",
+    "detect_logic": "不得纳入基金支付范围的中药饮片",
+    "batch": 11,
+    "batch_tag": "batch_11",
+    "published_at": "2026-05-11",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/5/11/art_109_20462.html",
+      "attachment_file": "第十一批“中药饮片单方使用不予支付” 规则对应知识点明细.xlsx",
+      "row": 13,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-b1780d30cc337073",
+    "rule_class": "中药饮片单复方均不予支付",
+    "gz_code": "GZ10000101003000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "T001700327",
+    "med_codes": [
+      "T001700327"
+    ],
+    "med_code_count": 1,
+    "item_name": "海马",
+    "constraint": "不得纳入基金支付范围的中药饮片",
+    "detect_logic": "不得纳入基金支付范围的中药饮片",
+    "batch": 11,
+    "batch_tag": "batch_11",
+    "published_at": "2026-05-11",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/5/11/art_109_20462.html",
+      "attachment_file": "第十一批“中药饮片单方使用不予支付” 规则对应知识点明细.xlsx",
+      "row": 14,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-7a03ca3678bdad71",
+    "rule_class": "中药饮片单复方均不予支付",
+    "gz_code": "GZ10000101003000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "T001300357",
+    "med_codes": [
+      "T001300357"
+    ],
+    "med_code_count": 1,
+    "item_name": "猴枣",
+    "constraint": "不得纳入基金支付范围的中药饮片",
+    "detect_logic": "不得纳入基金支付范围的中药饮片",
+    "batch": 11,
+    "batch_tag": "batch_11",
+    "published_at": "2026-05-11",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/5/11/art_109_20462.html",
+      "attachment_file": "第十一批“中药饮片单方使用不予支付” 规则对应知识点明细.xlsx",
+      "row": 15,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-f84133f95bf9a4fb",
+    "rule_class": "中药饮片单复方均不予支付",
+    "gz_code": "GZ10000101003000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "T001700249",
+    "med_codes": [
+      "T001700249"
+    ],
+    "med_code_count": 1,
+    "item_name": "蜂胶",
+    "constraint": "不得纳入基金支付范围的中药饮片",
+    "detect_logic": "不得纳入基金支付范围的中药饮片",
+    "batch": 11,
+    "batch_tag": "batch_11",
+    "published_at": "2026-05-11",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/5/11/art_109_20462.html",
+      "attachment_file": "第十一批“中药饮片单方使用不予支付” 规则对应知识点明细.xlsx",
+      "row": 16,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-d1988a3f41bf64b5",
+    "rule_class": "中药饮片单复方均不予支付",
+    "gz_code": "GZ10000101003000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "T001500499",
+    "med_codes": [
+      "T001500499"
+    ],
+    "med_code_count": 1,
+    "item_name": "羚羊角镑片",
+    "constraint": "不得纳入基金支付范围的中药饮片",
+    "detect_logic": "不得纳入基金支付范围的中药饮片",
+    "batch": 11,
+    "batch_tag": "batch_11",
+    "published_at": "2026-05-11",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/5/11/art_109_20462.html",
+      "attachment_file": "第十一批“中药饮片单方使用不予支付” 规则对应知识点明细.xlsx",
+      "row": 17,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-b09fa770027416b0",
+    "rule_class": "中药饮片单复方均不予支付",
+    "gz_code": "GZ10000101003000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "T001500500",
+    "med_codes": [
+      "T001500500"
+    ],
+    "med_code_count": 1,
+    "item_name": "羚羊角粉",
+    "constraint": "不得纳入基金支付范围的中药饮片",
+    "detect_logic": "不得纳入基金支付范围的中药饮片",
+    "batch": 11,
+    "batch_tag": "batch_11",
+    "published_at": "2026-05-11",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/5/11/art_109_20462.html",
+      "attachment_file": "第十一批“中药饮片单方使用不予支付” 规则对应知识点明细.xlsx",
+      "row": 18,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-b1a39b8e517c9638",
+    "rule_class": "中药饮片单复方均不予支付",
+    "gz_code": "GZ10000101003000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "T001700524",
+    "med_codes": [
+      "T001700524"
+    ],
+    "med_code_count": 1,
+    "item_name": "鹿茸粉",
+    "constraint": "不得纳入基金支付范围的中药饮片",
+    "detect_logic": "不得纳入基金支付范围的中药饮片",
+    "batch": 11,
+    "batch_tag": "batch_11",
+    "published_at": "2026-05-11",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/5/11/art_109_20462.html",
+      "attachment_file": "第十一批“中药饮片单方使用不予支付” 规则对应知识点明细.xlsx",
+      "row": 19,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-a360434609788271",
+    "rule_class": "中药饮片单复方均不予支付",
+    "gz_code": "GZ10000101003000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "T001700525",
+    "med_codes": [
+      "T001700525"
+    ],
+    "med_code_count": 1,
+    "item_name": "鹿茸片",
+    "constraint": "不得纳入基金支付范围的中药饮片",
+    "detect_logic": "不得纳入基金支付范围的中药饮片",
+    "batch": 11,
+    "batch_tag": "batch_11",
+    "published_at": "2026-05-11",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/5/11/art_109_20462.html",
+      "attachment_file": "第十一批“中药饮片单方使用不予支付” 规则对应知识点明细.xlsx",
+      "row": 20,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-7b27333764e76f30",
+    "rule_class": "中药饮片单复方均不予支付",
+    "gz_code": "GZ10000101003000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "T001400528",
+    "med_codes": [
+      "T001400528"
+    ],
+    "med_code_count": 1,
+    "item_name": "马宝",
+    "constraint": "不得纳入基金支付范围的中药饮片",
+    "detect_logic": "不得纳入基金支付范围的中药饮片",
+    "batch": 11,
+    "batch_tag": "batch_11",
+    "published_at": "2026-05-11",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/5/11/art_109_20462.html",
+      "attachment_file": "第十一批“中药饮片单方使用不予支付” 规则对应知识点明细.xlsx",
+      "row": 21,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-a88f01f24b081c45",
+    "rule_class": "中药饮片单复方均不予支付",
+    "gz_code": "GZ10000101003000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "T000200537",
+    "med_codes": [
+      "T000200537"
+    ],
+    "med_code_count": 1,
+    "item_name": "玛瑙",
+    "constraint": "不得纳入基金支付范围的中药饮片",
+    "detect_logic": "不得纳入基金支付范围的中药饮片",
+    "batch": 11,
+    "batch_tag": "batch_11",
+    "published_at": "2026-05-11",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/5/11/art_109_20462.html",
+      "attachment_file": "第十一批“中药饮片单方使用不予支付” 规则对应知识点明细.xlsx",
+      "row": 22,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-c824dd13f65e09de",
+    "rule_class": "中药饮片单复方均不予支付",
+    "gz_code": "GZ10000101003000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "T001500596",
+    "med_codes": [
+      "T001500596"
+    ],
+    "med_code_count": 1,
+    "item_name": "牛黄",
+    "constraint": "不得纳入基金支付范围的中药饮片",
+    "detect_logic": "不得纳入基金支付范围的中药饮片",
+    "batch": 11,
+    "batch_tag": "batch_11",
+    "published_at": "2026-05-11",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/5/11/art_109_20462.html",
+      "attachment_file": "第十一批“中药饮片单方使用不予支付” 规则对应知识点明细.xlsx",
+      "row": 23,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-69259c6f8038f7c3",
+    "rule_class": "中药饮片单复方均不予支付",
+    "gz_code": "GZ10000101003000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "T001400663",
+    "med_codes": [
+      "T001400663"
+    ],
+    "med_code_count": 1,
+    "item_name": "珊瑚",
+    "constraint": "不得纳入基金支付范围的中药饮片",
+    "detect_logic": "不得纳入基金支付范围的中药饮片",
+    "batch": 11,
+    "batch_tag": "batch_11",
+    "published_at": "2026-05-11",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/5/11/art_109_20462.html",
+      "attachment_file": "第十一批“中药饮片单方使用不予支付” 规则对应知识点明细.xlsx",
+      "row": 24,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-271670ed2c6ec75f",
+    "rule_class": "中药饮片单复方均不予支付",
+    "gz_code": "GZ10000101003000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "T001600693",
+    "med_codes": [
+      "T001600693"
+    ],
+    "med_code_count": 1,
+    "item_name": "麝香",
+    "constraint": "不得纳入基金支付范围的中药饮片",
+    "detect_logic": "不得纳入基金支付范围的中药饮片",
+    "batch": 11,
+    "batch_tag": "batch_11",
+    "published_at": "2026-05-11",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/5/11/art_109_20462.html",
+      "attachment_file": "第十一批“中药饮片单方使用不予支付” 规则对应知识点明细.xlsx",
+      "row": 25,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-92b2bbc98ec9bf66",
+    "rule_class": "中药饮片单复方均不予支付",
+    "gz_code": "GZ10000101003000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "T000400738",
+    "med_codes": [
+      "T000400738"
+    ],
+    "med_code_count": 1,
+    "item_name": "天山雪莲",
+    "constraint": "不得纳入基金支付范围的中药饮片",
+    "detect_logic": "不得纳入基金支付范围的中药饮片",
+    "batch": 11,
+    "batch_tag": "batch_11",
+    "published_at": "2026-05-11",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/5/11/art_109_20462.html",
+      "attachment_file": "第十一批“中药饮片单方使用不予支付” 规则对应知识点明细.xlsx",
+      "row": 26,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-928e557e27e4a243",
+    "rule_class": "中药饮片单复方均不予支付",
+    "gz_code": "GZ10000101003000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "T001700742",
+    "med_codes": [
+      "T001700742"
+    ],
+    "med_code_count": 1,
+    "item_name": "铁皮石斛",
+    "constraint": "不得纳入基金支付范围的中药饮片",
+    "detect_logic": "不得纳入基金支付范围的中药饮片",
+    "batch": 11,
+    "batch_tag": "batch_11",
+    "published_at": "2026-05-11",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/5/11/art_109_20462.html",
+      "attachment_file": "第十一批“中药饮片单方使用不予支付” 规则对应知识点明细.xlsx",
+      "row": 27,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-dee96a52795fcf5c",
+    "rule_class": "中药饮片单复方均不予支付",
+    "gz_code": "GZ10000101003000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "T001700783",
+    "med_codes": [
+      "T001700783"
+    ],
+    "med_code_count": 1,
+    "item_name": "鲜石斛",
+    "constraint": "不得纳入基金支付范围的中药饮片",
+    "detect_logic": "不得纳入基金支付范围的中药饮片",
+    "batch": 11,
+    "batch_tag": "batch_11",
+    "published_at": "2026-05-11",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/5/11/art_109_20462.html",
+      "attachment_file": "第十一批“中药饮片单方使用不予支付” 规则对应知识点明细.xlsx",
+      "row": 28,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-e2f4bb804a05091c",
+    "rule_class": "中药饮片单复方均不予支付",
+    "gz_code": "GZ10000101003000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "T001200797",
+    "med_codes": [
+      "T001200797"
+    ],
+    "med_code_count": 1,
+    "item_name": "西红花（番红花）",
+    "constraint": "不得纳入基金支付范围的中药饮片",
+    "detect_logic": "不得纳入基金支付范围的中药饮片",
+    "batch": 11,
+    "batch_tag": "batch_11",
+    "published_at": "2026-05-11",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/5/11/art_109_20462.html",
+      "attachment_file": "第十一批“中药饮片单方使用不予支付” 规则对应知识点明细.xlsx",
+      "row": 29,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-c1a75ac6261f7722",
+    "rule_class": "中药饮片单复方均不予支付",
+    "gz_code": "GZ10000101003000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "T001700805",
+    "med_codes": [
+      "T001700805"
+    ],
+    "med_code_count": 1,
+    "item_name": "西洋参",
+    "constraint": "不得纳入基金支付范围的中药饮片",
+    "detect_logic": "不得纳入基金支付范围的中药饮片",
+    "batch": 11,
+    "batch_tag": "batch_11",
+    "published_at": "2026-05-11",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/5/11/art_109_20462.html",
+      "attachment_file": "第十一批“中药饮片单方使用不予支付” 规则对应知识点明细.xlsx",
+      "row": 30,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-201b940f2fc5bb22",
+    "rule_class": "中药饮片单复方均不予支付",
+    "gz_code": "GZ10000101003000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "T001100811",
+    "med_codes": [
+      "T001100811"
+    ],
+    "med_code_count": 1,
+    "item_name": "血竭",
+    "constraint": "不得纳入基金支付范围的中药饮片",
+    "detect_logic": "不得纳入基金支付范围的中药饮片",
+    "batch": 11,
+    "batch_tag": "batch_11",
+    "published_at": "2026-05-11",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/5/11/art_109_20462.html",
+      "attachment_file": "第十一批“中药饮片单方使用不予支付” 规则对应知识点明细.xlsx",
+      "row": 31,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-ea8f7b077b8de03d",
+    "rule_class": "中药饮片单复方均不予支付",
+    "gz_code": "GZ10000101003000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "T001700834",
+    "med_codes": [
+      "T001700834"
+    ],
+    "med_code_count": 1,
+    "item_name": "燕窝",
+    "constraint": "不得纳入基金支付范围的中药饮片",
+    "detect_logic": "不得纳入基金支付范围的中药饮片",
+    "batch": 11,
+    "batch_tag": "batch_11",
+    "published_at": "2026-05-11",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/5/11/art_109_20462.html",
+      "attachment_file": "第十一批“中药饮片单方使用不予支付” 规则对应知识点明细.xlsx",
+      "row": 32,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-dfe34eae01847053",
+    "rule_class": "中药饮片单复方均不予支付",
+    "gz_code": "GZ10000101003000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "T001700844",
+    "med_codes": [
+      "T001700844"
+    ],
+    "med_code_count": 1,
+    "item_name": "野山参",
+    "constraint": "不得纳入基金支付范围的中药饮片",
+    "detect_logic": "不得纳入基金支付范围的中药饮片",
+    "batch": 11,
+    "batch_tag": "batch_11",
+    "published_at": "2026-05-11",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/5/11/art_109_20462.html",
+      "attachment_file": "第十一批“中药饮片单方使用不予支付” 规则对应知识点明细.xlsx",
+      "row": 33,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-8ffab5851863e95a",
+    "rule_class": "中药饮片单复方均不予支付",
+    "gz_code": "GZ10000101003000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "T001700851",
+    "med_codes": [
+      "T001700851"
+    ],
+    "med_code_count": 1,
+    "item_name": "移山参",
+    "constraint": "不得纳入基金支付范围的中药饮片",
+    "detect_logic": "不得纳入基金支付范围的中药饮片",
+    "batch": 11,
+    "batch_tag": "batch_11",
+    "published_at": "2026-05-11",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/5/11/art_109_20462.html",
+      "attachment_file": "第十一批“中药饮片单方使用不予支付” 规则对应知识点明细.xlsx",
+      "row": 34,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-b056d3d1e4d8a304",
+    "rule_class": "中药饮片单复方均不予支付",
+    "gz_code": "GZ10000101003000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "T001400875",
+    "med_codes": [
+      "T001400875"
+    ],
+    "med_code_count": 1,
+    "item_name": "珍珠",
+    "constraint": "不得纳入基金支付范围的中药饮片",
+    "detect_logic": "不得纳入基金支付范围的中药饮片",
+    "batch": 11,
+    "batch_tag": "batch_11",
+    "published_at": "2026-05-11",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/5/11/art_109_20462.html",
+      "attachment_file": "第十一批“中药饮片单方使用不予支付” 规则对应知识点明细.xlsx",
+      "row": 35,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-64456c5663e6ca9c",
+    "rule_class": "中药饮片单复方均不予支付",
+    "gz_code": "GZ10000101003000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "T001700914",
+    "med_codes": [
+      "T001700914"
+    ],
+    "med_code_count": 1,
+    "item_name": "紫河车",
+    "constraint": "不得纳入基金支付范围的中药饮片",
+    "detect_logic": "不得纳入基金支付范围的中药饮片",
+    "batch": 11,
+    "batch_tag": "batch_11",
+    "published_at": "2026-05-11",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/5/11/art_109_20462.html",
+      "attachment_file": "第十一批“中药饮片单方使用不予支付” 规则对应知识点明细.xlsx",
+      "row": 36,
+      "pdf_page": null
+    }
+  },
+  {
+    "kp_id": "KP-2c8aca68f1401cc4",
+    "rule_class": "中药饮片单复方均不予支付",
+    "gz_code": "GZ10000101003000",
+    "level1": "政策类",
+    "level2": "药品政策限定类",
+    "med_code": "T009900929",
+    "med_codes": [
+      "T009900929"
+    ],
+    "med_code_count": 1,
+    "item_name": "各种动物脏器（鸡内金除外）和胎、鞭、尾、筋、骨",
+    "constraint": "不得纳入基金支付范围的中药饮片",
+    "detect_logic": "不得纳入基金支付范围的中药饮片",
+    "batch": 11,
+    "batch_tag": "batch_11",
+    "published_at": "2026-05-11",
+    "supersedes": null,
+    "source": {
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/5/11/art_109_20462.html",
+      "attachment_file": "第十一批“中药饮片单方使用不予支付” 规则对应知识点明细.xlsx",
+      "row": 37,
+      "pdf_page": null
+    }
+  }
+]

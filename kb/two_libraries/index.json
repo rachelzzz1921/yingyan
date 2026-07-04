@@ -1,0 +1,226 @@
+{
+  "meta": {
+    "title": "国家医保智能监管两库 · 结构化知识点",
+    "built_from": "public-data-corpus/raw/mail-liangku",
+    "total_records": 3899,
+    "total_batches": 17,
+    "supersede_links": 397,
+    "note": "med_code 为标量首码(schema兼容)；med_codes 为完整编码数组(真实结构，一个知识点对应多编码)。"
+  },
+  "batches": [
+    {
+      "batch_tag": "batch_01",
+      "batch": 1,
+      "published_at": null,
+      "announcement_url": null,
+      "rule_classes": [
+        "药品区分性别使用",
+        "医疗服务项目区分性别使用",
+        "药品儿童专用",
+        "药品限儿童使用",
+        "医疗服务项目儿童专用"
+      ],
+      "records": 1184,
+      "with_med_code": 1183
+    },
+    {
+      "batch_tag": "batch_02",
+      "batch": 2,
+      "published_at": null,
+      "announcement_url": null,
+      "rule_classes": [
+        "手术项目未按规定折价收费"
+      ],
+      "records": 378,
+      "with_med_code": 378
+    },
+    {
+      "batch_tag": "batch_03",
+      "batch": 3,
+      "published_at": null,
+      "announcement_url": null,
+      "rule_classes": [
+        "药品限工伤保险",
+        "药品限生育保险"
+      ],
+      "records": 12,
+      "with_med_code": 12
+    },
+    {
+      "batch_tag": "batch_04",
+      "batch": 4,
+      "published_at": null,
+      "announcement_url": null,
+      "rule_classes": [
+        "药品限就医方式"
+      ],
+      "records": 35,
+      "with_med_code": 35
+    },
+    {
+      "batch_tag": "batch_05",
+      "batch": 5,
+      "published_at": null,
+      "announcement_url": null,
+      "rule_classes": [
+        "药品限医疗机构级别"
+      ],
+      "records": 61,
+      "with_med_code": 61
+    },
+    {
+      "batch_tag": "batch_06",
+      "batch": 6,
+      "published_at": null,
+      "announcement_url": null,
+      "rule_classes": [
+        "药品限支付疗程"
+      ],
+      "records": 30,
+      "with_med_code": 30
+    },
+    {
+      "batch_tag": "batch_07",
+      "batch": 7,
+      "published_at": null,
+      "announcement_url": null,
+      "rule_classes": [
+        "医疗服务项目重复收费"
+      ],
+      "records": 900,
+      "with_med_code": 900
+    },
+    {
+      "batch_tag": "batch_08",
+      "batch": 8,
+      "published_at": null,
+      "announcement_url": null,
+      "rule_classes": [
+        "医疗服务项目限定频次",
+        "医疗服务项目限年龄",
+        "医疗服务项目限支付疗程",
+        "医疗服务项目周期超频次"
+      ],
+      "records": 93,
+      "with_med_code": 93
+    },
+    {
+      "batch_tag": "batch_09",
+      "batch": 9,
+      "published_at": "2026-04-21",
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/4/21/art_109_20277.html",
+      "rule_classes": [
+        "药品限二线使用"
+      ],
+      "records": 110,
+      "with_med_code": 110
+    },
+    {
+      "batch_tag": "batch_10",
+      "batch": 10,
+      "published_at": "2026-04-28",
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/4/28/art_109_20351.html",
+      "rule_classes": [
+        "超互联网医院药品支付范围"
+      ],
+      "records": 22,
+      "with_med_code": 22
+    },
+    {
+      "batch_tag": "batch_11",
+      "batch": 11,
+      "published_at": "2026-05-11",
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/5/11/art_109_20462.html",
+      "rule_classes": [
+        "中药饮片单方使用不予支付",
+        "中药饮片单复方均不予支付"
+      ],
+      "records": 153,
+      "with_med_code": 153
+    },
+    {
+      "batch_tag": "batch_12",
+      "batch": 12,
+      "published_at": "2026-05-23",
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/5/23/art_109_20682.html",
+      "rule_classes": [
+        "药品限适应症"
+      ],
+      "records": 57,
+      "with_med_code": 57
+    },
+    {
+      "batch_tag": "batch_13",
+      "batch": 13,
+      "published_at": "2026-06-01",
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/6/1/art_109_20822.html",
+      "rule_classes": [
+        "药品限适应症"
+      ],
+      "records": 66,
+      "with_med_code": 66
+    },
+    {
+      "batch_tag": "batch_14",
+      "batch": 14,
+      "published_at": "2026-06-09",
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/6/9/art_109_20899.html",
+      "rule_classes": [
+        "药品限适应症"
+      ],
+      "records": 43,
+      "with_med_code": 43
+    },
+    {
+      "batch_tag": "batch_15",
+      "batch": 15,
+      "published_at": "2026-06-16",
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/6/16/art_109_21004.html",
+      "rule_classes": [
+        "药品限适应症"
+      ],
+      "records": 34,
+      "with_med_code": 34
+    },
+    {
+      "batch_tag": "batch_16",
+      "batch": 16,
+      "published_at": "2026-06-22",
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/6/22/art_109_21056.html",
+      "rule_classes": [
+        "药品限适应症"
+      ],
+      "records": 82,
+      "with_med_code": 82
+    },
+    {
+      "batch_tag": "batch_17",
+      "batch": 17,
+      "published_at": "2026-06-29",
+      "announcement_url": "https://www.nhsa.gov.cn/art/2026/6/29/art_109_21146.html",
+      "rule_classes": [
+        "药品限适应症"
+      ],
+      "records": 228,
+      "with_med_code": 228
+    },
+    {
+      "batch_tag": "updates_2026-01",
+      "batch": null,
+      "published_at": "2026-01-28",
+      "announcement_url": null,
+      "rule_classes": [
+        "药品区分性别使用",
+        "药品儿童专用",
+        "药品限儿童使用",
+        "药品限工伤保险",
+        "药品限生育保险",
+        "药品限就医方式",
+        "药品限医疗机构级别",
+        "药品限支付疗程"
+      ],
+      "records": 411,
+      "with_med_code": 411
+    }
+  ]
+}

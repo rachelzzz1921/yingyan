@@ -1,0 +1,823 @@
+{
+  "meta": {
+    "source": "《医疗保障基金智能监管规则库、知识库（2025年版）》· 第一部分 一、智能监管规则列表",
+    "artifact": "public-data-corpus/raw/mail-liangku/医疗保障基金智能监管规则库、知识库（2025年版）-1.pdf",
+    "extracted_at": "2026-07-05",
+    "total_rules": 88,
+    "tier1_breakdown": {
+      "政策类": 34,
+      "管理类": 29,
+      "医疗类": 25
+    },
+    "has_kp_detail_count": 46,
+    "mapped_to_1_0_gz": 78,
+    "new_in_2025_count": 10,
+    "new_in_2025": [
+      "9.药品限最大开药天数/开药量",
+      "13.药品限就医方式",
+      "29.医疗服务项目限年龄",
+      "30.医疗服务项目与医用耗材重复收费",
+      "31.医疗服务项目周期超频次",
+      "47.超互联网医院药品支付范围",
+      "76.中药饮片超大处方",
+      "77.中药饮片超量上传",
+      "87.医用耗材与性别不符",
+      "88.医用耗材限疾病使用"
+    ],
+    "note": "88类为2025年版全量口径；gz_code_1_0 为框架体系1.0(79条)按名映射，new_in_2025=true 者为1.0未收录的新增类。"
+  },
+  "rules": [
+    {
+      "seq": 1,
+      "tier1": "政策类",
+      "tier2": "药品政策限定类",
+      "name": "药品限工伤保险",
+      "has_kp_detail": true,
+      "gz_code_1_0": "GZ10000101001000",
+      "new_in_2025": false
+    },
+    {
+      "seq": 2,
+      "tier1": "政策类",
+      "tier2": "药品政策限定类",
+      "name": "药品限生育保险",
+      "has_kp_detail": true,
+      "gz_code_1_0": "GZ10000101002000",
+      "new_in_2025": false
+    },
+    {
+      "seq": 3,
+      "tier1": "政策类",
+      "tier2": "药品政策限定类",
+      "name": "中药饮片单复方均不予支付",
+      "has_kp_detail": true,
+      "gz_code_1_0": "GZ10000101003000",
+      "new_in_2025": false
+    },
+    {
+      "seq": 4,
+      "tier1": "政策类",
+      "tier2": "药品政策限定类",
+      "name": "中药饮片单方使用不予支付",
+      "has_kp_detail": true,
+      "gz_code_1_0": "GZ10000101004000",
+      "new_in_2025": false
+    },
+    {
+      "seq": 5,
+      "tier1": "政策类",
+      "tier2": "药品政策限定类",
+      "name": "药品限二线使用",
+      "has_kp_detail": true,
+      "gz_code_1_0": "GZ10000101005000",
+      "new_in_2025": false
+    },
+    {
+      "seq": 6,
+      "tier1": "政策类",
+      "tier2": "药品政策限定类",
+      "name": "药品限新生儿使用",
+      "has_kp_detail": false,
+      "gz_code_1_0": "GZ10000101006000",
+      "new_in_2025": false
+    },
+    {
+      "seq": 7,
+      "tier1": "政策类",
+      "tier2": "药品政策限定类",
+      "name": "药品限儿童使用",
+      "has_kp_detail": true,
+      "gz_code_1_0": "GZ10000101007000",
+      "new_in_2025": false
+    },
+    {
+      "seq": 8,
+      "tier1": "政策类",
+      "tier2": "药品政策限定类",
+      "name": "药品限适应症",
+      "has_kp_detail": true,
+      "gz_code_1_0": "GZ10000101008000",
+      "new_in_2025": false
+    },
+    {
+      "seq": 9,
+      "tier1": "政策类",
+      "tier2": "药品政策限定类",
+      "name": "药品限最大开药天数/开药量",
+      "has_kp_detail": false,
+      "gz_code_1_0": null,
+      "new_in_2025": true
+    },
+    {
+      "seq": 10,
+      "tier1": "政策类",
+      "tier2": "药品政策限定类",
+      "name": "药品限支付疗程",
+      "has_kp_detail": true,
+      "gz_code_1_0": "GZ10000101010000",
+      "new_in_2025": false
+    },
+    {
+      "seq": 11,
+      "tier1": "政策类",
+      "tier2": "药品政策限定类",
+      "name": "药品超限定病种目录范围使用",
+      "has_kp_detail": false,
+      "gz_code_1_0": "GZ10000101011000",
+      "new_in_2025": false
+    },
+    {
+      "seq": 12,
+      "tier1": "政策类",
+      "tier2": "药品政策限定类",
+      "name": "药品限医疗机构级别",
+      "has_kp_detail": true,
+      "gz_code_1_0": "GZ10000101012000",
+      "new_in_2025": false
+    },
+    {
+      "seq": 13,
+      "tier1": "政策类",
+      "tier2": "药品政策限定类",
+      "name": "药品限就医方式",
+      "has_kp_detail": true,
+      "gz_code_1_0": null,
+      "new_in_2025": true
+    },
+    {
+      "seq": 14,
+      "tier1": "政策类",
+      "tier2": "医疗服务项目政策限定类",
+      "name": "医疗服务项目超限定单价收费",
+      "has_kp_detail": false,
+      "gz_code_1_0": "GZ10000102001000",
+      "new_in_2025": false
+    },
+    {
+      "seq": 15,
+      "tier1": "政策类",
+      "tier2": "医疗服务项目政策限定类",
+      "name": "手术项目未按规定折价收费",
+      "has_kp_detail": true,
+      "gz_code_1_0": "GZ10000102002000",
+      "new_in_2025": false
+    },
+    {
+      "seq": 16,
+      "tier1": "政策类",
+      "tier2": "医疗服务项目政策限定类",
+      "name": "医疗服务项目限工伤保险",
+      "has_kp_detail": false,
+      "gz_code_1_0": "GZ10000102003000",
+      "new_in_2025": false
+    },
+    {
+      "seq": 17,
+      "tier1": "政策类",
+      "tier2": "医疗服务项目政策限定类",
+      "name": "医疗服务项目限生育保险",
+      "has_kp_detail": false,
+      "gz_code_1_0": "GZ10000102004000",
+      "new_in_2025": false
+    },
+    {
+      "seq": 18,
+      "tier1": "政策类",
+      "tier2": "医疗服务项目政策限定类",
+      "name": "医疗服务项目限新生儿使用",
+      "has_kp_detail": false,
+      "gz_code_1_0": "GZ10000102005000",
+      "new_in_2025": false
+    },
+    {
+      "seq": 19,
+      "tier1": "政策类",
+      "tier2": "医疗服务项目政策限定类",
+      "name": "医疗服务项目限儿童使用",
+      "has_kp_detail": false,
+      "gz_code_1_0": "GZ10000102006000",
+      "new_in_2025": false
+    },
+    {
+      "seq": 20,
+      "tier1": "政策类",
+      "tier2": "医疗服务项目政策限定类",
+      "name": "医疗服务项目限适应症",
+      "has_kp_detail": false,
+      "gz_code_1_0": "GZ10000102007000",
+      "new_in_2025": false
+    },
+    {
+      "seq": 21,
+      "tier1": "政策类",
+      "tier2": "医疗服务项目政策限定类",
+      "name": "医疗服务项目限科室使用",
+      "has_kp_detail": false,
+      "gz_code_1_0": "GZ10000102008000",
+      "new_in_2025": false
+    },
+    {
+      "seq": 22,
+      "tier1": "政策类",
+      "tier2": "医疗服务项目政策限定类",
+      "name": "医疗服务项目限就医方式",
+      "has_kp_detail": false,
+      "gz_code_1_0": "GZ10000102009000",
+      "new_in_2025": false
+    },
+    {
+      "seq": 23,
+      "tier1": "政策类",
+      "tier2": "医疗服务项目政策限定类",
+      "name": "医疗服务项目限支付疗程",
+      "has_kp_detail": true,
+      "gz_code_1_0": "GZ10000102010000",
+      "new_in_2025": false
+    },
+    {
+      "seq": 24,
+      "tier1": "政策类",
+      "tier2": "医疗服务项目政策限定类",
+      "name": "医疗服务项目限医疗机构级别",
+      "has_kp_detail": false,
+      "gz_code_1_0": "GZ10000102011000",
+      "new_in_2025": false
+    },
+    {
+      "seq": 25,
+      "tier1": "政策类",
+      "tier2": "医疗服务项目政策限定类",
+      "name": "医疗服务项目重复收费",
+      "has_kp_detail": true,
+      "gz_code_1_0": "GZ10000102012000",
+      "new_in_2025": false
+    },
+    {
+      "seq": 26,
+      "tier1": "政策类",
+      "tier2": "医疗服务项目政策限定类",
+      "name": "医疗服务项目分解收费",
+      "has_kp_detail": true,
+      "gz_code_1_0": "GZ10000102013000",
+      "new_in_2025": false
+    },
+    {
+      "seq": 27,
+      "tier1": "政策类",
+      "tier2": "医疗服务项目政策限定类",
+      "name": "医疗服务项目限定频次",
+      "has_kp_detail": true,
+      "gz_code_1_0": "GZ10000102014000",
+      "new_in_2025": false
+    },
+    {
+      "seq": 28,
+      "tier1": "政策类",
+      "tier2": "医疗服务项目政策限定类",
+      "name": "医疗服务项目超限定报销总额",
+      "has_kp_detail": false,
+      "gz_code_1_0": "GZ10000102015000",
+      "new_in_2025": false
+    },
+    {
+      "seq": 29,
+      "tier1": "政策类",
+      "tier2": "医疗服务项目政策限定类",
+      "name": "医疗服务项目限年龄",
+      "has_kp_detail": true,
+      "gz_code_1_0": null,
+      "new_in_2025": true
+    },
+    {
+      "seq": 30,
+      "tier1": "政策类",
+      "tier2": "医疗服务项目政策限定类",
+      "name": "医疗服务项目与医用耗材重复收费",
+      "has_kp_detail": false,
+      "gz_code_1_0": null,
+      "new_in_2025": true
+    },
+    {
+      "seq": 31,
+      "tier1": "政策类",
+      "tier2": "医疗服务项目政策限定类",
+      "name": "医疗服务项目周期超频次",
+      "has_kp_detail": true,
+      "gz_code_1_0": null,
+      "new_in_2025": true
+    },
+    {
+      "seq": 32,
+      "tier1": "政策类",
+      "tier2": "医用耗材政策限定类",
+      "name": "耗材限新生儿使用",
+      "has_kp_detail": true,
+      "gz_code_1_0": "GZ10000103001000",
+      "new_in_2025": false
+    },
+    {
+      "seq": 33,
+      "tier1": "政策类",
+      "tier2": "医用耗材政策限定类",
+      "name": "耗材限儿童使用",
+      "has_kp_detail": true,
+      "gz_code_1_0": "GZ10000103002000",
+      "new_in_2025": false
+    },
+    {
+      "seq": 34,
+      "tier1": "政策类",
+      "tier2": "医用耗材政策限定类",
+      "name": "耗材超限定报销总额",
+      "has_kp_detail": false,
+      "gz_code_1_0": "GZ10000103003000",
+      "new_in_2025": false
+    },
+    {
+      "seq": 35,
+      "tier1": "管理类",
+      "tier2": "信息数据监管类",
+      "name": "医保结算清单信息异常",
+      "has_kp_detail": false,
+      "gz_code_1_0": "GZ10000201001000",
+      "new_in_2025": false
+    },
+    {
+      "seq": 36,
+      "tier1": "管理类",
+      "tier2": "信息数据监管类",
+      "name": "结算明细信息异常",
+      "has_kp_detail": false,
+      "gz_code_1_0": "GZ10000201002000",
+      "new_in_2025": false
+    },
+    {
+      "seq": 37,
+      "tier1": "管理类",
+      "tier2": "信息数据监管类",
+      "name": "疾病诊断编码异常",
+      "has_kp_detail": false,
+      "gz_code_1_0": "GZ10000201003000",
+      "new_in_2025": false
+    },
+    {
+      "seq": 38,
+      "tier1": "管理类",
+      "tier2": "信息数据监管类",
+      "name": "手术操作编码异常",
+      "has_kp_detail": false,
+      "gz_code_1_0": "GZ10000201004000",
+      "new_in_2025": false
+    },
+    {
+      "seq": 39,
+      "tier1": "管理类",
+      "tier2": "信息数据监管类",
+      "name": "手术操作编码与性别不符",
+      "has_kp_detail": true,
+      "gz_code_1_0": "GZ10000201005000",
+      "new_in_2025": false
+    },
+    {
+      "seq": 40,
+      "tier1": "管理类",
+      "tier2": "信息数据监管类",
+      "name": "诊断编码与手术操作编码不符",
+      "has_kp_detail": true,
+      "gz_code_1_0": "GZ10000201006000",
+      "new_in_2025": false
+    },
+    {
+      "seq": 41,
+      "tier1": "管理类",
+      "tier2": "信息数据监管类",
+      "name": "就诊数据非实时上传监管",
+      "has_kp_detail": false,
+      "gz_code_1_0": "GZ10000201007000",
+      "new_in_2025": false
+    },
+    {
+      "seq": 42,
+      "tier1": "管理类",
+      "tier2": "信息数据监管类",
+      "name": "计费日期与住院时间不符",
+      "has_kp_detail": false,
+      "gz_code_1_0": "GZ10000201008000",
+      "new_in_2025": false
+    },
+    {
+      "seq": 43,
+      "tier1": "管理类",
+      "tier2": "药品监管类",
+      "name": "药品进销存异常",
+      "has_kp_detail": false,
+      "gz_code_1_0": "GZ10000202001000",
+      "new_in_2025": false
+    },
+    {
+      "seq": 44,
+      "tier1": "管理类",
+      "tier2": "药品监管类",
+      "name": "围手术期抗菌药物预防性应用监管",
+      "has_kp_detail": true,
+      "gz_code_1_0": "GZ10000202002000",
+      "new_in_2025": false
+    },
+    {
+      "seq": 45,
+      "tier1": "管理类",
+      "tier2": "药品监管类",
+      "name": "抗菌药物分级使用管理",
+      "has_kp_detail": false,
+      "gz_code_1_0": "GZ10000202003000",
+      "new_in_2025": false
+    },
+    {
+      "seq": 46,
+      "tier1": "管理类",
+      "tier2": "药品监管类",
+      "name": "药品种类超标",
+      "has_kp_detail": false,
+      "gz_code_1_0": "GZ10000202004000",
+      "new_in_2025": false
+    },
+    {
+      "seq": 47,
+      "tier1": "管理类",
+      "tier2": "药品监管类",
+      "name": "超互联网医院药品支付范围",
+      "has_kp_detail": true,
+      "gz_code_1_0": null,
+      "new_in_2025": true
+    },
+    {
+      "seq": 48,
+      "tier1": "管理类",
+      "tier2": "医用耗材监管类",
+      "name": "医用耗材进销存异常",
+      "has_kp_detail": false,
+      "gz_code_1_0": "GZ10000203001000",
+      "new_in_2025": false
+    },
+    {
+      "seq": 49,
+      "tier1": "管理类",
+      "tier2": "行为主体监管类",
+      "name": "分解住院",
+      "has_kp_detail": false,
+      "gz_code_1_0": "GZ10000204001000",
+      "new_in_2025": false
+    },
+    {
+      "seq": 50,
+      "tier1": "管理类",
+      "tier2": "行为主体监管类",
+      "name": "频繁门诊",
+      "has_kp_detail": false,
+      "gz_code_1_0": "GZ10000204002000",
+      "new_in_2025": false
+    },
+    {
+      "seq": 51,
+      "tier1": "管理类",
+      "tier2": "行为主体监管类",
+      "name": "频繁购药",
+      "has_kp_detail": false,
+      "gz_code_1_0": "GZ10000204003000",
+      "new_in_2025": false
+    },
+    {
+      "seq": 52,
+      "tier1": "管理类",
+      "tier2": "行为主体监管类",
+      "name": "频繁住院",
+      "has_kp_detail": false,
+      "gz_code_1_0": "GZ10000204004000",
+      "new_in_2025": false
+    },
+    {
+      "seq": 53,
+      "tier1": "管理类",
+      "tier2": "行为主体监管类",
+      "name": "无指征住院（低标准入院）",
+      "has_kp_detail": false,
+      "gz_code_1_0": "GZ10000204005000",
+      "new_in_2025": false
+    },
+    {
+      "seq": 54,
+      "tier1": "管理类",
+      "tier2": "行为主体监管类",
+      "name": "诊断与患者性别不符",
+      "has_kp_detail": true,
+      "gz_code_1_0": "GZ10000204006000",
+      "new_in_2025": false
+    },
+    {
+      "seq": 55,
+      "tier1": "管理类",
+      "tier2": "行为主体监管类",
+      "name": "诊断与患者年龄不符",
+      "has_kp_detail": true,
+      "gz_code_1_0": "GZ10000204007000",
+      "new_in_2025": false
+    },
+    {
+      "seq": 56,
+      "tier1": "管理类",
+      "tier2": "统计指标监测类",
+      "name": "药费占比统计",
+      "has_kp_detail": false,
+      "gz_code_1_0": "ZB10000205001000",
+      "new_in_2025": false
+    },
+    {
+      "seq": 57,
+      "tier1": "管理类",
+      "tier2": "统计指标监测类",
+      "name": "检验检查占比统计",
+      "has_kp_detail": false,
+      "gz_code_1_0": "ZB10000205002000",
+      "new_in_2025": false
+    },
+    {
+      "seq": 58,
+      "tier1": "管理类",
+      "tier2": "统计指标监测类",
+      "name": "耗材占比统计",
+      "has_kp_detail": false,
+      "gz_code_1_0": "ZB10000205003000",
+      "new_in_2025": false
+    },
+    {
+      "seq": 59,
+      "tier1": "管理类",
+      "tier2": "统计指标监测类",
+      "name": "治疗占比统计",
+      "has_kp_detail": false,
+      "gz_code_1_0": "ZB10000205004000",
+      "new_in_2025": false
+    },
+    {
+      "seq": 60,
+      "tier1": "管理类",
+      "tier2": "统计指标监测类",
+      "name": "CT检查占比统计",
+      "has_kp_detail": false,
+      "gz_code_1_0": "ZB10000205005000",
+      "new_in_2025": false
+    },
+    {
+      "seq": 61,
+      "tier1": "管理类",
+      "tier2": "统计指标监测类",
+      "name": "核磁检查占比统计",
+      "has_kp_detail": false,
+      "gz_code_1_0": "ZB10000205006000",
+      "new_in_2025": false
+    },
+    {
+      "seq": 62,
+      "tier1": "管理类",
+      "tier2": "统计指标监测类",
+      "name": "院内感染发生率统计",
+      "has_kp_detail": false,
+      "gz_code_1_0": "ZB10000205007000",
+      "new_in_2025": false
+    },
+    {
+      "seq": 63,
+      "tier1": "管理类",
+      "tier2": "统计指标监测类",
+      "name": "非计划再入院率统计",
+      "has_kp_detail": false,
+      "gz_code_1_0": "ZB10000205008000",
+      "new_in_2025": false
+    },
+    {
+      "seq": 64,
+      "tier1": "医疗类",
+      "tier2": "药品合理使用类",
+      "name": "药品与医疗服务项目不符",
+      "has_kp_detail": false,
+      "gz_code_1_0": "GZ10000301001000",
+      "new_in_2025": false
+    },
+    {
+      "seq": 65,
+      "tier1": "医疗类",
+      "tier2": "药品合理使用类",
+      "name": "药品儿童专用",
+      "has_kp_detail": true,
+      "gz_code_1_0": "GZ10000301002000",
+      "new_in_2025": false
+    },
+    {
+      "seq": 66,
+      "tier1": "医疗类",
+      "tier2": "药品合理使用类",
+      "name": "药品儿童禁用",
+      "has_kp_detail": true,
+      "gz_code_1_0": "GZ10000301003000",
+      "new_in_2025": false
+    },
+    {
+      "seq": 67,
+      "tier1": "医疗类",
+      "tier2": "药品合理使用类",
+      "name": "药品区分性别使用",
+      "has_kp_detail": true,
+      "gz_code_1_0": "GZ10000301004000",
+      "new_in_2025": false
+    },
+    {
+      "seq": 68,
+      "tier1": "医疗类",
+      "tier2": "药品合理使用类",
+      "name": "超说明书用量开药",
+      "has_kp_detail": true,
+      "gz_code_1_0": "GZ10000301005000",
+      "new_in_2025": false
+    },
+    {
+      "seq": 69,
+      "tier1": "医疗类",
+      "tier2": "药品合理使用类",
+      "name": "重复开药",
+      "has_kp_detail": true,
+      "gz_code_1_0": "GZ10000301006000",
+      "new_in_2025": false
+    },
+    {
+      "seq": 70,
+      "tier1": "医疗类",
+      "tier2": "药品合理使用类",
+      "name": "超说明书适应症用药",
+      "has_kp_detail": true,
+      "gz_code_1_0": "GZ10000301007000",
+      "new_in_2025": false
+    },
+    {
+      "seq": 71,
+      "tier1": "医疗类",
+      "tier2": "药品合理使用类",
+      "name": "药品禁忌症",
+      "has_kp_detail": true,
+      "gz_code_1_0": "GZ10000301008000",
+      "new_in_2025": false
+    },
+    {
+      "seq": 72,
+      "tier1": "医疗类",
+      "tier2": "药品合理使用类",
+      "name": "老年人用药安全",
+      "has_kp_detail": true,
+      "gz_code_1_0": "GZ10000301009000",
+      "new_in_2025": false
+    },
+    {
+      "seq": 73,
+      "tier1": "医疗类",
+      "tier2": "药品合理使用类",
+      "name": "妊娠期及哺乳期用药安全",
+      "has_kp_detail": true,
+      "gz_code_1_0": "GZ10000301010000",
+      "new_in_2025": false
+    },
+    {
+      "seq": 74,
+      "tier1": "医疗类",
+      "tier2": "药品合理使用类",
+      "name": "药品相互作用",
+      "has_kp_detail": true,
+      "gz_code_1_0": "GZ10000301011000",
+      "new_in_2025": false
+    },
+    {
+      "seq": 75,
+      "tier1": "医疗类",
+      "tier2": "药品合理使用类",
+      "name": "中药饮片配伍禁忌",
+      "has_kp_detail": true,
+      "gz_code_1_0": "GZ10000301012000",
+      "new_in_2025": false
+    },
+    {
+      "seq": 76,
+      "tier1": "医疗类",
+      "tier2": "药品合理使用类",
+      "name": "中药饮片超大处方",
+      "has_kp_detail": true,
+      "gz_code_1_0": null,
+      "new_in_2025": true
+    },
+    {
+      "seq": 77,
+      "tier1": "医疗类",
+      "tier2": "药品合理使用类",
+      "name": "中药饮片超量上传",
+      "has_kp_detail": true,
+      "gz_code_1_0": null,
+      "new_in_2025": true
+    },
+    {
+      "seq": 78,
+      "tier1": "医疗类",
+      "tier2": "医疗服务项目合理使用类",
+      "name": "无指征检验检查",
+      "has_kp_detail": true,
+      "gz_code_1_0": "GZ10000302001000",
+      "new_in_2025": false
+    },
+    {
+      "seq": 79,
+      "tier1": "医疗类",
+      "tier2": "医疗服务项目合理使用类",
+      "name": "无指征治疗",
+      "has_kp_detail": true,
+      "gz_code_1_0": "GZ10000302002000",
+      "new_in_2025": false
+    },
+    {
+      "seq": 80,
+      "tier1": "医疗类",
+      "tier2": "医疗服务项目合理使用类",
+      "name": "医疗服务项目儿童专用",
+      "has_kp_detail": true,
+      "gz_code_1_0": "GZ10000302003000",
+      "new_in_2025": false
+    },
+    {
+      "seq": 81,
+      "tier1": "医疗类",
+      "tier2": "医疗服务项目合理使用类",
+      "name": "医疗服务项目区分性别使用",
+      "has_kp_detail": true,
+      "gz_code_1_0": "GZ10000302004000",
+      "new_in_2025": false
+    },
+    {
+      "seq": 82,
+      "tier1": "医疗类",
+      "tier2": "医疗服务项目合理使用类",
+      "name": "医疗服务项目禁忌症",
+      "has_kp_detail": true,
+      "gz_code_1_0": "GZ10000302005000",
+      "new_in_2025": false
+    },
+    {
+      "seq": 83,
+      "tier1": "医疗类",
+      "tier2": "医疗服务项目合理使用类",
+      "name": "医疗服务项目超适应症使用",
+      "has_kp_detail": true,
+      "gz_code_1_0": "GZ10000302006000",
+      "new_in_2025": false
+    },
+    {
+      "seq": 84,
+      "tier1": "医疗类",
+      "tier2": "医用耗材合理使用类",
+      "name": "医用耗材与医疗服务项目不符",
+      "has_kp_detail": false,
+      "gz_code_1_0": "GZ10000303001000",
+      "new_in_2025": false
+    },
+    {
+      "seq": 85,
+      "tier1": "医疗类",
+      "tier2": "医用耗材合理使用类",
+      "name": "医用耗材与科室不符",
+      "has_kp_detail": false,
+      "gz_code_1_0": "GZ10000303002000",
+      "new_in_2025": false
+    },
+    {
+      "seq": 86,
+      "tier1": "医疗类",
+      "tier2": "医用耗材合理使用类",
+      "name": "医用耗材数量超标",
+      "has_kp_detail": false,
+      "gz_code_1_0": "GZ10000303003000",
+      "new_in_2025": false
+    },
+    {
+      "seq": 87,
+      "tier1": "医疗类",
+      "tier2": "医用耗材合理使用类",
+      "name": "医用耗材与性别不符",
+      "has_kp_detail": true,
+      "gz_code_1_0": null,
+      "new_in_2025": true
+    },
+    {
+      "seq": 88,
+      "tier1": "医疗类",
+      "tier2": "医用耗材合理使用类",
+      "name": "医用耗材限疾病使用",
+      "has_kp_detail": true,
+      "gz_code_1_0": null,
+      "new_in_2025": true
+    }
+  ]
+}

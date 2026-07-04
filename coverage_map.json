@@ -1,0 +1,1595 @@
+{
+  "meta": {
+    "coordinate_frame": "2025年版·88类",
+    "coordinate_source": "《医疗保障基金智能监管规则库、知识库（2025年版）》· 第一部分 一、智能监管规则列表",
+    "total_rules": 88,
+    "new_in_2025": 10,
+    "official_kp_detail_rules": 46,
+    "mapped_to_1_0_gz": 78,
+    "summary": {
+      "checker+kp": 17,
+      "checker_only": 61,
+      "blank": 6,
+      "kp_only": 4
+    },
+    "four_layer_numbers": {
+      "frame_1_0": "框架体系1.0：79条，政策类30/管理类28/医疗类21，带GZ编码（覆盖地图骨架）",
+      "full_2025": "2025年版：88类规则、24.7万条知识点，全部对应医保编码（究竟有多大）",
+      "public_batches": "公开发布至第十七批（2026-06-29），六月一月连发三批（十五6/16·十六6/22·十七6/29）",
+      "provincial": "省级实操口径约150万条（周夕鸣，仅在呼应其\"专家团队维护复杂度\"时引用，勿与24.7万对质）",
+      "endorsement": "官方目标：力争'十五五'期间实现定点医药机构事前提醒全覆盖（院端插件产品线即其执行工具）"
+    },
+    "checker_note": "checker 接线取自 app 权威计算(rule_gz_mapping.yaml)，1.0映射到的规则现为 implemented；10 类2025新增无1.0 GZ坐标，checker 记 roadmap。",
+    "out_of_frame_kp": [],
+    "caveat_pre_exhibition": "批次一周一发；时效数字(第十七批/日期)须于 7/5 上午布展前用 col109 复核，防第十八批突袭。"
+  },
+  "cells": [
+    {
+      "seq": 1,
+      "rule_name": "药品限工伤保险",
+      "level1": "政策类",
+      "level2": "药品政策限定类",
+      "gz_code_1_0": "GZ10000101001000",
+      "code_type": "GZ",
+      "new_in_2025": false,
+      "official_has_kp_detail": true,
+      "knowledge_points": 18,
+      "has_checker": true,
+      "coverage_status": "implemented",
+      "eagle_rule_ids": [
+        "B-211"
+      ],
+      "handler": "core_B-211",
+      "status": "checker+kp"
+    },
+    {
+      "seq": 2,
+      "rule_name": "药品限生育保险",
+      "level1": "政策类",
+      "level2": "药品政策限定类",
+      "gz_code_1_0": "GZ10000101002000",
+      "code_type": "GZ",
+      "new_in_2025": false,
+      "official_has_kp_detail": true,
+      "knowledge_points": 6,
+      "has_checker": true,
+      "coverage_status": "implemented",
+      "eagle_rule_ids": [
+        "B-211"
+      ],
+      "handler": "core_B-211",
+      "status": "checker+kp"
+    },
+    {
+      "seq": 3,
+      "rule_name": "中药饮片单复方均不予支付",
+      "level1": "政策类",
+      "level2": "药品政策限定类",
+      "gz_code_1_0": "GZ10000101003000",
+      "code_type": "GZ",
+      "new_in_2025": false,
+      "official_has_kp_detail": true,
+      "knowledge_points": 37,
+      "has_checker": true,
+      "coverage_status": "implemented",
+      "eagle_rule_ids": [
+        "precheck-tcm"
+      ],
+      "handler": "core_precheck-tcm",
+      "status": "checker+kp"
+    },
+    {
+      "seq": 4,
+      "rule_name": "中药饮片单方使用不予支付",
+      "level1": "政策类",
+      "level2": "药品政策限定类",
+      "gz_code_1_0": "GZ10000101004000",
+      "code_type": "GZ",
+      "new_in_2025": false,
+      "official_has_kp_detail": true,
+      "knowledge_points": 116,
+      "has_checker": true,
+      "coverage_status": "implemented",
+      "eagle_rule_ids": [
+        "precheck-tcm"
+      ],
+      "handler": "core_precheck-tcm",
+      "status": "checker+kp"
+    },
+    {
+      "seq": 5,
+      "rule_name": "药品限二线使用",
+      "level1": "政策类",
+      "level2": "药品政策限定类",
+      "gz_code_1_0": "GZ10000101005000",
+      "code_type": "GZ",
+      "new_in_2025": false,
+      "official_has_kp_detail": true,
+      "knowledge_points": 110,
+      "has_checker": true,
+      "coverage_status": "implemented",
+      "eagle_rule_ids": [
+        "B-209"
+      ],
+      "handler": "core_B-209",
+      "status": "checker+kp"
+    },
+    {
+      "seq": 6,
+      "rule_name": "药品限新生儿使用",
+      "level1": "政策类",
+      "level2": "药品政策限定类",
+      "gz_code_1_0": "GZ10000101006000",
+      "code_type": "GZ",
+      "new_in_2025": false,
+      "official_has_kp_detail": false,
+      "knowledge_points": 0,
+      "has_checker": true,
+      "coverage_status": "implemented",
+      "eagle_rule_ids": [
+        "F-002"
+      ],
+      "handler": "core_F-002",
+      "status": "checker_only"
+    },
+    {
+      "seq": 7,
+      "rule_name": "药品限儿童使用",
+      "level1": "政策类",
+      "level2": "药品政策限定类",
+      "gz_code_1_0": "GZ10000101007000",
+      "code_type": "GZ",
+      "new_in_2025": false,
+      "official_has_kp_detail": true,
+      "knowledge_points": 24,
+      "has_checker": true,
+      "coverage_status": "implemented",
+      "eagle_rule_ids": [
+        "F-002"
+      ],
+      "handler": "core_F-002",
+      "status": "checker+kp"
+    },
+    {
+      "seq": 8,
+      "rule_name": "药品限适应症",
+      "level1": "政策类",
+      "level2": "药品政策限定类",
+      "gz_code_1_0": "GZ10000101008000",
+      "code_type": "GZ",
+      "new_in_2025": false,
+      "official_has_kp_detail": true,
+      "knowledge_points": 510,
+      "has_checker": true,
+      "coverage_status": "implemented",
+      "eagle_rule_ids": [
+        "B-201-IND",
+        "B-201"
+      ],
+      "handler": "core_B-201-IND",
+      "status": "checker+kp"
+    },
+    {
+      "seq": 9,
+      "rule_name": "药品限最大开药天数/开药量",
+      "level1": "政策类",
+      "level2": "药品政策限定类",
+      "gz_code_1_0": null,
+      "code_type": null,
+      "new_in_2025": true,
+      "official_has_kp_detail": false,
+      "knowledge_points": 0,
+      "has_checker": false,
+      "coverage_status": "roadmap",
+      "eagle_rule_ids": [],
+      "handler": null,
+      "status": "blank"
+    },
+    {
+      "seq": 10,
+      "rule_name": "药品限支付疗程",
+      "level1": "政策类",
+      "level2": "药品政策限定类",
+      "gz_code_1_0": "GZ10000101010000",
+      "code_type": "GZ",
+      "new_in_2025": false,
+      "official_has_kp_detail": true,
+      "knowledge_points": 59,
+      "has_checker": true,
+      "coverage_status": "implemented",
+      "eagle_rule_ids": [
+        "F-006"
+      ],
+      "handler": "core_F-006",
+      "status": "checker+kp"
+    },
+    {
+      "seq": 11,
+      "rule_name": "药品超限定病种目录范围使用",
+      "level1": "政策类",
+      "level2": "药品政策限定类",
+      "gz_code_1_0": "GZ10000101011000",
+      "code_type": "GZ",
+      "new_in_2025": false,
+      "official_has_kp_detail": false,
+      "knowledge_points": 0,
+      "has_checker": true,
+      "coverage_status": "implemented",
+      "eagle_rule_ids": [
+        "B-201-IND"
+      ],
+      "handler": "core_B-201-IND",
+      "status": "checker_only"
+    },
+    {
+      "seq": 12,
+      "rule_name": "药品限医疗机构级别",
+      "level1": "政策类",
+      "level2": "药品政策限定类",
+      "gz_code_1_0": "GZ10000101012000",
+      "code_type": "GZ",
+      "new_in_2025": false,
+      "official_has_kp_detail": true,
+      "knowledge_points": 123,
+      "has_checker": true,
+      "coverage_status": "implemented",
+      "eagle_rule_ids": [
+        "B-210"
+      ],
+      "handler": "core_B-210",
+      "status": "checker+kp"
+    },
+    {
+      "seq": 13,
+      "rule_name": "药品限就医方式",
+      "level1": "政策类",
+      "level2": "药品政策限定类",
+      "gz_code_1_0": null,
+      "code_type": null,
+      "new_in_2025": true,
+      "official_has_kp_detail": true,
+      "knowledge_points": 76,
+      "has_checker": false,
+      "coverage_status": "roadmap",
+      "eagle_rule_ids": [],
+      "handler": null,
+      "status": "kp_only"
+    },
+    {
+      "seq": 14,
+      "rule_name": "医疗服务项目超限定单价收费",
+      "level1": "政策类",
+      "level2": "医疗服务项目政策限定类",
+      "gz_code_1_0": "GZ10000102001000",
+      "code_type": "GZ",
+      "new_in_2025": false,
+      "official_has_kp_detail": false,
+      "knowledge_points": 0,
+      "has_checker": true,
+      "coverage_status": "implemented",
+      "eagle_rule_ids": [
+        "A-101"
+      ],
+      "handler": "core_A-101",
+      "status": "checker_only"
+    },
+    {
+      "seq": 15,
+      "rule_name": "手术项目未按规定折价收费",
+      "level1": "政策类",
+      "level2": "医疗服务项目政策限定类",
+      "gz_code_1_0": "GZ10000102002000",
+      "code_type": "GZ",
+      "new_in_2025": false,
+      "official_has_kp_detail": true,
+      "knowledge_points": 378,
+      "has_checker": true,
+      "coverage_status": "implemented",
+      "eagle_rule_ids": [
+        "SUR-401"
+      ],
+      "handler": "core_SUR-401",
+      "status": "checker+kp"
+    },
+    {
+      "seq": 16,
+      "rule_name": "医疗服务项目限工伤保险",
+      "level1": "政策类",
+      "level2": "医疗服务项目政策限定类",
+      "gz_code_1_0": "GZ10000102003000",
+      "code_type": "GZ",
+      "new_in_2025": false,
+      "official_has_kp_detail": false,
+      "knowledge_points": 0,
+      "has_checker": true,
+      "coverage_status": "implemented",
+      "eagle_rule_ids": [
+        "B-211"
+      ],
+      "handler": "core_B-211",
+      "status": "checker_only"
+    },
+    {
+      "seq": 17,
+      "rule_name": "医疗服务项目限生育保险",
+      "level1": "政策类",
+      "level2": "医疗服务项目政策限定类",
+      "gz_code_1_0": "GZ10000102004000",
+      "code_type": "GZ",
+      "new_in_2025": false,
+      "official_has_kp_detail": false,
+      "knowledge_points": 0,
+      "has_checker": true,
+      "coverage_status": "implemented",
+      "eagle_rule_ids": [
+        "B-211"
+      ],
+      "handler": "core_B-211",
+      "status": "checker_only"
+    },
+    {
+      "seq": 18,
+      "rule_name": "医疗服务项目限新生儿使用",
+      "level1": "政策类",
+      "level2": "医疗服务项目政策限定类",
+      "gz_code_1_0": "GZ10000102005000",
+      "code_type": "GZ",
+      "new_in_2025": false,
+      "official_has_kp_detail": false,
+      "knowledge_points": 0,
+      "has_checker": true,
+      "coverage_status": "implemented",
+      "eagle_rule_ids": [
+        "F-002"
+      ],
+      "handler": "core_F-002",
+      "status": "checker_only"
+    },
+    {
+      "seq": 19,
+      "rule_name": "医疗服务项目限儿童使用",
+      "level1": "政策类",
+      "level2": "医疗服务项目政策限定类",
+      "gz_code_1_0": "GZ10000102006000",
+      "code_type": "GZ",
+      "new_in_2025": false,
+      "official_has_kp_detail": false,
+      "knowledge_points": 0,
+      "has_checker": true,
+      "coverage_status": "implemented",
+      "eagle_rule_ids": [
+        "F-002"
+      ],
+      "handler": "core_F-002",
+      "status": "checker_only"
+    },
+    {
+      "seq": 20,
+      "rule_name": "医疗服务项目限适应症",
+      "level1": "政策类",
+      "level2": "医疗服务项目政策限定类",
+      "gz_code_1_0": "GZ10000102007000",
+      "code_type": "GZ",
+      "new_in_2025": false,
+      "official_has_kp_detail": false,
+      "knowledge_points": 0,
+      "has_checker": true,
+      "coverage_status": "implemented",
+      "eagle_rule_ids": [
+        "B-201-IND"
+      ],
+      "handler": "core_B-201-IND",
+      "status": "checker_only"
+    },
+    {
+      "seq": 21,
+      "rule_name": "医疗服务项目限科室使用",
+      "level1": "政策类",
+      "level2": "医疗服务项目政策限定类",
+      "gz_code_1_0": "GZ10000102008000",
+      "code_type": "GZ",
+      "new_in_2025": false,
+      "official_has_kp_detail": false,
+      "knowledge_points": 0,
+      "has_checker": true,
+      "coverage_status": "implemented",
+      "eagle_rule_ids": [
+        "L3-DS"
+      ],
+      "handler": "l3_data_supervision",
+      "status": "checker_only"
+    },
+    {
+      "seq": 22,
+      "rule_name": "医疗服务项目限就医方式",
+      "level1": "政策类",
+      "level2": "医疗服务项目政策限定类",
+      "gz_code_1_0": "GZ10000102009000",
+      "code_type": "GZ",
+      "new_in_2025": false,
+      "official_has_kp_detail": false,
+      "knowledge_points": 0,
+      "has_checker": true,
+      "coverage_status": "implemented",
+      "eagle_rule_ids": [
+        "F-003"
+      ],
+      "handler": "core_F-003",
+      "status": "checker_only"
+    },
+    {
+      "seq": 23,
+      "rule_name": "医疗服务项目限支付疗程",
+      "level1": "政策类",
+      "level2": "医疗服务项目政策限定类",
+      "gz_code_1_0": "GZ10000102010000",
+      "code_type": "GZ",
+      "new_in_2025": false,
+      "official_has_kp_detail": true,
+      "knowledge_points": 11,
+      "has_checker": true,
+      "coverage_status": "implemented",
+      "eagle_rule_ids": [
+        "F-006"
+      ],
+      "handler": "core_F-006",
+      "status": "checker+kp"
+    },
+    {
+      "seq": 24,
+      "rule_name": "医疗服务项目限医疗机构级别",
+      "level1": "政策类",
+      "level2": "医疗服务项目政策限定类",
+      "gz_code_1_0": "GZ10000102011000",
+      "code_type": "GZ",
+      "new_in_2025": false,
+      "official_has_kp_detail": false,
+      "knowledge_points": 0,
+      "has_checker": true,
+      "coverage_status": "implemented",
+      "eagle_rule_ids": [
+        "B-210"
+      ],
+      "handler": "core_B-210",
+      "status": "checker_only"
+    },
+    {
+      "seq": 25,
+      "rule_name": "医疗服务项目重复收费",
+      "level1": "政策类",
+      "level2": "医疗服务项目政策限定类",
+      "gz_code_1_0": "GZ10000102012000",
+      "code_type": "GZ",
+      "new_in_2025": false,
+      "official_has_kp_detail": true,
+      "knowledge_points": 900,
+      "has_checker": true,
+      "coverage_status": "implemented",
+      "eagle_rule_ids": [
+        "A-102"
+      ],
+      "handler": "core_A-102",
+      "status": "checker+kp"
+    },
+    {
+      "seq": 26,
+      "rule_name": "医疗服务项目分解收费",
+      "level1": "政策类",
+      "level2": "医疗服务项目政策限定类",
+      "gz_code_1_0": "GZ10000102013000",
+      "code_type": "GZ",
+      "new_in_2025": false,
+      "official_has_kp_detail": true,
+      "knowledge_points": 0,
+      "has_checker": true,
+      "coverage_status": "implemented",
+      "eagle_rule_ids": [
+        "A-106"
+      ],
+      "handler": "core_A-106",
+      "status": "checker_only"
+    },
+    {
+      "seq": 27,
+      "rule_name": "医疗服务项目限定频次",
+      "level1": "政策类",
+      "level2": "医疗服务项目政策限定类",
+      "gz_code_1_0": "GZ10000102014000",
+      "code_type": "GZ",
+      "new_in_2025": false,
+      "official_has_kp_detail": true,
+      "knowledge_points": 67,
+      "has_checker": true,
+      "coverage_status": "implemented",
+      "eagle_rule_ids": [
+        "F-006"
+      ],
+      "handler": "core_F-006",
+      "status": "checker+kp"
+    },
+    {
+      "seq": 28,
+      "rule_name": "医疗服务项目超限定报销总额",
+      "level1": "政策类",
+      "level2": "医疗服务项目政策限定类",
+      "gz_code_1_0": "GZ10000102015000",
+      "code_type": "GZ",
+      "new_in_2025": false,
+      "official_has_kp_detail": false,
+      "knowledge_points": 0,
+      "has_checker": true,
+      "coverage_status": "implemented",
+      "eagle_rule_ids": [
+        "A-101"
+      ],
+      "handler": "core_A-101",
+      "status": "checker_only"
+    },
+    {
+      "seq": 29,
+      "rule_name": "医疗服务项目限年龄",
+      "level1": "政策类",
+      "level2": "医疗服务项目政策限定类",
+      "gz_code_1_0": null,
+      "code_type": null,
+      "new_in_2025": true,
+      "official_has_kp_detail": true,
+      "knowledge_points": 1,
+      "has_checker": false,
+      "coverage_status": "roadmap",
+      "eagle_rule_ids": [],
+      "handler": null,
+      "status": "kp_only"
+    },
+    {
+      "seq": 30,
+      "rule_name": "医疗服务项目与医用耗材重复收费",
+      "level1": "政策类",
+      "level2": "医疗服务项目政策限定类",
+      "gz_code_1_0": null,
+      "code_type": null,
+      "new_in_2025": true,
+      "official_has_kp_detail": false,
+      "knowledge_points": 0,
+      "has_checker": false,
+      "coverage_status": "roadmap",
+      "eagle_rule_ids": [],
+      "handler": null,
+      "status": "blank"
+    },
+    {
+      "seq": 31,
+      "rule_name": "医疗服务项目周期超频次",
+      "level1": "政策类",
+      "level2": "医疗服务项目政策限定类",
+      "gz_code_1_0": null,
+      "code_type": null,
+      "new_in_2025": true,
+      "official_has_kp_detail": true,
+      "knowledge_points": 14,
+      "has_checker": false,
+      "coverage_status": "roadmap",
+      "eagle_rule_ids": [],
+      "handler": null,
+      "status": "kp_only"
+    },
+    {
+      "seq": 32,
+      "rule_name": "耗材限新生儿使用",
+      "level1": "政策类",
+      "level2": "医用耗材政策限定类",
+      "gz_code_1_0": "GZ10000103001000",
+      "code_type": "GZ",
+      "new_in_2025": false,
+      "official_has_kp_detail": true,
+      "knowledge_points": 0,
+      "has_checker": true,
+      "coverage_status": "implemented",
+      "eagle_rule_ids": [
+        "F-002"
+      ],
+      "handler": "core_F-002",
+      "status": "checker_only"
+    },
+    {
+      "seq": 33,
+      "rule_name": "耗材限儿童使用",
+      "level1": "政策类",
+      "level2": "医用耗材政策限定类",
+      "gz_code_1_0": "GZ10000103002000",
+      "code_type": "GZ",
+      "new_in_2025": false,
+      "official_has_kp_detail": true,
+      "knowledge_points": 0,
+      "has_checker": true,
+      "coverage_status": "implemented",
+      "eagle_rule_ids": [
+        "F-002"
+      ],
+      "handler": "core_F-002",
+      "status": "checker_only"
+    },
+    {
+      "seq": 34,
+      "rule_name": "耗材超限定报销总额",
+      "level1": "政策类",
+      "level2": "医用耗材政策限定类",
+      "gz_code_1_0": "GZ10000103003000",
+      "code_type": "GZ",
+      "new_in_2025": false,
+      "official_has_kp_detail": false,
+      "knowledge_points": 0,
+      "has_checker": true,
+      "coverage_status": "implemented",
+      "eagle_rule_ids": [
+        "A-107"
+      ],
+      "handler": "core_A-107",
+      "status": "checker_only"
+    },
+    {
+      "seq": 35,
+      "rule_name": "医保结算清单信息异常",
+      "level1": "管理类",
+      "level2": "信息数据监管类",
+      "gz_code_1_0": "GZ10000201001000",
+      "code_type": "GZ",
+      "new_in_2025": false,
+      "official_has_kp_detail": false,
+      "knowledge_points": 0,
+      "has_checker": true,
+      "coverage_status": "implemented",
+      "eagle_rule_ids": [
+        "L3-DS"
+      ],
+      "handler": "l3_data_supervision",
+      "status": "checker_only"
+    },
+    {
+      "seq": 36,
+      "rule_name": "结算明细信息异常",
+      "level1": "管理类",
+      "level2": "信息数据监管类",
+      "gz_code_1_0": "GZ10000201002000",
+      "code_type": "GZ",
+      "new_in_2025": false,
+      "official_has_kp_detail": false,
+      "knowledge_points": 0,
+      "has_checker": true,
+      "coverage_status": "implemented",
+      "eagle_rule_ids": [
+        "L3-DS"
+      ],
+      "handler": "l3_data_supervision",
+      "status": "checker_only"
+    },
+    {
+      "seq": 37,
+      "rule_name": "疾病诊断编码异常",
+      "level1": "管理类",
+      "level2": "信息数据监管类",
+      "gz_code_1_0": "GZ10000201003000",
+      "code_type": "GZ",
+      "new_in_2025": false,
+      "official_has_kp_detail": false,
+      "knowledge_points": 0,
+      "has_checker": true,
+      "coverage_status": "implemented",
+      "eagle_rule_ids": [
+        "L3-CDM"
+      ],
+      "handler": "l3_coding_mismatch",
+      "status": "checker_only"
+    },
+    {
+      "seq": 38,
+      "rule_name": "手术操作编码异常",
+      "level1": "管理类",
+      "level2": "信息数据监管类",
+      "gz_code_1_0": "GZ10000201004000",
+      "code_type": "GZ",
+      "new_in_2025": false,
+      "official_has_kp_detail": false,
+      "knowledge_points": 0,
+      "has_checker": true,
+      "coverage_status": "implemented",
+      "eagle_rule_ids": [
+        "L3-CDM"
+      ],
+      "handler": "l3_coding_mismatch",
+      "status": "checker_only"
+    },
+    {
+      "seq": 39,
+      "rule_name": "手术操作编码与性别不符",
+      "level1": "管理类",
+      "level2": "信息数据监管类",
+      "gz_code_1_0": "GZ10000201005000",
+      "code_type": "GZ",
+      "new_in_2025": false,
+      "official_has_kp_detail": true,
+      "knowledge_points": 0,
+      "has_checker": true,
+      "coverage_status": "implemented",
+      "eagle_rule_ids": [
+        "L3-CDM"
+      ],
+      "handler": "l3_coding_mismatch",
+      "status": "checker_only"
+    },
+    {
+      "seq": 40,
+      "rule_name": "诊断编码与手术操作编码不符",
+      "level1": "管理类",
+      "level2": "信息数据监管类",
+      "gz_code_1_0": "GZ10000201006000",
+      "code_type": "GZ",
+      "new_in_2025": false,
+      "official_has_kp_detail": true,
+      "knowledge_points": 0,
+      "has_checker": true,
+      "coverage_status": "implemented",
+      "eagle_rule_ids": [
+        "L3-CDM"
+      ],
+      "handler": "l3_coding_mismatch",
+      "status": "checker_only"
+    },
+    {
+      "seq": 41,
+      "rule_name": "就诊数据非实时上传监管",
+      "level1": "管理类",
+      "level2": "信息数据监管类",
+      "gz_code_1_0": "GZ10000201007000",
+      "code_type": "GZ",
+      "new_in_2025": false,
+      "official_has_kp_detail": false,
+      "knowledge_points": 0,
+      "has_checker": true,
+      "coverage_status": "implemented",
+      "eagle_rule_ids": [
+        "L3-DS"
+      ],
+      "handler": "l3_data_supervision",
+      "status": "checker_only"
+    },
+    {
+      "seq": 42,
+      "rule_name": "计费日期与住院时间不符",
+      "level1": "管理类",
+      "level2": "信息数据监管类",
+      "gz_code_1_0": "GZ10000201008000",
+      "code_type": "GZ",
+      "new_in_2025": false,
+      "official_has_kp_detail": false,
+      "knowledge_points": 0,
+      "has_checker": true,
+      "coverage_status": "implemented",
+      "eagle_rule_ids": [
+        "F-003"
+      ],
+      "handler": "core_F-003",
+      "status": "checker_only"
+    },
+    {
+      "seq": 43,
+      "rule_name": "药品进销存异常",
+      "level1": "管理类",
+      "level2": "药品监管类",
+      "gz_code_1_0": "GZ10000202001000",
+      "code_type": "GZ",
+      "new_in_2025": false,
+      "official_has_kp_detail": false,
+      "knowledge_points": 0,
+      "has_checker": true,
+      "coverage_status": "implemented",
+      "eagle_rule_ids": [
+        "P-301"
+      ],
+      "handler": "core_P-301",
+      "status": "checker_only"
+    },
+    {
+      "seq": 44,
+      "rule_name": "围手术期抗菌药物预防性应用监管",
+      "level1": "管理类",
+      "level2": "药品监管类",
+      "gz_code_1_0": "GZ10000202002000",
+      "code_type": "GZ",
+      "new_in_2025": false,
+      "official_has_kp_detail": true,
+      "knowledge_points": 0,
+      "has_checker": true,
+      "coverage_status": "implemented",
+      "eagle_rule_ids": [
+        "B-202"
+      ],
+      "handler": "core_B-202",
+      "status": "checker_only"
+    },
+    {
+      "seq": 45,
+      "rule_name": "抗菌药物分级使用管理",
+      "level1": "管理类",
+      "level2": "药品监管类",
+      "gz_code_1_0": "GZ10000202003000",
+      "code_type": "GZ",
+      "new_in_2025": false,
+      "official_has_kp_detail": false,
+      "knowledge_points": 0,
+      "has_checker": true,
+      "coverage_status": "implemented",
+      "eagle_rule_ids": [
+        "B-202"
+      ],
+      "handler": "core_B-202",
+      "status": "checker_only"
+    },
+    {
+      "seq": 46,
+      "rule_name": "药品种类超标",
+      "level1": "管理类",
+      "level2": "药品监管类",
+      "gz_code_1_0": "GZ10000202004000",
+      "code_type": "GZ",
+      "new_in_2025": false,
+      "official_has_kp_detail": false,
+      "knowledge_points": 0,
+      "has_checker": true,
+      "coverage_status": "implemented",
+      "eagle_rule_ids": [
+        "L3-DRX"
+      ],
+      "handler": "l3_duplicate_rx",
+      "status": "checker_only"
+    },
+    {
+      "seq": 47,
+      "rule_name": "超互联网医院药品支付范围",
+      "level1": "管理类",
+      "level2": "药品监管类",
+      "gz_code_1_0": null,
+      "code_type": null,
+      "new_in_2025": true,
+      "official_has_kp_detail": true,
+      "knowledge_points": 22,
+      "has_checker": false,
+      "coverage_status": "roadmap",
+      "eagle_rule_ids": [],
+      "handler": null,
+      "status": "kp_only"
+    },
+    {
+      "seq": 48,
+      "rule_name": "医用耗材进销存异常",
+      "level1": "管理类",
+      "level2": "医用耗材监管类",
+      "gz_code_1_0": "GZ10000203001000",
+      "code_type": "GZ",
+      "new_in_2025": false,
+      "official_has_kp_detail": false,
+      "knowledge_points": 0,
+      "has_checker": true,
+      "coverage_status": "implemented",
+      "eagle_rule_ids": [
+        "P-301"
+      ],
+      "handler": "core_P-301",
+      "status": "checker_only"
+    },
+    {
+      "seq": 49,
+      "rule_name": "分解住院",
+      "level1": "管理类",
+      "level2": "行为主体监管类",
+      "gz_code_1_0": "GZ10000204001000",
+      "code_type": "GZ",
+      "new_in_2025": false,
+      "official_has_kp_detail": false,
+      "knowledge_points": 0,
+      "has_checker": true,
+      "coverage_status": "implemented",
+      "eagle_rule_ids": [
+        "C-301"
+      ],
+      "handler": "core_C-301",
+      "status": "checker_only"
+    },
+    {
+      "seq": 50,
+      "rule_name": "频繁门诊",
+      "level1": "管理类",
+      "level2": "行为主体监管类",
+      "gz_code_1_0": "GZ10000204002000",
+      "code_type": "GZ",
+      "new_in_2025": false,
+      "official_has_kp_detail": false,
+      "knowledge_points": 0,
+      "has_checker": true,
+      "coverage_status": "implemented",
+      "eagle_rule_ids": [
+        "D-401"
+      ],
+      "handler": "core_D-401",
+      "status": "checker_only"
+    },
+    {
+      "seq": 51,
+      "rule_name": "频繁购药",
+      "level1": "管理类",
+      "level2": "行为主体监管类",
+      "gz_code_1_0": "GZ10000204003000",
+      "code_type": "GZ",
+      "new_in_2025": false,
+      "official_has_kp_detail": false,
+      "knowledge_points": 0,
+      "has_checker": true,
+      "coverage_status": "implemented",
+      "eagle_rule_ids": [
+        "L3-DRX"
+      ],
+      "handler": "l3_duplicate_rx",
+      "status": "checker_only"
+    },
+    {
+      "seq": 52,
+      "rule_name": "频繁住院",
+      "level1": "管理类",
+      "level2": "行为主体监管类",
+      "gz_code_1_0": "GZ10000204004000",
+      "code_type": "GZ",
+      "new_in_2025": false,
+      "official_has_kp_detail": false,
+      "knowledge_points": 0,
+      "has_checker": true,
+      "coverage_status": "implemented",
+      "eagle_rule_ids": [
+        "C-301"
+      ],
+      "handler": "core_C-301",
+      "status": "checker_only"
+    },
+    {
+      "seq": 53,
+      "rule_name": "无指征住院（低标准入院）",
+      "level1": "管理类",
+      "level2": "行为主体监管类",
+      "gz_code_1_0": "GZ10000204005000",
+      "code_type": "GZ",
+      "new_in_2025": false,
+      "official_has_kp_detail": false,
+      "knowledge_points": 0,
+      "has_checker": true,
+      "coverage_status": "implemented",
+      "eagle_rule_ids": [
+        "C-302"
+      ],
+      "handler": "core_C-302",
+      "status": "checker_only"
+    },
+    {
+      "seq": 54,
+      "rule_name": "诊断与患者性别不符",
+      "level1": "管理类",
+      "level2": "行为主体监管类",
+      "gz_code_1_0": "GZ10000204006000",
+      "code_type": "GZ",
+      "new_in_2025": false,
+      "official_has_kp_detail": true,
+      "knowledge_points": 0,
+      "has_checker": true,
+      "coverage_status": "implemented",
+      "eagle_rule_ids": [
+        "L3-CDM"
+      ],
+      "handler": "l3_coding_mismatch",
+      "status": "checker_only"
+    },
+    {
+      "seq": 55,
+      "rule_name": "诊断与患者年龄不符",
+      "level1": "管理类",
+      "level2": "行为主体监管类",
+      "gz_code_1_0": "GZ10000204007000",
+      "code_type": "GZ",
+      "new_in_2025": false,
+      "official_has_kp_detail": true,
+      "knowledge_points": 0,
+      "has_checker": true,
+      "coverage_status": "implemented",
+      "eagle_rule_ids": [
+        "L3-CDM"
+      ],
+      "handler": "l3_coding_mismatch",
+      "status": "checker_only"
+    },
+    {
+      "seq": 56,
+      "rule_name": "药费占比统计",
+      "level1": "管理类",
+      "level2": "统计指标监测类",
+      "gz_code_1_0": "ZB10000205001000",
+      "code_type": "ZB",
+      "new_in_2025": false,
+      "official_has_kp_detail": false,
+      "knowledge_points": 0,
+      "has_checker": true,
+      "coverage_status": "implemented",
+      "eagle_rule_ids": [
+        "ZB-001"
+      ],
+      "handler": "batch_ratio",
+      "status": "checker_only"
+    },
+    {
+      "seq": 57,
+      "rule_name": "检验检查占比统计",
+      "level1": "管理类",
+      "level2": "统计指标监测类",
+      "gz_code_1_0": "ZB10000205002000",
+      "code_type": "ZB",
+      "new_in_2025": false,
+      "official_has_kp_detail": false,
+      "knowledge_points": 0,
+      "has_checker": true,
+      "coverage_status": "implemented",
+      "eagle_rule_ids": [
+        "ZB-002"
+      ],
+      "handler": "batch_ratio",
+      "status": "checker_only"
+    },
+    {
+      "seq": 58,
+      "rule_name": "耗材占比统计",
+      "level1": "管理类",
+      "level2": "统计指标监测类",
+      "gz_code_1_0": "ZB10000205003000",
+      "code_type": "ZB",
+      "new_in_2025": false,
+      "official_has_kp_detail": false,
+      "knowledge_points": 0,
+      "has_checker": true,
+      "coverage_status": "implemented",
+      "eagle_rule_ids": [
+        "ZB-003"
+      ],
+      "handler": "batch_ratio",
+      "status": "checker_only"
+    },
+    {
+      "seq": 59,
+      "rule_name": "治疗占比统计",
+      "level1": "管理类",
+      "level2": "统计指标监测类",
+      "gz_code_1_0": "ZB10000205004000",
+      "code_type": "ZB",
+      "new_in_2025": false,
+      "official_has_kp_detail": false,
+      "knowledge_points": 0,
+      "has_checker": true,
+      "coverage_status": "implemented",
+      "eagle_rule_ids": [
+        "ZB-004"
+      ],
+      "handler": "batch_ratio",
+      "status": "checker_only"
+    },
+    {
+      "seq": 60,
+      "rule_name": "CT检查占比统计",
+      "level1": "管理类",
+      "level2": "统计指标监测类",
+      "gz_code_1_0": "ZB10000205005000",
+      "code_type": "ZB",
+      "new_in_2025": false,
+      "official_has_kp_detail": false,
+      "knowledge_points": 0,
+      "has_checker": true,
+      "coverage_status": "implemented",
+      "eagle_rule_ids": [
+        "ZB-005"
+      ],
+      "handler": "batch_ratio",
+      "status": "checker_only"
+    },
+    {
+      "seq": 61,
+      "rule_name": "核磁检查占比统计",
+      "level1": "管理类",
+      "level2": "统计指标监测类",
+      "gz_code_1_0": "ZB10000205006000",
+      "code_type": "ZB",
+      "new_in_2025": false,
+      "official_has_kp_detail": false,
+      "knowledge_points": 0,
+      "has_checker": true,
+      "coverage_status": "implemented",
+      "eagle_rule_ids": [
+        "ZB-006"
+      ],
+      "handler": "batch_ratio",
+      "status": "checker_only"
+    },
+    {
+      "seq": 62,
+      "rule_name": "院内感染发生率统计",
+      "level1": "管理类",
+      "level2": "统计指标监测类",
+      "gz_code_1_0": "ZB10000205007000",
+      "code_type": "ZB",
+      "new_in_2025": false,
+      "official_has_kp_detail": false,
+      "knowledge_points": 0,
+      "has_checker": true,
+      "coverage_status": "implemented",
+      "eagle_rule_ids": [
+        "ZB-007"
+      ],
+      "handler": "batch_rate",
+      "status": "checker_only"
+    },
+    {
+      "seq": 63,
+      "rule_name": "非计划再入院率统计",
+      "level1": "管理类",
+      "level2": "统计指标监测类",
+      "gz_code_1_0": "ZB10000205008000",
+      "code_type": "ZB",
+      "new_in_2025": false,
+      "official_has_kp_detail": false,
+      "knowledge_points": 0,
+      "has_checker": true,
+      "coverage_status": "implemented",
+      "eagle_rule_ids": [
+        "ZB-008"
+      ],
+      "handler": "batch_rate",
+      "status": "checker_only"
+    },
+    {
+      "seq": 64,
+      "rule_name": "药品与医疗服务项目不符",
+      "level1": "医疗类",
+      "level2": "药品合理使用类",
+      "gz_code_1_0": "GZ10000301001000",
+      "code_type": "GZ",
+      "new_in_2025": false,
+      "official_has_kp_detail": false,
+      "knowledge_points": 0,
+      "has_checker": true,
+      "coverage_status": "implemented",
+      "eagle_rule_ids": [
+        "B-202",
+        "T-201"
+      ],
+      "handler": "core_B-202",
+      "status": "checker_only"
+    },
+    {
+      "seq": 65,
+      "rule_name": "药品儿童专用",
+      "level1": "医疗类",
+      "level2": "药品合理使用类",
+      "gz_code_1_0": "GZ10000301002000",
+      "code_type": "GZ",
+      "new_in_2025": false,
+      "official_has_kp_detail": true,
+      "knowledge_points": 366,
+      "has_checker": true,
+      "coverage_status": "implemented",
+      "eagle_rule_ids": [
+        "B-201-IND"
+      ],
+      "handler": "core_B-201-IND",
+      "status": "checker+kp"
+    },
+    {
+      "seq": 66,
+      "rule_name": "药品儿童禁用",
+      "level1": "医疗类",
+      "level2": "药品合理使用类",
+      "gz_code_1_0": "GZ10000301003000",
+      "code_type": "GZ",
+      "new_in_2025": false,
+      "official_has_kp_detail": true,
+      "knowledge_points": 0,
+      "has_checker": true,
+      "coverage_status": "implemented",
+      "eagle_rule_ids": [
+        "AGE-101"
+      ],
+      "handler": "core_AGE-101",
+      "status": "checker_only"
+    },
+    {
+      "seq": 67,
+      "rule_name": "药品区分性别使用",
+      "level1": "医疗类",
+      "level2": "药品合理使用类",
+      "gz_code_1_0": "GZ10000301004000",
+      "code_type": "GZ",
+      "new_in_2025": false,
+      "official_has_kp_detail": true,
+      "knowledge_points": 640,
+      "has_checker": true,
+      "coverage_status": "implemented",
+      "eagle_rule_ids": [
+        "F-001"
+      ],
+      "handler": "core_F-001",
+      "status": "checker+kp"
+    },
+    {
+      "seq": 68,
+      "rule_name": "超说明书用量开药",
+      "level1": "医疗类",
+      "level2": "药品合理使用类",
+      "gz_code_1_0": "GZ10000301005000",
+      "code_type": "GZ",
+      "new_in_2025": false,
+      "official_has_kp_detail": true,
+      "knowledge_points": 0,
+      "has_checker": true,
+      "coverage_status": "implemented",
+      "eagle_rule_ids": [
+        "L3-SAF"
+      ],
+      "handler": "l3_safety_rule",
+      "status": "checker_only"
+    },
+    {
+      "seq": 69,
+      "rule_name": "重复开药",
+      "level1": "医疗类",
+      "level2": "药品合理使用类",
+      "gz_code_1_0": "GZ10000301006000",
+      "code_type": "GZ",
+      "new_in_2025": false,
+      "official_has_kp_detail": true,
+      "knowledge_points": 0,
+      "has_checker": true,
+      "coverage_status": "implemented",
+      "eagle_rule_ids": [
+        "L3-DRX"
+      ],
+      "handler": "l3_duplicate_rx",
+      "status": "checker_only"
+    },
+    {
+      "seq": 70,
+      "rule_name": "超说明书适应症用药",
+      "level1": "医疗类",
+      "level2": "药品合理使用类",
+      "gz_code_1_0": "GZ10000301007000",
+      "code_type": "GZ",
+      "new_in_2025": false,
+      "official_has_kp_detail": true,
+      "knowledge_points": 0,
+      "has_checker": true,
+      "coverage_status": "implemented",
+      "eagle_rule_ids": [
+        "B-201-IND"
+      ],
+      "handler": "core_B-201-IND",
+      "status": "checker_only"
+    },
+    {
+      "seq": 71,
+      "rule_name": "药品禁忌症",
+      "level1": "医疗类",
+      "level2": "药品合理使用类",
+      "gz_code_1_0": "GZ10000301008000",
+      "code_type": "GZ",
+      "new_in_2025": false,
+      "official_has_kp_detail": true,
+      "knowledge_points": 0,
+      "has_checker": true,
+      "coverage_status": "implemented",
+      "eagle_rule_ids": [
+        "T-201"
+      ],
+      "handler": "core_T-201",
+      "status": "checker_only"
+    },
+    {
+      "seq": 72,
+      "rule_name": "老年人用药安全",
+      "level1": "医疗类",
+      "level2": "药品合理使用类",
+      "gz_code_1_0": "GZ10000301009000",
+      "code_type": "GZ",
+      "new_in_2025": false,
+      "official_has_kp_detail": true,
+      "knowledge_points": 0,
+      "has_checker": true,
+      "coverage_status": "implemented",
+      "eagle_rule_ids": [
+        "T-205"
+      ],
+      "handler": "core_T-205",
+      "status": "checker_only"
+    },
+    {
+      "seq": 73,
+      "rule_name": "妊娠期及哺乳期用药安全",
+      "level1": "医疗类",
+      "level2": "药品合理使用类",
+      "gz_code_1_0": "GZ10000301010000",
+      "code_type": "GZ",
+      "new_in_2025": false,
+      "official_has_kp_detail": true,
+      "knowledge_points": 0,
+      "has_checker": true,
+      "coverage_status": "implemented",
+      "eagle_rule_ids": [
+        "L3-SAF"
+      ],
+      "handler": "l3_safety_rule",
+      "status": "checker_only"
+    },
+    {
+      "seq": 74,
+      "rule_name": "药品相互作用",
+      "level1": "医疗类",
+      "level2": "药品合理使用类",
+      "gz_code_1_0": "GZ10000301011000",
+      "code_type": "GZ",
+      "new_in_2025": false,
+      "official_has_kp_detail": true,
+      "knowledge_points": 0,
+      "has_checker": true,
+      "coverage_status": "implemented",
+      "eagle_rule_ids": [
+        "L3-SAF"
+      ],
+      "handler": "l3_safety_rule",
+      "status": "checker_only"
+    },
+    {
+      "seq": 75,
+      "rule_name": "中药饮片配伍禁忌",
+      "level1": "医疗类",
+      "level2": "药品合理使用类",
+      "gz_code_1_0": "GZ10000301012000",
+      "code_type": "GZ",
+      "new_in_2025": false,
+      "official_has_kp_detail": true,
+      "knowledge_points": 0,
+      "has_checker": true,
+      "coverage_status": "implemented",
+      "eagle_rule_ids": [
+        "L3-TCM"
+      ],
+      "handler": "l3_tcm_usage",
+      "status": "checker_only"
+    },
+    {
+      "seq": 76,
+      "rule_name": "中药饮片超大处方",
+      "level1": "医疗类",
+      "level2": "药品合理使用类",
+      "gz_code_1_0": null,
+      "code_type": null,
+      "new_in_2025": true,
+      "official_has_kp_detail": true,
+      "knowledge_points": 0,
+      "has_checker": false,
+      "coverage_status": "roadmap",
+      "eagle_rule_ids": [],
+      "handler": null,
+      "status": "blank"
+    },
+    {
+      "seq": 77,
+      "rule_name": "中药饮片超量上传",
+      "level1": "医疗类",
+      "level2": "药品合理使用类",
+      "gz_code_1_0": null,
+      "code_type": null,
+      "new_in_2025": true,
+      "official_has_kp_detail": true,
+      "knowledge_points": 0,
+      "has_checker": false,
+      "coverage_status": "roadmap",
+      "eagle_rule_ids": [],
+      "handler": null,
+      "status": "blank"
+    },
+    {
+      "seq": 78,
+      "rule_name": "无指征检验检查",
+      "level1": "医疗类",
+      "level2": "医疗服务项目合理使用类",
+      "gz_code_1_0": "GZ10000302001000",
+      "code_type": "GZ",
+      "new_in_2025": false,
+      "official_has_kp_detail": true,
+      "knowledge_points": 0,
+      "has_checker": true,
+      "coverage_status": "implemented",
+      "eagle_rule_ids": [
+        "A-108",
+        "IMG-301"
+      ],
+      "handler": "core_A-108",
+      "status": "checker_only"
+    },
+    {
+      "seq": 79,
+      "rule_name": "无指征治疗",
+      "level1": "医疗类",
+      "level2": "医疗服务项目合理使用类",
+      "gz_code_1_0": "GZ10000302002000",
+      "code_type": "GZ",
+      "new_in_2025": false,
+      "official_has_kp_detail": true,
+      "knowledge_points": 0,
+      "has_checker": true,
+      "coverage_status": "implemented",
+      "eagle_rule_ids": [
+        "M-301"
+      ],
+      "handler": "core_M-301",
+      "status": "checker_only"
+    },
+    {
+      "seq": 80,
+      "rule_name": "医疗服务项目儿童专用",
+      "level1": "医疗类",
+      "level2": "医疗服务项目合理使用类",
+      "gz_code_1_0": "GZ10000302003000",
+      "code_type": "GZ",
+      "new_in_2025": false,
+      "official_has_kp_detail": true,
+      "knowledge_points": 30,
+      "has_checker": true,
+      "coverage_status": "implemented",
+      "eagle_rule_ids": [
+        "F-002"
+      ],
+      "handler": "core_F-002",
+      "status": "checker+kp"
+    },
+    {
+      "seq": 81,
+      "rule_name": "医疗服务项目区分性别使用",
+      "level1": "医疗类",
+      "level2": "医疗服务项目合理使用类",
+      "gz_code_1_0": "GZ10000302004000",
+      "code_type": "GZ",
+      "new_in_2025": false,
+      "official_has_kp_detail": true,
+      "knowledge_points": 391,
+      "has_checker": true,
+      "coverage_status": "implemented",
+      "eagle_rule_ids": [
+        "F-001"
+      ],
+      "handler": "core_F-001",
+      "status": "checker+kp"
+    },
+    {
+      "seq": 82,
+      "rule_name": "医疗服务项目禁忌症",
+      "level1": "医疗类",
+      "level2": "医疗服务项目合理使用类",
+      "gz_code_1_0": "GZ10000302005000",
+      "code_type": "GZ",
+      "new_in_2025": false,
+      "official_has_kp_detail": true,
+      "knowledge_points": 0,
+      "has_checker": true,
+      "coverage_status": "implemented",
+      "eagle_rule_ids": [
+        "ICU-301"
+      ],
+      "handler": "core_ICU-301",
+      "status": "checker_only"
+    },
+    {
+      "seq": 83,
+      "rule_name": "医疗服务项目超适应症使用",
+      "level1": "医疗类",
+      "level2": "医疗服务项目合理使用类",
+      "gz_code_1_0": "GZ10000302006000",
+      "code_type": "GZ",
+      "new_in_2025": false,
+      "official_has_kp_detail": true,
+      "knowledge_points": 0,
+      "has_checker": true,
+      "coverage_status": "implemented",
+      "eagle_rule_ids": [
+        "B-201-IND"
+      ],
+      "handler": "core_B-201-IND",
+      "status": "checker_only"
+    },
+    {
+      "seq": 84,
+      "rule_name": "医用耗材与医疗服务项目不符",
+      "level1": "医疗类",
+      "level2": "医用耗材合理使用类",
+      "gz_code_1_0": "GZ10000303001000",
+      "code_type": "GZ",
+      "new_in_2025": false,
+      "official_has_kp_detail": false,
+      "knowledge_points": 0,
+      "has_checker": true,
+      "coverage_status": "implemented",
+      "eagle_rule_ids": [
+        "A-107"
+      ],
+      "handler": "core_A-107",
+      "status": "checker_only"
+    },
+    {
+      "seq": 85,
+      "rule_name": "医用耗材与科室不符",
+      "level1": "医疗类",
+      "level2": "医用耗材合理使用类",
+      "gz_code_1_0": "GZ10000303002000",
+      "code_type": "GZ",
+      "new_in_2025": false,
+      "official_has_kp_detail": false,
+      "knowledge_points": 0,
+      "has_checker": true,
+      "coverage_status": "implemented",
+      "eagle_rule_ids": [
+        "A-108"
+      ],
+      "handler": "core_A-108",
+      "status": "checker_only"
+    },
+    {
+      "seq": 86,
+      "rule_name": "医用耗材数量超标",
+      "level1": "医疗类",
+      "level2": "医用耗材合理使用类",
+      "gz_code_1_0": "GZ10000303003000",
+      "code_type": "GZ",
+      "new_in_2025": false,
+      "official_has_kp_detail": false,
+      "knowledge_points": 0,
+      "has_checker": true,
+      "coverage_status": "implemented",
+      "eagle_rule_ids": [
+        "A-107"
+      ],
+      "handler": "core_A-107",
+      "status": "checker_only"
+    },
+    {
+      "seq": 87,
+      "rule_name": "医用耗材与性别不符",
+      "level1": "医疗类",
+      "level2": "医用耗材合理使用类",
+      "gz_code_1_0": null,
+      "code_type": null,
+      "new_in_2025": true,
+      "official_has_kp_detail": true,
+      "knowledge_points": 0,
+      "has_checker": false,
+      "coverage_status": "roadmap",
+      "eagle_rule_ids": [],
+      "handler": null,
+      "status": "blank"
+    },
+    {
+      "seq": 88,
+      "rule_name": "医用耗材限疾病使用",
+      "level1": "医疗类",
+      "level2": "医用耗材合理使用类",
+      "gz_code_1_0": null,
+      "code_type": null,
+      "new_in_2025": true,
+      "official_has_kp_detail": true,
+      "knowledge_points": 0,
+      "has_checker": false,
+      "coverage_status": "roadmap",
+      "eagle_rule_ids": [],
+      "handler": null,
+      "status": "blank"
+    }
+  ]
+}
