@@ -22,6 +22,9 @@ input[type=text]{width:100%}
 .field label{display:block;font-weight:600;color:#41556b;margin-bottom:3px}
 .chk{display:flex;align-items:center;gap:8px;padding:8px 10px;background:#fff8e6;border:1px solid #f0d488;border-radius:5px}
 .his-actions{padding:10px 14px;display:flex;gap:10px;border-top:1px solid #b9cadc;background:#eef3f9;align-items:center}
+.yy-dock{position:fixed;right:20px;bottom:20px;width:420px;max-height:80vh;overflow:auto;z-index:2147483647;background:#fff;border:1px solid #d3dce6;border-radius:12px;box-shadow:0 18px 50px rgba(10,30,60,.32)}
+.yy-dock.hidden{display:none}
+.yy-dock-x{position:absolute;top:7px;right:9px;z-index:3;border:0;background:transparent;color:#98a6b5;font-size:18px;cursor:pointer;line-height:1}
 button{padding:6px 18px;border:1px solid #2c5788;background:linear-gradient(#4a7fb5,#33608f);color:#fff;cursor:pointer;border-radius:3px;font-size:13px}
 button.ghost{background:#fff;color:#2c5788}
 .note{font-size:11px;color:#6b7f93;padding:4px 14px 12px}
@@ -61,7 +64,7 @@ a{color:#2c5788}
     <span style="flex:1"></span>
     <a href="/plugin-dashboard.html" style="font-size:12px">院端运营看板 →</a>
   </div>
-  <div id="result"></div>
+  <div id="yy-dock" class="yy-dock hidden"><button type="button" id="yy-dock-x" class="yy-dock-x" title="收起">×</button><div id="result"></div></div>
   <div class="note">⚠ 分组结果来自<b>演示子集数据表</b>(CHS-DRG 2.0,仅覆盖肺炎 J12–J18 示范病种,非全量分组器;费率 ¥8500/权重为虚构脱敏演示值)。编码员在提交病案首页编码前校验:主诊断按重症编码但病历无重症依据 → 鹰眼当场提示高套 + 实施细则第三十五条(一)"两病种支付标准差额"(复用 DRG 分组器)。把 D-401 高套从事后翻账前移到编码桌。<b>整改语义</b>:采纳=把编重了的主诊断更正到病历实际支持的组(J15.901→J15.900),差额同步少结、更正事件入台账留痕——不是"改病历首页两个字骗过校验"。真实落地的最终把关仍是病历核验+首页变更留痕。命中处置与开单、结算共用<b>同一事前台账</b>,汇入院端看板与监管预警。</div>
 </div>
 <script src="/plugin/yingyan-disposition.js"></script>
@@ -88,9 +91,11 @@ async function runCoderCheck(){
   };
   return fetch('/api/precheck/drg', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(payload) }).then(x=>x.json());
 }
+document.getElementById('yy-dock-x').onclick = function(){ document.getElementById('yy-dock').classList.add('hidden'); document.getElementById('result').innerHTML=''; };
 document.getElementById('btnCheck').onclick = async function(){
   var r = await runCoderCheck();
   var patient = { sex: document.querySelector('[data-field="sex"]').textContent, age: parseInt(document.querySelector('[data-field="age"]').textContent), dept: '病案科', diagnosis: document.getElementById('dxName').value };
+  document.getElementById('yy-dock').classList.remove('hidden');
   window.YingyanDisposition.renderDisposition('#result', r, {
     engineBase:'', source:'coder', patient: patient,
     heedLabel:'采纳建议·更正编码到病历实际支持组(ES35)',

@@ -1,0 +1,118 @@
+/* ============================================================
+   鹰眼 · 仿真宿主外壳样式库 plugin-host.css
+   给"插件形态"演示用：先把用户真实的工作软件外壳仿真出来
+   （Excel 表格 / 规则管理后台 / 飞检文件夹 / 文档 / POS），
+   再由 plugin-overlay.js 的鹰眼浮窗贴上去。
+   宿主刻意做成"第三方软件"观感，与鹰眼工具箱设计体系区隔——
+   这样浮窗贴上来才有"插件套在别人系统上"的说服力。
+   ============================================================ */
+
+/* ---------- 通用桌面底 + 窗口 chrome ---------- */
+.host-desk{min-height:100vh;background:#c8d2dc;font-family:"Microsoft YaHei","PingFang SC",sans-serif;padding:22px;color:#1f2d3d}
+.host-topbar{max-width:1180px;margin:0 auto 12px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.host-topbar .back{font-size:12.5px;color:#33475b;text-decoration:none;background:#fff;border:1px solid #b9c6d3;border-radius:8px;padding:6px 12px;font-weight:700;white-space:nowrap}
+.host-topbar .back:hover{border-color:#8fa3b6}
+.host-topbar .hint{font-size:12px;color:#5b6d82}
+.hostwin{max-width:1180px;margin:0 auto;background:#f3f5f8;border:1px solid #9aa9b8;border-radius:8px;overflow:hidden;box-shadow:0 8px 30px rgba(20,40,70,.18)}
+.hostwin-bar{display:flex;align-items:center;gap:8px;padding:7px 12px;background:linear-gradient(#e9edf2,#dde3ea);border-bottom:1px solid #c2ccd7}
+.hostwin-bar .dots{display:flex;gap:6px}
+.hostwin-bar .dots i{width:11px;height:11px;border-radius:50%;display:block}
+.hostwin-bar .dots .r{background:#ff5f57}.hostwin-bar .dots .y{background:#febc2e}.hostwin-bar .dots .g{background:#28c840}
+.hostwin-bar .title{font-size:12.5px;color:#41556b;font-weight:700}
+.hostwin-bar .title .file{color:#1f7a44}
+.hostwin-bar .spacer{flex:1}
+.hostwin-bar .badge{font-size:11px;color:#5b6d82;background:#fff;border:1px solid #c9d4df;border-radius:4px;padding:2px 8px}
+
+/* ---------- Excel / WPS 表格宿主 ---------- */
+.xl-ribbon{display:flex;gap:2px;padding:4px 10px 0;background:#f6f8fb;border-bottom:1px solid #dbe2ea;font-size:12.5px}
+.xl-ribbon .tab{padding:5px 12px;color:#5b6d82;border:1px solid transparent;border-bottom:none;border-radius:5px 5px 0 0;cursor:default}
+.xl-ribbon .tab.on{background:#fff;color:#1f7a44;border-color:#dbe2ea;font-weight:700}
+.xl-tools{display:flex;align-items:center;gap:10px;padding:6px 12px;background:#fff;border-bottom:1px solid #e3e9f0;color:#7a8ba0;font-size:12px}
+.xl-tools .grp{display:flex;align-items:center;gap:6px;padding-right:10px;border-right:1px solid #eef2f6}
+.xl-tools b{color:#41556b}
+.xl-formula{display:flex;align-items:stretch;border-bottom:1px solid #dbe2ea;font-size:12.5px}
+.xl-namebox{width:88px;padding:5px 8px;border-right:1px solid #dbe2ea;color:#41556b;font-family:"SF Mono",Menlo,monospace;background:#fafbfc;display:flex;align-items:center}
+.xl-fx{width:26px;text-align:center;color:#98a6b5;border-right:1px solid #dbe2ea;background:#fafbfc;display:flex;align-items:center;justify-content:center;font-style:italic}
+.xl-formula .cell-ref{flex:1;padding:5px 10px;color:#33475b;background:#fff}
+.xl-grid-wrap{overflow:auto;max-height:60vh;background:#fff}
+table.xl{border-collapse:collapse;font-size:12.5px;width:100%;table-layout:fixed}
+table.xl th,table.xl td{border:1px solid #dfe5ec;padding:0;height:26px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+/* 列字母行 & 行号列：Excel 灰头 */
+table.xl thead th{background:#f1f4f8;color:#8090a2;font-weight:600;text-align:center;height:22px;position:sticky;top:0;z-index:2}
+table.xl td.rownum,table.xl th.corner{background:#f1f4f8;color:#8090a2;text-align:center;width:38px;font-weight:600;position:sticky;left:0;z-index:1}
+table.xl th.corner{z-index:3}
+/* 表头行（数据的第 1 行，含中文字段名）加粗 */
+table.xl tr.head td{background:#eef4fb;font-weight:700;color:#33475b;text-align:center}
+table.xl td.c{padding:3px 8px}
+table.xl td.num{text-align:right;font-family:"SF Mono",Menlo,monospace;padding-right:10px}
+table.xl td.mono{font-family:"SF Mono",Menlo,monospace;color:#41556b}
+table.xl tr:hover td.c{background:#f5f9ff}
+/* 被鹰眼命中的行高亮（插件"读表"后标注） */
+table.xl tr.hit-a td.c{background:#fdecea!important}
+table.xl tr.hit-b td.c{background:#fff7e6!important}
+table.xl tr.flag{position:relative}
+table.xl td.tick{width:22px;text-align:center}
+.xl-status{display:flex;align-items:center;gap:14px;padding:5px 12px;background:#f1f4f8;border-top:1px solid #dbe2ea;font-size:11.5px;color:#7a8ba0}
+.xl-status .spacer{flex:1}
+
+/* 扫描线：插件"读取当前表格"时短暂出现 */
+.host-scanline{position:absolute;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,rgba(20,184,166,.85),transparent);animation:hostscan 1.1s ease-in-out;pointer-events:none;z-index:5}
+@keyframes hostscan{0%{top:0;opacity:0}10%{opacity:1}100%{top:100%;opacity:0}}
+
+/* ---------- 规则管理后台宿主 ---------- */
+.admin-shell{max-width:1180px;margin:0 auto;background:#fff;border:1px solid #9aa9b8;border-radius:8px;overflow:hidden;box-shadow:0 8px 30px rgba(20,40,70,.18);display:grid;grid-template-columns:190px 1fr}
+.admin-side{background:#1e2b3a;color:#c3d0dd;padding:14px 0;font-size:13px}
+.admin-side .brand{padding:0 16px 12px;font-weight:700;color:#fff;border-bottom:1px solid #2c3e52;margin-bottom:8px}
+.admin-side a{display:block;padding:9px 16px;color:#a9bacb;text-decoration:none}
+.admin-side a.on{background:#2c3e52;color:#fff;border-left:3px solid #29a3a3}
+.admin-main{padding:0}
+.admin-head{padding:12px 18px;border-bottom:1px solid #e3e9f0;display:flex;align-items:center;gap:10px;background:#f8fafc}
+.admin-head b{font-size:14px;color:#1f2d3d}
+.admin-body{padding:18px}
+.admin-field{display:grid;grid-template-columns:150px 1fr;gap:12px;align-items:center;padding:11px 0;border-bottom:1px solid #eef2f6}
+.admin-field label{color:#5b6d82;font-size:13px}
+.admin-field input[type=range]{width:100%}
+.admin-field .val{font-family:"SF Mono",Menlo,monospace;font-weight:700;color:#1f7a44}
+.admin-btn{margin-top:14px;padding:8px 18px;border:1px solid #29a3a3;background:#29a3a3;color:#fff;border-radius:6px;font-size:13px;cursor:pointer;font-family:inherit}
+
+/* ---------- 药店 POS / 结算终端宿主 ---------- */
+.pos-shell{max-width:560px;margin:0 auto;background:#0f2233;border:1px solid #21384c;border-radius:12px;overflow:hidden;box-shadow:0 8px 30px rgba(20,40,70,.28);color:#cfe0ee}
+.pos-head{padding:10px 16px;background:linear-gradient(#16324a,#102437);display:flex;align-items:center;gap:10px;border-bottom:1px solid #21384c}
+.pos-head b{font-size:14px;color:#fff}
+.pos-head .tag{margin-left:auto;font-size:11px;background:#16324a;color:#9cc;padding:2px 8px;border-radius:4px}
+.pos-screen{padding:18px 16px;font-family:"SF Mono",Menlo,monospace}
+.pos-line{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px dashed #21384c;font-size:13px}
+.pos-line .nm{color:#e6eef6}.pos-line .amt{color:#7fd4c4}
+.pos-scan{margin-top:14px;background:#0a1a28;border:1px solid #21384c;border-radius:8px;padding:12px}
+.pos-scan label{display:block;font-size:11px;color:#7f95a8;margin-bottom:6px}
+.pos-scan .row{display:flex;gap:8px}
+.pos-scan input{flex:1;background:#06131f;border:1px solid #2a465e;border-radius:6px;padding:9px 10px;color:#e6eef6;font-family:inherit;font-size:13px;letter-spacing:.04em}
+.pos-scan button{background:#1f7a44;border:0;border-radius:6px;color:#fff;font-weight:700;padding:9px 16px;cursor:pointer;font-family:inherit}
+.pos-foot{padding:8px 16px;font-size:11px;color:#5f7688;border-top:1px solid #21384c}
+
+/* ---------- 文书 / Word 编辑器宿主 ---------- */
+.doc-shell{max-width:960px;margin:0 auto;background:#fff;border:1px solid #9aa9b8;border-radius:8px;overflow:hidden;box-shadow:0 8px 30px rgba(20,40,70,.18)}
+.doc-ribbon{display:flex;gap:2px;padding:4px 10px 0;background:#f6f8fb;border-bottom:1px solid #dbe2ea;font-size:12.5px}
+.doc-ribbon .tab{padding:5px 12px;color:#5b6d82;border-radius:5px 5px 0 0;cursor:default}
+.doc-ribbon .tab.on{background:#fff;color:#2b5797;border:1px solid #dbe2ea;border-bottom:none;font-weight:700}
+.doc-tools{display:flex;align-items:center;gap:12px;padding:6px 14px;background:#fff;border-bottom:1px solid #e3e9f0;color:#98a6b5;font-size:12.5px}
+.doc-tools b{color:#41556b;font-weight:700}
+.doc-page{background:#e9edf2;padding:24px;display:flex;justify-content:center}
+.doc-paper{width:100%;max-width:720px;background:#fff;box-shadow:0 2px 12px rgba(20,40,70,.12);padding:44px 56px;min-height:520px;font-size:14px;line-height:1.9;color:#1f2d3d}
+.doc-paper h1{font-size:20px;text-align:center;margin-bottom:6px}
+.doc-paper .docno{text-align:center;color:#7a8ba0;font-size:12.5px;margin-bottom:22px}
+.doc-paper .field{margin:10px 0}
+.doc-paper .field b{color:#33475b}
+.doc-paper .blank{color:#b91c1c;background:#fff5f5;padding:0 4px;border-bottom:1px solid #f0b4b4}
+.doc-caret{display:inline-block;width:1px;height:16px;background:#2b5797;vertical-align:middle;animation:doccaret 1s step-end infinite}
+@keyframes doccaret{50%{opacity:0}}
+
+/* ---------- 文件夹 / 资源管理器宿主 ---------- */
+.fx-shell{max-width:1180px;margin:0 auto;background:#fff;border:1px solid #9aa9b8;border-radius:8px;overflow:hidden;box-shadow:0 8px 30px rgba(20,40,70,.18)}
+.fx-path{display:flex;align-items:center;gap:6px;padding:8px 14px;background:#f4f7fa;border-bottom:1px solid #dbe2ea;font-size:12.5px;color:#41556b;font-family:"SF Mono",Menlo,monospace}
+.fx-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(128px,1fr));gap:8px;padding:16px}
+.fx-item{border:1px solid transparent;border-radius:8px;padding:12px 8px;text-align:center;cursor:default}
+.fx-item:hover{background:#f0f6ff;border-color:#cfe0ee}
+.fx-item .ic{font-size:34px;line-height:1.2}
+.fx-item .nm{font-size:12px;color:#33475b;margin-top:4px;word-break:break-all}
+.fx-item .mt{font-size:10.5px;color:#98a6b5}

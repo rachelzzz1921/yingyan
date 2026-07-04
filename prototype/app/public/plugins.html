@@ -96,6 +96,7 @@
 
   <h2 class="lead-xl">同一个引擎，<span class="r">嵌进院端 HIS</span> 也 <span class="g">嵌进监管 Excel / 飞检文件夹</span>。</h2>
   <p class="sub">用户不一定打开鹰眼大平台（②），但在原有工作流旁边需要小工具。每个工具都不是独立开发的：换一种输入通道 + 换一个输出模板，就是一个新工具，引擎不重写。</p>
+  <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin:2px 0 12px;padding:13px 20px;border-radius:13px;background:linear-gradient(100deg,#0B2A4A,#134E72);color:#fff;box-shadow:0 8px 24px rgba(11,42,74,.22)"><span style="font-size:11px;letter-spacing:.15em;font-weight:700;color:#F5C842;border:1px solid rgba(245,200,66,.55);border-radius:20px;padding:4px 12px;white-space:nowrap;font-family:var(--mono,monospace)">装上就能用</span><b style="font-size:clamp(18px,2.3vw,24px);font-weight:800;letter-spacing:.02em">把医保监管的<span style="color:#F5C842;border-bottom:2px solid rgba(245,200,66,.5)">文件</span>，做成一台<span style="color:#F5C842;border-bottom:2px solid rgba(245,200,66,.5)">能跑的引擎</span>——不动你任何系统，数据不出机。</b></div>
   <div class="creed">同一引擎 · 同一套 KB · G0 零误报 · AI 提供线索支持，最终由人裁定</div>
 
   <!-- ============ 引擎脊柱：为什么这些工具是一个整体 ============ -->
@@ -119,13 +120,13 @@
 
   <!-- ============ 监管侧 ============ -->
   <div id="regulator" class="sect"><b>监管侧 · 小工具箱</b> · 嵌进 Excel / 线索台账 / 飞检材料流程</div>
-  <p class="sect-say">监管人员不一定换平台。三件精做工具答三个问题：<b>先查谁</b>（分诊）、<b>规则怎么定</b>（试算）、<b>查什么带什么</b>（行装包）。每个工具都带 🎬 模拟场景——用一个真实角色的一天来演示。</p>
+  <p class="sect-say">监管人员不一定换平台。三件精做工具答三个问题：<b>先查谁</b>（分诊）、<b>规则怎么定</b>（试算）、<b>查什么带什么</b>（行装包）。每个都是<b>插件形态演示靶站</b>——先仿真你原有的工作界面（Excel 疑点清单 / 规则管理后台 / 飞检文件夹），鹰眼以右下角浮窗贴上来提建议，点靶站里的「🦅 鹰眼助手」即可。</p>
   <div class="flow-strip">
-    <span class="n">1</span><a href="/regulator-triage.html?scenario=1">疑点分诊</a> →
-    <span class="n">2</span><a href="/regulator-threshold.html?scenario=1">阈值试算</a> →
-    <span class="n">3</span><a href="/regulator-fieldkit.html?scenario=1">飞检行装包</a> →
+    <span class="n">1</span><a href="/regulator-triage.html">疑点分诊·Excel</a> →
+    <span class="n">2</span><a href="/regulator-threshold.html">阈值试算·规则后台</a> →
+    <span class="n">3</span><a href="/regulator-fieldkit.html">飞检行装包·文件夹</a> →
     <a href="/agent-chain.html?preview=appeal&case_id=main">申诉批阅（加映）</a>
-    <a class="go red go-chain" href="/regulator-triage.html?scenario=1">▶ 一键连播 2 分钟监管场景链</a>
+    <a class="go red go-chain" href="/regulator-triage.html">▶ 从疑点分诊靶站开始</a>
   </div>
   <div class="cards">
     <div class="card reg1">
@@ -134,10 +135,10 @@
       <h2>疑点分诊器</h2>
       <dl class="spec">
         <div><dt>给谁用</dt><dd>基金监管处 / 线索核查员 / 经办审核负责人</dd></div>
-        <div><dt>嵌入场景</dt><dd>智能监管系统导出的疑点 Excel，第一遍粗筛</dd></div>
-        <div><dt>输入→输出</dt><dd>疑点清单粘贴 / 1000 条演示 → 三档 + 分档依据 + 建议动作</dd></div>
+        <div><dt>宿主仿真</dt><dd>智能监管系统导出的 Excel 疑点清单</dd></div>
+        <div><dt>浮窗做什么</dt><dd>读表 → 三档粗筛 + 优先级写回 H 列 + 分档依据</dd></div>
       </dl>
-      <div class="acts"><a class="go red" href="/regulator-triage.html">进入分诊 →</a><a class="go ghost" href="/regulator-triage.html?scenario=1">🎬 场景</a></div>
+      <div class="acts"><a class="go red" href="/regulator-triage.html">打开 Excel 靶站 →</a></div>
     </div>
     <div class="card reg2">
       <div class="accent"></div><span class="cbadge">精做 ②</span>
@@ -145,10 +146,10 @@
       <h2>规则阈值试算器</h2>
       <dl class="spec">
         <div><dt>给谁用</dt><dd>地方规则管理员 / 信息科 / 飞检筹备组</dd></div>
-        <div><dt>嵌入场景</dt><dd>国家下放阈值参数，地方上会前先试算</dd></div>
-        <div><dt>输入→输出</dt><dd>拖阈值滑块 → 触发量 diff + 误报压力（干净行必须 0）</dd></div>
+        <div><dt>宿主仿真</dt><dd>地方医保「规则管理后台」参数配置页</dd></div>
+        <div><dt>浮窗做什么</dt><dd>拖阈值滑块 → 触发量 diff + 误报压力（干净行必须 0）</dd></div>
       </dl>
-      <div class="acts"><a class="go" href="/regulator-threshold.html">进入试算 →</a><a class="go ghost" href="/regulator-threshold.html?scenario=1">🎬 场景</a></div>
+      <div class="acts"><a class="go" href="/regulator-threshold.html">打开规则后台靶站 →</a></div>
     </div>
     <div class="card reg3">
       <div class="accent"></div><span class="cbadge">精做 ③</span>
@@ -156,10 +157,10 @@
       <h2>飞检行装包生成器</h2>
       <dl class="spec">
         <div><dt>给谁用</dt><dd>飞检组长 / 现场检查员 / 第三方 IT 协查</dd></div>
-        <div><dt>嵌入场景</dt><dd>进场前夜打包标准化材料，人手一份同口径</dd></div>
-        <div><dt>输入→输出</dt><dd>案卷（可从分诊 Top1 直通）→ 疑点清单 + 证据索引 + 任务单五件套</dd></div>
+        <div><dt>宿主仿真</dt><dd>飞检组长笔记本上的案卷材料文件夹</dd></div>
+        <div><dt>浮窗做什么</dt><dd>读文件夹 → 疑点清单 + 证据索引 + 任务单五件套</dd></div>
       </dl>
-      <div class="acts"><a class="go" href="/regulator-fieldkit.html">进入行装包 →</a><a class="go ghost" href="/regulator-fieldkit.html?scenario=1">🎬 场景</a></div>
+      <div class="acts"><a class="go" href="/regulator-fieldkit.html">打开文件夹靶站 →</a></div>
     </div>
   </div>
   <div class="cards" style="margin-top:16px">
@@ -171,7 +172,7 @@
         <div><dt>给谁用</dt><dd>现场检查员，药房货架边扫码即查</dd></div>
         <div><dt>输入→输出</dt><dd>追溯码（单个/批量）→ TRACE-101 重复结算三档</dd></div>
       </dl>
-      <div class="acts"><a class="go" href="/regulator-trace.html">打开 →</a><a class="go ghost" href="/regulator-trace.html?scenario=1">🎬</a></div>
+      <div class="acts"><a class="go" href="/regulator-trace.html">打开 POS 靶站 →</a></div>
     </div>
     <div class="card pv">
       <div class="accent"></div><span class="cbadge prev">预览</span>
@@ -191,7 +192,7 @@
         <div><dt>给谁用</dt><dd>信息科审核员，月报进引擎前先体检</dd></div>
         <div><dt>输入→输出</dt><dd>报送 Excel 粘贴 → 字段缺失 / 编码格式 / 孤儿行</dd></div>
       </dl>
-      <div class="acts"><a class="go" href="/regulator-data-health.html">打开 →</a><a class="go ghost" href="/regulator-data-health.html?scenario=1">🎬</a></div>
+      <div class="acts"><a class="go" href="/regulator-data-health.html">打开报送月表靶站 →</a></div>
     </div>
   </div>
   <div class="cards" style="margin-top:16px;grid-template-columns:1fr 1fr 1fr">
@@ -203,7 +204,7 @@
         <div><dt>给谁用</dt><dd>处罚承办人写呈批表时找同类公开案例</dd></div>
         <div><dt>输入→输出</dt><dd>违规类型关键词 → 公开案例参照 + 历史处理区间（不作裁量）</dd></div>
       </dl>
-      <div class="acts"><a class="go" href="/regulator-cases.html">打开 →</a><a class="go ghost" href="/regulator-cases.html?scenario=1">🎬</a></div>
+      <div class="acts"><a class="go" href="/regulator-cases.html">打开文书靶站 →</a></div>
     </div>
   </div>
 
@@ -275,7 +276,7 @@
   </div>
 
   <div class="foot">
-    <b>在 Pitch 三入口里</b>：① 黄金闭环 · <a href="/?role=audit">② 鹰眼大平台</a> · <b>③ 本页（插件 & 小工具箱）</b>。<br>
+    <b>在 Pitch 三入口里</b>：① 黄金闭环 · <a href="/index.html?role=audit">② 鹰眼大平台</a> · <b>③ 本页（插件 & 小工具箱）</b>。<br>
     <b>院端</b>：「将不合规行为消除在萌芽阶段」——政策原文。<b>监管</b>：不替换监管大系统，在 Excel / 线索台账 / 飞检文件夹旁边用小工具。<br>
     <b>一句话</b>：监管人员不一定换平台——鹰眼把大平台拆成小工具箱：分诊帮第一遍粗筛，试算帮地方定参数，行装包帮现场标准化取证——同一个引擎，换输入和输出就是新工具。
   </div>

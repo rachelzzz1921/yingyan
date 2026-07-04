@@ -3,186 +3,126 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="theme-color" content="#F0F4F8">
-<title>规则阈值试算器 · 鹰眼监管小工具箱</title>
+<meta name="theme-color" content="#c8d2dc">
+<title>规则参数配置 · 地方医保规则管理系统(演示靶站)</title>
 <link rel="icon" type="image/svg+xml" href="/favicon.svg">
-<link rel="stylesheet" href="/toolkit.css">
+<link rel="stylesheet" href="/plugin-host.css">
 <style>
-.grid{display:grid;grid-template-columns:360px 1fr;gap:18px;margin-top:18px}
-@media(max-width:840px){.grid{grid-template-columns:1fr}}
-.range-row{display:grid;grid-template-columns:1fr auto;gap:12px;align-items:center}
-input[type=range]{width:100%}
-.value{font-family:var(--mono);font-weight:800;color:var(--ink2);border:1px solid var(--line);border-radius:9px;padding:7px 10px;background:#F8FAFC}
-.cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
-@media(max-width:700px){.cards{grid-template-columns:1fr}}
+.rule-card{border:1px solid #e3e9f0;border-radius:8px;padding:14px 16px;margin-bottom:12px}
+.rule-card.on{border-color:#29a3a3;box-shadow:0 0 0 2px rgba(41,163,163,.12)}
+.rule-card .rid{font-family:"SF Mono",Menlo,monospace;color:#7a8ba0;font-size:12px}
+.rule-card h3{font-size:15px;margin:2px 0 2px}
+.pill{display:inline-block;font-size:11px;padding:2px 8px;border-radius:20px;background:#eef4fb;color:#33608f;margin-left:6px}
+.trirow{display:flex;align-items:center;gap:14px;margin-top:12px}
+.trirow input[type=range]{flex:1}
+.trirow .val{font-family:"SF Mono",Menlo,monospace;font-weight:800;color:#1f7a44;min-width:38px;text-align:center;font-size:16px}
+.savebar{margin-top:12px;display:flex;gap:10px;align-items:center;color:#7a8ba0;font-size:12px}
 </style>
 </head>
 <body>
-<main class="wrap">
-  <header class="top">
-    <div>
-      <div class="eyebrow">REGULATOR TOOLKIT · 精做 ② THRESHOLD</div>
-      <h1>🎚 规则阈值试算器</h1>
-      <p class="lead">主平台「规则沉淀回放」和「统计指标监测」的能力，换成规则管理员的输入输出：拖一下滑块，先看触发量变化和误报压力，再决定本地参数。国家给地方的是规则自主权，鹰眼给的是试算工具。</p>
-    </div>
-    <div class="top-nav">
-      <a class="back" href="/plugins.html#regulator">← 工具箱</a>
-      <a class="back" href="/home.html">← 三入口</a>
-    </div>
-  </header>
-  <p class="crumb"><a href="/home.html">三入口</a> → <a href="/plugins.html#regulator">③ 插件 & 小工具箱</a> → <b>规则阈值试算器</b></p>
-
-  <nav class="mode">
-    <button data-mode="use">⚡ 直接使用</button>
-    <button data-mode="sc">🎬 模拟场景<span class="tag">监管链 2/3</span></button>
-  </nav>
-
-  <!-- ============ 直接使用 ============ -->
-  <div id="pane-use">
-  <section class="grid">
-    <aside class="panel">
-      <h2 style="font-size:18px;margin-bottom:10px">试算参数</h2>
-      <label for="rule">规则</label>
-      <select class="select" id="rule">
-        <option value="AGE-101">AGE-101 · 未成年用药年龄分层</option>
-        <option value="QTY-901">QTY-901 · 单日数量超常</option>
-        <option disabled>更多规则 · 演示扩展</option>
-      </select>
-      <label for="age">AGE-101 年龄上限</label>
-      <div class="range-row">
-        <input id="age" type="range" min="14" max="21" value="18">
-        <span class="value">18</span>
-      </div>
-      <label for="qty">QTY-901 数量上限</label>
-      <div class="range-row">
-        <input id="qty" type="range" min="20" max="80" value="30">
-        <span class="value">30</span>
-      </div>
-      <div class="actions"><button class="btn primary" type="button" id="btnTrial">运行阈值试算</button></div>
-      <div class="note">拖动滑块即时调用 <code>/api/rules/threshold-trial</code>，在 1000 条演示集上做 before/after diff；干净行新增命中单独计为误报压力。</div>
-    </aside>
-
-    <section class="panel">
-      <h2 style="font-size:18px;margin-bottom:10px">试算结果</h2>
-      <div class="cards">
-        <div class="metric hot"><b id="mDelta">—</b><span>触发量变化</span></div>
-        <div class="metric warn"><b id="mHits">—</b><span>基线 → 试算</span></div>
-        <div class="metric ok"><b id="mFp">—</b><span>疑似误报压力</span></div>
-      </div>
-      <div class="note" id="trialNote">拖动滑块或点「运行阈值试算」。</div>
-      <table class="table" aria-label="阈值试算变化表">
-        <thead><tr><th>行号</th><th>项目</th><th>金额</th><th>变化 / 说明</th></tr></thead>
-        <tbody id="baselineRows">
-          <tr><td colspan="4" class="muted">尚未试算。</td></tr>
-        </tbody>
-      </table>
-    </section>
-  </section>
+<div class="host-desk">
+  <div class="host-topbar">
+    <a class="back" href="/plugins.html#regulator">← 工具箱</a>
+    <a class="back" href="/home.html">← 三入口</a>
+    <span class="hint">演示靶站 · 仿真地方医保局的「规则管理系统」。国家把阈值下放地方自定，规则管理员改参数时，鹰眼以插件浮窗即时试算影响。</span>
   </div>
 
-  <!-- ============ 模拟场景 ============ -->
-  <div id="pane-sc" class="hidden"><div id="scPlayer"></div></div>
-</main>
+  <div class="admin-shell">
+    <aside class="admin-side">
+      <div class="brand">🏛 规则管理系统</div>
+      <a>规则库总览</a>
+      <a class="on">参数配置</a>
+      <a>命中统计</a>
+      <a>下发记录</a>
+      <a>操作日志</a>
+    </aside>
+    <main class="admin-main">
+      <div class="admin-head">
+        <b>参数配置 · 本地自定义规则阈值</b>
+        <span class="spacer" style="flex:1"></span>
+        <span style="font-size:12px;color:#7a8ba0">当前操作员：规则管理员 · 小李</span>
+      </div>
+      <div class="admin-body">
+        <div class="rule-card on" id="ruleAge">
+          <div class="rid">AGE-101 <span class="pill">未成年用药年龄分层</span><span class="pill">国家下放·地方自定</span></div>
+          <h3>未成年人用药年龄上限（minor_age）</h3>
+          <p style="color:#7a8ba0;font-size:12.5px">低于此年龄的患者使用限成人药品时命中。定松了漏检，定紧了误报压医院。</p>
+          <div class="trirow">
+            <span style="font-size:12px;color:#7a8ba0">14</span>
+            <input type="range" id="ageRange" min="14" max="21" value="18">
+            <span style="font-size:12px;color:#7a8ba0">21</span>
+            <span class="val" id="ageVal">18</span>
+          </div>
+          <div class="savebar">
+            <button class="admin-btn" id="btnSave">保存并下发</button>
+            <span id="saveHint">拖动滑块调整阈值 —— 鹰眼会即时试算影响</span>
+          </div>
+        </div>
 
-<script src="/toolkit.js"></script>
+        <div class="rule-card" style="opacity:.6">
+          <div class="rid">QTY-901 <span class="pill">单日数量超常</span></div>
+          <h3>单日数量上限（qty_limit）</h3>
+          <p style="color:#7a8ba0;font-size:12.5px">演示扩展 · 与 AGE-101 同一套试算逻辑。</p>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+
+<script src="/plugin-overlay.js"></script>
 <script>
-const $ = TK.$;
-for (const input of document.querySelectorAll('input[type="range"]')) {
-  input.addEventListener('input', () => {
-    input.parentElement.querySelector('.value').textContent = input.value;
-  });
-}
-async function apiTrial(payload) {
-  const r = await fetch('/api/rules/threshold-trial', {
-    method: 'POST', headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(payload),
-  }).then(x => x.json());
-  if (r.error) throw new Error(r.error);
+function esc(v){return String(v==null?'':v).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
+function money(n){return Number(n||0).toLocaleString('zh-CN');}
+var range=document.getElementById('ageRange'), val=document.getElementById('ageVal');
+var yy=null, timer=null;
+
+async function trial(v){
+  var r=await fetch('/api/rules/threshold-trial',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({rule_id:'AGE-101',param_key:'minor_age',param_value:Number(v)})}).then(function(x){return x.json();});
+  if(r.error) throw new Error(r.error);
   return r;
 }
-function activePayload() {
-  const rule = $('#rule').value;
-  if (rule === 'AGE-101') return { rule_id: rule, param_key: 'minor_age', param_value: Number($('#age').value) };
-  return { rule_id: rule, param_key: 'qty_limit', param_value: Number($('#qty').value) };
+function render(r){
+  var v=Number(range.value);
+  if(!yy || !document.getElementById('yy-overlay')) yy=YY.panel({title:'鹰眼 · 规则阈值助手', sub:'', accent:'#0E9384'});
+  yy.sub('检测到 AGE-101 阈值改动：18 → '+v+' 岁，已在历史数据上试算');
+  var fp=r.new_false_positives||0;
+  yy.chips([{text:'Δ '+(r.delta>=0?'+':'')+r.delta,bg:'#0E9384'},{text:'误报 '+fp,bg:fp>0?'#b91c1c':'#0a7a4b'}]);
+  var changed=(r.cases_changed||[]).slice(0,6).map(function(c){
+    var red=/减少/.test(c.change);
+    return '<div style="padding:8px 14px;border-bottom:1px solid #f2f5f9;display:flex;gap:8px;align-items:center">'+
+      '<span style="font-size:11px;font-weight:800;padding:1px 7px;border-radius:20px;background:'+(red?'#eef4fb':'#fdecea')+';color:'+(red?'#33608f':'#b91c1c')+'">'+esc(c.change)+'</span>'+
+      '<span style="flex:1">'+esc(c.item_name)+'<br><span style="font-size:11px;color:#98a6b5">'+esc(c.dept)+' · '+esc(c.doctor)+(c.is_truth?' · <b style="color:#1f7a44">命中真值</b>':'')+'</span></span>'+
+      '<span style="font-family:monospace;color:#41556b">¥'+money(c.amount)+'</span></div>';
+  }).join('');
+  yy.body(
+    '<div style="padding:12px 14px;background:#f8fafc;border-bottom:1px solid #edf1f6;display:flex;gap:8px">'+
+      card('基线命中', r.baseline_hits, '#7a8ba0')+card('试算命中', r.trial_hits, '#0E9384')+
+      card('误报压力', fp, fp>0?'#b91c1c':'#0a7a4b')+
+    '</div>'+
+    '<div style="padding:10px 14px;font-size:12.5px;color:'+(fp>0?'#b91c1c':'#0a7a4b')+';border-bottom:1px solid #edf1f6">'+
+      (fp>0?'⚠ 干净行新增命中 '+fp+' 条 —— 该阈值不建议直接下发':'✓ 干净行零新增命中(与主平台 G0 同一条红线)')+'</div>'+
+    (changed||'<div style="padding:14px;color:#98a6b5">该阈值变化未改变当前演示集命中。</div>'));
+  yy.actions([{label:'把试算结论存入下发说明',kind:'primary',onClick:function(){ document.getElementById('saveHint').textContent='已附试算：'+r.conclusion; yy.close(); }}]);
+  yy.footer('历史回放试算 · 不改引擎 · 结论口径：'+r.conclusion);
 }
-let timer = null;
-async function runTrial() {
-  const rows = $('#baselineRows');
-  const note = $('#trialNote');
-  note.textContent = '正在试算…';
-  try {
-    const r = await apiTrial(activePayload());
-    $('#mDelta').textContent = (r.delta >= 0 ? '+' : '') + r.delta;
-    $('#mHits').textContent = `${r.baseline_hits} → ${r.trial_hits}`;
-    $('#mFp').textContent = r.new_false_positives;
-    rows.innerHTML = (r.cases_changed || []).slice(0, 12).map(row => `
-      <tr>
-        <td>${TK.esc(row.row_id)}</td>
-        <td>${TK.esc(row.item_name)}<br><span class="muted">${TK.esc(row.dept)} · ${TK.esc(row.doctor)}</span></td>
-        <td class="num">${TK.money(row.amount)}</td>
-        <td>${TK.esc(row.change)} · ${TK.esc(row.note)}</td>
-      </tr>`).join('') || '<tr><td colspan="4" class="muted">阈值变化未改变当前演示集命中。</td></tr>';
-    note.textContent = r.conclusion;
-  } catch (e) {
-    rows.innerHTML = `<tr><td colspan="4" class="muted">读取失败：${TK.esc(e.message)}</td></tr>`;
-    note.textContent = '读取失败。请确认本地引擎已启动。';
-  }
+function card(label,n,color){
+  return '<div style="flex:1;background:#fff;border:1px solid #e3e9f0;border-radius:8px;padding:8px 10px;text-align:center">'+
+    '<div style="font-size:20px;font-weight:800;color:'+color+';font-family:monospace">'+esc(n)+'</div>'+
+    '<div style="font-size:11px;color:#7a8ba0">'+esc(label)+'</div></div>';
 }
-function scheduleTrial() { clearTimeout(timer); timer = setTimeout(runTrial, 180); }
-$('#btnTrial').addEventListener('click', runTrial);
-$('#rule').addEventListener('change', runTrial);
-$('#age').addEventListener('input', scheduleTrial);
-$('#qty').addEventListener('input', scheduleTrial);
-
-/* ---------- 模拟场景：地方规则参数怎么定 ---------- */
-function trialCard(r) {
-  return `<div class="cards" style="margin-top:0">
-    <div class="metric hot"><b>${(r.delta >= 0 ? '+' : '') + TK.esc(r.delta)}</b><span>触发量变化</span></div>
-    <div class="metric warn"><b>${TK.esc(r.baseline_hits)} → ${TK.esc(r.trial_hits)}</b><span>基线 → 试算</span></div>
-    <div class="metric ${r.new_false_positives > 0 ? 'hot' : 'ok'}"><b>${TK.esc(r.new_false_positives)}</b><span>疑似误报压力</span></div>
-  </div>
-  <p class="msg" style="margin-top:10px;color:var(--muted)">${TK.esc(r.conclusion || '')}</p>`;
+async function fire(){
+  try{ render(await trial(range.value)); }
+  catch(e){ if(yy) yy.body('<div style="padding:16px;color:#b91c1c">试算失败:'+esc(e.message)+'</div>'); }
 }
-TK.scenario({
-  mount: '#scPlayer',
-  role: '规则管理员 · 小李',
-  where: '周二 14:30 · 地方医保局信息科',
-  text: '国家政策把 AGE-101（未成年用药年龄分层）的具体阈值下放地方自定。定 16 还是 18？定松了漏，定紧了误报压医院。以前只能拍脑袋上会；现在小李先在历史数据上试算一遍，把 diff 带上会。',
-  steps: [
-    {
-      id: 'base', title: '先看基线：现行 18 岁的触发量', sub: 'AGE-101 · minor_age = 18', btn: '跑基线',
-      say: '这是现行参数下的命中水位——所有试算都以它为参照。',
-      run: async (ctx) => {
-        ctx.base = await apiTrial({ rule_id: 'AGE-101', param_key: 'minor_age', param_value: 18 });
-        return trialCard(ctx.base);
-      },
-    },
-    {
-      id: 'tight', title: '试算收紧：如果本地定 16 岁', sub: 'AGE-101 · minor_age = 16', btn: '试算 16 岁',
-      say: '拖一下滑块两秒出结果：触发量少了多少、哪些行退出命中，一条条列出来——不是拍脑袋，是回放。',
-      run: async (ctx) => {
-        ctx.tight = await apiTrial({ rule_id: 'AGE-101', param_key: 'minor_age', param_value: 16 });
-        const rows = (ctx.tight.cases_changed || []).slice(0, 6).map(row =>
-          `<tr><td>${TK.esc(row.row_id)}</td><td>${TK.esc(row.item_name)}</td><td class="num">${TK.money(row.amount)}</td><td>${TK.esc(row.change)} · ${TK.esc(row.note)}</td></tr>`).join('');
-        return trialCard(ctx.tight) + (rows ? `<table class="table"><thead><tr><th>行号</th><th>项目</th><th>金额</th><th>变化</th></tr></thead><tbody>${rows}</tbody></table>` : '');
-      },
-    },
-    {
-      id: 'fp', title: '关键一问：误报压力是多少', sub: '干净行新增命中 = 误报压力 · 必须单独计数', btn: '核对误报压力',
-      say: '地方最怕的不是漏，是误报压垮医院申诉通道。干净案卷新增命中必须为 0 才敢上会——这条红线和主平台 G0 是同一条。',
-      run: async (ctx) => {
-        if (!ctx.tight) throw new Error('请先执行第 2 步');
-        const fp = ctx.tight.new_false_positives || 0;
-        return `<div class="tier ${fp > 0 ? 'a' : 'c'}"><b>${fp > 0 ? '⚠ 新增误报 ' + fp + ' 条 —— 该参数不建议直接上会' : '✓ 疑似误报压力 0 —— 干净行未新增命中'}</b>
-          <span>结论口径：「阈值收紧 → 触发减少 ${TK.esc(Math.abs(ctx.tight.delta))}，误报压力 ${fp}」。带着这句和 diff 表上会，规则参数就不再是拍脑袋。</span></div>`;
-      },
-    },
-  ],
-  finale: {
-    text: '规则参数定好了，下一站：飞检组进场前，怎么把疑点变成标准化的进场材料。',
-    next: { label: '下一站 · 飞检行装包生成器', href: '/regulator-fieldkit.html?scenario=1' },
-  },
+range.addEventListener('input',function(){
+  val.textContent=range.value;
+  clearTimeout(timer); timer=setTimeout(fire,220);
 });
+document.getElementById('btnSave').addEventListener('click',function(){
+  document.getElementById('saveHint').textContent='阈值 '+range.value+' 岁已保存并下发(演示)。';
+});
+// 插件已注入入口：首次点击即拉起试算
+YY.launcher({label:'鹰眼规则助手 · 已注入', hint:'改阈值前先试算触发量与误报压力', onClick:fire});
 </script>
 </body>
 </html>

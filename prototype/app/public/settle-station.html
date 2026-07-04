@@ -20,6 +20,9 @@ table.fee{width:100%;border-collapse:collapse;font-size:12.5px}
 table.fee th{background:#e3ecf5;border:1px solid #b9cadc;padding:5px 7px;color:#2c5788}
 table.fee td{border:1px solid #b9cadc;background:#fff;padding:4px 7px}
 .his-actions{padding:10px 14px;display:flex;gap:10px;border-top:1px solid #b9cadc;background:#eef3f9;align-items:center}
+.yy-dock{position:fixed;right:20px;bottom:20px;width:420px;max-height:80vh;overflow:auto;z-index:2147483647;background:#fff;border:1px solid #d3dce6;border-radius:12px;box-shadow:0 18px 50px rgba(10,30,60,.32)}
+.yy-dock.hidden{display:none}
+.yy-dock-x{position:absolute;top:7px;right:9px;z-index:3;border:0;background:transparent;color:#98a6b5;font-size:18px;cursor:pointer;line-height:1}
 button{padding:6px 18px;border:1px solid #2c5788;background:linear-gradient(#4a7fb5,#33608f);color:#fff;cursor:pointer;border-radius:3px;font-size:13px}
 button.ghost{background:#fff;color:#2c5788}
 .funnel{padding:8px 14px;font-size:13px}
@@ -52,8 +55,11 @@ a{color:#2c5788}
     <span style="flex:1"></span>
     <a href="/plugin-dashboard.html" style="font-size:12px">院端运营看板 →</a>
   </div>
-  <div class="funnel" id="funnel"></div>
-  <div id="result"></div>
+  <div id="yy-dock" class="yy-dock hidden">
+    <button type="button" id="yy-dock-x" class="yy-dock-x" title="收起">×</button>
+    <div class="funnel" id="funnel" style="padding:14px 14px 0"></div>
+    <div id="result" style="padding:10px 12px 12px"></div>
+  </div>
   <div class="note">结算员在出院结算提交医保前一键把整份费用清单过筛查漏斗(复用与监管侧 1000 条批量同一引擎)。<b>整改语义</b>:明确违规行=撤销收费/退费(对应真实的红冲退费),可疑超量行=核减到常规量(可疑属合理使用类、需人工合议,不一删了之);每条整改带金额入事前台账留痕,可回溯"谁在何时因鹰眼提醒退费/核减了哪一行"。与开单、编码共用同一事前台账。对齐"一切以结算数据为锚"。</div>
 </div>
 <script src="/plugin/yingyan-disposition.js"></script>
@@ -87,7 +93,9 @@ async function runSettleCheck(){
   var hits = (r.top20||[]).map(function(h){ var idx=parseInt(String(h.row_id).replace('R',''))-1; if(idx>=0)lastHits.push({idx:idx,nature:h.nature,rule_id:h.rule_id,item_name:h.item_name}); return { rule_id:h.rule_id, rule_name:RN[h.rule_id]||'', nature:h.nature, reasoning:'第'+String(h.row_id).replace('R','')+'行「'+h.item_name+'」:'+h.reason, amount_involved:h.amount, evidence:[], policy:[], disposal_suggestion:'' }; });
   return { hits: hits, engine: r.elapsed_ms+'ms · 行级筛查·本地' };
 }
+document.getElementById('yy-dock-x').onclick = function(){ document.getElementById('yy-dock').classList.add('hidden'); document.getElementById('result').innerHTML=''; document.getElementById('funnel').innerHTML=''; };
 document.getElementById('btnCheck').onclick = async function(){
+  document.getElementById('yy-dock').classList.remove('hidden');
   var r = await runSettleCheck();
   window.YingyanDisposition.renderDisposition('#result', r, {
     engineBase:'', source:'settle', patient:{ sex:SEX, age:AGE, dept:DEPT, diagnosis:'社区获得性肺炎' },

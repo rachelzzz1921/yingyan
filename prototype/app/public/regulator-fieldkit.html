@@ -3,214 +3,107 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="theme-color" content="#F0F4F8">
-<title>飞检行装包生成器 · 鹰眼监管小工具箱</title>
+<meta name="theme-color" content="#c8d2dc">
+<title>飞检材料文件夹 · 飞检组长工作台(演示靶站)</title>
 <link rel="icon" type="image/svg+xml" href="/favicon.svg">
-<link rel="stylesheet" href="/toolkit.css">
-<style>
-.grid{display:grid;grid-template-columns:340px 1fr;gap:18px;margin-top:18px}
-@media(max-width:880px){.grid{grid-template-columns:1fr}}
-.kit{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px;margin-bottom:12px}
-@media(max-width:980px){.kit{grid-template-columns:1fr 1fr}}
-.block{border:1px solid var(--line);border-radius:12px;background:#F8FAFC;padding:12px}
-.block h3{font-size:14px;margin-bottom:5px}
-.block p,.block li{color:var(--muted);font-size:12px}
-.block ul{padding-left:16px}
-.pkg-frame{width:100%;min-height:520px;border:1px solid var(--line);border-radius:12px;background:#fff;margin-top:14px}
-.from-tip{margin-bottom:14px}
-</style>
+<link rel="stylesheet" href="/plugin-host.css">
 </head>
 <body>
-<main class="wrap">
-  <header class="top">
-    <div>
-      <div class="eyebrow">REGULATOR TOOLKIT · 精做 ③ FIELD KIT</div>
-      <h1>🎒 飞检行装包生成器</h1>
-      <p class="lead">主平台单案稽核 + 举证包能力，换成飞检组的输出模板：疑点清单、证据索引、现场核查任务单、缺失材料清单、询问要点，一键打包进场材料。「我们需要用标准化的材料去执行我们的任务」。</p>
-    </div>
-    <div class="top-nav">
-      <a class="back" href="/plugins.html#regulator">← 工具箱</a>
-      <a class="back" href="/home.html">← 三入口</a>
-    </div>
-  </header>
-  <p class="crumb"><a href="/home.html">三入口</a> → <a href="/plugins.html#regulator">③ 插件 & 小工具箱</a> → <b>飞检行装包生成器</b></p>
-
-  <nav class="mode">
-    <button data-mode="use">⚡ 直接使用</button>
-    <button data-mode="sc">🎬 模拟场景<span class="tag">监管链 3/3</span></button>
-  </nav>
-
-  <!-- ============ 直接使用 ============ -->
-  <div id="pane-use">
-  <div class="note from-tip hidden" id="fromTip"></div>
-  <section class="grid">
-    <aside class="panel">
-      <h2 style="font-size:18px;margin-bottom:10px">选案卷</h2>
-      <label for="case">案卷</label>
-      <select class="select" id="case">
-        <option value="main">main · NSCLC 演示主案</option>
-        <option value="uploaded">uploaded · 导入件</option>
-      </select>
-      <label for="org">机构名</label>
-      <input class="input" id="org" value="演示机构">
-      <label for="period">期间</label>
-      <input class="input" id="period" value="2026-06">
-      <div class="actions">
-        <button class="btn primary" type="button" id="btnGenerate">生成行装包</button>
-        <a class="btn" href="/golden.html">黄金闭环案卷快读</a>
-      </div>
-      <div class="note">调用 <code>/api/regulator/field-kit</code>：复用审计报告与举证包，再聚合现场任务单、缺失材料清单和询问要点。从疑点分诊 Top1 跳转会自动带入案卷。</div>
-    </aside>
-
-    <section class="panel">
-      <h2 style="font-size:18px;margin-bottom:10px">行装包预览</h2>
-      <div class="kit">
-        <article class="block"><h3>1. 疑点清单</h3><p>规则、金额、三档性质和建议动作。</p></article>
-        <article class="block"><h3>2. 证据索引</h3><ul><li>费用行锚点</li><li>病历锚点</li><li>政策 ref_id</li></ul></article>
-        <article class="block"><h3>3. 现场核查任务单</h3><p>查什么、问什么、调阅什么。</p></article>
-        <article class="block"><h3>4. 缺失材料清单</h3><p>按证据链缺口列出需补材料。</p></article>
-        <article class="block"><h3>5. 询问笔录要点</h3><p>只列建议问题，不生成最终笔录。</p></article>
-      </div>
-      <div class="actions" style="margin-top:0">
-        <button class="btn" type="button" id="btnDownload">下载 Markdown</button>
-        <button class="btn" type="button" id="btnPrint">打印</button>
-        <a class="btn" href="/agent-chain.html?preview=appeal&case_id=main">对争议项进入复核</a>
-      </div>
-      <div class="note" id="status">点「生成行装包」后，载入疑点清单、证据索引、现场核查任务单和缺失材料清单。</div>
-      <iframe class="pkg-frame" id="pkgFrame" title="飞检行装包预览"></iframe>
-    </section>
-  </section>
+<div class="host-desk">
+  <div class="host-topbar">
+    <a class="back" href="/plugins.html#regulator">← 工具箱</a>
+    <a class="back" href="/home.html">← 三入口</a>
+    <span class="hint">演示靶站 · 仿真飞检组长笔记本上的案卷材料文件夹。进场前，鹰眼把散落的材料聚合成一份标准化行装包。</span>
   </div>
 
-  <!-- ============ 模拟场景 ============ -->
-  <div id="pane-sc" class="hidden"><div id="scPlayer"></div></div>
-</main>
+  <div class="hostwin">
+    <div class="hostwin-bar">
+      <div class="dots"><i class="r"></i><i class="y"></i><i class="g"></i></div>
+      <span class="title">📁 飞检材料 — <span class="file" id="folderName">示范医院_2026-06</span> — 文件资源管理器</span>
+      <span class="spacer"></span>
+      <span class="badge" id="fileCount">6 个项目</span>
+    </div>
+    <div class="fx-path">🖥 桌面 › 飞检材料 › <b id="pathCase">示范医院_2026-06（案卷 main）</b></div>
+    <div class="fx-list" id="fxList" style="position:relative">
+      <div class="fx-item"><div class="ic">📄</div><div class="nm">病案首页.pdf</div><div class="mt">1.2 MB</div></div>
+      <div class="fx-item"><div class="ic">📊</div><div class="nm">费用明细清单.xlsx</div><div class="mt">340 KB</div></div>
+      <div class="fx-item"><div class="ic">🧬</div><div class="nm">病理报告.pdf</div><div class="mt">2.1 MB</div></div>
+      <div class="fx-item"><div class="ic">💊</div><div class="nm">医嘱单.pdf</div><div class="mt">560 KB</div></div>
+      <div class="fx-item"><div class="ic">🧾</div><div class="nm">结算数据.json</div><div class="mt">88 KB</div></div>
+      <div class="fx-item"><div class="ic">🔬</div><div class="nm">检验报告.pdf</div><div class="mt">790 KB</div></div>
+    </div>
+    <div class="xl-status"><span id="fxStatus">案卷 main · 6 份材料 · 尚未整理成进场清单</span><span class="spacer"></span><span>就绪</span></div>
+  </div>
+</div>
 
-<script src="/toolkit.js"></script>
+<script src="/plugin-overlay.js"></script>
 <script>
-const $ = TK.$;
-const params = new URLSearchParams(location.search);
+var params=new URLSearchParams(location.search);
+var CASE=params.get('case_id')||'main';
+function esc(v){return String(v==null?'':v).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
+function money(n){return Number(n||0).toLocaleString('zh-CN');}
+var TIER_BG={A:'#b91c1c',B:'#d97706',C:'#0a7a4b'};
 
-/* ---------- 消费分诊带入参数 ?from=triage&case_id= ---------- */
-(function consumeFrom() {
-  const from = params.get('from');
-  const caseId = params.get('case_id');
-  if (caseId && [...$('#case').options].some(o => o.value === caseId)) $('#case').value = caseId;
-  if (from === 'triage') {
-    const tip = $('#fromTip');
-    tip.classList.remove('hidden');
-    tip.innerHTML = `📋 已从 <a href="/regulator-triage.html">疑点分诊器</a> 带入 Top1 案卷 <code>${TK.esc(caseId || 'main')}</code>，点「生成行装包」即可聚合进场材料。`;
-  }
-})();
-
-async function fetchPackage(format, caseId) {
-  const res = await fetch('/api/regulator/field-kit', {
-    method: 'POST', headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      case_id: caseId || $('#case').value || 'main',
-      org_name: $('#org') ? $('#org').value : '演示机构',
-      period: $('#period') ? $('#period').value : '2026-06',
-      format,
-    }),
-  });
-  if (!res.ok) throw new Error(await res.text() || `HTTP ${res.status}`);
-  return format === 'json' ? res.json() : res.text();
+if(params.get('from')==='triage'){
+  document.getElementById('fxStatus').textContent='案卷 '+CASE+'（从疑点分诊 Top1 带入）· 待聚合行装包';
 }
-$('#btnGenerate').addEventListener('click', async () => {
-  $('#status').textContent = '正在生成行装包…';
-  $('#pkgFrame').srcdoc = '<p style="padding:24px;font-family:sans-serif;color:#5C7185">生成中…</p>';
-  try {
-    $('#pkgFrame').srcdoc = await fetchPackage('html');
-    $('#status').textContent = '已生成完整行装包：疑点清单、证据索引、现场任务单、缺失材料和询问要点。';
-  } catch (e) {
-    $('#status').innerHTML = `生成失败：${TK.esc(e.message)}`;
-    $('#pkgFrame').srcdoc = '';
-  }
-});
-$('#btnDownload').addEventListener('click', async () => {
-  try {
-    const md = await fetchPackage('markdown');
-    const blob = new Blob([md], { type: 'text/markdown;charset=utf-8' });
-    const a = document.createElement('a');
-    a.href = URL.createObjectURL(blob);
-    a.download = `yingyan-field-kit-${$('#case').value || 'main'}.md`;
-    a.click();
-    URL.revokeObjectURL(a.href);
-  } catch (e) {
-    $('#status').innerHTML = `下载失败：${TK.esc(e.message)}`;
-  }
-});
-$('#btnPrint').addEventListener('click', () => {
-  try { $('#pkgFrame').contentWindow.print(); }
-  catch (e) { $('#status').textContent = '打印失败：' + e.message; }
-});
 
-/* ---------- 模拟场景：飞检进场前夜 ---------- */
-const scCase = params.get('case_id') || 'main';
-TK.scenario({
-  mount: '#scPlayer',
-  role: '飞检组长 · 周队',
-  where: '周四 20:00 · 进场前夜 · 驻地酒店',
-  text: '明早八点进场。组里五个人要人手一份材料：查什么、证据在哪、缺什么要现场调阅。以前这套材料要秘书组熬一个通宵；现在从疑点分诊带过来的案卷，一键聚合成标准化行装包。',
-  steps: [
-    {
-      id: 'load', title: '带入案卷', sub: (scCase === 'main' ? 'main · NSCLC 演示主案' : scCase) + ' · 可从疑点分诊 Top1 直通', btn: '确认案卷',
-      say: '案卷是白天疑点分诊锁定的 Top1，参数直通带过来，不用重新找。',
-      run: async (ctx) => {
-        ctx.caseId = scCase;
-        return `<div class="tier b"><b>案卷 ${TK.esc(ctx.caseId)} 已就位</b><span>机构：演示机构 · 期间：2026-06 · 来源：疑点分诊 Top1</span></div>`;
-      },
-    },
-    {
-      id: 'gen', title: '一键生成行装包', sub: '/api/regulator/field-kit · 稽核报告 + 举证包聚合', btn: '生成行装包',
-      say: '同一个稽核引擎：主平台里它出的是稽核报告，在这里换个输出模板，就是五件套进场材料。',
-      run: async (ctx) => {
-        const kit = await fetchPackage('json', ctx.caseId);
-        ctx.kit = kit.kit || kit;
-        const k = ctx.kit;
-        const n = (x) => (Array.isArray(x) ? x.length : 0);
-        return `<div class="stats" style="margin-top:0">
-          <div class="stat"><b>${n(k.suspicious_list)}</b><span>疑点清单</span></div>
-          <div class="stat"><b>${n(k.evidence_index)}</b><span>证据索引</span></div>
-          <div class="stat"><b>${n(k.field_tasks)}</b><span>现场任务</span></div>
-          <div class="stat"><b>${n(k.missing_materials)}</b><span>缺失材料</span></div>
-          <div class="stat"><b>${n(k.interview_points)}</b><span>询问要点</span></div>
-        </div><p class="msg ok">✓ 五件套聚合完成，可下载 Markdown 或打印随身带。</p>`;
-      },
-    },
-    {
-      id: 'evidence', title: '抽查一条证据索引', sub: '费用行锚点 + 病历锚点 + 政策 ref_id', btn: '展开证据索引',
-      say: '每条疑点不是一句话，而是三要素证据链：费用行在哪、病历锚点在哪、政策条款是哪条。缺什么材料，现场直接照单调阅。',
-      run: async (ctx) => {
-        if (!ctx.kit) throw new Error('请先执行第 2 步');
-        const ev = (ctx.kit.evidence_index || []).slice(0, 3);
-        const miss = (ctx.kit.missing_materials || []).slice(0, 3);
-        if (!ev.length && !miss.length) return '<p class="msg ok">该案卷未输出证据索引（可能是干净件）。</p>';
-        return (ev.length ? `<table class="table" style="margin-top:0"><thead><tr><th>规则</th><th>锚点 / 依据</th></tr></thead><tbody>${
-          ev.map(e => `<tr><td>${TK.esc(e.rule_id || '')}<br><span class="muted">${TK.esc(e.type || '')}</span></td><td><code>${TK.esc(e.loc || '')}</code>${e.text ? '<br><span class="muted">' + TK.esc(String(e.text).slice(0, 90)) + '…</span>' : ''}</td></tr>`).join('')
-        }</tbody></table>` : '') + (miss.length ? `<div class="tier b" style="margin-top:10px"><b>现场需调阅</b><span>${miss.map(m => TK.esc(typeof m === 'string' ? m : (m.rule_id ? m.rule_id + '：' : '') + (m.item || ''))).join(' · ')}</span></div>` : '');
-      },
-    },
-    {
-      id: 'pack', title: '打包带走', sub: 'Markdown 下载 · 打印版 · 争议项转复核', btn: '下载 Markdown',
-      say: '材料标准化了，五个人拿到的是同一份口径。现场遇到医院申辩的争议项，回来交给申诉批阅助手走控辩裁。',
-      run: async (ctx) => {
-        const md = await fetchPackage('markdown', ctx.caseId);
-        const blob = new Blob([md], { type: 'text/markdown;charset=utf-8' });
-        const a = document.createElement('a');
-        a.href = URL.createObjectURL(blob);
-        a.download = `yingyan-field-kit-${ctx.caseId}.md`;
-        a.click();
-        URL.revokeObjectURL(a.href);
-        return `<p class="msg ok">✓ 行装包 Markdown 已下载（${(md.length / 1024).toFixed(1)} KB）。争议项可 <a href="/agent-chain.html?preview=appeal&case_id=${encodeURIComponent(ctx.caseId)}">进入申诉批阅助手 →</a></p>`;
-      },
-    },
-  ],
-  finale: {
-    text: '监管演示链走完：先查谁（分诊）→ 规则怎么定（试算）→ 查什么带什么（行装包）。可选加映：敢不敢对质——申诉批阅控辩裁。',
-    next: { label: '加映 · 申诉批阅助手', href: '/agent-chain.html?preview=appeal&case_id=main' },
-  },
-});
+async function fetchKit(format){
+  var res=await fetch('/api/regulator/field-kit',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({case_id:CASE,org_name:'示范医院',period:'2026-06',format:format})});
+  if(!res.ok) throw new Error(await res.text()||('HTTP '+res.status));
+  return format==='json'?res.json():res.text();
+}
+
+function aggregate(){
+  var wrap=document.getElementById('fxList');
+  var scan=document.createElement('div'); scan.className='host-scanline'; wrap.appendChild(scan);
+  setTimeout(function(){scan.remove();},1100);
+  var yy=YY.panel({title:'鹰眼 · 飞检行装包', sub:'正在读取案卷文件夹…', accent:'#0B2A4A'});
+  yy.loading('正在聚合案卷 '+esc(CASE)+' 的散落材料…');
+  fetchKit('json').then(function(d){
+    var k=d.kit||d; render(yy,k);
+  }).catch(function(e){ yy.body('<div style="padding:16px;color:#b91c1c">生成失败:'+esc(e.message)+'</div>'); });
+}
+
+function render(yy,k){
+  var n=function(x){return Array.isArray(x)?x.length:0;};
+  yy.sub('已读取案卷 '+esc(CASE)+' 的散落材料，聚合成标准化行装包五件套');
+  yy.chips([{text:'疑点 '+n(k.suspicious_list),bg:'#b91c1c'},{text:'缺材料 '+n(k.missing_materials),bg:'#d97706'}]);
+  var susp=(k.suspicious_list||[]).slice(0,3).map(function(s){var t=(s.tier||{}).code||'A';
+    return '<div style="padding:8px 14px;border-bottom:1px solid #f2f5f9;border-left:4px solid '+TIER_BG[t]+'">'+
+      '<div style="display:flex;align-items:center;gap:6px"><span style="background:'+TIER_BG[t]+';color:#fff;font-size:11px;font-weight:800;padding:1px 7px;border-radius:20px">'+t+'</span>'+
+      '<b>'+esc(s.rule_id)+' · '+esc(s.rule_name)+'</b><span style="flex:1"></span>'+(s.amount?'<span style="font-family:monospace;color:#41556b">¥'+money(s.amount)+'</span>':'')+'</div></div>';
+  }).join('');
+  var ev=(k.evidence_index||[]).slice(0,3).map(function(e){
+    return '<div style="padding:6px 14px;font-size:11.5px;border-bottom:1px solid #f7f9fb"><b style="color:#33475b">'+esc(e.rule_id)+' · '+esc(e.type)+'</b> <span style="color:#41556b">'+esc(e.loc)+'</span><br><span style="color:#98a6b5">'+esc(String(e.text||'').slice(0,60))+'</span></div>';
+  }).join('');
+  var miss=(k.missing_materials||[]).slice(0,4).map(function(m){return '<li>'+esc(m.rule_id)+'：'+esc(m.item)+'</li>';}).join('');
+  yy.body(
+    '<div style="padding:12px 14px;background:#f8fafc;border-bottom:1px solid #edf1f6;display:flex;gap:6px;flex-wrap:wrap">'+
+      kitCard('疑点清单',n(k.suspicious_list))+kitCard('证据索引',n(k.evidence_index))+kitCard('现场任务',n(k.field_tasks))+kitCard('缺失材料',n(k.missing_materials))+kitCard('询问要点',n(k.interview_points))+
+    '</div>'+
+    '<div style="padding:8px 14px;font-size:12px;font-weight:700;color:#33475b;background:#fafbfc">疑点清单（前 3）</div>'+susp+
+    '<div style="padding:8px 14px;font-size:12px;font-weight:700;color:#33475b;background:#fafbfc">证据索引（前 3）</div>'+ev+
+    (miss?'<div style="padding:8px 14px;font-size:12px;font-weight:700;color:#b45309;background:#fffaf0">现场需调阅</div><ul style="margin:0;padding:6px 14px 10px 30px;font-size:12px;color:#5b6d82">'+miss+'</ul>':''));
+  yy.actions([
+    {label:'下载行装包 Markdown',kind:'primary',onClick:function(){ download(); }},
+    {label:'争议项进复核',href:'/agent-chain.html?preview=appeal&case_id='+encodeURIComponent(CASE)}
+  ]);
+  yy.footer('复用单案稽核 + 举证包 · 换飞检输出模板 · 五个人拿到同一份口径');
+  document.getElementById('fxStatus').textContent='✓ 已聚合行装包五件套 · 可下载随身带';
+}
+function kitCard(label,n){
+  return '<div style="flex:1;min-width:60px;background:#fff;border:1px solid #e3e9f0;border-radius:8px;padding:7px 4px;text-align:center">'+
+    '<div style="font-size:18px;font-weight:800;color:#0B2A4A;font-family:monospace">'+n+'</div>'+
+    '<div style="font-size:10.5px;color:#7a8ba0">'+label+'</div></div>';
+}
+async function download(){
+  try{ var md=await fetchKit('markdown');
+    var blob=new Blob(['﻿'+md],{type:'text/markdown;charset=utf-8'});
+    var a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='飞检行装包-'+CASE+'.md'; a.click(); URL.revokeObjectURL(a.href);
+  }catch(e){ alert('下载失败:'+e.message); }
+}
+YY.launcher({label:'鹰眼飞检助手 · 已注入', hint:'把这个案卷文件夹聚合成标准行装包', onClick:aggregate});
 </script>
 </body>
 </html>

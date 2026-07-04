@@ -3,148 +3,77 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="theme-color" content="#F0F4F8">
-<title>追溯码即查 · 鹰眼监管小工具箱</title>
+<meta name="theme-color" content="#c8d2dc">
+<title>药店医保结算终端 · 追溯码即查(演示靶站)</title>
 <link rel="icon" type="image/svg+xml" href="/favicon.svg">
-<link rel="stylesheet" href="/toolkit.css">
-<style>
-.query{display:grid;grid-template-columns:1fr auto auto;gap:10px}
-@media(max-width:680px){.query{grid-template-columns:1fr}}
-input#code{font-family:var(--mono)}
-.batch-box{margin-top:12px}
-</style>
+<link rel="stylesheet" href="/plugin-host.css">
 </head>
 <body>
-<main class="wrap">
-  <header class="top">
-    <div>
-      <div class="eyebrow">REGULATOR TOOLKIT · TRACE</div>
-      <h1>🔍 追溯码即查</h1>
-      <p class="lead">复用行级筛查引擎 TRACE-101，回流药 / 重复结算线索快查。单码即查，也支持整版批量粘贴。AI 只提示线索，不作处置认定。</p>
-    </div>
-    <div class="top-nav">
-      <a class="back" href="/plugins.html#regulator">← 工具箱</a>
-      <a class="back" href="/home.html">← 三入口</a>
-    </div>
-  </header>
-  <p class="crumb"><a href="/home.html">三入口</a> → <a href="/plugins.html#regulator">③ 插件 & 小工具箱</a> → <b>追溯码即查</b></p>
-
-  <nav class="mode">
-    <button data-mode="use">⚡ 直接使用</button>
-    <button data-mode="sc">🎬 模拟场景</button>
-  </nav>
-
-  <!-- ============ 直接使用 ============ -->
-  <div id="pane-use">
-  <section class="panel" style="margin-top:0">
-    <div class="query">
-      <input class="input" id="code" value="85907831160000000214" aria-label="追溯码">
-      <button class="btn danger" id="lookup" type="button">查询</button>
-      <button class="btn" id="batchToggle" type="button">批量粘贴</button>
-    </div>
-    <p class="note" style="margin-top:10px">演示重复码示例：<code>85907831160000000214</code>。生产环境应接真实追溯码库，本页只查演示数据集。</p>
-    <div class="batch-box hidden" id="batchBox">
-      <textarea class="input" id="batchRaw" placeholder="每行一个追溯码，直接从 Excel 追溯码列复制粘贴即可"></textarea>
-      <div class="actions" style="margin-top:10px">
-        <button class="btn danger" id="batchRun" type="button">批量查询</button>
-        <button class="btn ghost" id="batchDemo" type="button">填入演示批量</button>
-      </div>
-    </div>
-  </section>
-
-  <section class="panel" id="result">
-    <p class="muted">输入追溯码后查看是否命中重复结算线索。</p>
-  </section>
+<div class="host-desk">
+  <div class="host-topbar">
+    <a class="back" href="/plugins.html#regulator">← 工具箱</a>
+    <a class="back" href="/home.html">← 三入口</a>
+    <span class="hint">演示靶站 · 仿真飞检现场的药店医保结算终端。扫一盒药的追溯码，鹰眼以插件浮窗即刻判断是否回流药 / 重复结算。</span>
   </div>
 
-  <!-- ============ 模拟场景 ============ -->
-  <div id="pane-sc" class="hidden"><div id="scPlayer"></div></div>
-</main>
+  <div class="pos-shell">
+    <div class="pos-head">
+      <b>💳 医保结算终端 · 示范大药房</b>
+      <span class="tag">POS v3.1</span>
+    </div>
+    <div class="pos-screen">
+      <div class="pos-line"><span class="nm">阿托伐他汀钙片 20mg×7</span><span class="amt">¥100.00</span></div>
+      <div class="pos-line"><span class="nm">追溯码</span><span class="amt" id="curCode">8590 7831 1600 0000 0214</span></div>
+      <div class="pos-scan">
+        <label>扫码枪 / 手动录入追溯码</label>
+        <div class="row">
+          <input id="code" value="85907831160000000214" aria-label="追溯码">
+          <button id="scanBtn" type="button">🔍 核验</button>
+        </div>
+      </div>
+    </div>
+    <div class="pos-foot">演示重复码：85907831160000000214 · 本终端只查演示数据集，生产接真实追溯码库</div>
+  </div>
+</div>
 
-<script src="/toolkit.js"></script>
+<script src="/plugin-overlay.js"></script>
 <script>
-const $ = TK.$;
-async function apiLookup(code) {
-  const r = await fetch('/api/regulator/trace-lookup?code=' + encodeURIComponent(code)).then(x => x.json());
-  if (r.error) throw new Error(r.error);
+function esc(v){return String(v==null?'':v).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
+function money(n){return Number(n||0).toLocaleString('zh-CN');}
+
+async function lookup(code){
+  var r=await fetch('/api/regulator/trace-lookup?code='+encodeURIComponent(code)).then(function(x){return x.json();});
+  if(r.error) throw new Error(r.error);
   return r;
 }
-function singleHtml(r) {
-  return `
-    <h2 style="font-size:18px;margin-bottom:8px">${TK.tierBadge(r.repeated ? 'A' : 'C')}</h2>
-    <p class="muted" style="font-size:13px">${TK.esc(r.explanation)}</p>
-    <table class="table"><thead><tr><th>行号</th><th>日期</th><th>项目</th><th>金额</th><th>科室/医生</th></tr></thead>
-    <tbody>${(r.rows || []).map(row => `<tr><td>${TK.esc(row.row_id)}</td><td>${TK.esc(row.settle_date)}</td><td>${TK.esc(row.item_name)}</td><td class="num">${TK.money(row.amount)}</td><td>${TK.esc(row.dept)} · ${TK.esc(row.doctor)}</td></tr>`).join('') || '<tr><td colspan="5" class="muted">未找到演示数据行</td></tr>'}</tbody></table>
-    ${r.repeated ? '<div class="note">建议动作：核对首笔结算、退药冲正记录、药品实物流向与参保人购药记录。</div>' : ''}`;
+function scan(){
+  var code=document.getElementById('code').value.trim();
+  if(!code) return;
+  document.getElementById('curCode').textContent=code.replace(/(.{4})/g,'$1 ').trim();
+  var yy=YY.panel({title:'鹰眼 · 追溯码即查', sub:'正在核验追溯码…', accent:'#DC4A3D'});
+  yy.loading('正在比对追溯码 '+esc(code)+'…');
+  lookup(code).then(function(r){ render(yy,r,code); })
+    .catch(function(e){ yy.body('<div style="padding:16px;color:#b91c1c">核验失败:'+esc(e.message)+'</div>'); });
 }
-async function lookup() {
-  const code = $('#code').value.trim();
-  if (!code) return;
-  $('#result').innerHTML = '<p class="muted">查询中…</p>';
-  try { $('#result').innerHTML = singleHtml(await apiLookup(code)); }
-  catch (e) { $('#result').innerHTML = `<p class="muted">查询失败：${TK.esc(e.message)}</p>`; }
+function render(yy,r,code){
+  var tier=r.repeated?'A':'C';
+  yy.sub(r.repeated?'⚠ 命中重复结算线索':'未命中重复结算线索');
+  yy.chips([{text:tier+(r.repeated?' 重点核查':' 暂缓观察'),bg:r.repeated?'#b91c1c':'#0a7a4b'}]);
+  var rows=(r.rows||[]).map(function(row){
+    return '<div style="padding:8px 14px;border-bottom:1px solid #f2f5f9;font-size:12.5px"><b>'+esc(row.settle_date)+'</b> · '+esc(row.item_name)+' · <span style="font-family:monospace">¥'+money(row.amount)+'</span><br><span style="color:#98a6b5">'+esc(row.dept)+' · '+esc(row.doctor)+' · 行号 '+esc(row.row_id)+'</span></div>';
+  }).join('');
+  yy.body(
+    '<div style="padding:12px 14px;background:'+(r.repeated?'#fdecea':'#f0fbf7')+';border-bottom:1px solid #edf1f6">'+
+      '<div style="font-size:15px;font-weight:800;color:'+(r.repeated?'#b91c1c':'#0a7a4b')+'">'+(r.repeated?'🔴 A · 建议重点核查':'🟢 C · 建议暂缓 / 观察')+'</div>'+
+      '<div style="font-size:12px;color:#5b6d82;margin-top:4px">'+esc(r.explanation)+'</div></div>'+
+    (rows?'<div style="padding:8px 14px;font-size:12px;font-weight:700;color:#33475b;background:#fafbfc">该追溯码关联的结算行</div>'+rows:'')+
+    (r.repeated?'<div style="padding:10px 14px;font-size:12px;color:#5b6d82">建议动作：核对首笔结算、退药冲正记录、药品实物流向与参保人购药记录。</div>':''));
+  yy.actions([{label:'加入现场线索单',kind:'primary',onClick:function(){ yy.close(); }},{label:'判例速查',href:'/regulator-cases.html'}]);
+  yy.footer('复用行级筛查 TRACE-101 · 本地运行 · AI 只提示线索，处置由检查组认定');
 }
-$('#lookup').addEventListener('click', lookup);
-$('#code').addEventListener('keydown', e => { if (e.key === 'Enter') lookup(); });
-
-/* ---------- 批量查询 ---------- */
-$('#batchToggle').addEventListener('click', () => $('#batchBox').classList.toggle('hidden'));
-$('#batchDemo').addEventListener('click', () => {
-  $('#batchRaw').value = ['85907831160000000214', '85907831160000000999', '81234567890000000001'].join('\n');
-});
-$('#batchRun').addEventListener('click', async () => {
-  const codes = [...new Set($('#batchRaw').value.split(/\r?\n/).map(s => s.trim()).filter(Boolean))].slice(0, 50);
-  if (!codes.length) return TK.toast('请粘贴至少一个追溯码', true);
-  $('#result').innerHTML = `<p class="muted">批量查询 ${codes.length} 个追溯码…</p>`;
-  const out = [];
-  for (const code of codes) {
-    try {
-      const r = await apiLookup(code);
-      out.push({ code, tier: r.repeated ? 'A' : 'C', rows: (r.rows || []).length, note: r.explanation });
-    } catch (e) { out.push({ code, tier: '—', rows: 0, note: '查询失败：' + e.message }); }
-  }
-  const hits = out.filter(x => x.tier === 'A');
-  $('#result').innerHTML = `
-    <div class="stats" style="margin-top:0">
-      <div class="stat"><b>${out.length}</b><span>已查追溯码</span></div>
-      <div class="stat"><b>${hits.length}</b><span>A 命中重复</span></div>
-      <div class="stat"><b>${out.length - hits.length}</b><span>C 暂缓/观察</span></div>
-    </div>
-    <table class="table"><thead><tr><th>档位</th><th>追溯码</th><th>关联行</th><th>说明</th></tr></thead>
-    <tbody>${out.map(x => `<tr><td>${x.tier === '—' ? '—' : TK.tierBadge(x.tier)}</td><td><code>${TK.esc(x.code)}</code></td><td class="num">${x.rows}</td><td class="muted">${TK.esc(x.note)}</td></tr>`).join('')}</tbody></table>`;
-});
-
-/* ---------- 模拟场景：药房现场扫码 ---------- */
-TK.scenario({
-  mount: '#scPlayer',
-  role: '现场检查员 · 小赵',
-  where: '周五 10:20 · 飞检现场 · 定点药店药房',
-  text: '货架上一盒阿托伐他汀，扫码枪一扫追溯码出来了。这盒药有没有被重复结算过？以前要回驻地导数据慢慢比对；现在把码粘进即查框，秒出结论。',
-  steps: [
-    {
-      id: 'scan', title: '扫码即查', sub: 'TRACE-101 · 回流药 / 重复结算', btn: '查这盒药',
-      say: '追溯码是药品的身份证：同一个码出现两笔结算，就是回流药或重复结算的强线索。',
-      run: async (ctx) => {
-        ctx.r = await apiLookup('85907831160000000214');
-        return `<div style="margin-bottom:8px">${TK.tierBadge(ctx.r.repeated ? 'A' : 'C')}</div><p class="muted" style="font-size:13px">${TK.esc(ctx.r.explanation)}</p>`;
-      },
-    },
-    {
-      id: 'rows', title: '看两笔结算长什么样', sub: '同码结算行明细', btn: '展开明细',
-      say: '两笔结算不同医生、同一个码——现场马上可以调这两笔的原始凭证和发药记录。',
-      run: async (ctx) => {
-        if (!ctx.r) throw new Error('请先执行第 1 步');
-        return `<table class="table" style="margin-top:0"><thead><tr><th>行号</th><th>日期</th><th>项目</th><th>金额</th><th>科室/医生</th></tr></thead>
-          <tbody>${(ctx.r.rows || []).map(row => `<tr><td>${TK.esc(row.row_id)}</td><td>${TK.esc(row.settle_date)}</td><td>${TK.esc(row.item_name)}</td><td class="num">${TK.money(row.amount)}</td><td>${TK.esc(row.dept)} · ${TK.esc(row.doctor)}</td></tr>`).join('')}</tbody></table>
-          <div class="note">建议动作：核对首笔结算、退药冲正记录、药品实物流向与参保人购药记录。AI 只提示线索，处置由检查组认定。</div>`;
-      },
-    },
-  ],
-  finale: {
-    text: '现场一扫一查，线索当场落地。同类公开案例怎么处理的？可以顺手翻判例速查卡。',
-    next: { label: '判例速查卡', href: '/regulator-cases.html?scenario=1' },
-  },
-});
+document.getElementById('scanBtn').addEventListener('click',scan);
+document.getElementById('code').addEventListener('keydown',function(e){if(e.key==='Enter')scan();});
+YY.launcher({label:'鹰眼追溯助手 · 已注入', hint:'扫码即查回流药 / 重复结算', onClick:scan});
 </script>
 </body>
 </html>
