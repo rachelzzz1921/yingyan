@@ -7,6 +7,23 @@
 <title>飞检材料文件夹 · 飞检组长工作台(演示靶站)</title>
 <link rel="icon" type="image/svg+xml" href="/favicon.svg">
 <link rel="stylesheet" href="/plugin-host.css">
+<style>
+  /* 让整个文件夹卡片可点 → 一键聚合（不再只靠右下角小浮标） */
+  .hostwin{cursor:pointer;transition:box-shadow .18s ease,transform .18s ease;position:relative}
+  .hostwin:hover{box-shadow:0 18px 48px rgba(11,42,74,.20)}
+  .hostwin:hover .fx-hovercta{opacity:1;transform:translateY(0)}
+  .fx-hovercta{position:absolute;top:50%;left:50%;transform:translate(-50%,-40%);pointer-events:none;
+    background:rgba(11,42,74,.94);color:#fff;font-size:14px;font-weight:800;padding:11px 20px;border-radius:12px;
+    box-shadow:0 12px 34px rgba(11,42,74,.4);opacity:0;transition:opacity .18s ease,transform .18s ease;white-space:nowrap;z-index:3}
+  .fx-cta{display:flex;align-items:center;justify-content:center;gap:6px;flex-wrap:wrap;width:100%;margin-top:14px;
+    padding:14px 22px;border:0;border-radius:13px;background:linear-gradient(90deg,#0B2A4A,#134E72);color:#fff;
+    font-size:15.5px;font-weight:800;cursor:pointer;font-family:inherit;box-shadow:0 12px 32px rgba(11,42,74,.3);transition:filter .15s}
+  .fx-cta:hover{filter:brightness(1.09)}
+  .fx-cta .k{font-weight:500;opacity:.82;font-size:12.5px}
+  .fx-agg-btn{border:0;border-radius:9px;background:#0B2A4A;color:#fff;font-size:12px;font-weight:800;
+    padding:6px 15px;cursor:pointer;font-family:inherit;box-shadow:0 3px 10px rgba(11,42,74,.25);transition:filter .15s}
+  .fx-agg-btn:hover{filter:brightness(1.12)}
+</style>
 </head>
 <body>
 <div class="host-desk">
@@ -32,8 +49,10 @@
       <div class="fx-item"><div class="ic">🧾</div><div class="nm">结算数据.json</div><div class="mt">88 KB</div></div>
       <div class="fx-item"><div class="ic">🔬</div><div class="nm">检验报告.pdf</div><div class="mt">790 KB</div></div>
     </div>
-    <div class="xl-status"><span id="fxStatus">案卷 main · 6 份材料 · 尚未整理成进场清单</span><span class="spacer"></span><span>就绪</span></div>
+    <div class="xl-status"><span id="fxStatus">案卷 main · 6 份材料 · 尚未整理成进场清单</span><span class="spacer"></span><button id="fxAggBtn" class="fx-agg-btn">▶ 聚合行装包</button></div>
+    <div class="fx-hovercta">▶ 点击文件夹 · 一键聚合成标准行装包</div>
   </div>
+  <button class="fx-cta" id="fxCta">▶ 一键聚合成标准行装包<span class="k"> · 读取这 6 份散落材料 → 疑点清单 / 证据索引 / 现场任务 / 缺失材料 / 询问要点</span></button>
 </div>
 
 <script src="/plugin-overlay.js"></script>
@@ -103,7 +122,13 @@ async function download(){
     var a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='飞检行装包-'+CASE+'.md'; a.click(); URL.revokeObjectURL(a.href);
   }catch(e){ alert('下载失败:'+e.message); }
 }
-YY.launcher({label:'鹰眼飞检助手 · 已注入', hint:'把这个案卷文件夹聚合成标准行装包', onClick:aggregate});
+// 多入口触发,修掉"一次性浮标用过即消失导致整页点不动":整卡片可点 + 显式按钮 + 常驻浮标
+var BUSY=false;
+function triggerAggregate(e){ if(e&&e.stopPropagation)e.stopPropagation(); if(BUSY)return; BUSY=true; try{ aggregate(); } finally { setTimeout(function(){BUSY=false;},1200); } }
+document.querySelector('.hostwin').addEventListener('click', triggerAggregate);
+document.getElementById('fxCta').addEventListener('click', triggerAggregate);
+var _aggBtn=document.getElementById('fxAggBtn'); if(_aggBtn) _aggBtn.addEventListener('click', triggerAggregate);
+YY.launcher({label:'鹰眼飞检助手 · 已注入', hint:'点文件夹 / 此浮标 · 聚合成标准行装包', onClick:triggerAggregate, hideOnClick:false});
 </script>
 </body>
 </html>
