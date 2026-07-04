@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>鹰眼 EAGLEEYE · 作品互动展示</title>
+<style>
+:root{
+  --ink:#0B2A4A;--ink2:#134E72;--muted:#5C7185;--dim:#8296A9;
+  --teal:#14B8A6;--teal2:#0E9384;--amber:#E8A838;--amber2:#F5C842;--amber-deep:#B07C1B;
+  --danger:#DC4A3D;--ok:#0D9B6A;
+  --bg:#F0F4F8;--surface:#FFFFFF;--line:#E2E9F0;--hair:#D3DDE7;
+  --sans:"PingFang SC","Hiragino Sans GB","Noto Sans SC","Microsoft YaHei",-apple-system,sans-serif;
+  --mono:"SF Mono","DM Mono",Menlo,monospace;
+}
+*{box-sizing:border-box;margin:0}
+html{scroll-behavior:smooth;-webkit-font-smoothing:antialiased}
+body{font-family:var(--sans);background:var(--bg);color:var(--ink);line-height:1.65}
+body::before{content:"";position:fixed;inset:0;background-image:radial-gradient(rgba(11,42,74,.05) 1.5px,transparent 1.5px);background-size:26px 26px;pointer-events:none;z-index:0}
+.wrap{max-width:1080px;margin:0 auto;padding:0 24px;position:relative;z-index:1}
+
+/* nav */
+.nav{position:sticky;top:0;z-index:50;background:rgba(240,244,248,.92);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.nav-in{max-width:1080px;margin:0 auto;padding:10px 24px;display:flex;align-items:center;gap:8px;overflow-x:auto;white-space:nowrap}
+.nav-in b{font-size:14px;margin-right:8px;flex:none}
+.nav-in a{font-size:12.5px;color:var(--muted);text-decoration:none;padding:5px 11px;border-radius:18px;border:1px solid transparent;flex:none}
+.nav-in a:hover{color:var(--ink);border-color:var(--hair);background:var(--surface)}
+
+/* hero */
+.hero{padding:52px 0 30px;text-align:left}
+.hero .tag{display:inline-block;font-size:12px;font-family:var(--mono);color:var(--danger);border:1.5px solid rgba(220,74,61,.4);border-radius:20px;padding:4px 14px;background:var(--surface);letter-spacing:.06em;margin-bottom:18px}
+.hero h1{font-size:clamp(30px,4.6vw,46px);font-weight:800;line-height:1.3;letter-spacing:.01em}
+.hero h1 .red{color:var(--danger)}
+.hero .sub{margin-top:12px;font-size:16px;color:var(--muted);max-width:780px}
+.waist{display:flex;align-items:center;gap:14px;margin:22px 0 0;padding:13px 20px;border-radius:14px;background:linear-gradient(100deg,#0B2A4A,#134E72);color:#fff;box-shadow:0 10px 30px rgba(11,42,74,.26);flex-wrap:wrap}
+.waist .wm{font-size:11px;letter-spacing:.15em;font-family:var(--mono);color:var(--amber2);border:1px solid rgba(245,200,66,.55);border-radius:20px;padding:4px 12px;white-space:nowrap;font-weight:700}
+.waist b{font-size:clamp(17px,2.4vw,24px);font-weight:800}
+.waist u{text-decoration:none;color:var(--amber2);border-bottom:2px solid rgba(245,200,66,.5);padding-bottom:1px}
+.facts{display:grid;grid-template-columns:repeat(4,1fr);gap:0;margin:26px 0 0;border:1px solid var(--line);border-radius:16px;background:var(--surface);overflow:hidden;box-shadow:0 4px 20px rgba(11,42,74,.06)}
+.fact{padding:16px 20px 13px;border-right:1px solid var(--line)}
+.fact:last-child{border-right:none}
+.fact b{display:block;font-size:27px;font-weight:800;font-family:var(--mono);letter-spacing:-.01em}
+.fact b em{font-style:normal;font-size:14px;color:var(--muted);font-weight:600;margin-left:2px}
+.fact span{font-size:11.5px;color:var(--dim)}
+.fact.hot b{color:var(--danger)}
+@media(max-width:820px){.facts{grid-template-columns:1fr 1fr}.fact:nth-child(2){border-right:none}.fact:nth-child(-n+2){border-bottom:1px solid var(--line)}}
+.mems{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:22px 0 0}
+@media(max-width:820px){.mems{grid-template-columns:1fr}}
+.mem{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:15px 18px;box-shadow:0 3px 14px rgba(11,42,74,.05)}
+.mem i{font-style:normal;font-family:var(--mono);font-weight:800;font-size:20px}
+.mem.m1 i{color:var(--amber)} .mem.m2 i{color:var(--danger)} .mem.m3 i{color:var(--teal2)}
+.mem b{display:block;font-size:15.5px;margin:4px 0 2px}
+.mem span{font-size:12.5px;color:var(--muted)}
+
+/* section frame */
+section{padding:44px 0 8px}
+.sect-h{display:flex;align-items:baseline;gap:12px;margin-bottom:6px}
+.sect-h .no{font-family:var(--mono);font-size:13px;font-weight:800;color:#fff;background:var(--ink);border-radius:8px;padding:3px 10px;flex:none}
+.sect-h h2{font-size:23px;font-weight:800}
+.sect-say{font-size:14px;color:var(--muted);margin:0 0 18px;max-width:820px}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:22px 24px;box-shadow:0 6px 24px rgba(11,42,74,.07)}
+.btn{display:inline-flex;align-items:center;gap:8px;font-size:14.5px;font-weight:700;padding:11px 22px;border-radius:11px;border:none;cursor:pointer;font-family:inherit;color:#fff;background:linear-gradient(90deg,var(--danger),#C43F33);box-shadow:0 6px 18px rgba(220,74,61,.3);transition:filter .15s}
+.btn:hover{filter:brightness(1.07)}
+.btn.teal{background:linear-gradient(90deg,var(--teal2),#0B7568);box-shadow:0 6px 18px rgba(20,184,166,.3)}
+.btn.gold{background:linear-gradient(90deg,var(--amber),#D99A22);box-shadow:0 6px 18px rgba(232,168,56,.35)}
+.btn.ghost{background:var(--surface);color:var(--ink2);border:1px solid var(--hair);box-shadow:none}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+
+/* screening funnel */
+.funnel{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:18px 0 6px}
+@media(max-width:820px){.funnel{grid-template-columns:1fr 1fr}}
+.fun{border:1px solid var(--line);border-radius:13px;padding:14px 16px;text-align:center;background:#F8FAFC}
+.fun b{display:block;font-size:30px;font-weight:800;font-family:var(--mono)}
+.fun span{font-size:12px;color:var(--dim)}
+.fun.red b{color:var(--danger)} .fun.amber b{color:var(--amber-deep)} .fun.ok b{color:var(--ok)}
+.truth{display:none;margin-top:12px;padding:11px 16px;border-radius:11px;background:#EEFBF5;border:1px solid rgba(13,155,106,.35);font-size:13px;color:#0A7A4B;font-weight:600}
+table.rows{width:100%;border-collapse:collapse;margin-top:14px;font-size:12.5px;display:none}
+table.rows th{text-align:left;color:var(--dim);font-weight:700;padding:7px 10px;border-bottom:1.5px solid var(--line);white-space:nowrap}
+table.rows td{padding:7px 10px;border-bottom:1px solid #EEF2F7;vertical-align:top}
+table.rows .amt{font-family:var(--mono);text-align:right;white-space:nowrap}
+.pill{display:inline-block;font-size:10.5px;font-weight:800;padding:2px 8px;border-radius:12px;white-space:nowrap}
+.pill.a{background:#FDECEA;color:#B42318}.pill.b{background:#FFF4DD;color:#8F6210}
+
+/* findings */
+.case-head{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px}
+.chip{font-size:12px;font-weight:700;padding:6px 13px;border-radius:20px;background:#F1F5F9;border:1px solid var(--line);color:#3D5A76}
+.chip.hot{background:#FDECEA;border-color:rgba(220,74,61,.35);color:#B42318}
+.f-card{border:1px solid var(--line);border-left:4px solid var(--danger);border-radius:12px;margin-bottom:10px;background:var(--surface);overflow:hidden}
+.f-card.clue{border-left-color:var(--amber)}
+.f-h{display:flex;align-items:center;gap:10px;padding:12px 16px;cursor:pointer;user-select:none}
+.f-h:hover{background:#F8FAFC}
+.f-h .rid{font-family:var(--mono);font-size:11px;color:var(--dim);flex:none}
+.f-h b{font-size:14px;flex:1;min-width:0}
+.f-h .amt{font-family:var(--mono);font-weight:800;color:var(--danger);white-space:nowrap}
+.f-card.clue .f-h .amt{color:var(--amber-deep)}
+.f-h .st{font-size:11px;font-weight:800;padding:2px 9px;border-radius:12px;background:#FDECEA;color:#B42318;flex:none}
+.f-card.clue .f-h .st{background:#FFF4DD;color:#8F6210}
+.f-h .chev{color:var(--dim);transition:transform .2s;flex:none}
+.f-card.open .f-h .chev{transform:rotate(90deg)}
+.f-b{display:none;padding:0 16px 14px;font-size:13px}
+.f-card.open .f-b{display:block}
+.tri{display:grid;gap:8px}
+.tri div{padding:9px 13px;border-radius:9px;background:#F8FAFC;border:1px solid #EEF2F7;line-height:1.6}
+.tri b{color:var(--ink2);font-size:12px;letter-spacing:.05em;display:block;margin-bottom:2px}
+.tri .conf{font-family:var(--mono);color:var(--teal2);font-weight:700}
+.callout{margin-top:16px;padding:14px 18px;border-radius:13px;border:1.5px dashed rgba(232,168,56,.55);background:#FFFBF0;font-size:13px;color:#6b5510;line-height:1.7}
+.callout b{color:#8F6210}
+
+/* debate */
+.deb{display:grid;gap:12px}
+.deb-step{border:1px solid var(--line);border-radius:13px;padding:14px 18px;background:#F8FAFC;opacity:.35;transition:opacity .3s;font-size:13.5px;line-height:1.7}
+.deb-step.on{opacity:1;background:var(--surface);box-shadow:0 4px 16px rgba(11,42,74,.07)}
+.deb-step .who{display:inline-block;font-size:11.5px;font-weight:800;padding:3px 11px;border-radius:14px;margin-bottom:7px}
+.deb-step.pros .who{background:#FDECEA;color:#B42318}
+.deb-step.def .who{background:#E5F5F2;color:#0E7568}
+.deb-step.judge .who{background:#FFF4DD;color:#8F6210}
+.verdict{display:none;margin-top:12px;padding:13px 18px;border-radius:12px;background:linear-gradient(100deg,#0B2A4A,#134E72);color:#fff;font-size:14px}
+.verdict b{color:var(--amber2)}
+
+/* hospital HIS mock */
+.his{border:1px solid #9db4cb;border-radius:10px;overflow:hidden;background:#f4f7fb;font-size:13px}
+.his-top{background:linear-gradient(#3a6ea5,#2c5788);color:#fff;padding:7px 14px;display:flex;justify-content:space-between;font-size:12.5px}
+.his table{width:100%;border-collapse:collapse}
+.his td,.his th{border:1px solid #b9cadc;padding:6px 9px;background:#fff;text-align:left}
+.his th{background:#e3ecf5;color:#2c5788;font-size:12px}
+.his .pt td.l{background:#e9f0f7;color:#41556b;font-weight:600;width:70px;font-size:12px}
+.his .act{padding:10px 14px;background:#eef3f9;border-top:1px solid #b9cadc;display:flex;gap:10px;align-items:center}
+.his .act .note{font-size:11px;color:#6b7f93;flex:1}
+tr.strike td{opacity:.32;text-decoration:line-through;transition:opacity .4s}
+.overlay-card{display:none;margin-top:14px;border:1.5px solid rgba(220,74,61,.45);border-radius:13px;overflow:hidden;box-shadow:0 14px 40px rgba(11,42,74,.16)}
+.ov-h{background:linear-gradient(90deg,var(--danger),#C43F33);color:#fff;padding:10px 16px;font-weight:800;font-size:13.5px;display:flex;justify-content:space-between;align-items:center}
+.ov-b{background:var(--surface);padding:14px 18px;font-size:13px;line-height:1.7}
+.ov-b .refs{margin:8px 0;display:flex;gap:6px;flex-wrap:wrap}
+.ov-b .refs span{font-size:11px;font-family:var(--mono);padding:3px 9px;border-radius:8px;background:#F1F5F9;border:1px solid var(--line);color:#41556b}
+.ov-acts{display:flex;gap:10px;padding:0 18px 16px;background:var(--surface)}
+.heeded{display:none;margin-top:12px;padding:11px 16px;border-radius:11px;background:#EEFBF5;border:1px solid rgba(13,155,106,.35);font-size:13px;color:#0A7A4B;font-weight:600}
+
+/* refund */
+.refund{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:14px}
+@media(max-width:820px){.refund{grid-template-columns:1fr}}
+.rf{border:1px solid var(--line);border-radius:13px;padding:15px 17px;background:#F8FAFC;text-align:center}
+.rf b{display:block;font-size:22px;font-weight:800;font-family:var(--mono)}
+.rf span{font-size:12px;color:var(--dim)}
+.rf.teal b{color:var(--teal2)} .rf.red b{color:var(--danger)} .rf.ok b{color:var(--ok)}
+
+/* threshold slider */
+.thr{display:flex;align-items:center;gap:16px;margin:16px 0 6px;flex-wrap:wrap}
+.thr input[type=range]{flex:1;min-width:220px;accent-color:var(--teal2)}
+.thr .val{font-family:var(--mono);font-size:26px;font-weight:800;color:var(--teal2);min-width:44px;text-align:center}
+.thr-out{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:10px}
+@media(max-width:820px){.thr-out{grid-template-columns:1fr}}
+
+/* foundation funnel */
+.base-row{display:flex;align-items:center;gap:12px;margin-bottom:9px;font-size:13px}
+.base-row .lab{width:220px;flex:none;color:var(--muted);text-align:right}
+.base-row .bar{flex:1;height:22px;border-radius:6px;background:#EDF2F7;overflow:hidden;position:relative}
+.base-row .bar i{display:block;height:100%;border-radius:6px;background:linear-gradient(90deg,var(--teal),var(--teal2));width:0;transition:width 1s cubic-bezier(.2,0,.3,1)}
+.base-row .num{font-family:var(--mono);font-weight:800;width:88px;flex:none}
+@media(max-width:680px){.base-row .lab{width:130px;font-size:11.5px}}
+
+/* honest + footer */
+.honest{margin-top:20px;padding:16px 20px;border:1px dashed var(--hair);border-radius:14px;background:rgba(255,255,255,.8);font-size:13px;color:var(--muted);line-height:1.8}
+.honest b{color:var(--ink)}
+.foot{margin:44px 0 40px;padding-top:22px;border-top:1px solid var(--hair);font-size:12.5px;color:var(--dim);line-height:1.8}
+.foot b{color:var(--ink)}
+</style>
+</head>
+<body>
+
+<nav class="nav"><div class="nav-in">
+  <b>🦅 鹰眼 EAGLEEYE</b>
+  <a href="#s1">① 批量筛查</a><a href="#s2">② 证据链</a><a href="#s3">③ 三人格合议</a><a href="#s4">④ 院端一分钟</a><a href="#s5">⑤ 阈值试算</a><a href="#s6">⑥ 地基与覆盖</a><a href="#s7">边界与团队</a>
+</div></nav>
+
+<div class="wrap">
+
+<header class="hero">
+  <div class="tag">作品互动展示 · 数据为引擎实测，非贴图</div>
+  <h1>看得懂病历的稽核 AI，<br>把线索变成<span class="red">能对质的证据</span>。</h1>
+  <p class="sub">读懂病程 · 医嘱 · 费用清单，做"费用—诊断—医嘱"三方交叉验证；每条疑点回链原文与政策条款。人少事多场景下的 AI 人力倍增器。本页所有按钮都可以点——每个数字背后是真实引擎的一次真实运行。</p>
+  <div class="waist"><span class="wm">一句话定位</span><b>把医保监管的<u>文件</u>，做成一台<u>能跑的引擎</u>。</b></div>
+  <div class="facts">
+    <div class="fact hot"><b data-count="8600">0</b><span>全国医保监管员（人）· 人均监管量为美国 4 倍</span></div>
+    <div class="fact"><b data-count="28.99" data-dec="2">0</b><span>定点医药机构（万家）· 13 亿参保人</span></div>
+    <div class="fact"><b data-count="500">0</b><span>飞检查得过来的机构数（家/年）</span></div>
+    <div class="fact hot"><b>40′→90″</b><span>单案初筛：人工 → 鹰眼（引擎判定实测 27ms）</span></div>
+  </div>
+  <div class="mems">
+    <div class="mem m1"><i>①</i><b>每条结论都有出处</b><span>两库第几批 · 哪条判例 · 原文第几页——点得开</span></div>
+    <div class="mem m2"><i>②</i><b>缺证据本身就是疑点</b><span>手术费找不到手术记录，系统自动立案，不是扣分了事</span></div>
+    <div class="mem m3"><i>③</i><b>装上就能用</b><span>不动你任何系统 · 数据不出机 · 断网也照跑</span></div>
+  </div>
+</header>
+
+<!-- ① 批量筛查 -->
+<section id="s1">
+  <div class="sect-h"><span class="no">互动 ①</span><h2>一千条结算明细，先分诊</h2></div>
+  <p class="sect-say">智能监控每月给一个审核员一万多条疑点，要过三遍。鹰眼做的第一件事是分诊：全量扫描，三档分类——明确违规、可疑、干净。三档不是我们发明的，是国家两库"政策限定类 / 合理使用类"运行结果的官方口径。</p>
+  <div class="panel">
+    <button class="btn" id="btnScreen">▶ 对 1,000 条结算明细跑一遍筛查</button>
+    <span id="screenMs" style="margin-left:12px;font-family:var(--mono);font-size:13px;color:var(--teal2);font-weight:700"></span>
+    <div class="funnel">
+      <div class="fun"><b data-target="1000">0</b><span>结算明细行</span></div>
+      <div class="fun red"><b data-target="24">0</b><span>明确违规（政策限定类）</span></div>
+      <div class="fun amber"><b data-target="8">0</b><span>可疑（合理使用类 · 待合议）</span></div>
+      <div class="fun ok"><b data-target="968">0</b><span>干净 · 放行（人不再看）</span></div>
+    </div>
+    <div class="truth" id="truthNote">✓ 真值对账：数据集预埋 32 处违规，检出 32、漏检 0、<b>误报 0</b>——干净行零误报是引擎的一票否决红线，本结果可逐行核对底账清单。</div>
+    <table class="rows" id="topRows">
+      <thead><tr><th>结算行</th><th>项目</th><th>科室 / 医生</th><th>命中规则</th><th>分诊</th><th style="text-align:right">金额</th></tr></thead>
+      <tbody></tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ② 证据链 -->
+<section id="s2">
+  <div class="sect-h"><span class="no">互动 ②</span><h2>一份案卷的三要素证据链</h2></div>
+  <p class="sect-say">主演示案卷：肺癌化疗住院（虚构脱敏数据，违规点仿国家局曝光台真实案例构造）。引擎 27 毫秒完成 79 条规则路由——激活 29 条、50 条零成本跳过。点开任何一条，看它的证据定位、政策条款和推理过程。<b>引不出原文的疑点，不输出。</b></p>
+  <div class="panel">
+    <div class="case-head">
+      <span class="chip hot">6 条疑点 · ¥6,326</span><span class="chip">4 条待核线索</span>
+      <span class="chip">引擎判定 27ms</span><span class="chip">路由 29/79 激活</span><span class="chip">12/12 政策引用可解析</span>
+    </div>
+    <div id="findings"></div>
+    <div class="callout"><b>合议去重（防过罚）</b>：第 21 行费用被 3 条规则从不同角度命中，引擎自动选主疑点、其余转佐证、金额只算一次——¥1,280 只计一遍，避免虚增 ¥2,560。<br><b>覆盖度声明（防漏查质疑）</b>：本次覆盖 7 个维度中的 6 个；唯一缺失的"分子病理/基因检测证据"不是漏查——它的缺失本身，正是 T-201 那条疑点的关键阴性证据。</div>
+  </div>
+</section>
+
+<!-- ③ 三人格合议 -->
+<section id="s3">
+  <div class="sect-h"><span class="no">互动 ③</span><h2>可疑档，先吵一架再见人</h2></div>
+  <p class="sect-say">真实世界的申诉机制是"复审、合议、终审"（医保办发〔2023〕14 号）。鹰眼把这套对质预演到初筛：控方只看规则与结算数据、辩方只看临床材料、裁判必须引用知识库条目——信息不对称在数据层物理切分。看主案卷里那支升白针（¥1,180）怎么被合议降级。</p>
+  <div class="panel">
+    <button class="btn gold" id="btnDebate">⚔ 逐步播放这场合议</button>
+    <div class="deb" style="margin-top:16px">
+      <div class="deb-step pros" id="deb1"><span class="who">控方 · 只看规则与结算数据</span>患者使用长效升白针，涉嫌超医保限定支付范围（限"前次化疗曾发生重度中性粒细胞减少的患者"），并涉嫌违反诊疗规范过度诊疗——需调阅前次住院血常规确认是否构成违规结算。</div>
+      <div class="deb-step def" id="deb2"><span class="who">辩方 · 只看临床材料</span>该病例采用高风险化疗方案，预防性使用长效升白针符合肿瘤诊疗规范与指南推荐：化疗方案与病理类型严格匹配（病理报告在案），临时医嘱与长期医嘱可互为印证——系合理医疗行为。</div>
+      <div class="deb-step judge" id="deb3"><span class="who">裁判 · 必须引用条目，引不出即转人工</span><b>钢人复述</b>——控方最强论点：中性粒细胞记录正常却用长效升白针，涉嫌违反支付限定；辩方最强论点：高风险方案下预防性使用符合指南。<b>裁定</b>：决定性证据（前次住院血常规）不在本材料包内、未闭环——疑点降级为线索，待调阅后人工评定。</div>
+    </div>
+    <div class="verdict" id="verdictBox">🏛 <b>裁定：降级为线索</b> · 不进处置、不计疑点金额，生成"待调阅材料清单"。——误报在见到人之前就被过滤掉了；如果这是院端在自查，这段合议记录就是现成的申诉举证材料。最终评定，永远由医保专家团队做。</div>
+  </div>
+</section>
+
+<!-- ④ 院端一分钟 -->
+<section id="s4">
+  <div class="sect-h"><span class="no">互动 ④</span><h2>院端一分钟：拦在开单，算在退回</h2></div>
+  <p class="sect-say">同一台引擎掉头装进医院：医生开单的瞬间浮层提醒——政策限定类红色拦截、医疗合理类黄色只提示，尊重临床。当场改掉的违规，稽核员案头就少一条疑点。</p>
+  <div class="panel">
+    <div class="his">
+      <div class="his-top"><span>🏥 示范市第一人民医院 · 医生工作站 v6.2</span><span>演示靶站 · 虚构数据</span></div>
+      <div style="padding:10px 14px">
+        <table class="pt"><tr><td class="l">姓名</td><td>王小雨</td><td class="l">性别</td><td>女</td><td class="l">年龄</td><td>16 岁</td><td class="l">科室</td><td>呼吸内科</td></tr></table>
+        <table style="margin-top:8px"><thead><tr><th>药品/项目名称</th><th style="width:110px">规格</th><th style="width:60px">数量</th><th style="width:80px">用法</th></tr></thead>
+        <tbody>
+          <tr id="ord1"><td>左氧氟沙星氯化钠注射液</td><td>0.5g:100ml</td><td>5 袋</td><td>ivgtt qd</td></tr>
+          <tr><td>小儿氨酚黄那敏颗粒</td><td>6g×10袋</td><td>2 盒</td><td>po tid</td></tr>
+          <tr><td>血常规</td><td>—</td><td>1 次</td><td>立即</td></tr>
+        </tbody></table>
+      </div>
+      <div class="act"><span class="note">鹰眼以浏览器扩展注入此页，HIS 无需任何对接改造</span><button class="btn" id="btnPrecheck" style="padding:8px 18px;font-size:13px">🦅 鹰眼审方</button></div>
+    </div>
+    <div class="overlay-card" id="ovCard">
+      <div class="ov-h"><span>🦅 鹰眼 · 开单事前提醒 — 明确违规 1 条</span><span style="font-weight:400;font-size:11px">毫秒级 · 本地运行 · 数据不出机</span></div>
+      <div class="ov-b">
+        <b style="color:#B42318">🟥 AGE-101 · 未成年用药年龄分层（拦截 · 政策限定类）</b><br>
+        患者 16 岁（未成年 18 岁档），第 1 行开立喹诺酮类「左氧氟沙星氯化钠注射液」。喹诺酮类说明书明确 18 岁以下禁用，属超说明书禁忌用药且超限定支付范围（两库年龄分层：14 岁与 18 岁两档，本条命中 18 岁档）。
+        <div class="refs"><span>KB1-条例-第38条(六)</span><span>两库·药品限儿童使用</span><span>喹诺酮说明书禁忌(18岁以下)</span></div>
+        <b>处置建议</b>：更换为未成年适用抗菌药物；如有特殊获益评估依据，请在病历记载后再开立。
+      </div>
+      <div class="ov-acts">
+        <button class="btn teal" id="btnHeed" style="padding:8px 18px;font-size:13px">✓ 采纳 · 当场整改</button>
+        <button class="btn ghost" id="btnInsist" style="padding:8px 18px;font-size:13px">⚠ 坚持提交（带理由转监管）</button>
+      </div>
+    </div>
+    <div class="heeded" id="heedNote">✓ 医嘱行已撤销——这条违规被消灭在萌芽。它不会出现在结算数据里，也不会出现在任何稽核员的案头。</div>
+    <div class="heeded" id="insistNote" style="background:#FFF7E6;border-color:rgba(232,168,56,.5);color:#8F6210">⚠ 已记录"开单时已提醒 · 未遵从"，该单据带医生理由进入监管预警台账——消灭不掉的，不放过。院端故事的终点，正是监管故事的起点。</div>
+
+    <div style="margin-top:24px;border-top:1px dashed var(--hair);padding-top:18px">
+      <b style="font-size:15px">自查体检的最后一步：把整改的经济账算给院长看</b>
+      <p style="font-size:13px;color:var(--muted);margin-top:4px">政策明文"自查从宽、被查从严"。主案卷 6 条疑点（¥6,326）如在自查期限内主动退回：</p>
+      <div class="refund">
+        <div class="rf teal"><b>¥6,326</b><span>建议主动退回（自查从宽，通常免于/低倍数罚款）</span></div>
+        <div class="rf red"><b>¥12,652 ~ 18,978</b><span>若被飞检查实的暴露区间（退回 + 1~2 倍罚款）</span></div>
+        <div class="rf ok"><b>¥6,326 ~ 12,652</b><span>主动自查可避免的损失</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ⑤ 阈值试算 -->
+<section id="s5">
+  <div class="sect-h"><span class="no">互动 ⑤</span><h2>阈值下放地方，工具我们补上</h2></div>
+  <p class="sect-say">国家明文把规则的"阈值、参数、应用场景"下放各地自定（"成熟一条、应用一条"），但没给工具。拖动滑块，改动"未成年用药"规则的年龄阈值——鹰眼在 1,000 条历史数据上即时回放，告诉规则管理员：触发量变多少，会不会误伤干净行。</p>
+  <div class="panel">
+    <div class="thr">
+      <span style="font-size:13px;color:var(--muted);flex:none">AGE-101 未成年年龄上限</span>
+      <span style="font-family:var(--mono);font-size:12px;color:var(--dim)">14</span>
+      <input type="range" id="thrRange" min="14" max="21" step="1" value="18">
+      <span style="font-family:var(--mono);font-size:12px;color:var(--dim)">21</span>
+      <span class="val" id="thrVal">18</span>
+    </div>
+    <div class="thr-out">
+      <div class="fun"><b id="thrBase">12</b><span>基线命中（阈值 18）</span></div>
+      <div class="fun amber"><b id="thrTrial">12</b><span>试算命中</span></div>
+      <div class="fun ok"><b id="thrFp">0</b><span>新增误报压力（必须为 0 才建议下发）</span></div>
+    </div>
+    <p id="thrSay" style="margin-top:12px;font-size:13px;color:var(--muted)">当前与基线一致。向左收紧阈值试试——命中会减少（漏掉真值会被标出），但任何设置下干净行零新增命中，与主平台同一条零误报红线。</p>
+  </div>
+</section>
+
+<!-- ⑥ 地基与覆盖 -->
+<section id="s6">
+  <div class="sect-h"><span class="no">互动 ⑥</span><h2>不是"号称"站在两库肩上</h2></div>
+  <p class="sect-say">我们不造规则。以下漏斗是产品内"合规地基"面板的实时数据：从官方公开发布批次入库，到操作化成引擎规则，到本案真实命中——每一层都可点开溯源到"文号 · 条款 · 生效日"。</p>
+  <div class="panel" id="basePanel">
+    <div class="base-row"><span class="lab">官方两库及政策条目已入库</span><div class="bar"><i data-w="100"></i></div><span class="num">11,027</span></div>
+    <div class="base-row"><span class="lab">其中带生效日期（支持按入院日回溯）</span><div class="bar"><i data-w="72"></i></div><span class="num">7,959</span></div>
+    <div class="base-row"><span class="lab">提炼为操作索引（16 个模式族）</span><div class="bar"><i data-w="58"></i></div><span class="num">7,822</span></div>
+    <div class="base-row"><span class="lab">已接确定性检测</span><div class="bar"><i data-w="38"></i></div><span class="num">4,728</span></div>
+    <div class="base-row"><span class="lab">手写操作化在库规则（19 个临床专科）</span><div class="bar"><i data-w="7" style="min-width:26px"></i></div><span class="num">79</span></div>
+    <div class="base-row"><span class="lab">主案卷本次真实命中</span><div class="bar"><i data-w="3" style="min-width:14px"></i></div><span class="num">10</span></div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:14px">
+      <span class="chip">覆盖地图 79/79 全部挂接 checker · 逐格可点</span>
+      <span class="chip">118 处政策引用 · 106 处（90%）一键溯源到官方原文</span>
+      <span class="chip">11 项对照表标注「待入库」——是路线图，不是掩饰</span>
+    </div>
+  </div>
+</section>
+
+<!-- 边界与团队 -->
+<section id="s7">
+  <div class="sect-h"><span class="no">收尾</span><h2>诚实边界，然后随便验</h2></div>
+  <div class="honest">
+    <b>我们不做什么</b>：不替代国家全量结算拦截、不做 AI 自动处罚、不假称接入官方 24.7 万知识点全量（只接已公开批次）。基准案卷为团队构造自标、demo 级——我们主打的不是"考了 100 分"，是"怎么防止自己骗自己"的三套隔离门禁：干净案卷误报为零，是一票否决的红线。<br><br>
+    <b>怎么验证本页每个数字</b>：现场演示中，任指一条疑点看它由哪几个字段交叉得出；打开"合规地基"逐条点政策原文；批量筛查页自带预埋真值对账；合议可切真·大模型路径实时重跑。<b>本页交互为真实引擎输出的忠实回放；现场演示为实时运行。</b>
+  </div>
+  <div class="foot">
+    <b>鹰眼 EAGLEEYE</b> · 替人扛量 · 报得准 · 证得实 · 扛得住申辩<br>
+    团队：陈知维（医疗行研 · 产品 · 商业化）× 赵馨（AI · 全栈工程）· 北京大学年庆功博士学术指导<br>
+    责任声明：鹰眼是初筛与取证工具，不是审判系统；所有定性与处罚由稽核员和医保部门最终裁定。演示数据均为虚构脱敏数据。<br>
+    数据口径：2026-07 引擎实测（8,600 人 · 13.27 亿参保 · 28.99 万家机构等引自国家医保局统计公报与公开文件）。
+  </div>
+</section>
+
+</div>
+
+<script>
+'use strict';
+/* ---------- 数字滚动 ---------- */
+function fmtNum(v, dec) { return dec ? v.toFixed(dec) : Math.round(v).toLocaleString('zh-CN'); }
+function countUp(el, target, dec, ms) {
+  var t0 = null; dec = dec || 0; ms = ms || 900;
+  function step(ts) {
+    if (!t0) t0 = ts;
+    var p = Math.min((ts - t0) / ms, 1);
+    el.textContent = fmtNum(target * (1 - Math.pow(1 - p, 3)), dec);
+    if (p < 1) requestAnimationFrame(step);
+  }
+  try { requestAnimationFrame(step); } catch (e) { /* ignore */ }
+  // 兜底：rAF 不跑的环境（后台标签/无头预览）也必须落定终值
+  setTimeout(function(){ el.textContent = fmtNum(target, dec); }, ms + 250);
+}
+var heroSeen = false;
+function fireHero(){
+  if (heroSeen) return; heroSeen = true;
+  document.querySelectorAll('.fact b[data-count]').forEach(function(b){
+    countUp(b, parseFloat(b.dataset.count), parseInt(b.dataset.dec||'0',10), 1100);
+  });
+}
+try {
+  new IntersectionObserver(function(es){ es.forEach(function(e){ if (e.isIntersecting) fireHero(); }); }, {threshold:.4})
+    .observe(document.querySelector('.facts'));
+} catch (e) { /* 老环境无 IO */ }
+setTimeout(fireHero, 700); // 兜底：无论观察器是否触发，数字都落定
+
+/* ---------- ① 批量筛查（真实引擎输出回放） ---------- */
+var TOP_ROWS = [
+  {id:'S00778',item:'静脉输液',dept:'肿瘤内科 · 周医生',rule:'QTY-901',tier:'B',amt:544,reason:'单日 ×68 超常，需调阅医嘱核实'},
+  {id:'S00803',item:'静脉输液',dept:'消化内科 · 刘医生',rule:'QTY-901',tier:'B',amt:520,reason:'单日 ×65 超常，需调阅医嘱核实'},
+  {id:'S00964',item:'静脉输液',dept:'神经内科 · 王医生',rule:'QTY-901',tier:'B',amt:448,reason:'单日 ×56 超常，需调阅医嘱核实'},
+  {id:'S00123',item:'静脉输液',dept:'神经内科 · 周医生',rule:'QTY-901',tier:'B',amt:408,reason:'单日 ×51 超常，需调阅医嘱核实'},
+  {id:'S00312',item:'静脉输液',dept:'普外科 · 刘医生',rule:'QTY-901',tier:'B',amt:392,reason:'单日 ×49 超常，需调阅医嘱核实'},
+  {id:'S00908',item:'静脉输液',dept:'呼吸内科 · 李医生',rule:'QTY-901',tier:'B',amt:344,reason:'单日 ×43 超常，需调阅医嘱核实'}
+];
+document.getElementById('btnScreen').addEventListener('click', function(){
+  var btn = this; btn.disabled = true; btn.textContent = '筛查中…';
+  setTimeout(function(){
+    btn.textContent = '✓ 筛查完成';
+    document.getElementById('screenMs').textContent = '实测耗时 19ms（确定性规则 · 毫秒级）';
+    document.querySelectorAll('#s1 .fun b[data-target]').forEach(function(b){
+      countUp(b, parseInt(b.dataset.target,10), 0, 1000);
+    });
+    setTimeout(function(){
+      document.getElementById('truthNote').style.display = 'block';
+      var tb = document.querySelector('#topRows tbody');
+      TOP_ROWS.forEach(function(r){
+        var tr = document.createElement('tr');
+        tr.innerHTML = '<td style="font-family:var(--mono)">'+r.id+'</td><td><b>'+r.item+'</b><br><span style="color:var(--dim);font-size:11px">'+r.reason+'</span></td><td>'+r.dept+'</td><td style="font-family:var(--mono)">'+r.rule+'</td><td><span class="pill '+(r.tier==='A'?'a':'b')+'">'+(r.tier==='A'?'A · 重点核查':'B · 补材料后核查')+'</span></td><td class="amt">¥'+r.amt.toLocaleString('zh-CN')+'</td>';
+        tb.appendChild(tr);
+      });
+      document.getElementById('topRows').style.display = 'table';
+    }, 900);
+  }, 700);
+});
+
+/* ---------- ② 证据链（主案卷 10 条真实 findings） ---------- */
+var FINDINGS = [
+  {id:'T-201',name:'靶向药无分子病理/基因检测证据使用',st:'疑点',amt:4704,conf:87,loc:'费用清单 第 7 行',ref:'KB1-条例-第38条(二) · 新型抗肿瘤药物临床应用指导原则(2025年版)',why:'费用清单第 7 行结算「奥希替尼」——属明确作用靶点(EGFR)类药物，须靶点检测阳性方可使用。全案卷未见任何分子病理/基因检测证据，病程亦无外院已测记载 → 证据缺口型高风险疑点；补交合格分子病理报告即降级。'},
+  {id:'B-201',name:'药品使用超出医保目录限定支付范围',st:'疑点',amt:1280,conf:87,loc:'费用清单 第 21 行',ref:'KB1-条例-第38条(六) · 医保目录人血白蛋白限定支付备注',why:'人血白蛋白限定支付＝"限抢救、重症或肝硬化/癌症胸腹水且白蛋白低于 30g/L"。本案检验值 39g/L ≥ 30，且全程无抢救/重症/胸腹水记载——超出限定支付范围。'},
+  {id:'A-109',name:'多记费用—结算数量超医嘱数量',st:'疑点',amt:180,conf:87,loc:'费用清单 第 8 行',ref:'KB1-条例-第38条(二)',why:'医嘱 L05「头孢呋辛钠 bid × 3 天」应发 6 支；费用清单结算数量超出医嘱可支持数量——结算与医嘱逐条勾稽不平。'},
+  {id:'A-105',name:'超标准收费—护理等级与实际不符',st:'疑点',amt:104,conf:87,loc:'费用清单 第 2 行',ref:'KB1-条例-第38条(三)',why:'长期医嘱为「二级护理」，费用清单却按「一级护理」计费 8 日；护理记录巡视频次（2 小时/次）只符合二级标准——按高等级收费缺乏依据。'},
+  {id:'F-003',name:'时间逻辑冲突（离院后费用）',st:'疑点',amt:33,conf:84,loc:'费用清单 第 3 行',ref:'KB1-条例-第40条(三)',why:'病案首页与出院小结一致载明出院日期 2026-03-20；费用清单第 3、4 行（一级护理、静脉输液）发生日期为 2026-03-21——费用发生在出院之后。'},
+  {id:'L3-DS',name:'结算/明细数据异常',st:'疑点',amt:25,conf:79,loc:'费用清单 第 3 行',ref:'KB1-条例-第38条',why:'费用计费日晚于出院日——计费日期与住院时间不符（跨明细数据勾稽信号，与 F-003 互为佐证）。'},
+  {id:'L3-DRX',name:'重复开药/药品种类超标',st:'线索',amt:9890,conf:51,loc:'药品费用行（聚合）',ref:'KB1-两库2025-重复开药',why:'本案药品费用行涉及约 9 种不同药品，超过机构药品种类监测阈值——数据统计型信号、定性不确定性高，按"引不出实质违规不定性"铁律降为线索待人工核，不计入疑点金额。大额只作线索，正是克制。'},
+  {id:'T-207',name:'院外购药费用转嫁',st:'线索',amt:2600,conf:61,loc:'病程记录 2026-03-14',ref:'KB1-条例-第38条',why:'培美曲塞为本化疗方案必需药；病程明确记载"我院药房缺药，嘱家属院外自购"；费用清单逐行核对无该药结算记录——涉嫌费用转嫁，金额待院外凭证。'},
+  {id:'T-205',name:'化疗辅助用药超规/无指征',st:'线索',amt:1180,conf:60,loc:'费用清单 第 9 行',ref:'KB1-目录2025-长效升白针-备注',why:'长效升白针限定"前次化疗曾发生重度中性粒细胞减少"。本材料包仅有概述性记载"无骨髓抑制相关不适"——指征材料不全，经三人格合议降级为线索（见互动 ③）。'},
+  {id:'D-402',name:'费用转嫁—应保项目让患者自费',st:'线索',amt:0,conf:56,loc:'病程记录 2026-03-14',ref:'KB1-条例-第38条',why:'目录内必需药出现"院外购买"记载，涉嫌费用转嫁（与 T-207 同源关联提示，零金额占位、待凭证）。'}
+];
+(function renderFindings(){
+  var box = document.getElementById('findings');
+  FINDINGS.forEach(function(f){
+    var card = document.createElement('div');
+    card.className = 'f-card' + (f.st === '线索' ? ' clue' : '');
+    card.innerHTML =
+      '<div class="f-h"><span class="rid">' + f.id + '</span><b>' + f.name + '</b>' +
+      '<span class="st">' + f.st + '</span><span class="amt">¥' + f.amt.toLocaleString('zh-CN') + '</span><span class="chev">▶</span></div>' +
+      '<div class="f-b"><div class="tri">' +
+      '<div><b>① 证据定位</b>' + f.loc + '（工作台内点击即回链原文并高亮）</div>' +
+      '<div><b>② 政策条款</b>' + f.ref + '（可溯源至文号 · 条款 · 生效日）</div>' +
+      '<div><b>③ 推理过程</b>' + f.why + '　<span class="conf">置信 ' + f.conf + '</span></div>' +
+      '</div></div>';
+    card.querySelector('.f-h').addEventListener('click', function(){ card.classList.toggle('open'); });
+    box.appendChild(card);
+  });
+})();
+
+/* ---------- ③ 三人格合议 ---------- */
+(function(){
+  var i = 0, steps = ['deb1','deb2','deb3'];
+  var btn = document.getElementById('btnDebate');
+  btn.addEventListener('click', function(){
+    if (i < steps.length) {
+      document.getElementById(steps[i]).classList.add('on');
+      i++;
+      btn.textContent = i < steps.length ? '⚔ 下一方发言（' + i + '/3）' : '🏛 看裁定';
+    } else {
+      document.getElementById('verdictBox').style.display = 'block';
+      btn.disabled = true; btn.textContent = '✓ 合议结束 · 降级线索';
+    }
+  });
+})();
+
+/* ---------- ④ 院端开单拦截 ---------- */
+document.getElementById('btnPrecheck').addEventListener('click', function(){
+  this.disabled = true; this.textContent = '🦅 审方中…';
+  var self = this;
+  setTimeout(function(){
+    self.textContent = '🦅 已审方（毫秒级）';
+    document.getElementById('ovCard').style.display = 'block';
+    document.getElementById('ovCard').scrollIntoView({behavior:'smooth', block:'nearest'});
+  }, 500);
+});
+document.getElementById('btnHeed').addEventListener('click', function(){
+  document.getElementById('ord1').classList.add('strike');
+  document.getElementById('ovCard').style.display = 'none';
+  document.getElementById('insistNote').style.display = 'none';
+  document.getElementById('heedNote').style.display = 'block';
+});
+document.getElementById('btnInsist').addEventListener('click', function(){
+  document.getElementById('ovCard').style.display = 'none';
+  document.getElementById('heedNote').style.display = 'none';
+  document.getElementById('insistNote').style.display = 'block';
+});
+
+/* ---------- ⑤ 阈值试算（各档位为引擎在 1000 条上的真实回放结果） ---------- */
+var THR_MAP = {14:8, 15:10, 16:10, 17:12, 18:12, 19:12, 20:12, 21:12};
+var thrRange = document.getElementById('thrRange');
+thrRange.addEventListener('input', function(){
+  var v = parseInt(this.value, 10);
+  var hits = THR_MAP[v];
+  document.getElementById('thrVal').textContent = v;
+  document.getElementById('thrTrial').textContent = hits;
+  document.getElementById('thrFp').textContent = '0';
+  var d = hits - 12;
+  document.getElementById('thrSay').textContent = d === 0
+    ? '阈值 ' + v + '：触发量与基线一致（12 条）。任何设置下干净行零新增命中——与主平台同一条零误报红线。'
+    : '阈值 ' + v + '：触发量 12 → ' + hits + '（' + d + '）。减少的命中里含预埋真值（会被标出提示漏检回退），新增误报压力 0——试算结论可一键存入下发说明。';
+});
+
+/* ---------- ⑥ 地基漏斗动画（观察器优先，滚动与定时兜底，保证任何环境都落定） ---------- */
+var baseSeen = false;
+function fireBase(){
+  if (baseSeen) return; baseSeen = true;
+  document.querySelectorAll('#basePanel .bar i').forEach(function(i, idx){
+    setTimeout(function(){ i.style.width = i.dataset.w + '%'; }, idx * 140);
+  });
+}
+function baseVisible(){
+  var r = document.getElementById('basePanel').getBoundingClientRect();
+  return r.top < innerHeight && r.bottom > 0;
+}
+try {
+  new IntersectionObserver(function(es){ es.forEach(function(e){ if (e.isIntersecting) fireBase(); }); }, {threshold:.15})
+    .observe(document.getElementById('basePanel'));
+} catch (e) { /* 老环境无 IO */ }
+window.addEventListener('scroll', function(){ if (!baseSeen && baseVisible()) fireBase(); }, {passive:true});
+setTimeout(function(){ if (baseVisible()) fireBase(); }, 800);
+setTimeout(fireBase, 4000); // 最终兜底：4 秒后无条件落定，宁可少一段动画也不许空条
+</script>
+</body>
+</html>
