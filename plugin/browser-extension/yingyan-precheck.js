@@ -87,6 +87,12 @@
       ${countChip(hard.length, '明确违规', '#b91c1c')} ${countChip(susp.length, '可疑', '#d97706')}
       <span style="flex:1"></span>
       <a href="javascript:void(0)" id="yy-close" style="text-decoration:none;color:#7a8ba0;font-size:16px">×</a></div>`;
+    const status = `<div style="padding:7px 14px;border-bottom:1px solid #edf1f6;display:flex;gap:6px;flex-wrap:wrap;background:#fff">
+      <span style="background:#ecfdf5;color:#0a7a4b;border:1px solid #a7f3d0;border-radius:999px;padding:2px 8px;font-size:10.5px;font-weight:800">本地引擎</span>
+      <span style="background:#f0fdfa;color:#0f766e;border:1px solid #99f6e4;border-radius:999px;padding:2px 8px;font-size:10.5px;font-weight:800">数据不出机</span>
+      <span style="background:#f1f5f9;color:#41556b;border:1px solid #dbe4ef;border-radius:999px;padding:2px 8px;font-size:10.5px;font-weight:800">两库依据可展开</span>
+      <span style="background:${result.error ? '#fef2f2' : hits.length ? '#fff7ed' : '#ecfdf5'};color:${result.error ? '#b91c1c' : hits.length ? '#b45309' : '#0a7a4b'};border:1px solid ${result.error ? '#fecaca' : hits.length ? '#fed7aa' : '#a7f3d0'};border-radius:999px;padding:2px 8px;font-size:10.5px;font-weight:800">${result.error ? '异常不放行' : hits.length ? '等待医生处置' : '已放行留痕'}</span>
+    </div>`;
     let body;
     if (result.error) {
       body = `<div style="padding:20px 14px;text-align:center">
@@ -112,7 +118,7 @@
         <button id="yy-override" style="padding:7px 10px;border:1px solid #d0a800;border-radius:6px;background:#fffbe6;color:#8a6d00;font-size:12px;cursor:pointer">⚠ 坚持提交</button>
       </div>` : '';
     const foot = `<div style="padding:8px 14px;font-size:11px;color:#8a99ab;border-top:1px solid #edf1f6">${esc(result.engine || '确定性规则·毫秒级')} · 本地运行,数据不出机 · 依据国家医保两库与相关号令 · 违规消除在"萌芽"</div>`;
-    box.innerHTML = head + body + actions + foot;
+    box.innerHTML = head + status + body + actions + foot;
     document.body.appendChild(box);
     box.querySelector('#yy-close').onclick = () => box.remove();
     wireActions(box, result, ctx);
@@ -159,6 +165,8 @@
         <div style="font-size:12px;color:#8a6d00;margin-bottom:6px">坚持提交需记录理由(将进入监管重点审核):</div>
         <select id="yy-reason" style="width:100%;padding:6px;border:1px solid #d0a800;border-radius:5px;font-size:12px;margin-bottom:6px">
           <option value="临床确有必要,已知情告知">临床确有必要,已知情告知</option>
+          <option value="已完成患者沟通,同意先行处置并补录记录">已完成患者沟通,同意先行处置并补录记录</option>
+          <option value="病历已有支持,本次先提交后补结构化材料">病历已有支持,本次先提交后补结构化材料</option>
           <option value="外院已有检测/评估结果,待补录">外院已有检测/评估结果,待补录</option>
           <option value="患者要求且自费部分已说明">患者要求且自费部分已说明</option>
           <option value="其他(见病历记录)">其他(见病历记录)</option>

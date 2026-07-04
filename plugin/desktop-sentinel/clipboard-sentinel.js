@@ -31,6 +31,15 @@ const interval = Number(getOpt('interval', '1500'));
 const once = args.includes('--once');
 const noPoll = args.includes('--no-poll');
 const fromStdin = args.includes('--stdin'); // 回退:pbpaste 不可用时 `pbpaste | node ... --stdin`,或管道喂 TSV
+const demoSample = args.includes('--demo-sample'); // 现场演示:不用打开 Excel,直接跑一段脱敏样例 TSV
+const DEMO_TSV = [
+  '项目名称\t年龄\t性别\t数量\t金额\t科室\t医生\t追溯码\t结算日期',
+  '左氧氟沙星氯化钠注射液\t16\t女\t5\t140\t呼吸内科\t王医生\t\t2026-06-16',
+  '静脉输液\t45\t男\t35\t280\t急诊科\t李医生\t\t2026-06-16',
+  '恩替卡韦分散片\t45\t男\t1\t145\t感染科\t赵医生\t81069847100523916482\t2026-06-11',
+  '恩替卡韦分散片\t45\t男\t1\t145\t感染科\t赵医生\t81069847100523916482\t2026-06-16',
+  '苯磺酸氨氯地平片\t45\t男\t1\t28\t心内科\t周医生\t\t2026-06-16',
+].join('\n');
 
 // —— 剪贴板读取(macOS 优先;其它平台预留分支)——
 function readClipboard() {
@@ -166,6 +175,7 @@ if (!/localhost|127\.0\.0\.1/.test(engineBase)) console.log('   ⚠ 引擎非本
 
 (async () => {
   if (fromStdin) { const t = await readStdin(); await auditClipboard(t); process.exit(0); }
+  if (demoSample) { console.log('   演示样例:使用内置脱敏结算表,不读取系统剪贴板。\n'); await auditClipboard(DEMO_TSV); process.exit(0); }
   if (once) { await auditClipboard(); process.exit(0); }
   if (noPoll) {
     console.log('   显式模式:在 Excel 选区复制后,回到本终端按回车审一次。Ctrl+C 退出。\n');

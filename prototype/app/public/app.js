@@ -583,6 +583,10 @@ async function init() {
     }
     document.body.classList.toggle('role-hospital', ROLE === 'hospital');
     document.body.classList.toggle('role-audit', ROLE === 'audit');
+    const qs = new URLSearchParams(location.search);
+    const qFrom = qs.get('from');
+    const lnkQueueEarly = $('#lnkBackQueue');
+    if (lnkQueueEarly) lnkQueueEarly.classList.toggle('hidden', qFrom !== 'priority');
     const [health, rules, cases, gov] = await Promise.all([
       fetch('/api/health').then(r => r.json()),
       fetch('/api/rules').then(r => r.json()),
@@ -603,10 +607,12 @@ async function init() {
       return `<option value="${esc(c.id)}">${esc(lbl)} · ${vio}</option>`;
     }).join('');
     $('#caseSelect').onchange = (e) => loadCase(e.target.value);
-    const qCase = new URLSearchParams(location.search).get('case');
-    const qAudit = new URLSearchParams(location.search).get('audit');
+    const qCase = qs.get('case');
+    const qAudit = qs.get('audit');
     const caseId = qCase && cases.some(c => c.id === qCase) ? qCase : 'main';
     await loadCase(caseId);
+    const lnkQueue = $('#lnkBackQueue');
+    if (lnkQueue) lnkQueue.classList.toggle('hidden', qFrom !== 'priority');
     if (qAudit === '1' && caseId === 'uploaded') setTimeout(() => runAudit(getEngineTierOpts()), 400);
     applyModeUI();
     bindReviewActionDelegation();
@@ -2635,10 +2641,16 @@ $('#btnReset').onclick = () => location.reload();
 // 双模式
 function setMode(mode) {
   if (mode === MODE) return;
+  const prevCase = CURRENT_CASE;
+  const hadReport = !!REPORT;
   MODE = mode;
+  ROLE = mode === 'exam' ? 'hospital' : 'audit';
   sessionStorage.setItem('yingyan_mode', mode);
+  sessionStorage.setItem('yingyan_role', ROLE);
+  document.body.classList.toggle('role-hospital', ROLE === 'hospital');
+  document.body.classList.toggle('role-audit', ROLE === 'audit');
   applyModeUI();
-  if (REPORT) runAudit(getEngineTierOpts());
+  if (hadReport) runAudit(getEngineTierOpts());
 }
 $$('.mode-btn').forEach(b => b.onclick = () => setMode(b.dataset.mode));
 $$('.rtab').forEach(b => b.onclick = () => switchReportView(b.dataset.view));

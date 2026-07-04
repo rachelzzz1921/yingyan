@@ -23,6 +23,7 @@
     </div>
   </div>
   <div class="topbar-actions">
+    <a class="role-home nav-back-queue hidden" id="lnkBackQueue" href="/priority.html" title="返回稽核优先队列">← 返回队列</a>
     <a class="role-home" href="/home.html" title="返回选择工作台（监管侧 / 院端）">⌂ 切换工作台</a>
     <div class="mode-toggle" id="modeToggle" title="一套引擎两种模式">
       <button class="mode-btn active" data-mode="audit">🛡 监管稽核</button>
@@ -178,6 +179,8 @@
 (function(){
   var q = new URLSearchParams(location.search);
   if (q.get('from') === 'priority') {
+    var back = document.getElementById('lnkBackQueue');
+    if (back) back.classList.remove('hidden');
     var lnk = document.getElementById('lnkPriority');
     if (lnk) lnk.textContent = '← 返回稽核队列';
   }

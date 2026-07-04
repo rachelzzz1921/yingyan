@@ -3050,6 +3050,14 @@ server.listen(PORT, async () => {
   console.log(`  ▸ 交付文档（PPT/架构图）http://localhost:${PORT}/deliverables/`);
   console.log(`  ▸ 现场物料（传单/白皮书）http://localhost:${PORT}/materials/`);
   console.log(`  ▸ 规则 ${DB.rulesDoc.rules.length} 条 | KB ${DB.kbSource || 'json'} | LLM ${llmReady() ? providerName() : '未配置(确定性引擎)'}\n`);
+  // 黄金闭环第⑦步用同一组 layers；冷启动首次约 60–90s，启动后后台预热避免演示卡住
+  try {
+    const { runYhfGate } = require(path.resolve(__dirname, '../../yhf/index.js'));
+    const goldenLayers = ['engine', 'rule', 'prompt', 'shadow', 'rag'];
+    cachedAsync('yhfQuick', 120000, () => runYhfGate({ layers: goldenLayers, strictLayers: true }))
+      .then(() => console.log('  ▸ 质量门禁已预热（黄金闭环第⑦步 · 秒开）'))
+      .catch((e) => console.warn('  ▸ 质量门禁预热跳过:', e.message));
+  } catch (_) { /* yhf 不可用时不阻塞启动 */ }
 });
 } else {
   refreshLiveKB().catch((e) => console.warn('[kb] refreshLiveKB:', e.message));

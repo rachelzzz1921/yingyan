@@ -24,6 +24,28 @@
   }
 
   var FONT = '"PingFang SC","Microsoft YaHei",sans-serif';
+  var DEFAULT_STATUS = [
+    { text: '本地引擎', tone: 'ok' },
+    { text: 'KB+规则版本 2026-07', tone: 'info' },
+    { text: '数据不出机', tone: 'safe' },
+    { text: '人工最终裁定', tone: 'info' },
+  ];
+
+  function statusHtml(items) {
+    items = (items && items.length ? items : DEFAULT_STATUS);
+    var tone = {
+      ok: ['#ecfdf5', '#0a7a4b', '#a7f3d0'],
+      safe: ['#f0fdfa', '#0f766e', '#99f6e4'],
+      warn: ['#fff7ed', '#b45309', '#fed7aa'],
+      danger: ['#fef2f2', '#b91c1c', '#fecaca'],
+      info: ['#f1f5f9', '#41556b', '#dbe4ef'],
+    };
+    return items.map(function (it) {
+      if (typeof it === 'string') it = { text: it, tone: 'info' };
+      var c = tone[it.tone || 'info'] || tone.info;
+      return '<span style="display:inline-flex;align-items:center;gap:4px;background:' + c[0] + ';color:' + c[1] + ';border:1px solid ' + c[2] + ';border-radius:999px;padding:2px 8px;font-size:10.5px;font-weight:800;white-space:nowrap">' + esc(it.text) + '</span>';
+    }).join('');
+  }
 
   function panel(opts) {
     opts = opts || {};
@@ -41,6 +63,7 @@
         '<a href="javascript:void(0)" id="yy-close" style="text-decoration:none;color:#cfe0ee;font-size:18px;line-height:1">×</a>' +
       '</div>' +
       '<div id="yy-sub" style="padding:7px 14px;background:#f6f9fc;border-bottom:1px solid #edf1f6;font-size:12px;color:#5b6d82;' + (opts.sub ? '' : 'display:none') + '">' + esc(opts.sub || '') + '</div>' +
+      '<div id="yy-status" style="padding:7px 14px;background:#fff;border-bottom:1px solid #edf1f6;display:flex;gap:6px;flex-wrap:wrap">' + statusHtml(opts.status) + '</div>' +
       '<div id="yy-body" style="padding:0;overflow:auto;flex:1;background:#fff"></div>' +
       '<div id="yy-actions" style="display:none;padding:10px 14px;border-top:1px solid #edf1f6;gap:8px;flex-wrap:wrap"></div>' +
       '<div id="yy-footer" style="padding:8px 14px;font-size:11px;color:#8a99ab;border-top:1px solid #edf1f6;display:none"></div>';
@@ -52,6 +75,7 @@
     var footEl = box.querySelector('#yy-footer');
     var chipEl = box.querySelector('#yy-chips');
     var subEl = box.querySelector('#yy-sub');
+    var statusEl = box.querySelector('#yy-status');
 
     function close() {
       box.style.opacity = '0'; box.style.transform = 'translateY(12px)';
@@ -66,6 +90,7 @@
     }
     function body(html) { bodyEl.innerHTML = html; return h; }
     function sub(text) { subEl.style.display = text ? 'block' : 'none'; subEl.textContent = text || ''; return h; }
+    function status(items) { statusEl.innerHTML = statusHtml(items); return h; }
     function chips(arr) {
       chipEl.innerHTML = (arr || []).map(function (c) {
         return '<span style="background:' + (c.bg || '#334') + ';color:#fff;font-size:11px;font-weight:800;padding:1px 8px;border-radius:20px">' + esc(c.text) + '</span>';
@@ -94,7 +119,7 @@
       footEl.textContent = text;
       return h;
     }
-    var h = { el: box, bodyEl: bodyEl, close: close, loading: loading, body: body, sub: sub, chips: chips, actions: actions, footer: footer,
+    var h = { el: box, bodyEl: bodyEl, close: close, loading: loading, body: body, sub: sub, status: status, chips: chips, actions: actions, footer: footer,
       debate: function (debateObj, opts) { body(debateHtml(debateObj, opts)); return h; }
     };
     return h;

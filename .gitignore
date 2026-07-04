@@ -58,6 +58,7 @@ export/
 *.tar.gz
 .vercel
 team-app-demo-delivery/
+team-app-u盘内网交付/app.env
 
 # KB crawler artifacts (raw downloads + incremental state)
 public-data-corpus/raw/
@@ -72,3 +73,6 @@ prototype/data/precheck_ledger.json
 
 # 本地 eval/yhf 备份(去eval改动前快照,勿提交)
 _backup_preeval_*/
+team-app-u盘内网交付_副本/
+团队交付u盘*/
+team-app-u盘内网交付/

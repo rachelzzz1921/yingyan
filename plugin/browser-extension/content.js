@@ -9,13 +9,21 @@
 
   const DEFAULTS = { engineBase: 'http://localhost:3700', interceptSubmit: true, showCleanBadge: true, natureFilter: 'any' };
   let CFG = { ...DEFAULTS };
-  try { chrome.storage.sync.get(DEFAULTS, (c) => { CFG = c || DEFAULTS; }); } catch (_) { /* 非扩展环境用默认 */ }
+  function isLocal(base) { return /^(http:\/\/)?(localhost|127\.0\.0\.1)(:|\/|$)/.test(String(base || '')); }
+  function refreshChip() {
+    if (!chip) return;
+    const local = isLocal(CFG.engineBase);
+    chip.textContent = '🦅 鹰眼已挂载 · ' + (local ? '本地引擎' : '内网引擎');
+    chip.title = (local ? '本地运行,数据不出机' : '当前连接非 localhost,请确认是可信院内引擎') + ' · 点击立即审方(不提交)';
+    chip.style.background = local ? '#0b2a4a' : '#8a5a00';
+  }
+  try { chrome.storage.sync.get(DEFAULTS, (c) => { CFG = c || DEFAULTS; refreshChip(); }); } catch (_) { /* 非扩展环境用默认 */ }
 
   // 页面右上角常驻小徽标:让"插件已挂载"可见(演示叙事点)
   const chip = document.createElement('div');
-  chip.textContent = '🦅 鹰眼已挂载 · 事前提醒';
+  chip.textContent = '🦅 鹰眼已挂载 · 本地引擎';
   chip.style.cssText = 'position:fixed;top:10px;right:12px;background:#0b2a4a;color:#fff;padding:4px 12px;border-radius:999px;font-size:12px;z-index:2147483647;box-shadow:0 4px 14px rgba(0,0,0,.25);cursor:pointer;font-family:"PingFang SC","Microsoft YaHei",sans-serif';
-  chip.title = '点击立即审方(不提交)';
+  chip.title = '本地运行,数据不出机 · 点击立即审方(不提交)';
   chip.onclick = () => window.YingyanPrecheck.run({ engineBase: CFG.engineBase });
   document.body.appendChild(chip);
 

@@ -496,7 +496,18 @@ const HANDLERS = {
   },
 
   async yhf(){
-    const r=await fetch('/api/yhf?layers=engine,rule,prompt,shadow,rag').then(x=>x.json());
+    const t0=Date.now();
+    const tick=setInterval(()=>{
+      const b=document.getElementById('btn-yhf');
+      if(b&&b.classList.contains('running')){
+        const s=Math.round((Date.now()-t0)/1000);
+        b.textContent='质量检查中 '+s+'s…';
+      }
+    },1000);
+    let r;
+    try{
+      r=await fetch('/api/yhf?layers=engine,rule,prompt,shadow,rag').then(x=>x.json());
+    }finally{ clearInterval(tick); }
     if(r.error) throw new Error(r.error);
     const g=(r.engine&&r.engine.gates)||{};
     const gates=[
@@ -572,6 +583,8 @@ async function handleFiles(files){
 }
 
 loadCases('main');
+// 进入页面即后台预热第⑦步质量门禁，避免走到该步时冷启动等待 ~60s
+fetch('/api/yhf?layers=engine,rule,prompt,shadow,rag').catch(()=>{});
 </script>
 </body>
 </html>

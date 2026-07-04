@@ -104,6 +104,304 @@
         "IT-mr63oc0o-7",
         "IT-mr63oc0o-8"
       ]
+    },
+    {
+      "plan_id": "IP-mr63ocw1-b86e",
+      "org_id": "示范市第一人民医院",
+      "period": "2026-07-04",
+      "teams": [
+        "医疗组",
+        "财务组"
+      ],
+      "routes": [
+        {
+          "route_id": "route-a",
+          "name": "动线 A",
+          "teams": [
+            "医疗组",
+            "政策组"
+          ],
+          "station_ids": [
+            "station-records",
+            "station-equipment",
+            "station-info"
+          ]
+        },
+        {
+          "route_id": "route-b",
+          "name": "动线 B",
+          "teams": [
+            "财务组",
+            "数据组"
+          ],
+          "station_ids": [
+            "station-pharmacy",
+            "station-finance",
+            "station-info"
+          ]
+        }
+      ],
+      "status": "进行中",
+      "created_from": "queue_selection",
+      "created_by": "飞检组长",
+      "created_at": "2026-07-04T08:28:25.537Z",
+      "updated_at": "2026-07-04T08:28:25.537Z",
+      "task_ids": [
+        "IT-mr63ocw2-1",
+        "IT-mr63ocw2-2",
+        "IT-mr63ocw2-3",
+        "IT-mr63ocw2-4",
+        "IT-mr63ocw2-5",
+        "IT-mr63ocw2-6",
+        "IT-mr63ocw2-7",
+        "IT-mr63ocw2-8"
+      ]
+    },
+    {
+      "plan_id": "IP-mr63ovix-53f2",
+      "org_id": "示范市第一人民医院",
+      "period": "2026-07-04",
+      "teams": [
+        "医疗组",
+        "财务组"
+      ],
+      "routes": [
+        {
+          "route_id": "route-a",
+          "name": "动线 A",
+          "teams": [
+            "医疗组",
+            "政策组"
+          ],
+          "station_ids": [
+            "station-records",
+            "station-equipment",
+            "station-info"
+          ]
+        },
+        {
+          "route_id": "route-b",
+          "name": "动线 B",
+          "teams": [
+            "财务组",
+            "数据组"
+          ],
+          "station_ids": [
+            "station-pharmacy",
+            "station-finance",
+            "station-info"
+          ]
+        }
+      ],
+      "status": "进行中",
+      "created_from": "queue_selection",
+      "created_by": "飞检组长",
+      "created_at": "2026-07-04T08:28:49.688Z",
+      "updated_at": "2026-07-04T08:28:49.688Z",
+      "task_ids": [
+        "IT-mr63ovix-1",
+        "IT-mr63ovix-2",
+        "IT-mr63ovix-3",
+        "IT-mr63ovix-4",
+        "IT-mr63ovix-5",
+        "IT-mr63ovix-6",
+        "IT-mr63ovix-7",
+        "IT-mr63ovix-8"
+      ]
+    },
+    {
+      "plan_id": "IP-mr63phl7-db68",
+      "org_id": "示范市第一人民医院",
+      "period": "2026-07-04",
+      "teams": [
+        "医疗组",
+        "财务组"
+      ],
+      "routes": [
+        {
+          "route_id": "route-a",
+          "name": "动线 A",
+          "teams": [
+            "医疗组",
+            "政策组"
+          ],
+          "station_ids": [
+            "station-records",
+            "station-equipment",
+            "station-info"
+          ]
+        },
+        {
+          "route_id": "route-b",
+          "name": "动线 B",
+          "teams": [
+            "财务组",
+            "数据组"
+          ],
+          "station_ids": [
+            "station-pharmacy",
+            "station-finance",
+            "station-info"
+          ]
+        }
+      ],
+      "status": "进行中",
+      "created_from": "queue_selection",
+      "created_by": "飞检组长",
+      "created_at": "2026-07-04T08:29:18.283Z",
+      "updated_at": "2026-07-04T08:29:18.283Z",
+      "task_ids": [
+        "IT-mr63phl7-1"
+      ]
+    },
+    {
+      "plan_id": "IP-mr63qemm-1069",
+      "org_id": "示范市第一人民医院",
+      "period": "2026-07-04",
+      "teams": [
+        "医疗组",
+        "财务组"
+      ],
+      "routes": [
+        {
+          "route_id": "route-a",
+          "name": "动线 A",
+          "teams": [
+            "医疗组",
+            "政策组"
+          ],
+          "station_ids": [
+            "station-records",
+            "station-equipment",
+            "station-info"
+          ]
+        },
+        {
+          "route_id": "route-b",
+          "name": "动线 B",
+          "teams": [
+            "财务组",
+            "数据组"
+          ],
+          "station_ids": [
+            "station-pharmacy",
+            "station-finance",
+            "station-info"
+          ]
+        }
+      ],
+      "status": "进行中",
+      "created_from": "queue_selection",
+      "created_by": "飞检组长",
+      "created_at": "2026-07-04T08:30:01.102Z",
+      "updated_at": "2026-07-04T08:30:01.102Z",
+      "task_ids": [
+        "IT-mr63qemm-1",
+        "IT-mr63qemm-2",
+        "IT-mr63qemm-3",
+        "IT-mr63qemm-4",
+        "IT-mr63qemm-5",
+        "IT-mr63qemm-6",
+        "IT-mr63qemm-7",
+        "IT-mr63qemm-8"
+      ]
+    },
+    {
+      "plan_id": "IP-mr63qn4f-b03a",
+      "org_id": "示范市第一人民医院",
+      "period": "2026-07-04",
+      "teams": [
+        "医疗组",
+        "财务组"
+      ],
+      "routes": [
+        {
+          "route_id": "route-a",
+          "name": "动线 A",
+          "teams": [
+            "医疗组",
+            "政策组"
+          ],
+          "station_ids": [
+            "station-records",
+            "station-equipment",
+            "station-info"
+          ]
+        },
+        {
+          "route_id": "route-b",
+          "name": "动线 B",
+          "teams": [
+            "财务组",
+            "数据组"
+          ],
+          "station_ids": [
+            "station-pharmacy",
+            "station-finance",
+            "station-info"
+          ]
+        }
+      ],
+      "status": "进行中",
+      "created_from": "queue_selection",
+      "created_by": "飞检组长",
+      "created_at": "2026-07-04T08:30:12.111Z",
+      "updated_at": "2026-07-04T08:30:12.111Z",
+      "task_ids": [
+        "IT-mr63qn4g-1"
+      ]
+    },
+    {
+      "plan_id": "IP-mr63qs43-ad90",
+      "org_id": "示范市第一人民医院",
+      "period": "2026-07-04",
+      "teams": [
+        "医疗组",
+        "财务组"
+      ],
+      "routes": [
+        {
+          "route_id": "route-a",
+          "name": "动线 A",
+          "teams": [
+            "医疗组",
+            "政策组"
+          ],
+          "station_ids": [
+            "station-records",
+            "station-equipment",
+            "station-info"
+          ]
+        },
+        {
+          "route_id": "route-b",
+          "name": "动线 B",
+          "teams": [
+            "财务组",
+            "数据组"
+          ],
+          "station_ids": [
+            "station-pharmacy",
+            "station-finance",
+            "station-info"
+          ]
+        }
+      ],
+      "status": "进行中",
+      "created_from": "queue_selection",
+      "created_by": "飞检组长",
+      "created_at": "2026-07-04T08:30:18.579Z",
+      "updated_at": "2026-07-04T08:30:18.579Z",
+      "task_ids": [
+        "IT-mr63qs43-1",
+        "IT-mr63qs43-2",
+        "IT-mr63qs43-3",
+        "IT-mr63qs43-4",
+        "IT-mr63qs43-5",
+        "IT-mr63qs43-6",
+        "IT-mr63qs43-7",
+        "IT-mr63qs43-8"
+      ]
     }
   ],
   "tasks": [
@@ -868,6 +1166,1628 @@
       "needs_more_evidence": false,
       "created_at": "2026-07-04T08:28:24.407Z",
       "updated_at": "2026-07-04T08:28:24.407Z"
+    },
+    {
+      "task_id": "IT-mr63ocw2-1",
+      "plan_id": "IP-mr63ocw1-b86e",
+      "source_finding_id": "F-NSCLC001-010",
+      "case_id": "main",
+      "case_title": "非小细胞肺癌（NSCLC）住院化疗 · 模拟材料包",
+      "rule_id": "L3-DRX",
+      "rule_name": "重复开药/药品种类超标",
+      "amount_involved": 9890,
+      "original_nature": "可疑",
+      "station_id": "station-pharmacy",
+      "team": "医疗组",
+      "route_id": "route-a",
+      "type": "进销存盘点",
+      "basis_ref": {
+        "rule_id": "L3-DRX",
+        "rule_name": "重复开药/药品种类超标",
+        "official_gz_codes": [
+          "GZ10000202004000",
+          "GZ10000204003000",
+          "GZ10000301006000"
+        ],
+        "effective_interval": {
+          "from": "2023-05-15",
+          "to": null
+        },
+        "policy_basis": [
+          "KB1-两库2025-重复开药"
+        ],
+        "disposal": "",
+        "region_override": ""
+      },
+      "evidence_requirements": [
+        "台账复印盖章",
+        "收费量 vs 出库量差量计算表",
+        "发票/随货同行单编号"
+      ],
+      "compliance_flags": {
+        "need_two_officers": true,
+        "need_signed_transcript": false
+      },
+      "fee_line_no": 1,
+      "state": "已分配",
+      "verify_result": null,
+      "verify_reason": "",
+      "needs_more_evidence": false,
+      "created_at": "2026-07-04T08:28:25.537Z",
+      "updated_at": "2026-07-04T08:28:25.537Z"
+    },
+    {
+      "task_id": "IT-mr63ocw2-2",
+      "plan_id": "IP-mr63ocw1-b86e",
+      "source_finding_id": "F-NSCLC001-004",
+      "case_id": "main",
+      "case_title": "非小细胞肺癌（NSCLC）住院化疗 · 模拟材料包",
+      "rule_id": "T-201",
+      "rule_name": "靶向药无基因检测证据使用",
+      "amount_involved": 4704,
+      "original_nature": "可疑",
+      "station_id": "station-pharmacy",
+      "team": "财务组",
+      "route_id": "route-b",
+      "type": "进销存盘点",
+      "basis_ref": {
+        "rule_id": "T-201",
+        "rule_name": "靶向药无基因检测证据使用",
+        "official_gz_codes": [
+          "GZ10000301008000",
+          "GZ10000301001000"
+        ],
+        "effective_interval": {
+          "from": "2023-05-15",
+          "to": null
+        },
+        "policy_basis": [
+          "KB1-条例-第38条(二)",
+          "KB1-条例-第38条(六)",
+          "KB1-目录2025-西药-奥希替尼-备注",
+          "KB2-指导原则2025-靶点检测原则",
+          "KB2-指导原则2025-EGFR-TKI用药要点"
+        ],
+        "disposal": "",
+        "region_override": ""
+      },
+      "evidence_requirements": [
+        "台账复印盖章",
+        "收费量 vs 出库量差量计算表",
+        "发票/随货同行单编号"
+      ],
+      "compliance_flags": {
+        "need_two_officers": true,
+        "need_signed_transcript": false
+      },
+      "fee_line_no": 7,
+      "state": "已分配",
+      "verify_result": null,
+      "verify_reason": "",
+      "needs_more_evidence": false,
+      "created_at": "2026-07-04T08:28:25.537Z",
+      "updated_at": "2026-07-04T08:28:25.537Z"
+    },
+    {
+      "task_id": "IT-mr63ocw2-3",
+      "plan_id": "IP-mr63ocw1-b86e",
+      "source_finding_id": "F-ORTHO001-003",
+      "case_id": "ortho",
+      "case_title": "骨科·经皮椎体后凸成形术(PKP) 备演材料包（硬证据·对错分明）",
+      "rule_id": "A-107",
+      "rule_name": "串换药品/耗材/诊疗项目",
+      "amount_involved": 3200,
+      "original_nature": "可疑",
+      "station_id": "station-equipment",
+      "team": "医疗组",
+      "route_id": "route-a",
+      "type": "设备存在性核查",
+      "basis_ref": {
+        "rule_id": "A-107",
+        "rule_name": "串换药品/耗材/诊疗项目",
+        "official_gz_codes": [
+          "GZ10000103003000",
+          "GZ10000303001000",
+          "GZ10000303003000"
+        ],
+        "effective_interval": {
+          "from": "2023-05-15",
+          "to": null
+        },
+        "policy_basis": [
+          "KB1-条例-第38条(四)",
+          "KB1-骨科植入耗材分类代码2026"
+        ],
+        "disposal": "",
+        "region_override": ""
+      },
+      "evidence_requirements": [
+        "铭牌与序列号照片",
+        "采购发票编号",
+        "收费期间设备在院说明"
+      ],
+      "compliance_flags": {
+        "need_two_officers": true,
+        "need_signed_transcript": false
+      },
+      "fee_line_no": 7,
+      "state": "已分配",
+      "verify_result": null,
+      "verify_reason": "",
+      "needs_more_evidence": false,
+      "created_at": "2026-07-04T08:28:25.537Z",
+      "updated_at": "2026-07-04T08:28:25.537Z"
+    },
+    {
+      "task_id": "IT-mr63ocw2-4",
+      "plan_id": "IP-mr63ocw1-b86e",
+      "source_finding_id": "F-LC301001-001",
+      "case_id": "violation_light_c301",
+      "case_title": "轻量违规·分解住院(C-301)",
+      "rule_id": "C-301",
+      "rule_name": "分解住院",
+      "amount_involved": 3200,
+      "original_nature": "明确违规",
+      "station_id": "station-records",
+      "team": "财务组",
+      "route_id": "route-b",
+      "type": "病历调阅+人员询问",
+      "basis_ref": {
+        "rule_id": "C-301",
+        "rule_name": "分解住院",
+        "official_gz_codes": [
+          "GZ10000204001000",
+          "GZ10000204004000"
+        ],
+        "effective_interval": {
+          "from": "2023-05-15",
+          "to": null
+        },
+        "policy_basis": [
+          "KB1-条例-第38条(一)"
+        ],
+        "disposal": "",
+        "region_override": ""
+      },
+      "evidence_requirements": [
+        "原始病历调阅记录",
+        "经治医师询问笔录",
+        "逐页签字/捺印确认"
+      ],
+      "compliance_flags": {
+        "need_two_officers": true,
+        "need_signed_transcript": true
+      },
+      "fee_line_no": 1,
+      "state": "已分配",
+      "verify_result": null,
+      "verify_reason": "",
+      "needs_more_evidence": false,
+      "created_at": "2026-07-04T08:28:25.537Z",
+      "updated_at": "2026-07-04T08:28:25.537Z"
+    },
+    {
+      "task_id": "IT-mr63ocw2-5",
+      "plan_id": "IP-mr63ocw1-b86e",
+      "source_finding_id": "F-NSCLC001-006",
+      "case_id": "main",
+      "case_title": "非小细胞肺癌（NSCLC）住院化疗 · 模拟材料包",
+      "rule_id": "T-207",
+      "rule_name": "院外购药费用转嫁",
+      "amount_involved": 2600,
+      "original_nature": "可疑",
+      "station_id": "station-pharmacy",
+      "team": "医疗组",
+      "route_id": "route-a",
+      "type": "进销存盘点",
+      "basis_ref": {
+        "rule_id": "T-207",
+        "rule_name": "院外购药费用转嫁",
+        "official_gz_codes": [],
+        "effective_interval": null,
+        "policy_basis": [
+          "KB1-条例-第38条",
+          "KB1-江苏-DRGDIP绩效评价负面清单(高编低套/分解费用)"
+        ],
+        "disposal": "",
+        "region_override": ""
+      },
+      "evidence_requirements": [
+        "台账复印盖章",
+        "收费量 vs 出库量差量计算表",
+        "发票/随货同行单编号"
+      ],
+      "compliance_flags": {
+        "need_two_officers": true,
+        "need_signed_transcript": false
+      },
+      "fee_line_no": 1,
+      "state": "已分配",
+      "verify_result": null,
+      "verify_reason": "",
+      "needs_more_evidence": false,
+      "created_at": "2026-07-04T08:28:25.537Z",
+      "updated_at": "2026-07-04T08:28:25.537Z"
+    },
+    {
+      "task_id": "IT-mr63ocw2-6",
+      "plan_id": "IP-mr63ocw1-b86e",
+      "source_finding_id": "F-NSCLC001-007",
+      "case_id": "main",
+      "case_title": "非小细胞肺癌（NSCLC）住院化疗 · 模拟材料包",
+      "rule_id": "B-201",
+      "rule_name": "药品使用超出医保目录限定支付范围",
+      "amount_involved": 1280,
+      "original_nature": "可疑",
+      "station_id": "station-pharmacy",
+      "team": "财务组",
+      "route_id": "route-b",
+      "type": "进销存盘点",
+      "basis_ref": {
+        "rule_id": "B-201",
+        "rule_name": "药品使用超出医保目录限定支付范围",
+        "official_gz_codes": [
+          "GZ10000101008000"
+        ],
+        "effective_interval": {
+          "from": "2023-05-15",
+          "to": null
+        },
+        "policy_basis": [
+          "KB1-条例-第38条(六)",
+          "KB1-目录2025-人血白蛋白-备注"
+        ],
+        "disposal": "",
+        "region_override": "江苏不缩紧限定支付(地市无权调整)，以国家目录备注为准"
+      },
+      "evidence_requirements": [
+        "台账复印盖章",
+        "收费量 vs 出库量差量计算表",
+        "发票/随货同行单编号"
+      ],
+      "compliance_flags": {
+        "need_two_officers": true,
+        "need_signed_transcript": false
+      },
+      "fee_line_no": 21,
+      "state": "已分配",
+      "verify_result": null,
+      "verify_reason": "",
+      "needs_more_evidence": false,
+      "created_at": "2026-07-04T08:28:25.537Z",
+      "updated_at": "2026-07-04T08:28:25.537Z"
+    },
+    {
+      "task_id": "IT-mr63ocw2-7",
+      "plan_id": "IP-mr63ocw1-b86e",
+      "source_finding_id": "F-YYICU001-002",
+      "case_id": "icu",
+      "case_title": "重症医学·ICU急性呼吸窘迫综合征 备演材料包（硬证据·对错分明）",
+      "rule_id": "ICU-302",
+      "rule_name": "按小时计价监护项目时长虚计",
+      "amount_involved": 1200,
+      "original_nature": "可疑",
+      "station_id": "station-equipment",
+      "team": "医疗组",
+      "route_id": "route-a",
+      "type": "设备存在性核查",
+      "basis_ref": {
+        "rule_id": "ICU-302",
+        "rule_name": "按小时计价监护项目时长虚计",
+        "official_gz_codes": [],
+        "effective_interval": null,
+        "policy_basis": [
+          "KB1-条例-第38条(三)",
+          "KB1-问题清单2025-重症-174"
+        ],
+        "disposal": "",
+        "region_override": ""
+      },
+      "evidence_requirements": [
+        "铭牌与序列号照片",
+        "采购发票编号",
+        "收费期间设备在院说明"
+      ],
+      "compliance_flags": {
+        "need_two_officers": true,
+        "need_signed_transcript": false
+      },
+      "fee_line_no": 4,
+      "state": "已分配",
+      "verify_result": null,
+      "verify_reason": "",
+      "needs_more_evidence": false,
+      "created_at": "2026-07-04T08:28:25.537Z",
+      "updated_at": "2026-07-04T08:28:25.537Z"
+    },
+    {
+      "task_id": "IT-mr63ocw2-8",
+      "plan_id": "IP-mr63ocw1-b86e",
+      "source_finding_id": "F-ORTHO001-002",
+      "case_id": "ortho",
+      "case_title": "骨科·经皮椎体后凸成形术(PKP) 备演材料包（硬证据·对错分明）",
+      "rule_id": "A-106",
+      "rule_name": "分解项目收费",
+      "amount_involved": 1200,
+      "original_nature": "可疑",
+      "station_id": "station-records",
+      "team": "财务组",
+      "route_id": "route-b",
+      "type": "病历调阅+人员询问",
+      "basis_ref": {
+        "rule_id": "A-106",
+        "rule_name": "分解项目收费",
+        "official_gz_codes": [
+          "GZ10000102013000"
+        ],
+        "effective_interval": {
+          "from": "2023-05-15",
+          "to": null
+        },
+        "policy_basis": [
+          "KB1-条例-第38条(三)",
+          "KB1-立项指南-椎体成形费-内涵"
+        ],
+        "disposal": "",
+        "region_override": ""
+      },
+      "evidence_requirements": [
+        "原始病历调阅记录",
+        "经治医师询问笔录",
+        "逐页签字/捺印确认"
+      ],
+      "compliance_flags": {
+        "need_two_officers": true,
+        "need_signed_transcript": true
+      },
+      "fee_line_no": 5,
+      "state": "已分配",
+      "verify_result": null,
+      "verify_reason": "",
+      "needs_more_evidence": false,
+      "created_at": "2026-07-04T08:28:25.537Z",
+      "updated_at": "2026-07-04T08:28:25.537Z"
+    },
+    {
+      "task_id": "IT-mr63ovix-1",
+      "plan_id": "IP-mr63ovix-53f2",
+      "source_finding_id": "F-NSCLC001-010",
+      "case_id": "main",
+      "case_title": "非小细胞肺癌（NSCLC）住院化疗 · 模拟材料包",
+      "rule_id": "L3-DRX",
+      "rule_name": "重复开药/药品种类超标",
+      "amount_involved": 9890,
+      "original_nature": "可疑",
+      "station_id": "station-pharmacy",
+      "team": "医疗组",
+      "route_id": "route-a",
+      "type": "进销存盘点",
+      "basis_ref": {
+        "rule_id": "L3-DRX",
+        "rule_name": "重复开药/药品种类超标",
+        "official_gz_codes": [
+          "GZ10000202004000",
+          "GZ10000204003000",
+          "GZ10000301006000"
+        ],
+        "effective_interval": {
+          "from": "2023-05-15",
+          "to": null
+        },
+        "policy_basis": [
+          "KB1-两库2025-重复开药"
+        ],
+        "disposal": "",
+        "region_override": ""
+      },
+      "evidence_requirements": [
+        "台账复印盖章",
+        "收费量 vs 出库量差量计算表",
+        "发票/随货同行单编号"
+      ],
+      "compliance_flags": {
+        "need_two_officers": true,
+        "need_signed_transcript": false
+      },
+      "fee_line_no": 1,
+      "state": "已分配",
+      "verify_result": null,
+      "verify_reason": "",
+      "needs_more_evidence": false,
+      "created_at": "2026-07-04T08:28:49.688Z",
+      "updated_at": "2026-07-04T08:28:49.688Z"
+    },
+    {
+      "task_id": "IT-mr63ovix-2",
+      "plan_id": "IP-mr63ovix-53f2",
+      "source_finding_id": "F-NSCLC001-004",
+      "case_id": "main",
+      "case_title": "非小细胞肺癌（NSCLC）住院化疗 · 模拟材料包",
+      "rule_id": "T-201",
+      "rule_name": "靶向药无基因检测证据使用",
+      "amount_involved": 4704,
+      "original_nature": "可疑",
+      "station_id": "station-pharmacy",
+      "team": "财务组",
+      "route_id": "route-b",
+      "type": "进销存盘点",
+      "basis_ref": {
+        "rule_id": "T-201",
+        "rule_name": "靶向药无基因检测证据使用",
+        "official_gz_codes": [
+          "GZ10000301008000",
+          "GZ10000301001000"
+        ],
+        "effective_interval": {
+          "from": "2023-05-15",
+          "to": null
+        },
+        "policy_basis": [
+          "KB1-条例-第38条(二)",
+          "KB1-条例-第38条(六)",
+          "KB1-目录2025-西药-奥希替尼-备注",
+          "KB2-指导原则2025-靶点检测原则",
+          "KB2-指导原则2025-EGFR-TKI用药要点"
+        ],
+        "disposal": "",
+        "region_override": ""
+      },
+      "evidence_requirements": [
+        "台账复印盖章",
+        "收费量 vs 出库量差量计算表",
+        "发票/随货同行单编号"
+      ],
+      "compliance_flags": {
+        "need_two_officers": true,
+        "need_signed_transcript": false
+      },
+      "fee_line_no": 7,
+      "state": "已分配",
+      "verify_result": null,
+      "verify_reason": "",
+      "needs_more_evidence": false,
+      "created_at": "2026-07-04T08:28:49.688Z",
+      "updated_at": "2026-07-04T08:28:49.688Z"
+    },
+    {
+      "task_id": "IT-mr63ovix-3",
+      "plan_id": "IP-mr63ovix-53f2",
+      "source_finding_id": "F-ORTHO001-003",
+      "case_id": "ortho",
+      "case_title": "骨科·经皮椎体后凸成形术(PKP) 备演材料包（硬证据·对错分明）",
+      "rule_id": "A-107",
+      "rule_name": "串换药品/耗材/诊疗项目",
+      "amount_involved": 3200,
+      "original_nature": "可疑",
+      "station_id": "station-equipment",
+      "team": "医疗组",
+      "route_id": "route-a",
+      "type": "设备存在性核查",
+      "basis_ref": {
+        "rule_id": "A-107",
+        "rule_name": "串换药品/耗材/诊疗项目",
+        "official_gz_codes": [
+          "GZ10000103003000",
+          "GZ10000303001000",
+          "GZ10000303003000"
+        ],
+        "effective_interval": {
+          "from": "2023-05-15",
+          "to": null
+        },
+        "policy_basis": [
+          "KB1-条例-第38条(四)",
+          "KB1-骨科植入耗材分类代码2026"
+        ],
+        "disposal": "",
+        "region_override": ""
+      },
+      "evidence_requirements": [
+        "铭牌与序列号照片",
+        "采购发票编号",
+        "收费期间设备在院说明"
+      ],
+      "compliance_flags": {
+        "need_two_officers": true,
+        "need_signed_transcript": false
+      },
+      "fee_line_no": 7,
+      "state": "已分配",
+      "verify_result": null,
+      "verify_reason": "",
+      "needs_more_evidence": false,
+      "created_at": "2026-07-04T08:28:49.688Z",
+      "updated_at": "2026-07-04T08:28:49.688Z"
+    },
+    {
+      "task_id": "IT-mr63ovix-4",
+      "plan_id": "IP-mr63ovix-53f2",
+      "source_finding_id": "F-LC301001-001",
+      "case_id": "violation_light_c301",
+      "case_title": "轻量违规·分解住院(C-301)",
+      "rule_id": "C-301",
+      "rule_name": "分解住院",
+      "amount_involved": 3200,
+      "original_nature": "明确违规",
+      "station_id": "station-records",
+      "team": "财务组",
+      "route_id": "route-b",
+      "type": "病历调阅+人员询问",
+      "basis_ref": {
+        "rule_id": "C-301",
+        "rule_name": "分解住院",
+        "official_gz_codes": [
+          "GZ10000204001000",
+          "GZ10000204004000"
+        ],
+        "effective_interval": {
+          "from": "2023-05-15",
+          "to": null
+        },
+        "policy_basis": [
+          "KB1-条例-第38条(一)"
+        ],
+        "disposal": "",
+        "region_override": ""
+      },
+      "evidence_requirements": [
+        "原始病历调阅记录",
+        "经治医师询问笔录",
+        "逐页签字/捺印确认"
+      ],
+      "compliance_flags": {
+        "need_two_officers": true,
+        "need_signed_transcript": true
+      },
+      "fee_line_no": 1,
+      "state": "已分配",
+      "verify_result": null,
+      "verify_reason": "",
+      "needs_more_evidence": false,
+      "created_at": "2026-07-04T08:28:49.688Z",
+      "updated_at": "2026-07-04T08:28:49.688Z"
+    },
+    {
+      "task_id": "IT-mr63ovix-5",
+      "plan_id": "IP-mr63ovix-53f2",
+      "source_finding_id": "F-NSCLC001-006",
+      "case_id": "main",
+      "case_title": "非小细胞肺癌（NSCLC）住院化疗 · 模拟材料包",
+      "rule_id": "T-207",
+      "rule_name": "院外购药费用转嫁",
+      "amount_involved": 2600,
+      "original_nature": "可疑",
+      "station_id": "station-pharmacy",
+      "team": "医疗组",
+      "route_id": "route-a",
+      "type": "进销存盘点",
+      "basis_ref": {
+        "rule_id": "T-207",
+        "rule_name": "院外购药费用转嫁",
+        "official_gz_codes": [],
+        "effective_interval": null,
+        "policy_basis": [
+          "KB1-条例-第38条",
+          "KB1-江苏-DRGDIP绩效评价负面清单(高编低套/分解费用)"
+        ],
+        "disposal": "",
+        "region_override": ""
+      },
+      "evidence_requirements": [
+        "台账复印盖章",
+        "收费量 vs 出库量差量计算表",
+        "发票/随货同行单编号"
+      ],
+      "compliance_flags": {
+        "need_two_officers": true,
+        "need_signed_transcript": false
+      },
+      "fee_line_no": 1,
+      "state": "已分配",
+      "verify_result": null,
+      "verify_reason": "",
+      "needs_more_evidence": false,
+      "created_at": "2026-07-04T08:28:49.688Z",
+      "updated_at": "2026-07-04T08:28:49.688Z"
+    },
+    {
+      "task_id": "IT-mr63ovix-6",
+      "plan_id": "IP-mr63ovix-53f2",
+      "source_finding_id": "F-NSCLC001-007",
+      "case_id": "main",
+      "case_title": "非小细胞肺癌（NSCLC）住院化疗 · 模拟材料包",
+      "rule_id": "B-201",
+      "rule_name": "药品使用超出医保目录限定支付范围",
+      "amount_involved": 1280,
+      "original_nature": "可疑",
+      "station_id": "station-pharmacy",
+      "team": "财务组",
+      "route_id": "route-b",
+      "type": "进销存盘点",
+      "basis_ref": {
+        "rule_id": "B-201",
+        "rule_name": "药品使用超出医保目录限定支付范围",
+        "official_gz_codes": [
+          "GZ10000101008000"
+        ],
+        "effective_interval": {
+          "from": "2023-05-15",
+          "to": null
+        },
+        "policy_basis": [
+          "KB1-条例-第38条(六)",
+          "KB1-目录2025-人血白蛋白-备注"
+        ],
+        "disposal": "",
+        "region_override": "江苏不缩紧限定支付(地市无权调整)，以国家目录备注为准"
+      },
+      "evidence_requirements": [
+        "台账复印盖章",
+        "收费量 vs 出库量差量计算表",
+        "发票/随货同行单编号"
+      ],
+      "compliance_flags": {
+        "need_two_officers": true,
+        "need_signed_transcript": false
+      },
+      "fee_line_no": 21,
+      "state": "已分配",
+      "verify_result": null,
+      "verify_reason": "",
+      "needs_more_evidence": false,
+      "created_at": "2026-07-04T08:28:49.688Z",
+      "updated_at": "2026-07-04T08:28:49.688Z"
+    },
+    {
+      "task_id": "IT-mr63ovix-7",
+      "plan_id": "IP-mr63ovix-53f2",
+      "source_finding_id": "F-YYICU001-002",
+      "case_id": "icu",
+      "case_title": "重症医学·ICU急性呼吸窘迫综合征 备演材料包（硬证据·对错分明）",
+      "rule_id": "ICU-302",
+      "rule_name": "按小时计价监护项目时长虚计",
+      "amount_involved": 1200,
+      "original_nature": "可疑",
+      "station_id": "station-equipment",
+      "team": "医疗组",
+      "route_id": "route-a",
+      "type": "设备存在性核查",
+      "basis_ref": {
+        "rule_id": "ICU-302",
+        "rule_name": "按小时计价监护项目时长虚计",
+        "official_gz_codes": [],
+        "effective_interval": null,
+        "policy_basis": [
+          "KB1-条例-第38条(三)",
+          "KB1-问题清单2025-重症-174"
+        ],
+        "disposal": "",
+        "region_override": ""
+      },
+      "evidence_requirements": [
+        "铭牌与序列号照片",
+        "采购发票编号",
+        "收费期间设备在院说明"
+      ],
+      "compliance_flags": {
+        "need_two_officers": true,
+        "need_signed_transcript": false
+      },
+      "fee_line_no": 4,
+      "state": "已分配",
+      "verify_result": null,
+      "verify_reason": "",
+      "needs_more_evidence": false,
+      "created_at": "2026-07-04T08:28:49.688Z",
+      "updated_at": "2026-07-04T08:28:49.688Z"
+    },
+    {
+      "task_id": "IT-mr63ovix-8",
+      "plan_id": "IP-mr63ovix-53f2",
+      "source_finding_id": "F-ORTHO001-002",
+      "case_id": "ortho",
+      "case_title": "骨科·经皮椎体后凸成形术(PKP) 备演材料包（硬证据·对错分明）",
+      "rule_id": "A-106",
+      "rule_name": "分解项目收费",
+      "amount_involved": 1200,
+      "original_nature": "可疑",
+      "station_id": "station-records",
+      "team": "财务组",
+      "route_id": "route-b",
+      "type": "病历调阅+人员询问",
+      "basis_ref": {
+        "rule_id": "A-106",
+        "rule_name": "分解项目收费",
+        "official_gz_codes": [
+          "GZ10000102013000"
+        ],
+        "effective_interval": {
+          "from": "2023-05-15",
+          "to": null
+        },
+        "policy_basis": [
+          "KB1-条例-第38条(三)",
+          "KB1-立项指南-椎体成形费-内涵"
+        ],
+        "disposal": "",
+        "region_override": ""
+      },
+      "evidence_requirements": [
+        "原始病历调阅记录",
+        "经治医师询问笔录",
+        "逐页签字/捺印确认"
+      ],
+      "compliance_flags": {
+        "need_two_officers": true,
+        "need_signed_transcript": true
+      },
+      "fee_line_no": 5,
+      "state": "已分配",
+      "verify_result": null,
+      "verify_reason": "",
+      "needs_more_evidence": false,
+      "created_at": "2026-07-04T08:28:49.688Z",
+      "updated_at": "2026-07-04T08:28:49.688Z"
+    },
+    {
+      "task_id": "IT-mr63phl7-1",
+      "plan_id": "IP-mr63phl7-db68",
+      "source_finding_id": "F-NSCLC001-010",
+      "case_id": "main",
+      "case_title": "非小细胞肺癌（NSCLC）住院化疗 · 模拟材料包",
+      "rule_id": "L3-DRX",
+      "rule_name": "重复开药/药品种类超标",
+      "amount_involved": 9890,
+      "original_nature": "可疑",
+      "station_id": "station-pharmacy",
+      "team": "医疗组",
+      "route_id": "route-a",
+      "type": "进销存盘点",
+      "basis_ref": {
+        "rule_id": "L3-DRX",
+        "rule_name": "重复开药/药品种类超标",
+        "official_gz_codes": [
+          "GZ10000202004000",
+          "GZ10000204003000",
+          "GZ10000301006000"
+        ],
+        "effective_interval": {
+          "from": "2023-05-15",
+          "to": null
+        },
+        "policy_basis": [
+          "KB1-两库2025-重复开药"
+        ],
+        "disposal": "",
+        "region_override": ""
+      },
+      "evidence_requirements": [
+        "台账复印盖章",
+        "收费量 vs 出库量差量计算表",
+        "发票/随货同行单编号"
+      ],
+      "compliance_flags": {
+        "need_two_officers": true,
+        "need_signed_transcript": false
+      },
+      "fee_line_no": 1,
+      "state": "已分配",
+      "verify_result": null,
+      "verify_reason": "",
+      "needs_more_evidence": false,
+      "created_at": "2026-07-04T08:29:18.283Z",
+      "updated_at": "2026-07-04T08:29:18.283Z"
+    },
+    {
+      "task_id": "IT-mr63qemm-1",
+      "plan_id": "IP-mr63qemm-1069",
+      "source_finding_id": "F-NSCLC001-010",
+      "case_id": "main",
+      "case_title": "非小细胞肺癌（NSCLC）住院化疗 · 模拟材料包",
+      "rule_id": "L3-DRX",
+      "rule_name": "重复开药/药品种类超标",
+      "amount_involved": 9890,
+      "original_nature": "可疑",
+      "station_id": "station-pharmacy",
+      "team": "医疗组",
+      "route_id": "route-a",
+      "type": "进销存盘点",
+      "basis_ref": {
+        "rule_id": "L3-DRX",
+        "rule_name": "重复开药/药品种类超标",
+        "official_gz_codes": [
+          "GZ10000202004000",
+          "GZ10000204003000",
+          "GZ10000301006000"
+        ],
+        "effective_interval": {
+          "from": "2023-05-15",
+          "to": null
+        },
+        "policy_basis": [
+          "KB1-两库2025-重复开药"
+        ],
+        "disposal": "",
+        "region_override": ""
+      },
+      "evidence_requirements": [
+        "台账复印盖章",
+        "收费量 vs 出库量差量计算表",
+        "发票/随货同行单编号"
+      ],
+      "compliance_flags": {
+        "need_two_officers": true,
+        "need_signed_transcript": false
+      },
+      "fee_line_no": 1,
+      "state": "已分配",
+      "verify_result": null,
+      "verify_reason": "",
+      "needs_more_evidence": false,
+      "created_at": "2026-07-04T08:30:01.102Z",
+      "updated_at": "2026-07-04T08:30:01.102Z"
+    },
+    {
+      "task_id": "IT-mr63qemm-2",
+      "plan_id": "IP-mr63qemm-1069",
+      "source_finding_id": "F-NSCLC001-004",
+      "case_id": "main",
+      "case_title": "非小细胞肺癌（NSCLC）住院化疗 · 模拟材料包",
+      "rule_id": "T-201",
+      "rule_name": "靶向药无基因检测证据使用",
+      "amount_involved": 4704,
+      "original_nature": "可疑",
+      "station_id": "station-pharmacy",
+      "team": "财务组",
+      "route_id": "route-b",
+      "type": "进销存盘点",
+      "basis_ref": {
+        "rule_id": "T-201",
+        "rule_name": "靶向药无基因检测证据使用",
+        "official_gz_codes": [
+          "GZ10000301008000",
+          "GZ10000301001000"
+        ],
+        "effective_interval": {
+          "from": "2023-05-15",
+          "to": null
+        },
+        "policy_basis": [
+          "KB1-条例-第38条(二)",
+          "KB1-条例-第38条(六)",
+          "KB1-目录2025-西药-奥希替尼-备注",
+          "KB2-指导原则2025-靶点检测原则",
+          "KB2-指导原则2025-EGFR-TKI用药要点"
+        ],
+        "disposal": "",
+        "region_override": ""
+      },
+      "evidence_requirements": [
+        "台账复印盖章",
+        "收费量 vs 出库量差量计算表",
+        "发票/随货同行单编号"
+      ],
+      "compliance_flags": {
+        "need_two_officers": true,
+        "need_signed_transcript": false
+      },
+      "fee_line_no": 7,
+      "state": "已分配",
+      "verify_result": null,
+      "verify_reason": "",
+      "needs_more_evidence": false,
+      "created_at": "2026-07-04T08:30:01.102Z",
+      "updated_at": "2026-07-04T08:30:01.102Z"
+    },
+    {
+      "task_id": "IT-mr63qemm-3",
+      "plan_id": "IP-mr63qemm-1069",
+      "source_finding_id": "F-ORTHO001-003",
+      "case_id": "ortho",
+      "case_title": "骨科·经皮椎体后凸成形术(PKP) 备演材料包（硬证据·对错分明）",
+      "rule_id": "A-107",
+      "rule_name": "串换药品/耗材/诊疗项目",
+      "amount_involved": 3200,
+      "original_nature": "可疑",
+      "station_id": "station-equipment",
+      "team": "医疗组",
+      "route_id": "route-a",
+      "type": "设备存在性核查",
+      "basis_ref": {
+        "rule_id": "A-107",
+        "rule_name": "串换药品/耗材/诊疗项目",
+        "official_gz_codes": [
+          "GZ10000103003000",
+          "GZ10000303001000",
+          "GZ10000303003000"
+        ],
+        "effective_interval": {
+          "from": "2023-05-15",
+          "to": null
+        },
+        "policy_basis": [
+          "KB1-条例-第38条(四)",
+          "KB1-骨科植入耗材分类代码2026"
+        ],
+        "disposal": "",
+        "region_override": ""
+      },
+      "evidence_requirements": [
+        "铭牌与序列号照片",
+        "采购发票编号",
+        "收费期间设备在院说明"
+      ],
+      "compliance_flags": {
+        "need_two_officers": true,
+        "need_signed_transcript": false
+      },
+      "fee_line_no": 7,
+      "state": "已分配",
+      "verify_result": null,
+      "verify_reason": "",
+      "needs_more_evidence": false,
+      "created_at": "2026-07-04T08:30:01.102Z",
+      "updated_at": "2026-07-04T08:30:01.102Z"
+    },
+    {
+      "task_id": "IT-mr63qemm-4",
+      "plan_id": "IP-mr63qemm-1069",
+      "source_finding_id": "F-LC301001-001",
+      "case_id": "violation_light_c301",
+      "case_title": "轻量违规·分解住院(C-301)",
+      "rule_id": "C-301",
+      "rule_name": "分解住院",
+      "amount_involved": 3200,
+      "original_nature": "明确违规",
+      "station_id": "station-records",
+      "team": "财务组",
+      "route_id": "route-b",
+      "type": "病历调阅+人员询问",
+      "basis_ref": {
+        "rule_id": "C-301",
+        "rule_name": "分解住院",
+        "official_gz_codes": [
+          "GZ10000204001000",
+          "GZ10000204004000"
+        ],
+        "effective_interval": {
+          "from": "2023-05-15",
+          "to": null
+        },
+        "policy_basis": [
+          "KB1-条例-第38条(一)"
+        ],
+        "disposal": "",
+        "region_override": ""
+      },
+      "evidence_requirements": [
+        "原始病历调阅记录",
+        "经治医师询问笔录",
+        "逐页签字/捺印确认"
+      ],
+      "compliance_flags": {
+        "need_two_officers": true,
+        "need_signed_transcript": true
+      },
+      "fee_line_no": 1,
+      "state": "已分配",
+      "verify_result": null,
+      "verify_reason": "",
+      "needs_more_evidence": false,
+      "created_at": "2026-07-04T08:30:01.102Z",
+      "updated_at": "2026-07-04T08:30:01.102Z"
+    },
+    {
+      "task_id": "IT-mr63qemm-5",
+      "plan_id": "IP-mr63qemm-1069",
+      "source_finding_id": "F-NSCLC001-006",
+      "case_id": "main",
+      "case_title": "非小细胞肺癌（NSCLC）住院化疗 · 模拟材料包",
+      "rule_id": "T-207",
+      "rule_name": "院外购药费用转嫁",
+      "amount_involved": 2600,
+      "original_nature": "可疑",
+      "station_id": "station-pharmacy",
+      "team": "医疗组",
+      "route_id": "route-a",
+      "type": "进销存盘点",
+      "basis_ref": {
+        "rule_id": "T-207",
+        "rule_name": "院外购药费用转嫁",
+        "official_gz_codes": [],
+        "effective_interval": null,
+        "policy_basis": [
+          "KB1-条例-第38条",
+          "KB1-江苏-DRGDIP绩效评价负面清单(高编低套/分解费用)"
+        ],
+        "disposal": "",
+        "region_override": ""
+      },
+      "evidence_requirements": [
+        "台账复印盖章",
+        "收费量 vs 出库量差量计算表",
+        "发票/随货同行单编号"
+      ],
+      "compliance_flags": {
+        "need_two_officers": true,
+        "need_signed_transcript": false
+      },
+      "fee_line_no": 1,
+      "state": "已分配",
+      "verify_result": null,
+      "verify_reason": "",
+      "needs_more_evidence": false,
+      "created_at": "2026-07-04T08:30:01.102Z",
+      "updated_at": "2026-07-04T08:30:01.102Z"
+    },
+    {
+      "task_id": "IT-mr63qemm-6",
+      "plan_id": "IP-mr63qemm-1069",
+      "source_finding_id": "F-NSCLC001-007",
+      "case_id": "main",
+      "case_title": "非小细胞肺癌（NSCLC）住院化疗 · 模拟材料包",
+      "rule_id": "B-201",
+      "rule_name": "药品使用超出医保目录限定支付范围",
+      "amount_involved": 1280,
+      "original_nature": "可疑",
+      "station_id": "station-pharmacy",
+      "team": "财务组",
+      "route_id": "route-b",
+      "type": "进销存盘点",
+      "basis_ref": {
+        "rule_id": "B-201",
+        "rule_name": "药品使用超出医保目录限定支付范围",
+        "official_gz_codes": [
+          "GZ10000101008000"
+        ],
+        "effective_interval": {
+          "from": "2023-05-15",
+          "to": null
+        },
+        "policy_basis": [
+          "KB1-条例-第38条(六)",
+          "KB1-目录2025-人血白蛋白-备注"
+        ],
+        "disposal": "",
+        "region_override": "江苏不缩紧限定支付(地市无权调整)，以国家目录备注为准"
+      },
+      "evidence_requirements": [
+        "台账复印盖章",
+        "收费量 vs 出库量差量计算表",
+        "发票/随货同行单编号"
+      ],
+      "compliance_flags": {
+        "need_two_officers": true,
+        "need_signed_transcript": false
+      },
+      "fee_line_no": 21,
+      "state": "已分配",
+      "verify_result": null,
+      "verify_reason": "",
+      "needs_more_evidence": false,
+      "created_at": "2026-07-04T08:30:01.102Z",
+      "updated_at": "2026-07-04T08:30:01.102Z"
+    },
+    {
+      "task_id": "IT-mr63qemm-7",
+      "plan_id": "IP-mr63qemm-1069",
+      "source_finding_id": "F-YYICU001-002",
+      "case_id": "icu",
+      "case_title": "重症医学·ICU急性呼吸窘迫综合征 备演材料包（硬证据·对错分明）",
+      "rule_id": "ICU-302",
+      "rule_name": "按小时计价监护项目时长虚计",
+      "amount_involved": 1200,
+      "original_nature": "可疑",
+      "station_id": "station-equipment",
+      "team": "医疗组",
+      "route_id": "route-a",
+      "type": "设备存在性核查",
+      "basis_ref": {
+        "rule_id": "ICU-302",
+        "rule_name": "按小时计价监护项目时长虚计",
+        "official_gz_codes": [],
+        "effective_interval": null,
+        "policy_basis": [
+          "KB1-条例-第38条(三)",
+          "KB1-问题清单2025-重症-174"
+        ],
+        "disposal": "",
+        "region_override": ""
+      },
+      "evidence_requirements": [
+        "铭牌与序列号照片",
+        "采购发票编号",
+        "收费期间设备在院说明"
+      ],
+      "compliance_flags": {
+        "need_two_officers": true,
+        "need_signed_transcript": false
+      },
+      "fee_line_no": 4,
+      "state": "已分配",
+      "verify_result": null,
+      "verify_reason": "",
+      "needs_more_evidence": false,
+      "created_at": "2026-07-04T08:30:01.102Z",
+      "updated_at": "2026-07-04T08:30:01.102Z"
+    },
+    {
+      "task_id": "IT-mr63qemm-8",
+      "plan_id": "IP-mr63qemm-1069",
+      "source_finding_id": "F-ORTHO001-002",
+      "case_id": "ortho",
+      "case_title": "骨科·经皮椎体后凸成形术(PKP) 备演材料包（硬证据·对错分明）",
+      "rule_id": "A-106",
+      "rule_name": "分解项目收费",
+      "amount_involved": 1200,
+      "original_nature": "可疑",
+      "station_id": "station-records",
+      "team": "财务组",
+      "route_id": "route-b",
+      "type": "病历调阅+人员询问",
+      "basis_ref": {
+        "rule_id": "A-106",
+        "rule_name": "分解项目收费",
+        "official_gz_codes": [
+          "GZ10000102013000"
+        ],
+        "effective_interval": {
+          "from": "2023-05-15",
+          "to": null
+        },
+        "policy_basis": [
+          "KB1-条例-第38条(三)",
+          "KB1-立项指南-椎体成形费-内涵"
+        ],
+        "disposal": "",
+        "region_override": ""
+      },
+      "evidence_requirements": [
+        "原始病历调阅记录",
+        "经治医师询问笔录",
+        "逐页签字/捺印确认"
+      ],
+      "compliance_flags": {
+        "need_two_officers": true,
+        "need_signed_transcript": true
+      },
+      "fee_line_no": 5,
+      "state": "已分配",
+      "verify_result": null,
+      "verify_reason": "",
+      "needs_more_evidence": false,
+      "created_at": "2026-07-04T08:30:01.102Z",
+      "updated_at": "2026-07-04T08:30:01.102Z"
+    },
+    {
+      "task_id": "IT-mr63qn4g-1",
+      "plan_id": "IP-mr63qn4f-b03a",
+      "source_finding_id": "F-NSCLC001-010",
+      "case_id": "main",
+      "case_title": "非小细胞肺癌（NSCLC）住院化疗 · 模拟材料包",
+      "rule_id": "L3-DRX",
+      "rule_name": "重复开药/药品种类超标",
+      "amount_involved": 9890,
+      "original_nature": "可疑",
+      "station_id": "station-pharmacy",
+      "team": "医疗组",
+      "route_id": "route-a",
+      "type": "进销存盘点",
+      "basis_ref": {
+        "rule_id": "L3-DRX",
+        "rule_name": "重复开药/药品种类超标",
+        "official_gz_codes": [
+          "GZ10000202004000",
+          "GZ10000204003000",
+          "GZ10000301006000"
+        ],
+        "effective_interval": {
+          "from": "2023-05-15",
+          "to": null
+        },
+        "policy_basis": [
+          "KB1-两库2025-重复开药"
+        ],
+        "disposal": "",
+        "region_override": ""
+      },
+      "evidence_requirements": [
+        "台账复印盖章",
+        "收费量 vs 出库量差量计算表",
+        "发票/随货同行单编号"
+      ],
+      "compliance_flags": {
+        "need_two_officers": true,
+        "need_signed_transcript": false
+      },
+      "fee_line_no": 1,
+      "state": "已分配",
+      "verify_result": null,
+      "verify_reason": "",
+      "needs_more_evidence": false,
+      "created_at": "2026-07-04T08:30:12.111Z",
+      "updated_at": "2026-07-04T08:30:12.111Z"
+    },
+    {
+      "task_id": "IT-mr63qs43-1",
+      "plan_id": "IP-mr63qs43-ad90",
+      "source_finding_id": "F-NSCLC001-010",
+      "case_id": "main",
+      "case_title": "非小细胞肺癌（NSCLC）住院化疗 · 模拟材料包",
+      "rule_id": "L3-DRX",
+      "rule_name": "重复开药/药品种类超标",
+      "amount_involved": 9890,
+      "original_nature": "可疑",
+      "station_id": "station-pharmacy",
+      "team": "医疗组",
+      "route_id": "route-a",
+      "type": "进销存盘点",
+      "basis_ref": {
+        "rule_id": "L3-DRX",
+        "rule_name": "重复开药/药品种类超标",
+        "official_gz_codes": [
+          "GZ10000202004000",
+          "GZ10000204003000",
+          "GZ10000301006000"
+        ],
+        "effective_interval": {
+          "from": "2023-05-15",
+          "to": null
+        },
+        "policy_basis": [
+          "KB1-两库2025-重复开药"
+        ],
+        "disposal": "",
+        "region_override": ""
+      },
+      "evidence_requirements": [
+        "台账复印盖章",
+        "收费量 vs 出库量差量计算表",
+        "发票/随货同行单编号"
+      ],
+      "compliance_flags": {
+        "need_two_officers": true,
+        "need_signed_transcript": false
+      },
+      "fee_line_no": 1,
+      "state": "已分配",
+      "verify_result": null,
+      "verify_reason": "",
+      "needs_more_evidence": false,
+      "created_at": "2026-07-04T08:30:18.579Z",
+      "updated_at": "2026-07-04T08:30:18.579Z"
+    },
+    {
+      "task_id": "IT-mr63qs43-2",
+      "plan_id": "IP-mr63qs43-ad90",
+      "source_finding_id": "F-NSCLC001-004",
+      "case_id": "main",
+      "case_title": "非小细胞肺癌（NSCLC）住院化疗 · 模拟材料包",
+      "rule_id": "T-201",
+      "rule_name": "靶向药无基因检测证据使用",
+      "amount_involved": 4704,
+      "original_nature": "可疑",
+      "station_id": "station-pharmacy",
+      "team": "财务组",
+      "route_id": "route-b",
+      "type": "进销存盘点",
+      "basis_ref": {
+        "rule_id": "T-201",
+        "rule_name": "靶向药无基因检测证据使用",
+        "official_gz_codes": [
+          "GZ10000301008000",
+          "GZ10000301001000"
+        ],
+        "effective_interval": {
+          "from": "2023-05-15",
+          "to": null
+        },
+        "policy_basis": [
+          "KB1-条例-第38条(二)",
+          "KB1-条例-第38条(六)",
+          "KB1-目录2025-西药-奥希替尼-备注",
+          "KB2-指导原则2025-靶点检测原则",
+          "KB2-指导原则2025-EGFR-TKI用药要点"
+        ],
+        "disposal": "",
+        "region_override": ""
+      },
+      "evidence_requirements": [
+        "台账复印盖章",
+        "收费量 vs 出库量差量计算表",
+        "发票/随货同行单编号"
+      ],
+      "compliance_flags": {
+        "need_two_officers": true,
+        "need_signed_transcript": false
+      },
+      "fee_line_no": 7,
+      "state": "已分配",
+      "verify_result": null,
+      "verify_reason": "",
+      "needs_more_evidence": false,
+      "created_at": "2026-07-04T08:30:18.579Z",
+      "updated_at": "2026-07-04T08:30:18.579Z"
+    },
+    {
+      "task_id": "IT-mr63qs43-3",
+      "plan_id": "IP-mr63qs43-ad90",
+      "source_finding_id": "F-ORTHO001-003",
+      "case_id": "ortho",
+      "case_title": "骨科·经皮椎体后凸成形术(PKP) 备演材料包（硬证据·对错分明）",
+      "rule_id": "A-107",
+      "rule_name": "串换药品/耗材/诊疗项目",
+      "amount_involved": 3200,
+      "original_nature": "可疑",
+      "station_id": "station-equipment",
+      "team": "医疗组",
+      "route_id": "route-a",
+      "type": "设备存在性核查",
+      "basis_ref": {
+        "rule_id": "A-107",
+        "rule_name": "串换药品/耗材/诊疗项目",
+        "official_gz_codes": [
+          "GZ10000103003000",
+          "GZ10000303001000",
+          "GZ10000303003000"
+        ],
+        "effective_interval": {
+          "from": "2023-05-15",
+          "to": null
+        },
+        "policy_basis": [
+          "KB1-条例-第38条(四)",
+          "KB1-骨科植入耗材分类代码2026"
+        ],
+        "disposal": "",
+        "region_override": ""
+      },
+      "evidence_requirements": [
+        "铭牌与序列号照片",
+        "采购发票编号",
+        "收费期间设备在院说明"
+      ],
+      "compliance_flags": {
+        "need_two_officers": true,
+        "need_signed_transcript": false
+      },
+      "fee_line_no": 7,
+      "state": "已分配",
+      "verify_result": null,
+      "verify_reason": "",
+      "needs_more_evidence": false,
+      "created_at": "2026-07-04T08:30:18.579Z",
+      "updated_at": "2026-07-04T08:30:18.579Z"
+    },
+    {
+      "task_id": "IT-mr63qs43-4",
+      "plan_id": "IP-mr63qs43-ad90",
+      "source_finding_id": "F-LC301001-001",
+      "case_id": "violation_light_c301",
+      "case_title": "轻量违规·分解住院(C-301)",
+      "rule_id": "C-301",
+      "rule_name": "分解住院",
+      "amount_involved": 3200,
+      "original_nature": "明确违规",
+      "station_id": "station-records",
+      "team": "财务组",
+      "route_id": "route-b",
+      "type": "病历调阅+人员询问",
+      "basis_ref": {
+        "rule_id": "C-301",
+        "rule_name": "分解住院",
+        "official_gz_codes": [
+          "GZ10000204001000",
+          "GZ10000204004000"
+        ],
+        "effective_interval": {
+          "from": "2023-05-15",
+          "to": null
+        },
+        "policy_basis": [
+          "KB1-条例-第38条(一)"
+        ],
+        "disposal": "",
+        "region_override": ""
+      },
+      "evidence_requirements": [
+        "原始病历调阅记录",
+        "经治医师询问笔录",
+        "逐页签字/捺印确认"
+      ],
+      "compliance_flags": {
+        "need_two_officers": true,
+        "need_signed_transcript": true
+      },
+      "fee_line_no": 1,
+      "state": "已分配",
+      "verify_result": null,
+      "verify_reason": "",
+      "needs_more_evidence": false,
+      "created_at": "2026-07-04T08:30:18.579Z",
+      "updated_at": "2026-07-04T08:30:18.579Z"
+    },
+    {
+      "task_id": "IT-mr63qs43-5",
+      "plan_id": "IP-mr63qs43-ad90",
+      "source_finding_id": "F-NSCLC001-006",
+      "case_id": "main",
+      "case_title": "非小细胞肺癌（NSCLC）住院化疗 · 模拟材料包",
+      "rule_id": "T-207",
+      "rule_name": "院外购药费用转嫁",
+      "amount_involved": 2600,
+      "original_nature": "可疑",
+      "station_id": "station-pharmacy",
+      "team": "医疗组",
+      "route_id": "route-a",
+      "type": "进销存盘点",
+      "basis_ref": {
+        "rule_id": "T-207",
+        "rule_name": "院外购药费用转嫁",
+        "official_gz_codes": [],
+        "effective_interval": null,
+        "policy_basis": [
+          "KB1-条例-第38条",
+          "KB1-江苏-DRGDIP绩效评价负面清单(高编低套/分解费用)"
+        ],
+        "disposal": "",
+        "region_override": ""
+      },
+      "evidence_requirements": [
+        "台账复印盖章",
+        "收费量 vs 出库量差量计算表",
+        "发票/随货同行单编号"
+      ],
+      "compliance_flags": {
+        "need_two_officers": true,
+        "need_signed_transcript": false
+      },
+      "fee_line_no": 1,
+      "state": "已分配",
+      "verify_result": null,
+      "verify_reason": "",
+      "needs_more_evidence": false,
+      "created_at": "2026-07-04T08:30:18.579Z",
+      "updated_at": "2026-07-04T08:30:18.579Z"
+    },
+    {
+      "task_id": "IT-mr63qs43-6",
+      "plan_id": "IP-mr63qs43-ad90",
+      "source_finding_id": "F-NSCLC001-007",
+      "case_id": "main",
+      "case_title": "非小细胞肺癌（NSCLC）住院化疗 · 模拟材料包",
+      "rule_id": "B-201",
+      "rule_name": "药品使用超出医保目录限定支付范围",
+      "amount_involved": 1280,
+      "original_nature": "可疑",
+      "station_id": "station-pharmacy",
+      "team": "财务组",
+      "route_id": "route-b",
+      "type": "进销存盘点",
+      "basis_ref": {
+        "rule_id": "B-201",
+        "rule_name": "药品使用超出医保目录限定支付范围",
+        "official_gz_codes": [
+          "GZ10000101008000"
+        ],
+        "effective_interval": {
+          "from": "2023-05-15",
+          "to": null
+        },
+        "policy_basis": [
+          "KB1-条例-第38条(六)",
+          "KB1-目录2025-人血白蛋白-备注"
+        ],
+        "disposal": "",
+        "region_override": "江苏不缩紧限定支付(地市无权调整)，以国家目录备注为准"
+      },
+      "evidence_requirements": [
+        "台账复印盖章",
+        "收费量 vs 出库量差量计算表",
+        "发票/随货同行单编号"
+      ],
+      "compliance_flags": {
+        "need_two_officers": true,
+        "need_signed_transcript": false
+      },
+      "fee_line_no": 21,
+      "state": "已分配",
+      "verify_result": null,
+      "verify_reason": "",
+      "needs_more_evidence": false,
+      "created_at": "2026-07-04T08:30:18.579Z",
+      "updated_at": "2026-07-04T08:30:18.579Z"
+    },
+    {
+      "task_id": "IT-mr63qs43-7",
+      "plan_id": "IP-mr63qs43-ad90",
+      "source_finding_id": "F-YYICU001-002",
+      "case_id": "icu",
+      "case_title": "重症医学·ICU急性呼吸窘迫综合征 备演材料包（硬证据·对错分明）",
+      "rule_id": "ICU-302",
+      "rule_name": "按小时计价监护项目时长虚计",
+      "amount_involved": 1200,
+      "original_nature": "可疑",
+      "station_id": "station-equipment",
+      "team": "医疗组",
+      "route_id": "route-a",
+      "type": "设备存在性核查",
+      "basis_ref": {
+        "rule_id": "ICU-302",
+        "rule_name": "按小时计价监护项目时长虚计",
+        "official_gz_codes": [],
+        "effective_interval": null,
+        "policy_basis": [
+          "KB1-条例-第38条(三)",
+          "KB1-问题清单2025-重症-174"
+        ],
+        "disposal": "",
+        "region_override": ""
+      },
+      "evidence_requirements": [
+        "铭牌与序列号照片",
+        "采购发票编号",
+        "收费期间设备在院说明"
+      ],
+      "compliance_flags": {
+        "need_two_officers": true,
+        "need_signed_transcript": false
+      },
+      "fee_line_no": 4,
+      "state": "已分配",
+      "verify_result": null,
+      "verify_reason": "",
+      "needs_more_evidence": false,
+      "created_at": "2026-07-04T08:30:18.579Z",
+      "updated_at": "2026-07-04T08:30:18.579Z"
+    },
+    {
+      "task_id": "IT-mr63qs43-8",
+      "plan_id": "IP-mr63qs43-ad90",
+      "source_finding_id": "F-ORTHO001-002",
+      "case_id": "ortho",
+      "case_title": "骨科·经皮椎体后凸成形术(PKP) 备演材料包（硬证据·对错分明）",
+      "rule_id": "A-106",
+      "rule_name": "分解项目收费",
+      "amount_involved": 1200,
+      "original_nature": "可疑",
+      "station_id": "station-records",
+      "team": "财务组",
+      "route_id": "route-b",
+      "type": "病历调阅+人员询问",
+      "basis_ref": {
+        "rule_id": "A-106",
+        "rule_name": "分解项目收费",
+        "official_gz_codes": [
+          "GZ10000102013000"
+        ],
+        "effective_interval": {
+          "from": "2023-05-15",
+          "to": null
+        },
+        "policy_basis": [
+          "KB1-条例-第38条(三)",
+          "KB1-立项指南-椎体成形费-内涵"
+        ],
+        "disposal": "",
+        "region_override": ""
+      },
+      "evidence_requirements": [
+        "原始病历调阅记录",
+        "经治医师询问笔录",
+        "逐页签字/捺印确认"
+      ],
+      "compliance_flags": {
+        "need_two_officers": true,
+        "need_signed_transcript": true
+      },
+      "fee_line_no": 5,
+      "state": "已分配",
+      "verify_result": null,
+      "verify_reason": "",
+      "needs_more_evidence": false,
+      "created_at": "2026-07-04T08:30:18.579Z",
+      "updated_at": "2026-07-04T08:30:18.579Z"
     }
   ],
   "stations": [

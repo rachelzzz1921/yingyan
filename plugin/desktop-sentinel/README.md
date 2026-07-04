@@ -16,6 +16,8 @@
 node plugin/desktop-sentinel/clipboard-sentinel.js --engine http://localhost:3700
 # 审当前剪贴板一次即退(配 macOS 快捷指令绑系统快捷键=伪热键):
 node plugin/desktop-sentinel/clipboard-sentinel.js --once
+# 现场演示样例(不读系统剪贴板,直接跑内置脱敏 TSV):
+node plugin/desktop-sentinel/clipboard-sentinel.js --demo-sample
 # 常驻不轮询,回车审一次(最省电):
 node plugin/desktop-sentinel/clipboard-sentinel.js --no-poll
 # 无 pbpaste 环境回退:管道喂 TSV
@@ -23,6 +25,8 @@ pbpaste | node plugin/desktop-sentinel/clipboard-sentinel.js --stdin
 ```
 
 复用引擎 `/api/screening/rows`(行级筛查,与 1000 条批量同一引擎)。剪贴板解析(列名词典+位置启发式)在本机完成——**原始整段剪贴板文本不外发,只把解析出的结构化医保字段(项目名/年龄/性别/数量/金额/追溯码等)POST 给你指定的引擎地址**;默认本地回环(localhost),指向非本地地址会显式告警。隐私门槛:必须有医保特征(药名/项目词或合法追溯码)才发引擎,带"名称/金额"表头的私密账单/密码表被挡在门外不外发。命中规则:TRACE-101 追溯码重复 / AGE-101 年龄限药 / F-001 性别冲突 / QTY-901 超常数量。macOS 优先(pbpaste),Win/Linux 分支预留。
+
+插件总入口:启动本地引擎后打开 `http://localhost:3700/plugins.html`,可进入院端连播、监管插件链和院端台账。
 
 ## 监管小工具箱对应关系
 

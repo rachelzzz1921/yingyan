@@ -1,15 +1,18 @@
 'use strict';
 // 弹窗:读设置里的引擎地址,拉台账汇总,给看板/设置入口
 const DEFAULTS = { engineBase: 'http://localhost:3700' };
+function isLocal(base) { return /^(http:\/\/)?(localhost|127\.0\.0\.1)(:|\/|$)/.test(String(base || '')); }
 chrome.storage.sync.get(DEFAULTS, async (cfg) => {
   const base = cfg.engineBase || DEFAULTS.engineBase;
   document.getElementById('lnkDash').href = base + '/plugin-dashboard.html';
   document.getElementById('lnkDash').target = '_blank';
+  document.getElementById('lnkTools').href = base + '/plugins.html';
+  document.getElementById('lnkTools').target = '_blank';
   document.getElementById('lnkOptions').onclick = (e) => { e.preventDefault(); chrome.runtime.openOptionsPage(); };
   try {
     const d = await fetch(base + '/api/precheck/ledger').then(r => r.json());
     document.getElementById('dot').classList.add('on');
-    document.getElementById('engineState').textContent = '引擎在线 · 本地';
+    document.getElementById('engineState').textContent = '引擎在线 · ' + (isLocal(base) ? '本地' : '内网/远端');
     const t = d.today || {};
     document.getElementById('fired').textContent = t.reminders_fired || 0;
     document.getElementById('heed').textContent = d.heed_rate == null ? '—' : d.heed_rate + '%';

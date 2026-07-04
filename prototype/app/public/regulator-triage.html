@@ -120,6 +120,7 @@ function runTriage(){
   setTimeout(function(){scan.remove();},1100);
   var yy=YY.panel({ title:'鹰眼 · 疑点分诊', sub:'正在读取当前表格…', accent:'#DC4A3D' });
   yy.loading('正在粗筛 '+money((DATA.funnel||{}).total_rows)+' 条疑点…');
+  yy.status([{text:'读取 Excel 选区',tone:'warn'},{text:'本地筛查引擎',tone:'ok'},{text:'不改原始表',tone:'safe'},{text:'写回 H 列',tone:'info'}]);
   setTimeout(function(){ renderResult(yy); }, 900);
 }
 
@@ -133,6 +134,7 @@ function renderResult(yy){
     if(tag){ tag.innerHTML='<b style="color:'+TIER_BG[t]+'">'+(t==='A'?'🔴 A 重点核查':'🟡 B 补材料')+'</b>'; }
   });
   yy.sub('读取到 '+money(f.total_rows)+' 条疑点,已按核查优先级粗筛成三档');
+  yy.status([{text:'已完成三档粗筛',tone:'ok'},{text:'H 列已写回',tone:'ok'},{text:'干净行零误报 '+esc(g.false_positives),tone:g.false_positives?'danger':'safe'},{text:'等待人工派单',tone:'warn'}]);
   yy.chips([{text:'A 重点 '+f.by_nature['明确违规'],bg:'#b91c1c'},{text:'B 补材料 '+f.by_nature['可疑'],bg:'#d97706'},{text:'C 暂缓 '+money(f.clean_rows),bg:'#0a7a4b'}]);
   // 漏斗 + Top 列表
   var top=rows.slice(0,6).map(function(h){var t=tierOf(h);
@@ -154,6 +156,7 @@ function renderResult(yy){
     '</div>'+top);
   yy.actions([
     {label:'生成上会清单',kind:'primary',onClick:function(){ downloadList(rows); }},
+    {label:'派给飞检组',onClick:function(){ assignTask(yy, rows); }},
     {label:'Top1 飞检行装包',href:'/regulator-fieldkit.html?from=triage&case_id=main'}
   ]);
   yy.footer('确定性规则·毫秒级 · 本地运行,数据不出机 · AI 提供线索支持,最终由监管人员裁定');
@@ -168,6 +171,25 @@ function downloadList(rows){
   rows.forEach(function(h){var t=tierOf(h); lines.push([t,h.row_id,h.dept,h.item_name,h.amount,h.rule_id,h.reason].join('\t'));});
   var blob=new Blob(['﻿'+lines.join('\n')],{type:'text/tab-separated-values;charset=utf-8'});
   var a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='疑点分诊-上会清单.tsv'; a.click(); URL.revokeObjectURL(a.href);
+}
+function assignTask(yy, rows){
+  var top=rows[0]||{};
+  rows.slice(0,3).forEach(function(h){
+    var tag=document.getElementById('yytag-'+h.row_id);
+    if(tag) tag.innerHTML='<b style="color:#134E72">已派单 · 飞检组A</b>';
+  });
+  yy.status([{text:'已生成核查任务',tone:'ok'},{text:'Top3 已派给飞检组A',tone:'ok'},{text:'带入行装包',tone:'safe'},{text:'人工核查待办',tone:'warn'}]);
+  yy.body('<div style="padding:14px 14px 6px;background:#f8fafc;border-bottom:1px solid #edf1f6">'+
+    '<div style="font-size:14px;font-weight:800;color:#134E72">现场核查任务已生成</div>'+
+    '<div style="font-size:12px;color:#5b6d82;margin-top:4px">已把 Top3 疑点写回表格 H 列为“已派单”，并把 Top1 案卷带入飞检行装包。</div></div>'+
+    '<div style="padding:10px 14px;line-height:1.7;font-size:12.5px">'+
+      '<b>任务对象：</b>'+esc(top.dept||'—')+' · '+esc(top.item_name||'—')+'<br>'+
+      '<b>首要规则：</b>'+esc(top.rule_id||'—')+'<br>'+
+      '<b>现场动作：</b>调病历首页、费用明细、医嘱单；如涉及限定支付，补调检验/病理/基因检测材料。<br>'+
+      '<b>口径：</b>本任务为线索支持，现场人员核实后再定性。'+
+    '</div>');
+  yy.actions([{label:'打开 Top1 行装包',kind:'primary',href:'/regulator-fieldkit.html?from=triage&case_id=main&task=assigned'},{label:'下载任务清单',onClick:function(){downloadList(rows.slice(0,3));}}]);
+  yy.footer('插件动作:Excel 写回 → 任务派发 → 行装包;不替代人工核查结论');
 }
 loadSheet();
 </script>

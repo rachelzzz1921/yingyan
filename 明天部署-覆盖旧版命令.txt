@@ -1,0 +1,28 @@
+═══════════════════════════════════════════════════════════
+  鹰眼 EAGLEEYE · 明天部署命令（覆盖旧版 → 新版）
+  文件位置：项目根目录 + U盘包内各有一份
+  新版包：team-app-u盘内网交付.tar
+═══════════════════════════════════════════════════════════
+
+【拷到云桌面】整个文件夹 team-app-u盘内网交付
+
+【黑色终端 · 一键覆盖旧版】
+
+cd /root/team-app-u盘内网交付
+docker compose down
+docker load -i team-app_bundle_arm64.tar
+docker compose up -d --force-recreate
+sleep 10
+docker compose ps
+curl -s http://127.0.0.1:8080/health
+bash 04-测试Qwen接口.sh
+
+【浏览器】
+http://127.0.0.1:8080/golden.html
+
+【成功标志】
+- docker compose ps → 两个容器 Up (healthy)
+- curl /health → "ok":true
+- 04-测试Qwen接口.sh → 有模型回答
+
+详细步骤见：team-app-u盘内网交付/明天部署-覆盖旧版命令.txt

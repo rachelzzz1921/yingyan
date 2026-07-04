@@ -20,13 +20,27 @@ const MINIMAX_MODEL = process.env.YINGYAN_LLM_MODEL || 'MiniMax-Text-01';
 const MINIMAX_VL_MODEL = process.env.YINGYAN_VL_MODEL || 'MiniMax-VL-01';
 const ANTHROPIC_URL = 'https://api.anthropic.com/v1/messages';
 const ANTHROPIC_MODEL = process.env.YINGYAN_MODEL || 'claude-opus-4-8';
-const SF_BASE = process.env.SILICONFLOW_BASE || 'https://api.siliconflow.cn/v1/chat/completions';
+const SF_BASE = process.env.SILICONFLOW_BASE || process.env.SILICONFLOW_BASE_URL || 'https://api.siliconflow.cn/v1/chat/completions';
 const SF_MODEL = process.env.SILICONFLOW_CHAT_MODEL || 'Qwen/Qwen2.5-72B-Instruct';
 const SF_VL_MODEL = process.env.SILICONFLOW_VL_MODEL || ''; // 多数 VL 模型对普通 key 被禁用 → 默认不走 SF 视觉
 
 const DEFAULT_TIMEOUT = Number(process.env.YINGYAN_LLM_TIMEOUT_MS || 90000);
 
+function truthy(v) { return /^(1|true|yes|on)$/i.test(String(v || '')); }
 function sfKey() { return process.env.SILICONFLOW_CHAT_KEY || process.env.SILICONFLOW_API_KEY || ''; }
+function sfFallback() {
+  const key = process.env.SILICONFLOW_FALLBACK_API_KEY || process.env.SILICONFLOW_FALLBACK_CHAT_KEY || '';
+  if (!key) return null;
+  return {
+    base: process.env.SILICONFLOW_FALLBACK_BASE || 'https://api.siliconflow.cn/v1/chat/completions',
+    key,
+    model: process.env.SILICONFLOW_FALLBACK_CHAT_MODEL || 'Qwen/Qwen2.5-72B-Instruct',
+    label: 'SiliconFlow(公网兜底)',
+  };
+}
+function sfPrimaryLabel() {
+  return /10\.|192\.168\.|172\.(1[6-9]|2\d|3[01])\./.test(SF_BASE) ? 'SiliconFlow(内网)' : 'SiliconFlow';
+}
 function hasMinimax() { return !!process.env.MINIMAX_API_KEY; }
 function hasAnthropic() { return !!process.env.ANTHROPIC_API_KEY; }
 
@@ -121,18 +135,38 @@ async function withRetry(label, fn, retries = Number(process.env.YINGYAN_LLM_RET
   throw lastErr;
 }
 
+async function readOpenAIStream(r, label) {
+  const text = await r.text();
+  let content = '';
+  for (const line of text.split(/\r?\n/)) {
+    const trimmed = line.trim();
+    if (!trimmed.startsWith('data:')) continue;
+    const payload = trimmed.slice(5).trim();
+    if (!payload || payload === '[DONE]') continue;
+    try {
+      const chunk = JSON.parse(payload);
+      const choice = chunk.choices?.[0] || {};
+      content += choice.delta?.content || choice.message?.content || choice.text || '';
+    } catch {
+      // Ignore keepalive/non-JSON SSE frames; empty final content is checked below.
+    }
+  }
+  return nonEmpty(content, label);
+}
+
 // OpenAI 兼容 provider（SiliconFlow/MiniMax）的一次调用
-async function callOpenAICompatible({ base, key, model, system, user, maxTokens, temperature, timeoutMs, jsonMode, label, minimax }) {
+async function callOpenAICompatible({ base, key, model, system, user, maxTokens, temperature, timeoutMs, jsonMode, label, minimax, stream }) {
   const messages = [];
   if (system) messages.push({ role: 'system', content: system });
   messages.push({ role: 'user', content: user });
-  const body = { model, messages, max_tokens: maxTokens, temperature };
+  const body = { model, messages, max_tokens: maxTokens, temperature, stream: !!stream };
   if (jsonMode) body.response_format = { type: 'json_object' }; // 结构化输出：强制合法 JSON，减少解析兜底
   const r = await fetchWithTimeout(base, {
     method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + key },
     body: JSON.stringify(body),
   }, timeoutMs);
   if (!r.ok) throw new Error(`${label} ${r.status}: ${(await r.text()).slice(0, 200)}`);
+  if (body.stream) return readOpenAIStream(r, label);
   const data = await r.json();
   if (minimax && data.base_resp && data.base_resp.status_code) throw new Error(`${label}: ${data.base_resp.status_msg}`);
   return nonEmpty(data.choices?.[0]?.message?.content, label);
@@ -145,9 +179,21 @@ async function callLLM({ system, user, maxTokens = 4000, temperature = 0.2, time
   if (!p) { const e = new Error('真·语义分析需配置 SILICONFLOW_API_KEY / MINIMAX_API_KEY / ANTHROPIC_API_KEY'); e.needsKey = true; throw e; }
 
   if (p === 'siliconflow') {
-    return withRetry('SiliconFlow', () => callOpenAICompatible({
-      base: SF_BASE, key: sfKey(), model: SF_MODEL, system, user, maxTokens, temperature, timeoutMs, jsonMode, label: 'SiliconFlow',
+    const runSf = (cfg, label) => withRetry(label, () => callOpenAICompatible({
+      base: cfg.base, key: cfg.key, model: cfg.model, system, user, maxTokens, temperature, timeoutMs, jsonMode, label,
+      stream: truthy(process.env.SILICONFLOW_STREAM),
     }));
+    const primary = { base: SF_BASE, key: sfKey(), model: SF_MODEL };
+    try {
+      return await runSf(primary, sfPrimaryLabel());
+    } catch (primaryErr) {
+      const fb = sfFallback();
+      if (!fb || process.env.YINGYAN_LLM_FALLBACK === '0') throw primaryErr;
+      if (process.env.YINGYAN_LLM_TIMING !== '0') {
+        console.warn(`  [llm-provider] ${sfPrimaryLabel()} 失败(${String(primaryErr.message).slice(0, 72)}) → ${fb.label}`);
+      }
+      return await runSf(fb, fb.label);
+    }
   }
   if (p === 'minimax') {
     return withRetry('MiniMax', () => callOpenAICompatible({

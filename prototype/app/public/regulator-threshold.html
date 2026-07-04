@@ -87,6 +87,7 @@ function render(r){
   if(!yy || !document.getElementById('yy-overlay')) yy=YY.panel({title:'鹰眼 · 规则阈值助手', sub:'', accent:'#0E9384'});
   yy.sub('检测到 AGE-101 阈值改动：18 → '+v+' 岁，已在历史数据上试算');
   var fp=r.new_false_positives||0;
+  yy.status([{text:'历史回放试算',tone:'ok'},{text:'不直接改规则',tone:'safe'},{text:'误报压力 '+fp,tone:fp>0?'danger':'safe'},{text:'需人工审批',tone:'warn'}]);
   yy.chips([{text:'Δ '+(r.delta>=0?'+':'')+r.delta,bg:'#0E9384'},{text:'误报 '+fp,bg:fp>0?'#b91c1c':'#0a7a4b'}]);
   var changed=(r.cases_changed||[]).slice(0,6).map(function(c){
     var red=/减少/.test(c.change);
@@ -103,13 +104,31 @@ function render(r){
     '<div style="padding:10px 14px;font-size:12.5px;color:'+(fp>0?'#b91c1c':'#0a7a4b')+';border-bottom:1px solid #edf1f6">'+
       (fp>0?'⚠ 干净行新增命中 '+fp+' 条 —— 该阈值不建议直接下发':'✓ 干净行零新增命中(与主平台同一条零误报红线)')+'</div>'+
     (changed||'<div style="padding:14px;color:#98a6b5">该阈值变化未改变当前演示集命中。</div>'));
-  yy.actions([{label:'把试算结论存入下发说明',kind:'primary',onClick:function(){ document.getElementById('saveHint').textContent='已附试算：'+r.conclusion; yy.close(); }}]);
+  yy.actions([
+    {label:'生成审批说明',kind:'primary',onClick:function(){ attachApproval(r, yy); }},
+    {label:'灰度下发 10%',onClick:function(){ stageRollout(r, yy); }},
+    {label:'回滚到 18 岁',onClick:function(){ range.value=18; val.textContent='18'; document.getElementById('saveHint').textContent='已回滚到基线 18 岁(演示)。'; fire(); }}
+  ]);
   yy.footer('历史回放试算 · 不改引擎 · 结论口径：'+r.conclusion);
 }
 function card(label,n,color){
   return '<div style="flex:1;background:#fff;border:1px solid #e3e9f0;border-radius:8px;padding:8px 10px;text-align:center">'+
     '<div style="font-size:20px;font-weight:800;color:'+color+';font-family:monospace">'+esc(n)+'</div>'+
     '<div style="font-size:11px;color:#7a8ba0">'+esc(label)+'</div></div>';
+}
+function attachApproval(r, yy){
+  document.getElementById('saveHint').textContent='已附审批说明：'+r.conclusion+'；试算命中 '+r.trial_hits+'，新增误报 '+(r.new_false_positives||0)+'。';
+  yy.status([{text:'审批说明已写入',tone:'ok'},{text:'等待人工提交',tone:'warn'},{text:'保留回滚点 18 岁',tone:'safe'}]);
+}
+function stageRollout(r, yy){
+  var fp=r.new_false_positives||0;
+  if(fp>0){
+    document.getElementById('saveHint').textContent='灰度被拦截：新增误报 '+fp+' 条，不建议下发。';
+    yy.status([{text:'灰度下发被拦截',tone:'danger'},{text:'违反零误报红线',tone:'danger'},{text:'建议回滚',tone:'warn'}]);
+    return;
+  }
+  document.getElementById('saveHint').textContent='已创建灰度下发计划：10%机构、观察 7 天、异常自动回滚到 18 岁(演示)。';
+  yy.status([{text:'灰度计划已生成',tone:'ok'},{text:'10%机构',tone:'info'},{text:'观察 7 天',tone:'warn'},{text:'可回滚',tone:'safe'}]);
 }
 async function fire(){
   try{ render(await trial(range.value)); }
