@@ -6,54 +6,46 @@
 <meta name="theme-color" content="#F0F4F8">
 <title>飞检行装包生成器 · 鹰眼监管小工具箱</title>
 <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="stylesheet" href="/toolkit.css">
 <style>
-:root{--ink:#0B2A4A;--ink2:#134E72;--muted:#5C7185;--dim:#8296A9;--teal:#14B8A6;--amber:#E8A838;--red:#DC4A3D;--bg:#F0F4F8;--surface:#fff;--line:#E2E9F0;--hair:#D3DDE7;--sans:"PingFang SC","Hiragino Sans GB","Noto Sans SC","Microsoft YaHei",-apple-system,sans-serif;--mono:"SF Mono","DM Mono","Roboto Mono",Menlo,monospace}
-*{box-sizing:border-box;margin:0}
-body{font-family:var(--sans);background:var(--bg);color:var(--ink);line-height:1.65;min-height:100vh}
-body::before{content:"";position:fixed;inset:0;background-image:radial-gradient(rgba(11,42,74,.055) 1.5px,transparent 1.5px);background-size:26px 26px;pointer-events:none}
-.wrap{max-width:1160px;margin:0 auto;padding:34px 24px 48px;position:relative}
-.top{display:flex;justify-content:space-between;gap:16px;align-items:flex-start;margin-bottom:24px}
-.back{color:var(--ink2);text-decoration:none;border:1px solid var(--line);background:var(--surface);border-radius:10px;padding:9px 14px;font-weight:800;font-size:13px}
-.eyebrow{font-family:var(--mono);font-size:12px;color:var(--dim);letter-spacing:.12em}
-h1{font-size:clamp(28px,4vw,42px);line-height:1.25}
-h2{font-size:18px;margin-bottom:10px}
-.lead{color:var(--muted);max-width:840px;margin-top:8px}
-.grid{display:grid;grid-template-columns:340px 1fr;gap:18px;margin-top:20px}
-@media(max-width:880px){.grid{grid-template-columns:1fr}.top{flex-direction:column}}
-.panel{border:1px solid var(--line);border-radius:14px;background:var(--surface);padding:20px;box-shadow:0 3px 14px rgba(11,42,74,.05)}
-label{display:block;color:var(--muted);font-size:13px;font-weight:800;margin:14px 0 6px}
-.select,.input{width:100%;border:1px solid var(--line);border-radius:10px;padding:10px 12px;background:#F8FAFC;color:var(--ink);font-weight:700}
-.actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:16px}
-.btn{border:1px solid var(--line);border-radius:10px;background:#F8FAFC;color:var(--ink2);font-weight:800;padding:10px 13px;text-decoration:none;cursor:pointer;font-size:14px}
-.btn.primary{background:linear-gradient(90deg,var(--teal),#0E9384);border-color:transparent;color:#fff}
+.grid{display:grid;grid-template-columns:340px 1fr;gap:18px;margin-top:18px}
+@media(max-width:880px){.grid{grid-template-columns:1fr}}
 .kit{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px;margin-bottom:12px}
 @media(max-width:980px){.kit{grid-template-columns:1fr 1fr}}
 .block{border:1px solid var(--line);border-radius:12px;background:#F8FAFC;padding:12px}
 .block h3{font-size:14px;margin-bottom:5px}
 .block p,.block li{color:var(--muted);font-size:12px}
 .block ul{padding-left:16px}
-.placeholder{margin-top:14px;border:1px dashed var(--hair);border-radius:12px;padding:14px;color:var(--muted);background:rgba(255,255,255,.75);font-size:13px}
 .pkg-frame{width:100%;min-height:520px;border:1px solid var(--line);border-radius:12px;background:#fff;margin-top:14px}
+.from-tip{margin-bottom:14px}
 </style>
 </head>
 <body>
 <main class="wrap">
   <header class="top">
     <div>
-      <div class="eyebrow">REGULATOR TOOLKIT · ③ FIELD KIT</div>
-      <h1>飞检行装包生成器</h1>
-      <p class="lead">从主平台“优先队列”的举证包能力拆出来，面向飞检组长和现场检查员整理进场前材料。</p>
+      <div class="eyebrow">REGULATOR TOOLKIT · 精做 ③ FIELD KIT</div>
+      <h1>🎒 飞检行装包生成器</h1>
+      <p class="lead">主平台单案稽核 + 举证包能力，换成飞检组的输出模板：疑点清单、证据索引、现场核查任务单、缺失材料清单、询问要点，一键打包进场材料。「我们需要用标准化的材料去执行我们的任务」。</p>
     </div>
-    <div style="display:flex;gap:8px;flex-wrap:wrap">
-      <a class="back" href="/plugins.html#regulator">← 插件 & 小工具箱</a>
+    <div class="top-nav">
+      <a class="back" href="/plugins.html#regulator">← 工具箱</a>
       <a class="back" href="/home.html">← 三入口</a>
     </div>
   </header>
-  <p style="font-size:12px;color:var(--dim);margin:-12px 0 18px"><a href="/home.html" style="color:var(--muted);text-decoration:none">三入口</a> → <a href="/plugins.html#regulator" style="color:var(--muted);text-decoration:none">③ 插件 & 小工具箱</a> → <b style="color:var(--ink)">飞检行装包生成器</b></p>
+  <p class="crumb"><a href="/home.html">三入口</a> → <a href="/plugins.html#regulator">③ 插件 & 小工具箱</a> → <b>飞检行装包生成器</b></p>
 
+  <nav class="mode">
+    <button data-mode="use">⚡ 直接使用</button>
+    <button data-mode="sc">🎬 模拟场景<span class="tag">监管链 3/3</span></button>
+  </nav>
+
+  <!-- ============ 直接使用 ============ -->
+  <div id="pane-use">
+  <div class="note from-tip hidden" id="fromTip"></div>
   <section class="grid">
     <aside class="panel">
-      <h2>选案卷</h2>
+      <h2 style="font-size:18px;margin-bottom:10px">选案卷</h2>
       <label for="case">案卷</label>
       <select class="select" id="case">
         <option value="main">main · NSCLC 演示主案</option>
@@ -65,13 +57,13 @@ label{display:block;color:var(--muted);font-size:13px;font-weight:800;margin:14p
       <input class="input" id="period" value="2026-06">
       <div class="actions">
         <button class="btn primary" type="button" id="btnGenerate">生成行装包</button>
-        <a class="btn" href="/golden.html">打开黄金闭环案卷快读</a>
+        <a class="btn" href="/golden.html">黄金闭环案卷快读</a>
       </div>
-      <div class="placeholder">调用 <code>/api/regulator/field-kit</code>：复用审计报告与举证包，再聚合现场任务单、缺失材料清单和询问要点。</div>
+      <div class="note">调用 <code>/api/regulator/field-kit</code>：复用审计报告与举证包，再聚合现场任务单、缺失材料清单和询问要点。从疑点分诊 Top1 跳转会自动带入案卷。</div>
     </aside>
 
     <section class="panel">
-      <h2>行装包预览</h2>
+      <h2 style="font-size:18px;margin-bottom:10px">行装包预览</h2>
       <div class="kit">
         <article class="block"><h3>1. 疑点清单</h3><p>规则、金额、三档性质和建议动作。</p></article>
         <article class="block"><h3>2. 证据索引</h3><ul><li>费用行锚点</li><li>病历锚点</li><li>政策 ref_id</li></ul></article>
@@ -79,42 +71,59 @@ label{display:block;color:var(--muted);font-size:13px;font-weight:800;margin:14p
         <article class="block"><h3>4. 缺失材料清单</h3><p>按证据链缺口列出需补材料。</p></article>
         <article class="block"><h3>5. 询问笔录要点</h3><p>只列建议问题，不生成最终笔录。</p></article>
       </div>
-      <div class="actions">
+      <div class="actions" style="margin-top:0">
         <button class="btn" type="button" id="btnDownload">下载 Markdown</button>
         <button class="btn" type="button" id="btnPrint">打印</button>
         <a class="btn" href="/agent-chain.html?preview=appeal&case_id=main">对争议项进入复核</a>
       </div>
-      <div class="placeholder" id="status">点击“生成行装包”后，将载入疑点清单、证据索引、现场核查任务单和缺失材料清单。</div>
+      <div class="note" id="status">点「生成行装包」后，载入疑点清单、证据索引、现场核查任务单和缺失材料清单。</div>
       <iframe class="pkg-frame" id="pkgFrame" title="飞检行装包预览"></iframe>
     </section>
   </section>
+  </div>
+
+  <!-- ============ 模拟场景 ============ -->
+  <div id="pane-sc" class="hidden"><div id="scPlayer"></div></div>
 </main>
+
+<script src="/toolkit.js"></script>
 <script>
-const $ = (s) => document.querySelector(s);
-const esc = (v) => String(v ?? '').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
-async function fetchPackage(format) {
-  const caseId = $('#case').value || 'main';
+const $ = TK.$;
+const params = new URLSearchParams(location.search);
+
+/* ---------- 消费分诊带入参数 ?from=triage&case_id= ---------- */
+(function consumeFrom() {
+  const from = params.get('from');
+  const caseId = params.get('case_id');
+  if (caseId && [...$('#case').options].some(o => o.value === caseId)) $('#case').value = caseId;
+  if (from === 'triage') {
+    const tip = $('#fromTip');
+    tip.classList.remove('hidden');
+    tip.innerHTML = `📋 已从 <a href="/regulator-triage.html">疑点分诊器</a> 带入 Top1 案卷 <code>${TK.esc(caseId || 'main')}</code>，点「生成行装包」即可聚合进场材料。`;
+  }
+})();
+
+async function fetchPackage(format, caseId) {
   const res = await fetch('/api/regulator/field-kit', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    method: 'POST', headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
-      case_id: caseId,
-      org_name: $('#org').value,
-      period: $('#period').value,
+      case_id: caseId || $('#case').value || 'main',
+      org_name: $('#org') ? $('#org').value : '演示机构',
+      period: $('#period') ? $('#period').value : '2026-06',
       format,
     }),
   });
   if (!res.ok) throw new Error(await res.text() || `HTTP ${res.status}`);
-  return res.text();
+  return format === 'json' ? res.json() : res.text();
 }
 $('#btnGenerate').addEventListener('click', async () => {
-  $('#status').textContent = '正在生成举证包...';
-  $('#pkgFrame').srcdoc = '<p style="padding:24px;font-family:sans-serif;color:#5C7185">生成中...</p>';
+  $('#status').textContent = '正在生成行装包…';
+  $('#pkgFrame').srcdoc = '<p style="padding:24px;font-family:sans-serif;color:#5C7185">生成中…</p>';
   try {
     $('#pkgFrame').srcdoc = await fetchPackage('html');
     $('#status').textContent = '已生成完整行装包：疑点清单、证据索引、现场任务单、缺失材料和询问要点。';
   } catch (e) {
-    $('#status').innerHTML = `生成失败：${esc(e.message)}`;
+    $('#status').innerHTML = `生成失败：${TK.esc(e.message)}`;
     $('#pkgFrame').srcdoc = '';
   }
 });
@@ -128,12 +137,79 @@ $('#btnDownload').addEventListener('click', async () => {
     a.click();
     URL.revokeObjectURL(a.href);
   } catch (e) {
-    $('#status').innerHTML = `下载失败：${esc(e.message)}`;
+    $('#status').innerHTML = `下载失败：${TK.esc(e.message)}`;
   }
 });
 $('#btnPrint').addEventListener('click', () => {
   try { $('#pkgFrame').contentWindow.print(); }
   catch (e) { $('#status').textContent = '打印失败：' + e.message; }
+});
+
+/* ---------- 模拟场景：飞检进场前夜 ---------- */
+const scCase = params.get('case_id') || 'main';
+TK.scenario({
+  mount: '#scPlayer',
+  role: '飞检组长 · 周队',
+  where: '周四 20:00 · 进场前夜 · 驻地酒店',
+  text: '明早八点进场。组里五个人要人手一份材料：查什么、证据在哪、缺什么要现场调阅。以前这套材料要秘书组熬一个通宵；现在从疑点分诊带过来的案卷，一键聚合成标准化行装包。',
+  steps: [
+    {
+      id: 'load', title: '带入案卷', sub: (scCase === 'main' ? 'main · NSCLC 演示主案' : scCase) + ' · 可从疑点分诊 Top1 直通', btn: '确认案卷',
+      say: '案卷是白天疑点分诊锁定的 Top1，参数直通带过来，不用重新找。',
+      run: async (ctx) => {
+        ctx.caseId = scCase;
+        return `<div class="tier b"><b>案卷 ${TK.esc(ctx.caseId)} 已就位</b><span>机构：演示机构 · 期间：2026-06 · 来源：疑点分诊 Top1</span></div>`;
+      },
+    },
+    {
+      id: 'gen', title: '一键生成行装包', sub: '/api/regulator/field-kit · 稽核报告 + 举证包聚合', btn: '生成行装包',
+      say: '同一个稽核引擎：主平台里它出的是稽核报告，在这里换个输出模板，就是五件套进场材料。',
+      run: async (ctx) => {
+        const kit = await fetchPackage('json', ctx.caseId);
+        ctx.kit = kit.kit || kit;
+        const k = ctx.kit;
+        const n = (x) => (Array.isArray(x) ? x.length : 0);
+        return `<div class="stats" style="margin-top:0">
+          <div class="stat"><b>${n(k.suspicious_list)}</b><span>疑点清单</span></div>
+          <div class="stat"><b>${n(k.evidence_index)}</b><span>证据索引</span></div>
+          <div class="stat"><b>${n(k.field_tasks)}</b><span>现场任务</span></div>
+          <div class="stat"><b>${n(k.missing_materials)}</b><span>缺失材料</span></div>
+          <div class="stat"><b>${n(k.interview_points)}</b><span>询问要点</span></div>
+        </div><p class="msg ok">✓ 五件套聚合完成，可下载 Markdown 或打印随身带。</p>`;
+      },
+    },
+    {
+      id: 'evidence', title: '抽查一条证据索引', sub: '费用行锚点 + 病历锚点 + 政策 ref_id', btn: '展开证据索引',
+      say: '每条疑点不是一句话，而是三要素证据链：费用行在哪、病历锚点在哪、政策条款是哪条。缺什么材料，现场直接照单调阅。',
+      run: async (ctx) => {
+        if (!ctx.kit) throw new Error('请先执行第 2 步');
+        const ev = (ctx.kit.evidence_index || []).slice(0, 3);
+        const miss = (ctx.kit.missing_materials || []).slice(0, 3);
+        if (!ev.length && !miss.length) return '<p class="msg ok">该案卷未输出证据索引（可能是干净件）。</p>';
+        return (ev.length ? `<table class="table" style="margin-top:0"><thead><tr><th>规则</th><th>锚点 / 依据</th></tr></thead><tbody>${
+          ev.map(e => `<tr><td>${TK.esc(e.rule_id || '')}<br><span class="muted">${TK.esc(e.type || '')}</span></td><td><code>${TK.esc(e.loc || '')}</code>${e.text ? '<br><span class="muted">' + TK.esc(String(e.text).slice(0, 90)) + '…</span>' : ''}</td></tr>`).join('')
+        }</tbody></table>` : '') + (miss.length ? `<div class="tier b" style="margin-top:10px"><b>现场需调阅</b><span>${miss.map(m => TK.esc(typeof m === 'string' ? m : (m.rule_id ? m.rule_id + '：' : '') + (m.item || ''))).join(' · ')}</span></div>` : '');
+      },
+    },
+    {
+      id: 'pack', title: '打包带走', sub: 'Markdown 下载 · 打印版 · 争议项转复核', btn: '下载 Markdown',
+      say: '材料标准化了，五个人拿到的是同一份口径。现场遇到医院申辩的争议项，回来交给申诉批阅助手走控辩裁。',
+      run: async (ctx) => {
+        const md = await fetchPackage('markdown', ctx.caseId);
+        const blob = new Blob([md], { type: 'text/markdown;charset=utf-8' });
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = `yingyan-field-kit-${ctx.caseId}.md`;
+        a.click();
+        URL.revokeObjectURL(a.href);
+        return `<p class="msg ok">✓ 行装包 Markdown 已下载（${(md.length / 1024).toFixed(1)} KB）。争议项可 <a href="/agent-chain.html?preview=appeal&case_id=${encodeURIComponent(ctx.caseId)}">进入申诉批阅助手 →</a></p>`;
+      },
+    },
+  ],
+  finale: {
+    text: '监管演示链走完：先查谁（分诊）→ 规则怎么定（试算）→ 查什么带什么（行装包）。可选加映：敢不敢对质——申诉批阅控辩裁。',
+    next: { label: '加映 · 申诉批阅助手', href: '/agent-chain.html?preview=appeal&case_id=main' },
+  },
 });
 </script>
 </body>

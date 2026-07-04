@@ -6,42 +6,66 @@
 <meta name="theme-color" content="#F0F4F8">
 <title>数据体检哨兵 · 鹰眼监管小工具箱</title>
 <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="stylesheet" href="/toolkit.css">
 <style>
-:root{--ink:#0B2A4A;--ink2:#134E72;--muted:#5C7185;--dim:#8296A9;--teal:#14B8A6;--amber:#E8A838;--red:#DC4A3D;--bg:#F0F4F8;--surface:#fff;--line:#E2E9F0;--hair:#D3DDE7;--sans:"PingFang SC","Hiragino Sans GB","Noto Sans SC","Microsoft YaHei",-apple-system,sans-serif;--mono:"SF Mono","DM Mono","Roboto Mono",Menlo,monospace}
-*{box-sizing:border-box;margin:0}body{font-family:var(--sans);background:var(--bg);color:var(--ink);line-height:1.65;min-height:100vh}body::before{content:"";position:fixed;inset:0;background-image:radial-gradient(rgba(11,42,74,.055) 1.5px,transparent 1.5px);background-size:26px 26px;pointer-events:none}.wrap{max-width:1080px;margin:0 auto;padding:34px 24px 48px;position:relative}.top{display:flex;justify-content:space-between;gap:16px;align-items:flex-start;margin-bottom:24px}.back{color:var(--ink2);text-decoration:none;border:1px solid var(--line);background:var(--surface);border-radius:10px;padding:9px 14px;font-weight:800;font-size:13px}.eyebrow{font-family:var(--mono);font-size:12px;color:var(--dim);letter-spacing:.12em}h1{font-size:clamp(28px,4vw,42px);line-height:1.25}.lead{color:var(--muted);max-width:820px;margin-top:8px}.panel{border:1px solid var(--line);border-radius:14px;background:var(--surface);padding:20px;box-shadow:0 3px 14px rgba(11,42,74,.05);margin-top:16px}textarea{width:100%;min-height:210px;border:1px solid var(--line);border-radius:12px;background:#F8FAFC;padding:12px;color:var(--ink);font-family:var(--mono);font-size:13px;line-height:1.55}.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}.btn{border:1px solid transparent;border-radius:10px;background:linear-gradient(90deg,var(--ink2),#0E9384);color:#fff;font-weight:800;padding:11px 16px;cursor:pointer}.ghost{background:#fff;color:var(--ink2);border-color:var(--line)}.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:12px}@media(max-width:780px){.cards{grid-template-columns:1fr}}.metric{border:1px solid var(--line);border-radius:12px;background:#F8FAFC;padding:14px}.metric b{display:block;font-family:var(--mono);font-size:26px}.metric span{color:var(--dim);font-size:12px}.issue{border:1px solid var(--line);border-left:5px solid var(--amber);border-radius:12px;background:#F8FAFC;padding:12px;margin-top:10px}.issue.hot{border-left-color:var(--red)}.issue.ok{border-left-color:var(--teal)}.issue h2{font-size:16px}.issue p,.issue li{font-size:13px;color:var(--muted)}ul{padding-left:18px}.note{border:1px dashed var(--hair);border-radius:12px;background:#fff;padding:12px;color:var(--muted);margin-top:12px;font-size:13px}.muted{color:var(--muted)}
+.cards{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:12px}
+@media(max-width:780px){.cards{grid-template-columns:1fr 1fr}}
+.issue{border:1px solid var(--line);border-left:5px solid var(--amber);border-radius:12px;background:#F8FAFC;padding:12px;margin-top:10px}
+.issue.hot{border-left-color:var(--red)}
+.issue.ok{border-left-color:var(--iris2)}
+.issue h2{font-size:16px}
+.issue p,.issue li{font-size:13px;color:var(--muted)}
+ul{padding-left:18px}
 </style>
 </head>
 <body>
 <main class="wrap">
   <header class="top">
     <div>
-      <div class="eyebrow">REGULATOR TOOLKIT · PREVIEW · DATA HEALTH</div>
-      <h1>数据体检哨兵</h1>
-      <p class="lead">用于医院报送 Excel 的复制粘贴快检：字段缺失、编码格式、孤儿行。只提示数据质量问题，不做稽核认定。</p>
+      <div class="eyebrow">REGULATOR TOOLKIT · DATA HEALTH</div>
+      <h1>🧾 数据体检哨兵</h1>
+      <p class="lead">医院报送 Excel 的复制粘贴快检：字段缺失、编码格式、孤儿行。数据先体检、再进疑点分诊——脏数据进引擎只会产出脏线索。只提示数据质量问题，不做稽核认定。</p>
     </div>
-    <div style="display:flex;gap:8px;flex-wrap:wrap"><a class="back" href="/plugins.html#regulator">← 工具箱</a><a class="back" href="/home.html">← 三入口</a></div>
+    <div class="top-nav">
+      <a class="back" href="/plugins.html#regulator">← 工具箱</a>
+      <a class="back" href="/home.html">← 三入口</a>
+    </div>
   </header>
+  <p class="crumb"><a href="/home.html">三入口</a> → <a href="/plugins.html#regulator">③ 插件 & 小工具箱</a> → <b>数据体检哨兵</b></p>
 
-  <section class="panel">
-    <textarea id="raw" aria-label="报送表 TSV 或 CSV">项目名称	年龄	性别	数量	金额	科室	医生	追溯码
-左氧氟沙星注射液	16	男	1	120	儿科	李医生	
-静脉输液	40	女	35	280	内科	王医生	
+  <nav class="mode">
+    <button data-mode="use">⚡ 直接使用</button>
+    <button data-mode="sc">🎬 模拟场景</button>
+  </nav>
+
+  <!-- ============ 直接使用 ============ -->
+  <div id="pane-use">
+  <section class="panel" style="margin-top:0">
+    <textarea class="input" id="raw" aria-label="报送表 TSV 或 CSV">项目名称	年龄	性别	数量	金额	科室	医生	追溯码
+左氧氟沙星注射液	16	男	1	120	儿科	李医生
+静脉输液	40	女	35	280	内科	王医生
 	60	女	2	90	内科	王医生	85907831160000000214
 阿托伐他汀钙片			1	100		张医生	85907831160000000214</textarea>
-    <div class="actions">
-      <button class="btn" type="button" id="check">开始体检</button>
+    <div class="actions" style="margin-top:12px">
+      <button class="btn primary" type="button" id="check">开始体检</button>
       <button class="btn ghost" type="button" id="demo">载入演示表</button>
+      <a class="btn" href="/regulator-triage.html">体检通过 → 送疑点分诊</a>
     </div>
-    <div class="note">支持从 Excel 直接复制的 TSV，也兼容简单 CSV。生产版可接上传解析；当前预览版保持零依赖。</div>
+    <div class="note">支持从 Excel 直接复制的 TSV，也兼容简单 CSV。生产版可接上传解析；当前版本零依赖、纯本机校验，数据不出机。</div>
   </section>
 
   <section class="panel" id="result">
-    <p class="muted">点击“开始体检”查看字段缺失、编码格式、孤儿行三类数据质量问题。</p>
+    <p class="muted">点「开始体检」查看字段缺失、编码格式、孤儿行三类数据质量问题。</p>
   </section>
+  </div>
+
+  <!-- ============ 模拟场景 ============ -->
+  <div id="pane-sc" class="hidden"><div id="scPlayer"></div></div>
 </main>
+
+<script src="/toolkit.js"></script>
 <script>
-const $ = (s) => document.querySelector(s);
-const esc = (v) => String(v ?? '').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const $ = TK.$;
 const REQUIRED = [
   ['item_name', /项目名称|项目|名称|收费项目|药品名称|诊疗项目|品名/],
   ['patient_age', /年龄|患者年龄/],
@@ -62,8 +86,8 @@ function parseTable(text) {
   const sep = lines[0].includes('\t') ? '\t' : ',';
   return { header: splitLine(lines[0], sep), rows: lines.slice(1).map(l => splitLine(l, sep)), sep };
 }
-function runCheck() {
-  const { header, rows } = parseTable($('#raw').value);
+function analyze(text) {
+  const { header, rows } = parseTable(text);
   const col = {};
   for (const [field, re] of REQUIRED) {
     const idx = header.findIndex(h => re.test(h));
@@ -108,20 +132,57 @@ function runCheck() {
     const noDeptDoctor = (col.dept == null || !String(r[col.dept] ?? '').trim()) && (col.doctor == null || !String(r[col.doctor] ?? '').trim());
     return hasAmount && (noItem || noDeptDoctor);
   });
-  $('#result').innerHTML = `
-    <div class="cards">
-      <div class="metric"><b>${rows.length}</b><span>数据行</span></div>
-      <div class="metric"><b>${missing.length}</b><span>字段缺失</span></div>
-      <div class="metric"><b>${formatIssues.length}</b><span>编码/格式问题</span></div>
-      <div class="metric"><b>${orphanRows.length}</b><span>孤儿行</span></div>
-    </div>
-    <article class="issue ${missing.length ? 'hot' : 'ok'}"><h2>1. 字段缺失</h2>${missing.length ? `<ul>${missing.map(x => `<li>${esc(x)}</li>`).join('')}</ul>` : '<p>必要字段均已识别。</p>'}</article>
-    <article class="issue ${formatIssues.length ? 'hot' : 'ok'}"><h2>2. 编码格式</h2>${formatIssues.length ? `<ul>${formatIssues.map(x => `<li>${esc(x)}</li>`).join('')}</ul>` : '<p>年龄、数量、金额、追溯码格式未发现明显异常。</p>'}</article>
-    <article class="issue ${orphanRows.length ? 'hot' : 'ok'}"><h2>3. 孤儿行</h2>${orphanRows.length ? `<ul>${orphanRows.map(x => `<li>第 ${x.i} 行：有金额但缺项目名或科室/医生归属</li>`).join('')}</ul>` : '<p>未发现有金额但缺关键归属的孤儿行。</p>'}</article>
-    <div class="note">建议动作：补齐字段、修正空值和孤儿行后，再进入疑点分诊或飞检行装包。</div>`;
+  return { rows, missing, formatIssues, orphanRows };
 }
+function reportHtml(a) {
+  return `
+    <div class="cards" style="margin-top:0">
+      <div class="metric"><b>${a.rows.length}</b><span>数据行</span></div>
+      <div class="metric ${a.missing.length ? 'hot' : 'ok'}"><b>${a.missing.length}</b><span>字段缺失</span></div>
+      <div class="metric ${a.formatIssues.length ? 'hot' : 'ok'}"><b>${a.formatIssues.length}</b><span>编码/格式问题</span></div>
+      <div class="metric ${a.orphanRows.length ? 'hot' : 'ok'}"><b>${a.orphanRows.length}</b><span>孤儿行</span></div>
+    </div>
+    <article class="issue ${a.missing.length ? 'hot' : 'ok'}"><h2>1. 字段缺失</h2>${a.missing.length ? `<ul>${a.missing.map(x => `<li>${TK.esc(x)}</li>`).join('')}</ul>` : '<p>必要字段均已识别。</p>'}</article>
+    <article class="issue ${a.formatIssues.length ? 'hot' : 'ok'}"><h2>2. 编码格式</h2>${a.formatIssues.length ? `<ul>${a.formatIssues.map(x => `<li>${TK.esc(x)}</li>`).join('')}</ul>` : '<p>年龄、数量、金额、追溯码格式未发现明显异常。</p>'}</article>
+    <article class="issue ${a.orphanRows.length ? 'hot' : 'ok'}"><h2>3. 孤儿行</h2>${a.orphanRows.length ? `<ul>${a.orphanRows.map(x => `<li>第 ${x.i} 行：有金额但缺项目名或科室/医生归属</li>`).join('')}</ul>` : '<p>未发现有金额但缺关键归属的孤儿行。</p>'}</article>
+    <div class="note">建议动作：退回医院补齐字段、修正空值和孤儿行后，再进入 <a href="/regulator-triage.html">疑点分诊</a> 或 <a href="/regulator-fieldkit.html">飞检行装包</a>。</div>`;
+}
+function runCheck() { $('#result').innerHTML = reportHtml(analyze($('#raw').value)); }
 $('#check').addEventListener('click', runCheck);
-$('#demo').addEventListener('click', () => { $('#raw').value = document.querySelector('#raw').defaultValue; runCheck(); });
+$('#demo').addEventListener('click', () => { $('#raw').value = $('#raw').defaultValue; runCheck(); });
+
+/* ---------- 模拟场景：月初报送表体检 ---------- */
+TK.scenario({
+  mount: '#scPlayer',
+  role: '信息科审核员 · 小孙',
+  where: '月初 · 医保局信息科 · 定点机构月报刚到',
+  text: '医院月报 Excel 到了，直接进筛查引擎吗？慢——脏数据进引擎只会产出脏线索：缺列会漏检，孤儿行会误伤。小孙的习惯是：先体检，不合格退回补报，合格再送疑点分诊。',
+  steps: [
+    {
+      id: 'paste', title: '粘贴这个月的报送表', sub: '零依赖 · 纯本机校验 · 数据不出机', btn: '粘贴并体检',
+      say: '从 Excel 全选复制、粘贴，一步出体检报告——不用装任何东西。',
+      run: async (ctx) => {
+        ctx.a = analyze($('#raw').defaultValue);
+        return reportHtml(ctx.a);
+      },
+    },
+    {
+      id: 'verdict', title: '给报送质量下结论', sub: '合格 → 送分诊 / 不合格 → 退回补报', btn: '出体检结论',
+      say: '三类问题各有一个明确的处理动作：缺字段退回、格式异常改正、孤儿行补归属。这一步挡住的是引擎的输入质量。',
+      run: async (ctx) => {
+        if (!ctx.a) throw new Error('请先执行第 1 步');
+        const bad = ctx.a.missing.length + ctx.a.formatIssues.length + ctx.a.orphanRows.length;
+        return bad
+          ? `<div class="tier b"><b>⚠ 本次报送不合格：${bad} 处数据质量问题</b><span>按清单退回医院补报。修复后重新体检，合格再进疑点分诊——保证引擎吃到的是干净输入。</span></div>`
+          : `<div class="tier c"><b>✓ 报送合格</b><span>可以直接送疑点分诊。</span></div>`;
+      },
+    },
+  ],
+  finale: {
+    text: '数据体检 → 疑点分诊 → 飞检行装包，一条监管数据流水线。',
+    next: { label: '送去疑点分诊器', href: '/regulator-triage.html?scenario=1' },
+  },
+});
 </script>
 </body>
 </html>

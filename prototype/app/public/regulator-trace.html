@@ -6,56 +6,145 @@
 <meta name="theme-color" content="#F0F4F8">
 <title>追溯码即查 · 鹰眼监管小工具箱</title>
 <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="stylesheet" href="/toolkit.css">
 <style>
-:root{--ink:#0B2A4A;--ink2:#134E72;--muted:#5C7185;--dim:#8296A9;--teal:#14B8A6;--red:#DC4A3D;--bg:#F0F4F8;--surface:#fff;--line:#E2E9F0;--hair:#D3DDE7;--sans:"PingFang SC","Hiragino Sans GB","Noto Sans SC","Microsoft YaHei",-apple-system,sans-serif;--mono:"SF Mono","DM Mono","Roboto Mono",Menlo,monospace}
-*{box-sizing:border-box;margin:0}body{font-family:var(--sans);background:var(--bg);color:var(--ink);line-height:1.65;min-height:100vh}body::before{content:"";position:fixed;inset:0;background-image:radial-gradient(rgba(11,42,74,.055) 1.5px,transparent 1.5px);background-size:26px 26px;pointer-events:none}.wrap{max-width:1040px;margin:0 auto;padding:34px 24px 48px;position:relative}.top{display:flex;justify-content:space-between;gap:16px;align-items:flex-start;margin-bottom:24px}.back{color:var(--ink2);text-decoration:none;border:1px solid var(--line);background:var(--surface);border-radius:10px;padding:9px 14px;font-weight:800;font-size:13px}.eyebrow{font-family:var(--mono);font-size:12px;color:var(--dim);letter-spacing:.12em}h1{font-size:clamp(28px,4vw,42px);line-height:1.25}.lead{color:var(--muted);max-width:820px;margin-top:8px}.panel{border:1px solid var(--line);border-radius:14px;background:var(--surface);padding:20px;box-shadow:0 3px 14px rgba(11,42,74,.05);margin-top:16px}.query{display:grid;grid-template-columns:1fr auto;gap:10px}@media(max-width:680px){.query{grid-template-columns:1fr}}input{width:100%;border:1px solid var(--line);border-radius:10px;padding:12px;background:#F8FAFC;color:var(--ink);font-family:var(--mono);font-weight:700}.btn{border:1px solid transparent;border-radius:10px;background:linear-gradient(90deg,var(--red),#C43F33);color:#fff;font-weight:800;padding:11px 16px;cursor:pointer}.hint{font-size:13px;color:var(--muted);margin-top:8px}.badge{display:inline-flex;border-radius:999px;padding:4px 10px;font-weight:800;font-size:12px}.a{background:#FDEDEC;color:#B42318}.c{background:#EAFBF8;color:#0E756A}.table{width:100%;border-collapse:collapse;font-size:13px;margin-top:12px}.table th,.table td{border-bottom:1px solid var(--line);padding:9px;text-align:left}.table th{color:var(--dim);font-size:12px}.muted{color:var(--muted)}.note{border:1px dashed var(--hair);border-radius:12px;background:#fff;padding:12px;color:var(--muted);margin-top:12px;font-size:13px}
+.query{display:grid;grid-template-columns:1fr auto auto;gap:10px}
+@media(max-width:680px){.query{grid-template-columns:1fr}}
+input#code{font-family:var(--mono)}
+.batch-box{margin-top:12px}
 </style>
 </head>
 <body>
 <main class="wrap">
   <header class="top">
     <div>
-      <div class="eyebrow">REGULATOR TOOLKIT · PREVIEW · TRACE</div>
-      <h1>追溯码即查</h1>
-      <p class="lead">复用行级筛查引擎 TRACE-101，用于回流药 / 重复结算线索快查。AI 只提示线索，不作处置认定。</p>
+      <div class="eyebrow">REGULATOR TOOLKIT · TRACE</div>
+      <h1>🔍 追溯码即查</h1>
+      <p class="lead">复用行级筛查引擎 TRACE-101，回流药 / 重复结算线索快查。单码即查，也支持整版批量粘贴。AI 只提示线索，不作处置认定。</p>
     </div>
-    <div style="display:flex;gap:8px;flex-wrap:wrap"><a class="back" href="/plugins.html#regulator">← 工具箱</a><a class="back" href="/home.html">← 三入口</a></div>
+    <div class="top-nav">
+      <a class="back" href="/plugins.html#regulator">← 工具箱</a>
+      <a class="back" href="/home.html">← 三入口</a>
+    </div>
   </header>
+  <p class="crumb"><a href="/home.html">三入口</a> → <a href="/plugins.html#regulator">③ 插件 & 小工具箱</a> → <b>追溯码即查</b></p>
 
-  <section class="panel">
+  <nav class="mode">
+    <button data-mode="use">⚡ 直接使用</button>
+    <button data-mode="sc">🎬 模拟场景</button>
+  </nav>
+
+  <!-- ============ 直接使用 ============ -->
+  <div id="pane-use">
+  <section class="panel" style="margin-top:0">
     <div class="query">
-      <input id="code" value="85907831160000000214" aria-label="追溯码">
-      <button class="btn" id="lookup" type="button">查询</button>
+      <input class="input" id="code" value="85907831160000000214" aria-label="追溯码">
+      <button class="btn danger" id="lookup" type="button">查询</button>
+      <button class="btn" id="batchToggle" type="button">批量粘贴</button>
     </div>
-    <p class="hint">演示重复码示例：<code>85907831160000000214</code>。生产环境应接真实追溯码库，本页只查演示数据集。</p>
+    <p class="note" style="margin-top:10px">演示重复码示例：<code>85907831160000000214</code>。生产环境应接真实追溯码库，本页只查演示数据集。</p>
+    <div class="batch-box hidden" id="batchBox">
+      <textarea class="input" id="batchRaw" placeholder="每行一个追溯码，直接从 Excel 追溯码列复制粘贴即可"></textarea>
+      <div class="actions" style="margin-top:10px">
+        <button class="btn danger" id="batchRun" type="button">批量查询</button>
+        <button class="btn ghost" id="batchDemo" type="button">填入演示批量</button>
+      </div>
+    </div>
   </section>
 
   <section class="panel" id="result">
     <p class="muted">输入追溯码后查看是否命中重复结算线索。</p>
   </section>
+  </div>
+
+  <!-- ============ 模拟场景 ============ -->
+  <div id="pane-sc" class="hidden"><div id="scPlayer"></div></div>
 </main>
+
+<script src="/toolkit.js"></script>
 <script>
-const $ = (s) => document.querySelector(s);
-const esc = (v) => String(v ?? '').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const $ = TK.$;
+async function apiLookup(code) {
+  const r = await fetch('/api/regulator/trace-lookup?code=' + encodeURIComponent(code)).then(x => x.json());
+  if (r.error) throw new Error(r.error);
+  return r;
+}
+function singleHtml(r) {
+  return `
+    <h2 style="font-size:18px;margin-bottom:8px">${TK.tierBadge(r.repeated ? 'A' : 'C')}</h2>
+    <p class="muted" style="font-size:13px">${TK.esc(r.explanation)}</p>
+    <table class="table"><thead><tr><th>行号</th><th>日期</th><th>项目</th><th>金额</th><th>科室/医生</th></tr></thead>
+    <tbody>${(r.rows || []).map(row => `<tr><td>${TK.esc(row.row_id)}</td><td>${TK.esc(row.settle_date)}</td><td>${TK.esc(row.item_name)}</td><td class="num">${TK.money(row.amount)}</td><td>${TK.esc(row.dept)} · ${TK.esc(row.doctor)}</td></tr>`).join('') || '<tr><td colspan="5" class="muted">未找到演示数据行</td></tr>'}</tbody></table>
+    ${r.repeated ? '<div class="note">建议动作：核对首笔结算、退药冲正记录、药品实物流向与参保人购药记录。</div>' : ''}`;
+}
 async function lookup() {
   const code = $('#code').value.trim();
-  $('#result').innerHTML = '<p class="muted">查询中...</p>';
-  try {
-    const r = await fetch('/api/regulator/trace-lookup?code=' + encodeURIComponent(code)).then(x => x.json());
-    if (r.error) throw new Error(r.error);
-    const badge = r.repeated ? '<span class="badge a">A · 建议重点核查</span>' : '<span class="badge c">C · 建议暂缓 / 观察</span>';
-    $('#result').innerHTML = `
-      <h2>${badge}</h2>
-      <p class="hint">${esc(r.explanation)}</p>
-      <table class="table"><thead><tr><th>行号</th><th>日期</th><th>项目</th><th>金额</th><th>科室/医生</th></tr></thead>
-      <tbody>${(r.rows || []).map(row => `<tr><td>${esc(row.row_id)}</td><td>${esc(row.settle_date)}</td><td>${esc(row.item_name)}</td><td>¥${esc(row.amount)}</td><td>${esc(row.dept)} · ${esc(row.doctor)}</td></tr>`).join('') || '<tr><td colspan="5">未找到演示数据行</td></tr>'}</tbody></table>
-      <div class="note">建议动作：核对首笔结算、退药冲正记录、药品实物流向与参保人购药记录。</div>`;
-  } catch (e) {
-    $('#result').innerHTML = `<p class="muted">查询失败：${esc(e.message)}</p>`;
-  }
+  if (!code) return;
+  $('#result').innerHTML = '<p class="muted">查询中…</p>';
+  try { $('#result').innerHTML = singleHtml(await apiLookup(code)); }
+  catch (e) { $('#result').innerHTML = `<p class="muted">查询失败：${TK.esc(e.message)}</p>`; }
 }
 $('#lookup').addEventListener('click', lookup);
 $('#code').addEventListener('keydown', e => { if (e.key === 'Enter') lookup(); });
+
+/* ---------- 批量查询 ---------- */
+$('#batchToggle').addEventListener('click', () => $('#batchBox').classList.toggle('hidden'));
+$('#batchDemo').addEventListener('click', () => {
+  $('#batchRaw').value = ['85907831160000000214', '85907831160000000999', '81234567890000000001'].join('\n');
+});
+$('#batchRun').addEventListener('click', async () => {
+  const codes = [...new Set($('#batchRaw').value.split(/\r?\n/).map(s => s.trim()).filter(Boolean))].slice(0, 50);
+  if (!codes.length) return TK.toast('请粘贴至少一个追溯码', true);
+  $('#result').innerHTML = `<p class="muted">批量查询 ${codes.length} 个追溯码…</p>`;
+  const out = [];
+  for (const code of codes) {
+    try {
+      const r = await apiLookup(code);
+      out.push({ code, tier: r.repeated ? 'A' : 'C', rows: (r.rows || []).length, note: r.explanation });
+    } catch (e) { out.push({ code, tier: '—', rows: 0, note: '查询失败：' + e.message }); }
+  }
+  const hits = out.filter(x => x.tier === 'A');
+  $('#result').innerHTML = `
+    <div class="stats" style="margin-top:0">
+      <div class="stat"><b>${out.length}</b><span>已查追溯码</span></div>
+      <div class="stat"><b>${hits.length}</b><span>A 命中重复</span></div>
+      <div class="stat"><b>${out.length - hits.length}</b><span>C 暂缓/观察</span></div>
+    </div>
+    <table class="table"><thead><tr><th>档位</th><th>追溯码</th><th>关联行</th><th>说明</th></tr></thead>
+    <tbody>${out.map(x => `<tr><td>${x.tier === '—' ? '—' : TK.tierBadge(x.tier)}</td><td><code>${TK.esc(x.code)}</code></td><td class="num">${x.rows}</td><td class="muted">${TK.esc(x.note)}</td></tr>`).join('')}</tbody></table>`;
+});
+
+/* ---------- 模拟场景：药房现场扫码 ---------- */
+TK.scenario({
+  mount: '#scPlayer',
+  role: '现场检查员 · 小赵',
+  where: '周五 10:20 · 飞检现场 · 定点药店药房',
+  text: '货架上一盒阿托伐他汀，扫码枪一扫追溯码出来了。这盒药有没有被重复结算过？以前要回驻地导数据慢慢比对；现在把码粘进即查框，秒出结论。',
+  steps: [
+    {
+      id: 'scan', title: '扫码即查', sub: 'TRACE-101 · 回流药 / 重复结算', btn: '查这盒药',
+      say: '追溯码是药品的身份证：同一个码出现两笔结算，就是回流药或重复结算的强线索。',
+      run: async (ctx) => {
+        ctx.r = await apiLookup('85907831160000000214');
+        return `<div style="margin-bottom:8px">${TK.tierBadge(ctx.r.repeated ? 'A' : 'C')}</div><p class="muted" style="font-size:13px">${TK.esc(ctx.r.explanation)}</p>`;
+      },
+    },
+    {
+      id: 'rows', title: '看两笔结算长什么样', sub: '同码结算行明细', btn: '展开明细',
+      say: '两笔结算不同医生、同一个码——现场马上可以调这两笔的原始凭证和发药记录。',
+      run: async (ctx) => {
+        if (!ctx.r) throw new Error('请先执行第 1 步');
+        return `<table class="table" style="margin-top:0"><thead><tr><th>行号</th><th>日期</th><th>项目</th><th>金额</th><th>科室/医生</th></tr></thead>
+          <tbody>${(ctx.r.rows || []).map(row => `<tr><td>${TK.esc(row.row_id)}</td><td>${TK.esc(row.settle_date)}</td><td>${TK.esc(row.item_name)}</td><td class="num">${TK.money(row.amount)}</td><td>${TK.esc(row.dept)} · ${TK.esc(row.doctor)}</td></tr>`).join('')}</tbody></table>
+          <div class="note">建议动作：核对首笔结算、退药冲正记录、药品实物流向与参保人购药记录。AI 只提示线索，处置由检查组认定。</div>`;
+      },
+    },
+  ],
+  finale: {
+    text: '现场一扫一查，线索当场落地。同类公开案例怎么处理的？可以顺手翻判例速查卡。',
+    next: { label: '判例速查卡', href: '/regulator-cases.html?scenario=1' },
+  },
+});
 </script>
 </body>
 </html>

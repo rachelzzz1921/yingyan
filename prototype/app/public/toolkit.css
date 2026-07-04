@@ -1,0 +1,142 @@
+/* ============================================================
+   鹰眼 · 插件 & 小工具箱 · 统一设计层 toolkit.css
+   规范来源：home.html / plugins.html 色板 + golden.html 演示动线范式
+   约定：所有工具页共享本文件的 :root 与基础类，页面只写自己特有样式；
+        不要在页面里再定义重复的 :root 色板。
+   三档口径（全局统一）：A 建议重点核查 / B 建议补材料后核查 / C 建议暂缓·观察
+   ============================================================ */
+
+:root{
+  --ink:#0B2A4A;--ink2:#134E72;--muted:#5C7185;--dim:#8296A9;
+  --iris:#2DD4BF;--iris2:#14B8A6;--teal:#14B8A6;
+  --amber:#E8A838;--amber2:#F5C842;--amber-deep:#8F6210;
+  --red:#DC4A3D;--danger:#DC4A3D;--ok:#0D9B6A;
+  --bg:#F0F4F8;--surface:#FFFFFF;--line:#E2E9F0;--hair:#D3DDE7;
+  --sans:"PingFang SC","Hiragino Sans GB","Noto Sans SC","Microsoft YaHei",-apple-system,sans-serif;
+  --lat:Inter,"Helvetica Neue",Arial,sans-serif;
+  --mono:"SF Mono","DM Mono","Roboto Mono",Menlo,monospace;
+  --radius:14px;--radius-lg:18px;
+  --shadow:0 3px 14px rgba(11,42,74,.06);
+  --shadow-hover:0 14px 34px rgba(11,42,74,.13);
+}
+
+*{box-sizing:border-box;margin:0}
+html{-webkit-font-smoothing:antialiased;scroll-behavior:smooth}
+body{font-family:var(--sans);background:var(--bg);color:var(--ink);line-height:1.65;min-height:100vh;position:relative}
+body::before{content:"";position:fixed;inset:0;background-image:radial-gradient(rgba(11,42,74,.055) 1.5px,transparent 1.5px);background-size:26px 26px;pointer-events:none;z-index:0}
+.wrap{max-width:1160px;margin:0 auto;padding:34px 24px 52px;position:relative;z-index:1}
+.hidden{display:none !important}
+.muted{color:var(--muted)}
+code{font-family:var(--mono);font-size:.92em;background:#EEF2F7;padding:1px 5px;border-radius:4px}
+
+/* ---------- 统一顶栏 / 面包屑（顶栏任何宽度不换行） ---------- */
+.top{display:flex;justify-content:space-between;gap:16px;align-items:flex-start;margin-bottom:8px}
+.top-nav{display:flex;gap:8px;flex-wrap:nowrap;white-space:nowrap;flex:none}
+.back{color:var(--ink2);text-decoration:none;border:1px solid var(--line);background:var(--surface);border-radius:10px;padding:9px 14px;font-weight:800;font-size:13px;white-space:nowrap}
+.back:hover{border-color:var(--hair)}
+.eyebrow{font-family:var(--mono);font-size:12px;color:var(--dim);letter-spacing:.12em}
+h1{font-size:clamp(26px,3.6vw,38px);line-height:1.25}
+.lead{color:var(--muted);max-width:840px;margin-top:8px;font-size:14.5px}
+.crumb{font-size:12px;color:var(--dim);margin:6px 0 20px}
+.crumb a{color:var(--muted);text-decoration:none}
+.crumb b{color:var(--ink)}
+@media(max-width:760px){.top{flex-direction:column}}
+
+/* ---------- 面板 / 卡片 ---------- */
+.hero{border:1px solid var(--line);background:var(--surface);box-shadow:var(--shadow);border-radius:var(--radius-lg);padding:24px 26px}
+.panel{border:1px solid var(--line);background:var(--surface);box-shadow:var(--shadow);border-radius:var(--radius);padding:20px}
+.note,.placeholder{margin-top:14px;border:1px dashed var(--hair);border-radius:12px;padding:12px 14px;color:var(--muted);background:rgba(255,255,255,.78);font-size:13px}
+
+/* ---------- 按钮 ---------- */
+.btn{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);border-radius:10px;background:#F8FAFC;color:var(--ink2);font-weight:800;padding:11px 14px;text-decoration:none;cursor:pointer;font-size:14px;font-family:inherit;line-height:1.3}
+.btn:hover{border-color:var(--hair)}
+.btn.primary{background:linear-gradient(90deg,var(--iris2),#0E9384);border-color:transparent;color:#fff}
+.btn.danger{background:linear-gradient(90deg,var(--red),#C43F33);border-color:transparent;color:#fff}
+.btn.gold{background:linear-gradient(90deg,var(--amber),#D99A22);border-color:transparent;color:#fff}
+.btn.ghost{background:var(--surface)}
+.btn:disabled,.btn[aria-disabled="true"]{opacity:.55;cursor:not-allowed}
+.actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:16px}
+
+/* ---------- 三档口径（统一徽章 + 说明块） ---------- */
+.badge{display:inline-flex;align-items:center;border-radius:999px;padding:3px 9px;font-weight:800;font-size:12px;white-space:nowrap}
+.badge.a{background:#FDEDEC;color:#B42318}
+.badge.b{background:#FFF7E6;color:#8F6210}
+.badge.c{background:#EAFBF8;color:#0E756A}
+.tier{border:1px solid var(--line);border-left-width:5px;border-radius:11px;padding:12px;background:#F8FAFC}
+.tier.a{border-left-color:var(--red)}
+.tier.b{border-left-color:var(--amber)}
+.tier.c{border-left-color:var(--iris2)}
+.tier b{display:block}
+.tiers{display:grid;gap:10px}
+
+/* ---------- 指标卡 / 统计 ---------- */
+.stats{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+.stat,.metric{border:1px solid var(--line);border-radius:12px;background:#F8FAFC;padding:11px 13px;min-width:116px}
+.stat b,.metric b{display:block;font-family:var(--mono);font-size:23px;font-variant-numeric:tabular-nums}
+.stat span,.metric span{color:var(--dim);font-size:12px}
+.metric.ok b{color:var(--ok)}
+.metric.warn b{color:var(--amber-deep)}
+.metric.hot b{color:var(--red)}
+
+/* ---------- 表格 ---------- */
+.table,.mock-table{width:100%;border-collapse:collapse;font-size:13px;margin-top:12px}
+.table th,.table td,.mock-table th,.mock-table td{border-bottom:1px solid var(--line);padding:9px;text-align:left;vertical-align:top}
+.table th,.mock-table th{color:var(--dim);font-size:12px}
+.num{text-align:right;font-family:var(--mono);white-space:nowrap}
+
+/* ---------- 表单 ---------- */
+label{display:block;color:var(--muted);font-size:13px;font-weight:800;margin:14px 0 6px}
+.select,.input{width:100%;border:1px solid var(--line);border-radius:10px;padding:10px 12px;background:#F8FAFC;color:var(--ink);font-weight:700;font-family:inherit;font-size:14px}
+textarea.input{font-family:var(--mono);font-weight:500;font-size:13px;line-height:1.55;min-height:180px}
+
+/* ---------- 使用模式切换（直接使用 / 模拟场景） ---------- */
+.mode{display:inline-flex;border:1px solid var(--line);border-radius:12px;background:var(--surface);padding:4px;gap:4px;margin:0 0 16px;box-shadow:var(--shadow)}
+.mode button{border:none;background:transparent;border-radius:9px;padding:8px 16px;font-weight:800;font-size:13.5px;color:var(--muted);cursor:pointer;font-family:inherit;white-space:nowrap}
+.mode button.on{background:var(--ink);color:#fff}
+.mode button .tag{font-size:10.5px;font-weight:800;color:var(--amber-deep);margin-left:4px}
+.mode button.on .tag{color:var(--amber2)}
+
+/* ---------- 模拟场景播放器（golden.html 演示动线范式的小工具版） ----------
+   结构由 toolkit.js 的 TK.scenario() 生成：
+   .sc > .sc-scene(角色/时间地点/进度点) + .sc-text(剧情) + .sc-step* + .sc-final
+*/
+.sc-scene{display:flex;align-items:center;gap:12px;flex-wrap:wrap;border:1px solid var(--line);background:var(--surface);border-radius:var(--radius);padding:13px 18px;box-shadow:var(--shadow)}
+.sc-role{font-weight:800;font-size:14px}
+.sc-where{font-family:var(--mono);font-size:12px;color:var(--dim)}
+.sc-dots{display:flex;gap:8px;margin-left:auto;align-items:center}
+.sc-dots i{width:12px;height:12px;border-radius:50%;background:#E8EEF4;border:1px solid var(--hair);transition:.25s}
+.sc-dots i.on{background:var(--ok);border-color:var(--ok);box-shadow:0 0 8px rgba(13,155,106,.45)}
+.sc-text{font-size:13.5px;color:var(--muted);margin:12px 2px 16px;max-width:900px}
+.sc-steps{position:relative}
+.sc-steps::before{content:"";position:absolute;left:33px;top:22px;bottom:22px;width:2px;background:linear-gradient(180deg,rgba(20,184,166,.45),rgba(20,184,166,.06));z-index:0}
+.sc-step{position:relative;z-index:1;border:1px solid var(--line);border-radius:var(--radius);background:var(--surface);margin-bottom:12px;overflow:hidden;transition:opacity .25s,border-color .25s,box-shadow .25s;opacity:.45;box-shadow:var(--shadow)}
+.sc-step.unlocked{opacity:1}
+.sc-step.unlocked:not(.done){box-shadow:0 10px 30px rgba(11,42,74,.1)}
+.sc-step.done{border-color:rgba(13,155,106,.45)}
+.sc-h{display:flex;align-items:center;gap:14px;padding:14px 18px}
+.sc-num{width:34px;height:34px;flex:none;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-family:var(--mono);font-size:14px;background:#F8FAFC;color:var(--dim);border:1.5px solid var(--hair);transition:.25s}
+.sc-step.unlocked:not(.done) .sc-num{border-color:var(--iris2);color:#0E756A;background:#EAFBF8;box-shadow:0 0 12px rgba(20,184,166,.25)}
+.sc-step.done .sc-num{background:var(--ok);color:#fff;border-color:var(--ok)}
+.sc-tt{flex:1;min-width:0}
+.sc-tt h3{font-size:15.5px;font-weight:800;color:var(--ink)}
+.sc-tt p{font-size:11.5px;color:var(--dim);margin-top:1px}
+.sc-h button{flex:none;padding:9px 18px;border-radius:10px;border:none;background:linear-gradient(90deg,var(--iris2),#0E9384);color:#fff;font-weight:800;font-size:13.5px;cursor:pointer;font-family:inherit;box-shadow:0 5px 14px rgba(20,184,166,.3);transition:filter .15s;white-space:nowrap}
+.sc-h button:hover:not(:disabled){filter:brightness(1.06)}
+.sc-h button:disabled{background:#E8EEF4;color:#A5B4C2;cursor:not-allowed;box-shadow:none}
+.sc-h button.running{background:#EAFBF8;color:#0E756A;box-shadow:none}
+.sc-b{padding:0 20px 16px 66px;display:none}
+.sc-step.open .sc-b{display:block}
+.sc-pitch{font-size:13px;color:var(--amber-deep);background:#FFFAEF;border:1px dashed rgba(232,168,56,.5);border-radius:11px;padding:9px 13px;margin-bottom:12px}
+.sc-pitch::before{content:"🎤 口播 · ";font-weight:800}
+.sc-res{font-size:13px}
+.sc-res .msg{margin-top:8px;font-size:12.5px}
+.sc-res .msg.ok{color:var(--ok)}
+.sc-res .msg.err{color:var(--red)}
+.sc-final{display:none;border:1.5px solid rgba(13,155,106,.5);background:linear-gradient(180deg,#F2FBF7,#EAF8F2);border-radius:var(--radius);padding:16px 20px;margin-top:4px}
+.sc-final.show{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.sc-final .ftext{flex:1;min-width:240px;font-size:13.5px;color:#0B5F45;font-weight:700}
+.sc-final a.btn{flex:none}
+
+/* ---------- 提示 toast ---------- */
+.tk-toast{position:fixed;left:50%;bottom:26px;transform:translateX(-50%);background:var(--ink);color:#fff;font-size:13px;font-weight:700;padding:10px 18px;border-radius:11px;box-shadow:0 10px 30px rgba(11,42,74,.3);z-index:9999}
+.tk-toast.err{background:var(--red)}

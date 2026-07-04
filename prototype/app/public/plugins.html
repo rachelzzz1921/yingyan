@@ -6,35 +6,54 @@
 <title>鹰眼 · 插件 & 小工具箱</title>
 <meta name="theme-color" content="#0B2A4A">
 <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="stylesheet" href="/toolkit.css">
 <style>
-:root{--ink:#0B2A4A;--ink2:#134E72;--muted:#5C7185;--dim:#8296A9;--iris:#2DD4BF;--iris2:#14B8A6;--amber:#E8A838;--amber2:#F5C842;--danger:#DC4A3D;--ok:#0D9B6A;--bg:#F0F4F8;--surface:#FFFFFF;--line:#E2E9F0;--hair:#D3DDE7;--sans:"PingFang SC","Hiragino Sans GB","Noto Sans SC","Microsoft YaHei",-apple-system,sans-serif;--lat:Inter,"Helvetica Neue",Arial,sans-serif;--mono:"SF Mono","DM Mono",Menlo,monospace}
-*{box-sizing:border-box;margin:0}
-html{-webkit-font-smoothing:antialiased;scroll-behavior:smooth}
-body{font-family:var(--sans);background:var(--bg);color:var(--ink);min-height:100vh;line-height:1.6;position:relative}
-body::before{content:"";position:fixed;inset:0;background-image:radial-gradient(rgba(11,42,74,.055) 1.5px,transparent 1.5px);background-size:26px 26px;pointer-events:none;z-index:0}
-.wrap{max-width:1160px;margin:0 auto;padding:38px 26px 52px;position:relative;z-index:1}
-.top{display:flex;align-items:center;gap:14px;margin-bottom:6px}
+/* ---------- 入口页专属 ---------- */
+.brandbar{display:flex;align-items:center;gap:14px;margin-bottom:6px}
 .mark{width:52px;height:52px;flex:none}
-.brand h1{font-size:26px;font-weight:800;color:var(--ink)}
+.brand h1{font-size:26px;font-weight:800}
 .brand h1 .en{color:var(--iris2);font-family:var(--lat)}
 .brand p{font-size:13px;color:var(--muted)}
 .home{margin-left:auto;font-size:13px;color:var(--muted);text-decoration:none;border:1px solid var(--line);background:var(--surface);border-radius:18px;padding:6px 14px;white-space:nowrap}
 .home:hover{border-color:var(--hair)}
-.crumb{font-size:12px;color:var(--dim);margin:4px 0 16px}
-.crumb a{color:var(--muted);text-decoration:none}
-.lead{margin:0 0 8px;font-size:clamp(24px,3.4vw,36px);font-weight:800;letter-spacing:.01em}
-.lead .g{color:#B07C1B}.lead .r{color:var(--danger)}
-.sub{font-size:15px;color:var(--muted);max-width:880px}
+.lead-xl{margin:0 0 8px;font-size:clamp(24px,3.4vw,36px);font-weight:800;letter-spacing:.01em;line-height:1.3}
+.lead-xl .g{color:#B07C1B}.lead-xl .r{color:var(--danger)}
+.sub{font-size:15px;color:var(--muted);max-width:900px}
 .creed{display:inline-flex;align-items:center;gap:8px;margin:14px 0 6px;padding:8px 16px;border:1.5px solid rgba(232,168,56,.5);border-radius:11px;background:linear-gradient(180deg,#FFF9EC,#FFF4DD);font-size:13.5px;color:#8F6210;font-weight:700}
-.rail{display:inline-block;width:64px;height:5px;border-radius:3px;background:linear-gradient(90deg,var(--iris),var(--iris2));margin:18px 0 22px}
-.sect{font-size:13px;color:var(--dim);letter-spacing:.14em;margin:28px 0 14px;display:flex;align-items:center;gap:12px}
+
+/* 引擎脊柱：输入通道 → 同一引擎 → 输出模板 */
+.spine{display:grid;grid-template-columns:1fr 44px 1.1fr 44px 1fr;gap:0;align-items:stretch;margin:22px 0 8px}
+@media(max-width:900px){.spine{grid-template-columns:1fr}.spine .arrow{transform:rotate(90deg);margin:2px auto}}
+.spine .col{border:1px solid var(--line);border-radius:var(--radius);background:var(--surface);box-shadow:var(--shadow);padding:16px 18px}
+.spine .col.core{border:1.5px solid rgba(20,184,166,.55);background:linear-gradient(180deg,#F4FCFA,#ECFAF6)}
+.spine .col h3{font-size:13px;color:var(--dim);letter-spacing:.1em;margin-bottom:10px;font-family:var(--mono)}
+.spine .col.core h3{color:#0E756A}
+.spine .pills{display:flex;flex-wrap:wrap;gap:6px}
+.spine .pills span{font-size:12px;padding:4px 10px;border-radius:8px;background:#F1F5F9;border:1px solid var(--line);color:#41556b;font-weight:700}
+.spine .col.core .pills span{background:#fff;border-color:rgba(20,184,166,.4);color:#0B5F52}
+.spine .col.core .pills span.hard{background:#FDEDEC;border-color:rgba(220,74,61,.4);color:#B42318}
+.spine .arrow{display:flex;align-items:center;justify-content:center;color:var(--dim);font-size:20px;font-weight:800}
+.spine-note{font-size:13px;color:var(--muted);margin:10px 2px 0}
+.spine-note b{color:var(--ink)}
+
+/* 分区标题 */
+.sect{font-size:13px;color:var(--dim);letter-spacing:.14em;margin:34px 0 6px;display:flex;align-items:center;gap:12px}
 .sect::after{content:"";flex:1;height:1px;background:var(--hair)}
 .sect b{color:var(--muted)}
-.sect:first-of-type{margin-top:0}
+.sect-say{font-size:13.5px;color:var(--muted);margin:0 0 14px}
+
+/* 演示链 */
+.flow-strip{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:0 0 14px;padding:12px 16px;background:var(--surface);border:1px solid var(--line);border-radius:12px;font-size:12.5px;font-weight:700}
+.flow-strip .n{width:24px;height:24px;border-radius:50%;background:var(--danger);color:#fff;display:inline-flex;align-items:center;justify-content:center;font-size:11px;font-family:var(--mono);flex:none}
+.flow-strip a{color:var(--ink2);text-decoration:none}
+.flow-strip a:hover{text-decoration:underline}
+.flow-strip .go-chain{margin-left:auto;flex:none}
+
+/* 工具卡（统一模板） */
 .cards{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}
 @media(max-width:900px){.cards{grid-template-columns:1fr}}
-.card{display:flex;flex-direction:column;text-decoration:none;color:inherit;border-radius:16px;padding:20px;border:1px solid var(--line);background:var(--surface);position:relative;overflow:hidden;transition:transform .2s,box-shadow .2s;box-shadow:0 3px 14px rgba(11,42,74,.06)}
-a.card:hover{transform:translateY(-4px);box-shadow:0 14px 34px rgba(11,42,74,.13)}
+.card{display:flex;flex-direction:column;color:inherit;border-radius:16px;padding:20px;border:1px solid var(--line);background:var(--surface);position:relative;overflow:hidden;transition:transform .2s,box-shadow .2s;box-shadow:var(--shadow)}
+.card:hover{transform:translateY(-4px);box-shadow:var(--shadow-hover)}
 .card .accent{position:absolute;top:0;left:0;width:100%;height:5px}
 .card.reg1 .accent{background:linear-gradient(90deg,var(--danger),#F15B52)}
 .card.reg2 .accent{background:linear-gradient(90deg,var(--amber),var(--amber2))}
@@ -45,127 +64,220 @@ a.card:hover{transform:translateY(-4px);box-shadow:0 14px 34px rgba(11,42,74,.13
 .card.board .accent{background:linear-gradient(90deg,#7C5CFF,#9B87FF)}
 .card.sentinel .accent{background:linear-gradient(90deg,var(--danger),#F15B52)}
 .card.ext .accent{background:linear-gradient(90deg,#0D9B6A,#12B981)}
-.card.pv{opacity:.92}
 .card.pv .accent{background:linear-gradient(90deg,var(--dim),#a8b8c8)}
-.badge{position:absolute;top:14px;right:14px;font-size:10px;font-weight:800;padding:3px 8px;border-radius:6px;background:#FFEDEB;color:#9a2c22}
-.badge.prev{background:#F1F5F9;color:var(--dim)}
-.ico{font-size:26px;margin:4px 0 8px}
+.cbadge{position:absolute;top:14px;right:14px;font-size:10px;font-weight:800;padding:3px 8px;border-radius:6px;background:#FFEDEB;color:#9a2c22}
+.cbadge.prev{background:#F1F5F9;color:var(--dim)}
+.ico{font-size:26px;margin:4px 0 6px}
 .role{font-size:12px;font-weight:700;letter-spacing:.05em;color:var(--dim)}
-.card h2{font-size:19px;font-weight:800;margin:2px 0 6px;padding-right:48px}
-.who{font-size:13px;color:var(--muted);margin-bottom:12px;flex:1;line-height:1.65}
-.who code{font-family:var(--mono);font-size:12px;background:#EEF2F7;padding:1px 5px;border-radius:4px}
-.rule{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
-.rule span{font-size:11.5px;padding:3px 9px;border-radius:7px;background:#F1F5F9;border:1px solid var(--line);color:#41556b}
-.go{display:inline-flex;align-items:center;gap:6px;font-size:14px;font-weight:700;padding:9px 16px;border-radius:10px;background:var(--ink);color:#fff;align-self:flex-start;text-decoration:none}
+.card h2{font-size:19px;font-weight:800;margin:2px 0 8px;padding-right:48px}
+.spec{display:grid;gap:4px;margin:0 0 14px;flex:1}
+.spec div{display:grid;grid-template-columns:74px 1fr;gap:6px;font-size:12.5px;line-height:1.55}
+.spec dt{color:var(--dim);font-weight:800;white-space:nowrap}
+.spec dd{color:var(--muted);margin:0}
+.spec dd code{font-size:11px}
+.acts{display:flex;gap:8px}
+.go{display:inline-flex;align-items:center;justify-content:center;gap:6px;font-size:13.5px;font-weight:700;padding:9px 14px;border-radius:10px;background:var(--ink);color:#fff;text-decoration:none;flex:1;text-align:center}
 .go.red{background:linear-gradient(90deg,var(--danger),#c93d32)}
-.go.ghost{background:var(--surface);color:var(--ink);border:1px solid var(--hair)}
-.flow-strip{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:0 0 8px;padding:12px 16px;background:var(--surface);border:1px solid var(--line);border-radius:12px;font-size:12.5px;font-weight:700}
-.flow-strip .n{width:24px;height:24px;border-radius:50%;background:var(--danger);color:#fff;display:inline-flex;align-items:center;justify-content:center;font-size:11px;font-family:var(--mono)}
+.go.ghost{background:var(--surface);color:var(--ink);border:1px solid var(--hair);flex:none}
+.go:hover{filter:brightness(1.07)}
 .foot{margin-top:34px;padding-top:18px;border-top:1px solid var(--line);font-size:13px;color:var(--muted);line-height:1.7}
 .foot b{color:var(--ink)}
+.cli{font-family:var(--mono);font-size:11.5px;background:#0B2A4A;color:#B7E9E0;border-radius:8px;padding:8px 10px;margin-top:8px;overflow-x:auto;white-space:nowrap}
 </style>
 </head>
 <body>
 <div class="wrap">
-  <header class="top">
+  <header class="brandbar">
     <svg class="mark" viewBox="0 0 64 64" role="img" aria-label="鹰眼"><defs><linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#0B2A4A"/><stop offset="1" stop-color="#134E72"/></linearGradient><linearGradient id="ir" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#2DD4BF"/><stop offset="1" stop-color="#14B8A6"/></linearGradient></defs><rect width="64" height="64" rx="16" fill="url(#bg)"/><path d="M12 32 C17 20 47 20 52 32 C47 44 17 44 12 32 Z" stroke="#fff" stroke-width="2.2" stroke-linejoin="round" fill="none" opacity=".93"/><circle cx="32" cy="32" r="11" fill="url(#ir)"/><circle cx="32" cy="32" r="5" fill="#061829"/></svg>
     <div class="brand"><h1>插件 & 小工具箱 <span class="en">PLUGINS</span></h1><p>③ 零对接 · 大平台拆小工具 · 院端 + 监管</p></div>
     <a class="home" href="/home.html">← 返回三入口</a>
   </header>
   <p class="crumb"><a href="/home.html">三入口</a> → <b>③ 插件 & 小工具箱</b></p>
 
-  <h2 class="lead">同一个引擎，<span class="r">嵌进院端 HIS</span> 也 <span class="g">嵌进监管 Excel / 飞检文件夹</span>。</h2>
-  <p class="sub">用户不一定打开鹰眼大平台（②），但在原有工作流旁边需要小工具。院端 = 开单/编码/结算事前提醒；监管 = 疑点分诊、阈值试算、飞检行装包。换输入和输出模板，就是新插件。</p>
+  <h2 class="lead-xl">同一个引擎，<span class="r">嵌进院端 HIS</span> 也 <span class="g">嵌进监管 Excel / 飞检文件夹</span>。</h2>
+  <p class="sub">用户不一定打开鹰眼大平台（②），但在原有工作流旁边需要小工具。每个工具都不是独立开发的：换一种输入通道 + 换一个输出模板，就是一个新工具，引擎不重写。</p>
   <div class="creed">同一引擎 · 同一套 KB · G0 零误报 · AI 提供线索支持，最终由人裁定</div>
-  <div class="rail"></div>
 
-  <div id="regulator" class="sect"><b>监管侧 · 小工具箱</b> · 精做演示 · 嵌 Excel / 线索台账 / 飞检材料</div>
-  <div class="flow-strip"><span class="n">1</span>疑点分诊 → <span class="n">2</span>阈值试算 → <span class="n">3</span>飞检行装包 → 争议复核（预览）</div>
+  <!-- ============ 引擎脊柱：为什么这些工具是一个整体 ============ -->
+  <div class="spine" aria-label="同一引擎架构">
+    <div class="col">
+      <h3>输入通道 · 换着接</h3>
+      <div class="pills"><span>Excel 复制粘贴</span><span>疑点清单 CSV</span><span>HIS 开单表单</span><span>飞检文件夹拖入</span><span>追溯码扫码</span><span>报送月表</span></div>
+    </div>
+    <div class="arrow">→</div>
+    <div class="col core">
+      <h3>鹰眼引擎 · 只有一个</h3>
+      <div class="pills"><span>确定性规则 L1</span><span>两库 KB 政策依据</span><span>三档口径 A/B/C</span><span class="hard">G0 干净件零误报红线</span><span>LLM 深审可选</span></div>
+    </div>
+    <div class="arrow">→</div>
+    <div class="col">
+      <h3>输出模板 · 换着出</h3>
+      <div class="pills"><span>三档分诊单</span><span>阈值试算 diff</span><span>飞检行装包</span><span>事前提醒浮层</span><span>运营台账</span><span>判例参照卡</span></div>
+    </div>
+  </div>
+  <p class="spine-note"><b>把这页读成一句话：</b>左边换一个输入、右边换一个输出，中间的引擎和红线从不变——所以每张卡片都能追溯到主平台的同一套能力，而不是七个拼起来的小工程。</p>
+
+  <!-- ============ 监管侧 ============ -->
+  <div id="regulator" class="sect"><b>监管侧 · 小工具箱</b> · 嵌进 Excel / 线索台账 / 飞检材料流程</div>
+  <p class="sect-say">监管人员不一定换平台。三件精做工具答三个问题：<b>先查谁</b>（分诊）、<b>规则怎么定</b>（试算）、<b>查什么带什么</b>（行装包）。每个工具都带 🎬 模拟场景——用一个真实角色的一天来演示。</p>
+  <div class="flow-strip">
+    <span class="n">1</span><a href="/regulator-triage.html?scenario=1">疑点分诊</a> →
+    <span class="n">2</span><a href="/regulator-threshold.html?scenario=1">阈值试算</a> →
+    <span class="n">3</span><a href="/regulator-fieldkit.html?scenario=1">飞检行装包</a> →
+    <a href="/agent-chain.html?preview=appeal&case_id=main">申诉批阅（加映）</a>
+    <a class="go red go-chain" href="/regulator-triage.html?scenario=1">▶ 一键连播 2 分钟监管场景链</a>
+  </div>
   <div class="cards">
-    <a class="card reg1" href="/regulator-triage.html">
-      <div class="accent"></div><span class="badge">精做 ①</span>
+    <div class="card reg1">
+      <div class="accent"></div><span class="cbadge">精做 ①</span>
       <div class="ico">📋</div><div class="role">监管 · 线索核查</div>
       <h2>疑点分诊器</h2>
-      <div class="who">疑点 Excel 复制或 1000 条演示 → 三档：重点核查 / 补材料后核查 / 暂缓。第一遍粗筛。</div>
-      <div class="rule"><span>screening</span><span>剪贴板</span></div>
-      <span class="go red">进入分诊 →</span>
-    </a>
-    <a class="card reg2" href="/regulator-threshold.html">
-      <div class="accent"></div><span class="badge">精做 ②</span>
+      <dl class="spec">
+        <div><dt>给谁用</dt><dd>基金监管处 / 线索核查员 / 经办审核负责人</dd></div>
+        <div><dt>嵌入场景</dt><dd>智能监管系统导出的疑点 Excel，第一遍粗筛</dd></div>
+        <div><dt>输入→输出</dt><dd>疑点清单粘贴 / 1000 条演示 → 三档 + 分档依据 + 建议动作</dd></div>
+      </dl>
+      <div class="acts"><a class="go red" href="/regulator-triage.html">进入分诊 →</a><a class="go ghost" href="/regulator-triage.html?scenario=1">🎬 场景</a></div>
+    </div>
+    <div class="card reg2">
+      <div class="accent"></div><span class="cbadge">精做 ②</span>
       <div class="ico">🎚</div><div class="role">监管 · 规则管理</div>
       <h2>规则阈值试算器</h2>
-      <div class="who">拖阈值滑块 → 看触发量、误报压力变化。地方自主设定阈值的试算工具。</div>
-      <div class="rule"><span>precip-replay</span><span>AGE-101</span></div>
-      <span class="go">进入试算 →</span>
-    </a>
-    <a class="card reg3" href="/regulator-fieldkit.html">
-      <div class="accent"></div><span class="badge">精做 ③</span>
+      <dl class="spec">
+        <div><dt>给谁用</dt><dd>地方规则管理员 / 信息科 / 飞检筹备组</dd></div>
+        <div><dt>嵌入场景</dt><dd>国家下放阈值参数，地方上会前先试算</dd></div>
+        <div><dt>输入→输出</dt><dd>拖阈值滑块 → 触发量 diff + 误报压力（干净行必须 0）</dd></div>
+      </dl>
+      <div class="acts"><a class="go" href="/regulator-threshold.html">进入试算 →</a><a class="go ghost" href="/regulator-threshold.html?scenario=1">🎬 场景</a></div>
+    </div>
+    <div class="card reg3">
+      <div class="accent"></div><span class="cbadge">精做 ③</span>
       <div class="ico">🎒</div><div class="role">监管 · 飞检现场</div>
       <h2>飞检行装包生成器</h2>
-      <div class="who">疑点清单 + 证据索引 + 现场核查任务单 + 调阅清单，一键打包进场材料。</div>
-      <div class="rule"><span>evidence-package</span><span>任务单</span></div>
-      <span class="go">进入行装包 →</span>
-    </a>
+      <dl class="spec">
+        <div><dt>给谁用</dt><dd>飞检组长 / 现场检查员 / 第三方 IT 协查</dd></div>
+        <div><dt>嵌入场景</dt><dd>进场前夜打包标准化材料，人手一份同口径</dd></div>
+        <div><dt>输入→输出</dt><dd>案卷（可从分诊 Top1 直通）→ 疑点清单 + 证据索引 + 任务单五件套</dd></div>
+      </dl>
+      <div class="acts"><a class="go" href="/regulator-fieldkit.html">进入行装包 →</a><a class="go ghost" href="/regulator-fieldkit.html?scenario=1">🎬 场景</a></div>
+    </div>
   </div>
   <div class="cards" style="margin-top:16px">
-    <a class="card pv" href="/regulator-trace.html"><div class="accent"></div><span class="badge prev">预览</span><div class="ico">🔍</div><h2>追溯码即查</h2><div class="who">TRACE-101 · 回流药 / 重复结算</div><span class="go ghost">打开 →</span></a>
-    <a class="card pv" href="/agent-chain.html?preview=appeal"><div class="accent"></div><span class="badge prev">预览</span><div class="ico">⚔</div><h2>申诉批阅助手</h2><div class="who">控辩裁参考 · 人工最终评定</div><span class="go ghost">打开 →</span></a>
-    <a class="card pv" href="/regulator-data-health.html"><div class="accent"></div><span class="badge prev">预览</span><div class="ico">🧾</div><h2>数据体检哨兵</h2><div class="who">报送 Excel 字段缺失 / 编码格式 / 孤儿行校验</div><span class="go ghost">打开 →</span></a>
-    <a class="card pv" href="/regulator-cases.html"><div class="accent"></div><span class="badge prev">预览</span><div class="ico">📚</div><h2>判例速查卡</h2><div class="who">公开案例参照 · 不作裁量</div><span class="go ghost">打开 →</span></a>
+    <div class="card pv">
+      <div class="accent"></div><span class="cbadge prev">可用 · 预览级</span>
+      <div class="ico">🔍</div><div class="role">监管 · 现场快查</div>
+      <h2>追溯码即查</h2>
+      <dl class="spec">
+        <div><dt>给谁用</dt><dd>现场检查员，药房货架边扫码即查</dd></div>
+        <div><dt>输入→输出</dt><dd>追溯码（单个/批量）→ TRACE-101 重复结算三档</dd></div>
+      </dl>
+      <div class="acts"><a class="go" href="/regulator-trace.html">打开 →</a><a class="go ghost" href="/regulator-trace.html?scenario=1">🎬</a></div>
+    </div>
+    <div class="card pv">
+      <div class="accent"></div><span class="cbadge prev">预览</span>
+      <div class="ico">⚖️</div><div class="role">监管 · 争议复核</div>
+      <h2>申诉批阅助手</h2>
+      <dl class="spec">
+        <div><dt>给谁用</dt><dd>医保 / 医疗 / 药学专家会审争议费用</dd></div>
+        <div><dt>输入→输出</dt><dd>医院申诉材料 → 控辩裁参考意见（人工最终评定）</dd></div>
+      </dl>
+      <div class="acts"><a class="go" href="/agent-chain.html?preview=appeal&case_id=main">打开 →</a></div>
+    </div>
+    <div class="card pv">
+      <div class="accent"></div><span class="cbadge prev">可用 · 预览级</span>
+      <div class="ico">🧾</div><div class="role">监管 · 报送质量</div>
+      <h2>数据体检哨兵</h2>
+      <dl class="spec">
+        <div><dt>给谁用</dt><dd>信息科审核员，月报进引擎前先体检</dd></div>
+        <div><dt>输入→输出</dt><dd>报送 Excel 粘贴 → 字段缺失 / 编码格式 / 孤儿行</dd></div>
+      </dl>
+      <div class="acts"><a class="go" href="/regulator-data-health.html">打开 →</a><a class="go ghost" href="/regulator-data-health.html?scenario=1">🎬</a></div>
+    </div>
+  </div>
+  <div class="cards" style="margin-top:16px;grid-template-columns:1fr 1fr 1fr">
+    <div class="card pv">
+      <div class="accent"></div><span class="cbadge prev">可用 · 预览级</span>
+      <div class="ico">📚</div><div class="role">监管 · 法制 / 处罚承办</div>
+      <h2>判例速查卡</h2>
+      <dl class="spec">
+        <div><dt>给谁用</dt><dd>处罚承办人写呈批表时找同类公开案例</dd></div>
+        <div><dt>输入→输出</dt><dd>违规类型关键词 → 公开案例参照 + 历史处理区间（不作裁量）</dd></div>
+      </dl>
+      <div class="acts"><a class="go" href="/regulator-cases.html">打开 →</a><a class="go ghost" href="/regulator-cases.html?scenario=1">🎬</a></div>
+    </div>
   </div>
 
+  <!-- ============ 院端侧 ============ -->
   <div class="sect"><b>院端侧 · 三角色事前触点</b> · 浏览器扩展 / 内嵌 · 命中即处置</div>
+  <p class="sect-say">政策原文：「将不合规行为消除在萌芽阶段」。同一个引擎换到院端，输出模板变成三个时点的事前提醒——开单时、编码时、结算时。工作站故意做成老 HIS 观感：演示的就是插件<b>套在旧系统上、零对接</b>。</p>
   <div class="cards">
-    <a class="card doc" href="/mockhis.html">
+    <div class="card doc">
       <div class="accent"></div><div class="ico">👨‍⚕️</div>
       <div class="role">医生 · 开单时</div>
       <h2>开单事前提醒</h2>
-      <div class="who">审方：未成年用药/性别冲突/靶向未检/超限定支付，浮层给两库依据。</div>
-      <div class="rule"><span>AGE-101</span><span>T-201</span></div>
-      <span class="go">打开开单靶站 →</span>
-    </a>
-    <a class="card code" href="/coder-station.html">
+      <dl class="spec">
+        <div><dt>嵌入场景</dt><dd>浏览器扩展注入老 HIS 开单页，审方浮层</dd></div>
+        <div><dt>输入→输出</dt><dd>患者 + 医嘱行 → 未成年用药 / 性别冲突 / 靶向未检 / 超限定支付，附两库依据</dd></div>
+      </dl>
+      <div class="acts"><a class="go" href="/mockhis.html">打开开单靶站 →</a></div>
+    </div>
+    <div class="card code">
       <div class="accent"></div><div class="ico">📑</div>
       <div class="role">编码员 · 编码时</div>
       <h2>DRG 高套事前校验</h2>
-      <div class="who">编码提交前：高套提示 + 第35条差额。采纳则降编。</div>
-      <div class="rule"><span>D-401</span><span>DRG</span></div>
-      <span class="go">打开编码站 →</span>
-    </a>
-    <a class="card settle" href="/settle-station.html">
+      <dl class="spec">
+        <div><dt>嵌入场景</dt><dd>编码提交前，同引擎 DRG 分组校验</dd></div>
+        <div><dt>输入→输出</dt><dd>编码首页 → 高套提示 + 第 35 条差额，采纳则降编</dd></div>
+      </dl>
+      <div class="acts"><a class="go" href="/coder-station.html">打开编码站 →</a></div>
+    </div>
+    <div class="card settle">
       <div class="accent"></div><div class="ico">💳</div>
       <div class="role">结算员 · 结算时</div>
       <h2>出院整单自查</h2>
-      <div class="who">结算前整单过筛查漏斗，与监管 1000 条同引擎。</div>
-      <div class="rule"><span>TRACE-101</span><span>QTY-901</span></div>
-      <span class="go">打开结算站 →</span>
-    </a>
+      <dl class="spec">
+        <div><dt>嵌入场景</dt><dd>结算前整单过筛查漏斗</dd></div>
+        <div><dt>输入→输出</dt><dd>费用明细 → 与监管 1000 条同引擎的三档 + 整改动作</dd></div>
+      </dl>
+      <div class="acts"><a class="go" href="/settle-station.html">打开结算站 →</a></div>
+    </div>
   </div>
 
+  <!-- ============ 汇聚与桌面 ============ -->
   <div class="sect"><b>汇聚与桌面</b> · 三角色台账 · 桌面哨兵 · 浏览器扩展</div>
+  <p class="sect-say">院端三个触点的每次提醒都落进同一本台账；桌面哨兵把引擎装进剪贴板和文件夹，Excel 一复制就能筛。</p>
   <div class="cards">
-    <a class="card board" href="/plugin-dashboard.html">
+    <div class="card board">
       <div class="accent"></div><div class="ico">📊</div>
       <h2>院端运营看板</h2>
-      <div class="who">三角色汇总：遵从率、萌芽拦截、未遵从→监管回执。</div>
-      <span class="go ghost">打开看板 →</span>
-    </a>
+      <dl class="spec">
+        <div><dt>输入→输出</dt><dd>三角色台账汇总 → 遵从率 / 萌芽拦截 / 未遵从→监管回执</dd></div>
+      </dl>
+      <div class="acts"><a class="go ghost" style="flex:1" href="/plugin-dashboard.html">打开看板 →</a></div>
+    </div>
     <div class="card sentinel">
       <div class="accent"></div><div class="ico">🖥</div>
-      <h2>桌面哨兵</h2>
-      <div class="who">Excel 复制 / 文件夹拖拽 → 秒出三档。院端医保科、监管 Excel 都能用。<code>plugin/desktop-sentinel/</code></div>
+      <h2>桌面哨兵 CLI</h2>
+      <dl class="spec">
+        <div><dt>嵌入场景</dt><dd>Excel 复制 / 文件夹拖拽 → 秒出三档，院端监管都能用</dd></div>
+      </dl>
+      <div class="cli">node plugin/desktop-sentinel/clipboard-sentinel.js</div>
+      <div class="cli">node plugin/desktop-sentinel/sentinel.js  # 文件夹收件箱</div>
     </div>
     <div class="card ext">
       <div class="accent"></div><div class="ico">🧩</div>
       <h2>浏览器扩展 MV3</h2>
-      <div class="who">套在老 HIS 上，零对接。<code>plugin/browser-extension</code></div>
-      <a class="go ghost" href="/mockhis.html">靶站体验 →</a>
+      <dl class="spec">
+        <div><dt>嵌入场景</dt><dd>套在老 HIS 上，零对接。<code>plugin/browser-extension</code></dd></div>
+      </dl>
+      <div class="acts"><a class="go ghost" style="flex:1" href="/mockhis.html">靶站体验 →</a></div>
     </div>
   </div>
 
   <div class="foot">
     <b>在 Pitch 三入口里</b>：① 黄金闭环 · <a href="/?role=audit">② 鹰眼大平台</a> · <b>③ 本页（插件 & 小工具箱）</b>。<br>
-    <b>院端</b>：「将不合规行为消除在萌芽阶段」——政策原文。<b>监管</b>：不替换监管大系统，在 Excel / 线索台账 / 飞检文件夹旁边用小工具。
+    <b>院端</b>：「将不合规行为消除在萌芽阶段」——政策原文。<b>监管</b>：不替换监管大系统，在 Excel / 线索台账 / 飞检文件夹旁边用小工具。<br>
+    <b>一句话</b>：监管人员不一定换平台——鹰眼把大平台拆成小工具箱：分诊帮第一遍粗筛，试算帮地方定参数，行装包帮现场标准化取证——同一个引擎，换输入和输出就是新工具。
   </div>
 </div>
 </body>

@@ -149,6 +149,13 @@ if(APPEAL_PREVIEW){
   document.title = '申诉批阅助手（预览） · 鹰眼';
   document.getElementById('pageTitle').textContent = '申诉批阅助手（预览）';
   document.getElementById('pageSub').textContent = '复用七环节 Agent 编排与 /api/debate：对争议费用生成控辩裁参考意见，默认开启对抗分诊，供人工评定前核查。';
+  var homeLnk = document.querySelector('.top a.home');
+  if(homeLnk){
+    var tk = document.createElement('a');
+    tk.className = 'home'; tk.href = '/plugins.html#regulator'; tk.textContent = '← 工具箱';
+    tk.style.marginRight = '8px';
+    homeLnk.parentNode.insertBefore(tk, homeLnk);
+  }
 }
 function esc(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 function triCls(n){return n==='明确违规'?'hard':n==='干净'?'clean':'suspect';}
