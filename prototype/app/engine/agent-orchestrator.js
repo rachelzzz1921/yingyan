@@ -30,7 +30,7 @@ const STAGE_DEFS = [
   },
   {
     no: 3, stage: '违规筛查', agent: '筛查 Agent(控方)', kind: '确定性规则(+LLM 语义影子)',
-    harness: { 输入数据源: '案卷对象(费用/医嘱/诊断/检验)', 知识源: '79 条规则库(47 确定性 checker + L3 家族/操作索引数据驱动)· 国家两库条款 · 触发路由谓词', 工具: 'ruleCheckers 确定性引擎 · prosecutor LLM(可选,送模前 pii-redact)', 输出: '候选疑点(三档:明确违规/可疑/干净)' },
+    harness: { 输入数据源: '案卷对象(费用/医嘱/诊断/检验)', 知识源: '79 条 rule_id · 全量 checker 挂接 · 国家两库条款 · 触发路由谓词', 工具: 'ruleCheckers 确定性引擎 · prosecutor LLM(可选,送模前 pii-redact)', 输出: '候选疑点(三档:明确违规/可疑/干净)' },
   },
   {
     no: 4, stage: '明细审核', agent: '明细核验 Agent(三要素门禁 / CoVe)', kind: '确定性门禁(+CoVe LLM)',

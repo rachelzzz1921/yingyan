@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>鹰眼 · 黄金闭环演示（10 分钟走完一个闭环）</title>
+<title>鹰眼 · 医保案卷智能审核演示</title>
 <meta name="theme-color" content="#F0F4F8">
 <link rel="icon" type="image/svg+xml" href="/favicon.svg">
 <style>
@@ -32,6 +32,14 @@ a{color:var(--iris2);text-decoration:none}
 .top .sub-en{font-size:11.5px;color:var(--dim);font-family:var(--mono);letter-spacing:.14em}
 .top .home{margin-left:auto;font-size:13px;color:var(--muted);border:1px solid var(--line);border-radius:10px;padding:7px 14px;transition:.15s;background:var(--surface)}
 .top .home:hover{border-color:var(--ink2);color:var(--ink)}
+@media(max-width:560px){
+  .wrap{padding:30px 20px 64px}
+  .top{align-items:flex-start;gap:10px}
+  .top h1{font-size:22px;line-height:1.25}
+  .top h1 .en{display:block;font-size:20px;margin-top:1px}
+  .top .sub-en{font-size:10.5px;letter-spacing:.08em;line-height:1.55}
+  .top .home{white-space:nowrap;padding:7px 10px}
+}
 .lead{font-size:15.5px;color:var(--muted);margin-bottom:4px;max-width:880px}
 .lead b{color:var(--amber-deep)}
 .creed{display:inline-flex;align-items:center;gap:10px;margin:12px 0 0;padding:7px 15px;border:1.5px solid rgba(232,168,56,.5);border-radius:11px;background:linear-gradient(180deg,#FFF9EC,#FFF4DD);font-size:13px;color:#8F6210;font-weight:700;letter-spacing:.05em;box-shadow:0 3px 12px rgba(232,168,56,.12)}
@@ -48,6 +56,11 @@ a{color:var(--iris2);text-decoration:none}
 @media(max-width:820px){.case-b{grid-template-columns:1fr}}
 .case-list{padding:14px 18px;border-right:1px solid var(--line)}
 @media(max-width:820px){.case-list{border-right:none;border-bottom:1px solid var(--line)}}
+@media(max-width:560px){
+  .case-h{flex-wrap:wrap;align-items:flex-start}
+  .case-h h2 small{display:block;margin-left:0}
+  .case-h .cur{width:100%;margin-left:42px}
+}
 .case-list .lab,.case-up .lab{font-size:11.5px;color:var(--dim);letter-spacing:.1em;font-weight:700;margin-bottom:9px}
 .chips{display:flex;flex-wrap:wrap;gap:8px;max-height:132px;overflow-y:auto}
 .chip{border:1.5px solid var(--line);border-radius:11px;background:var(--panel);padding:7px 13px;font-size:12.5px;color:var(--ink);cursor:pointer;font-family:inherit;transition:.15s;text-align:left;line-height:1.4}
@@ -92,13 +105,13 @@ a{color:var(--iris2);text-decoration:none}
 .step-b{padding:0 22px 18px 72px;display:none}
 .step.open .step-b{display:block}
 .pitch{font-size:13px;color:#8F6210;background:#FFFAEF;border:1px dashed rgba(232,168,56,.5);border-radius:11px;padding:9px 14px;margin-bottom:13px}
-.pitch::before{content:"🎤 口播 · ";font-weight:700}
+.pitch::before{content:"这一步会做什么 · ";font-weight:700}
 .ask{font-size:12.5px;color:#0E6F66;background:#F0FBF9;border:1px dashed rgba(20,184,166,.5);border-radius:11px;padding:8px 14px;margin-bottom:13px;line-height:1.72}
-.ask::before{content:"🔎 追问储备 · ";font-weight:700;color:var(--iris2)}
+.ask::before{content:"想了解更多 · ";font-weight:700;color:var(--iris2)}
 .ask a{color:var(--iris2);font-weight:600;border-bottom:1px solid rgba(20,184,166,.4)}
 .res{font-size:13.5px}
 
-/* ---------- vs 套壳对比 ---------- */
+/* ---------- trust explanation ---------- */
 .vs{margin-top:28px;border:1px solid var(--line);border-radius:18px;background:var(--surface);overflow:hidden;box-shadow:0 4px 18px rgba(11,42,74,.06)}
 .vs-h{padding:15px 22px;border-bottom:1px solid var(--line);background:linear-gradient(180deg,#FDFEFF,#F8FAFC)}
 .vs-h b{font-size:16px;font-weight:800;color:var(--ink)}
@@ -163,6 +176,10 @@ table.mini td.num{font-family:var(--mono);text-align:right;font-variant-numeric:
 @keyframes pop{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
 .final h2{font-size:20px;color:var(--amber-deep);margin-bottom:7px}
 .final p{font-size:14px;color:#3D5A76}
+.final-acts{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+.fbtn{display:inline-flex;align-items:center;gap:6px;font-size:13.5px;font-weight:700;padding:9px 16px;border-radius:10px;border:1px solid var(--line,#E2E9F0);background:#fff;color:#134E72;cursor:pointer;text-decoration:none;font-family:inherit;transition:border-color .15s}
+.fbtn:hover{border-color:#134E72}
+.fbtn.strong{background:linear-gradient(90deg,#E8A838,#D99A22);border:none;color:#fff;box-shadow:0 6px 18px rgba(232,168,56,.35)}
 .hint{font-size:11.5px;color:var(--dim);margin-top:26px;text-align:center;letter-spacing:.02em}
 </style>
 </head>
@@ -171,28 +188,29 @@ table.mini td.num{font-family:var(--mono);text-align:right;font-variant-numeric:
   <header class="top">
     <svg class="logo" viewBox="0 0 64 64"><defs><linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#0B2A4A"/><stop offset="1" stop-color="#134E72"/></linearGradient><linearGradient id="ir" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#2DD4BF"/><stop offset="1" stop-color="#14B8A6"/></linearGradient><linearGradient id="am" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#E8A838"/><stop offset="1" stop-color="#F5C842"/></linearGradient></defs><rect width="64" height="64" rx="16" fill="url(#bg)"/><circle cx="32" cy="32" r="26" stroke="url(#am)" stroke-width="1.8" stroke-opacity=".5" fill="none"/><path d="M32 10 A22 22 0 0 1 54 32" stroke="url(#am)" stroke-width="3" stroke-linecap="round" fill="none"/><path d="M12 32 C17 20 47 20 52 32 C47 44 17 44 12 32 Z" stroke="#fff" stroke-width="2.2" stroke-linejoin="round" fill="none" opacity=".93"/><circle cx="32" cy="32" r="11" fill="url(#ir)"/><circle cx="32" cy="32" r="5" fill="#061829"/><circle cx="35" cy="29" r="2" fill="#fff" opacity=".95"/></svg>
     <div>
-      <h1>黄金闭环 <span class="en">GOLDEN PATH</span></h1>
-      <div class="sub-en">ONE CASE · ONE ENGINE · SEVEN STEPS · FULL LOOP</div>
+      <h1>医保案卷智能审核 <span class="en">EAGLEEYE</span></h1>
+      <div class="sub-en">选材料 · 看疑点 · 查证据 · 做复核 · 看整改</div>
     </div>
-    <a class="home" href="/home.html">← 返回三入口</a>
+    <a class="home" href="/home.html">← 返回首页</a>
   </header>
-  <p class="lead">选一份案卷（或现场上传病历材料）· 同一个引擎 · <b>7 步走完「稽核 → 举证 → 复核 → 治理 → 复跑 → 测算 → 门禁」</b>闭环。每步都是真 API 实时运行，不是幻灯片。</p>
-  <div class="creed">铁律 · 引不出原文的疑点，不输出</div>
+  <p class="lead">上传或选择一份病历材料，鹰眼会帮你把费用、医嘱、病程和政策依据串起来，按步骤生成一份<b>看得懂、查得到、能复核</b>的审核结果。</p>
+  <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin:12px 0 0;padding:13px 20px;border-radius:13px;background:linear-gradient(100deg,#0B2A4A,#134E72);color:#fff;box-shadow:0 8px 24px rgba(11,42,74,.22)"><span style="font-size:11px;letter-spacing:.15em;font-weight:700;color:#F5C842;border:1px solid rgba(245,200,66,.55);border-radius:20px;padding:4px 12px;white-space:nowrap;font-family:var(--mono,monospace)">适合谁用</span><b style="font-size:clamp(18px,2.3vw,24px);font-weight:800;letter-spacing:.02em">给医保经办、飞检人员和医院合规岗的<span style="color:#F5C842;border-bottom:2px solid rgba(245,200,66,.5)">案卷初筛助手</span>。</b></div>
+  <div class="creed">原则 · 只有能定位到原文证据的问题，才会提示</div>
 
   <!-- 第 0 步：案卷选择 / 上传 -->
   <section class="case-panel">
     <div class="case-h">
       <div class="ico">📁</div>
-      <h2>第 0 步 · 选择案卷<small>换案卷会重置演示进度</small></h2>
+      <h2>先选一份材料<small>切换材料后会重新开始</small></h2>
       <span class="cur">当前：<b id="curCase">未选择</b></span>
     </div>
     <div class="case-b">
       <div class="case-list">
-        <div class="lab">从演示案卷库选择</div>
+        <div class="lab">选择一个示例案卷</div>
         <div class="chips" id="chips"><span style="font-size:12px;color:var(--dim)">加载中…</span></div>
       </div>
       <div class="case-up">
-        <div class="lab">或上传自己的病历材料</div>
+        <div class="lab">也可以上传自己的材料</div>
         <div class="drop" id="drop">
           <b>拖入文件，或点击选择</b>
           可多选：完整材料包 / 费用清单 / 医嘱单 / 病案首页…
@@ -205,7 +223,7 @@ table.mini td.num{font-family:var(--mono);text-align:right;font-variant-numeric:
   </section>
 
   <div class="watch">
-    <span class="clock" id="clock">00:00</span><span class="lab">演示计时 · 点第①步开始走表</span>
+    <span class="clock" id="clock">00:00</span><span class="lab">完成进度 · 从第 1 步开始计时</span>
     <div class="dots" id="dots"></div>
   </div>
 
@@ -214,20 +232,26 @@ table.mini td.num{font-family:var(--mono);text-align:right;font-variant-numeric:
   <div class="final" id="final">
     <h2>✅ 闭环走完</h2>
     <p id="finalText"></p>
-    <p style="margin-top:8px;font-size:12.5px;color:var(--muted)">纵深追问 → <a href="/?role=audit">② 鹰眼大平台</a> · 零对接插件 → <a href="/plugins.html">③ 插件 & 小工具箱</a> · 口径出处 → docs/GOLDEN-PATH.md</p>
+    <div class="final-acts">
+      <button type="button" class="fbtn" id="btnAgain">🔁 再走一遍</button>
+      <button type="button" class="fbtn" id="btnSwitch">📁 换一份材料</button>
+      <a class="fbtn strong" id="goWorkbench" href="/index.html?role=audit">带着这份案卷进完整工作台 →</a>
+      <a class="fbtn" href="/plugins.html">看插件和小工具</a>
+      <a class="fbtn" href="/home.html">← 返回首页</a>
+    </div>
   </div>
 
   <div class="vs">
-    <div class="vs-h"><b>为什么套壳大模型队做不出这套</b><span>同样接大模型，差距在工程纵深——判「像不像」容易，「算得对 · 说得清 · 不乱报 · 扛得住申辩」难。</span></div>
-    <div class="vs-row vs-head"><div class="dim">维度</div><div class="them">套壳大模型队</div><div class="us">鹰眼工程纵深</div></div>
-    <div class="vs-row"><div class="dim">稳定 / 可回归</div><div class="them">每次结果漂移，改一版 prompt 无法回归验证</div><div class="us"><b>确定性引擎先出候选（可复现）</b> + G0–G5 五层门禁把关回归</div></div>
-    <div class="vs-row"><div class="dim">不乱报</div><div class="them">幻觉 + 过度报，无据也报，罚过头</div><div class="us"><b>取证三件套</b>（合议去重 · 覆盖度声明 · 置信度传播）+ 引不出原文即不输出</div></div>
-    <div class="vs-row"><div class="dim">抗申辩</div><div class="them">无，疑点经不起院方一问就撤</div><div class="us"><b>控辩裁申诉预演</b>，进人工评定的都已扛过一轮模拟申诉</div></div>
-    <div class="vs-row"><div class="dim">可信底座</div><div class="them">自说自话，规则自己编</div><div class="us"><b>79 条挂国家 GZ/ZB 框架</b>、每条溯官方原文、覆盖深度诚实标注</div></div>
-    <div class="vs-row"><div class="dim">质量证据</div><div class="them">靠感觉，demo 一次好不代表稳</div><div class="us"><b>P4 辩方认账 eval 8/8</b>（真跑千问）+ 金标准去自评化（G0b 双独立真值源）</div></div>
+    <div class="vs-h"><b>为什么这份结果值得信任</b><span>页面不只给“疑似违规”四个字，还会告诉你证据在哪里、依据是什么、后续该谁复核。</span></div>
+    <div class="vs-row vs-head"><div class="dim">你关心的事</div><div class="them">如果只靠模型判断</div><div class="us">鹰眼怎么处理</div></div>
+    <div class="vs-row"><div class="dim">结果会不会飘</div><div class="them">同一份材料多跑几次，结论可能不一致</div><div class="us"><b>先用规则引擎筛出候选</b>，同一案卷可复现，再交给模型补充解释</div></div>
+    <div class="vs-row"><div class="dim">会不会乱报</div><div class="them">证据不足也容易写成“疑点”</div><div class="us"><b>找不到原文证据就降级</b>，宁可标为线索，也不直接下结论</div></div>
+    <div class="vs-row"><div class="dim">院方质疑怎么办</div><div class="them">只能给一句模型解释，难以对质</div><div class="us"><b>每条都带材料位置、政策依据和推理过程</b>，人工复核时能逐项核对</div></div>
+    <div class="vs-row"><div class="dim">政策依据从哪来</div><div class="them">容易凭常识或记忆写条款</div><div class="us"><b>引用仓库内已整理的政策和规则</b>，未确认的依据会明确标注待核实</div></div>
+    <div class="vs-row"><div class="dim">改了规则会退化吗</div><div class="them">演示能跑，不代表以后每次都稳</div><div class="us"><b>每次改动都跑回归检查</b>，干净案卷不能被误报</div></div>
   </div>
 
-  <p class="hint">演示案卷为团队构造的虚构数据（预埋违规点）；引擎、门禁、治理留痕全部真实运行 · 替人扛量 · 报得准 · 证得实 · 扛得住申辩</p>
+  <p class="hint">演示案卷为团队构造的虚构数据；审核、复核、整改对比和质量检查均为真实运行 · 少翻材料 · 少报错 · 证据说得清</p>
 </div>
 
 <script>
@@ -236,29 +260,66 @@ let CASE_ID = 'main';
 const S = { report: null, report2: null, reviewedFinding: null, t0: null, done: new Set() };
 const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const fmtY = n => '¥' + (Math.round((Number(n)||0)*100)/100).toLocaleString('zh-CN');
+const friendlyCaseNames = {
+  main: '肺癌住院化疗示例材料',
+  anes: '胆囊切除手术示例材料',
+  clean: '合规住院化疗对照材料',
+  clean_cardio: '心血管内科合规对照材料',
+  clean_rehab: '康复科合规对照材料',
+  drg: '肺炎住院分组示例材料',
+  pharmacy: '药店购药示例材料',
+  uploaded: '现场上传的材料'
+};
+function caseLabel(c){
+  const id = typeof c === 'string' ? c : c && c.id;
+  if(friendlyCaseNames[id]) return friendlyCaseNames[id];
+  let title = (c && (c.title || c.id)) || id || '示例材料';
+  title = title
+    .replace(/非小细胞肺癌（NSCLC）/g,'肺癌')
+    .replace(/NSCLC/g,'肺癌')
+    .replace(/药品限适应症语义层/g,'药品适应症核对')
+    .replace(/材料内提示注入/g,'材料异常提示')
+    .replace(/[（(][^）)]*[A-Z]-\d{3}[^）)]*[）)]/g,'')
+    .replace(/\b[A-Z]-\d{3}(?:-[A-Z]+)?\b/g,'')
+    .replace(/AuditBench/g,'')
+    .replace(/边界干扰件/g,'合规边界示例')
+    .replace(/边界件/g,'需人工核对示例')
+    .replace(/干净件/g,'合规对照')
+    .replace(/预埋违规/g,'示例问题')
+    .replace(/（[^）]*(应不报|线索|B-|C-|T-|E-|P-|PKP|IND)[^）]*）/g,'')
+    .replace(/（\s*）/g,'')
+    .replace(/[· ]+/g,' · ')
+    .replace(/^ · | · $/g,'');
+  return title || '示例材料';
+}
+function caseMeta(c){
+  if(!c || c.id === 'uploaded') return '刚导入，可直接检查';
+  const count = Number(c.violations || 0);
+  return count > 0 ? '内含可检查问题 ' + count + ' 个' : '合规或边界对照';
+}
 
 const STEPS = [
-  { id:'audit',  title:'① 体检稽核（秒级初筛）',  sub:'POST /api/audit?mode=exam · 确定性引擎，可复现',
-    pitch:'人工翻一本案卷 40 分钟；鹰眼秒级出初筛——不是抽查，是全量。', btn:'跑稽核',
-    ask:'被追问“秒级/全量怎么做到” → 确定性规则引擎 + 触发路由（与本案无关的规则零成本跳过），不是纯 LLM 逐条问。点 <a href="/agent-chain.html" target="_blank">七环节 Agent 编排</a> 看白盒。' },
-  { id:'triad',  title:'② 三要素证据链',          sub:'每条疑点 = 证据定位 + 政策原文 + 推理链',
-    pitch:'铁律：引不出原文的疑点，不输出。每个政策引用可溯源到官方文件。', btn:'展开证据链',
-    ask:'被追问“凭什么可对质/不乱报” → 三要素门禁（证据+条款原文+推理），引不出条目 ID 即转人工。点 <a href="/agent-chain.html" target="_blank">调用链留痕</a> + 三人格对抗合议（控/辩/裁信息不对称、数据层物理切分）。' },
-  { id:'review', title:'③ 人工复核（人是闸门）',    sub:'POST /api/review · 采纳/驳回落库留痕',
-    pitch:'AI 不做最终认定。复核动作全部持久化，是治理的原料。', btn:'加载复核台',
-    ask:'被追问“AI 会不会越权定性” → AI 只建议、人是闸门；控辩裁 = 申诉机制预演，进人工评定的都已扛过一轮模拟申诉。' },
-  { id:'govern', title:'④ 治理沉淀（误报有状态）',  sub:'GET /api/review · 驳回≥3 自动标高误报 → shadow',
-    pitch:'误报不是修 bug 修掉的，是被治理掉的：驳回攒够阈值，规则自动转影子观察。', btn:'看治理台账',
-    ask:'被追问“误报怎么不反复” → 驳回≥3 自动转 shadow 影子观察、三审三验才转正。点 <a href="/dashboard.html" target="_blank">规则治理看板</a>。' },
-  { id:'diff',   title:'⑤ 整改复跑 diff',          sub:'再稽核一次 → GET /api/exam/diff · 已消除/仍存在/新增',
-    pitch:'自查 → 整改 → 再自查，整改效果不靠汇报，靠两次快照的 diff。', btn:'复跑并对比',
-    ask:'被追问“整改效果怎么信” → 两次快照 diff（已消除/仍存在/新增），不靠院方口头汇报。' },
-  { id:'refund', title:'⑥ 主动退回测算（院端 ROI）', sub:'GET /api/exam/refund-estimate · 按条例 38/40 条分档',
-    pitch:'自查从宽：主动退回 vs 被飞检查实的暴露区间，一张表算清楚为什么现在要自查。', btn:'算 ROI',
-    ask:'被追问“院端凭什么买单” → 自查从宽 vs 被查实暴露的 ROI 区间；双前台单引擎（院端自查↔监管飞检）形成数据飞轮。点 <a href="/plugins.html" target="_blank">插件产品线</a>。' },
-  { id:'yhf',    title:'⑦ 门禁验收（G0 红线）',     sub:'GET /api/yhf · 干净件零误报一票否决',
-    pitch:'每次改规则/prompt 都要过这道门。G0 = 干净案卷零误报，是不可破的红线。', btn:'跑门禁（约 1 分钟）',
-    ask:'被追问“质量/会不会退化” → 五层门禁 G0–G5 + P4 辩方认账 eval 8/8（真跑千问 72B/32B）+ 金标准去自评化（G0b 双独立真值源）。见 <a href="/materials/yingyan-rule-architecture-flyer.html" target="_blank">规则能力说明册 P5</a>。' },
+  { id:'audit',  title:'① 初步检查',  sub:'快速扫描费用、医嘱、病程和规则是否对得上',
+    pitch:'把原本需要人工翻阅的材料先扫一遍，先告诉你哪些地方值得重点看。', btn:'开始检查',
+    ask:'系统先用可复现的规则筛查，再把相关证据整理出来；想看技术调用过程，可打开 <a href="/agent-chain.html" target="_blank">审核过程记录</a>。' },
+  { id:'triad',  title:'② 查看证据',          sub:'每条问题都带材料位置、政策依据和判断理由',
+    pitch:'不是只给一个结论，而是把“为什么提示它”说清楚，方便你回到原文核对。', btn:'查看证据',
+    ask:'找不到材料位置或政策依据的问题，不会直接当成疑点，只会降为待核对线索。' },
+  { id:'review', title:'③ 人工确认',    sub:'由审核人员采纳、驳回或补充理由',
+    pitch:'系统只负责提示和整理证据，最终是否成立仍由人来确认。', btn:'打开确认台',
+    ask:'每一次采纳或驳回都会保存下来，后续可追溯谁在什么时候做了什么判断。' },
+  { id:'govern', title:'④ 记录复核意见',  sub:'被反复驳回的问题会进入观察清单，减少再次打扰',
+    pitch:'如果某类提示经常被人工驳回，系统会把它标出来，避免以后反复误提醒。', btn:'查看记录',
+    ask:'复核记录会进入规则治理看板，方便团队持续校正提示口径。<a href="/dashboard.html" target="_blank">查看看板</a>。' },
+  { id:'diff',   title:'⑤ 整改后再查',          sub:'对比整改前后：已解决、仍存在、新出现',
+    pitch:'整改效果不用只听汇报，系统会把两次检查结果并排对比出来。', btn:'再次检查',
+    ask:'适合医院自查整改、监管复核整改结果，也适合把重点问题持续跟踪。' },
+  { id:'refund', title:'⑥ 退回金额预估', sub:'按违规性质估算主动退回和被查实后的差异',
+    pitch:'把“现在主动处理”和“后续被查实”的金额影响算成一张表，方便做决策。', btn:'估算金额',
+    ask:'金额测算基于当前案卷中的疑点金额和处置区间，只作为自查决策参考，最终以人工复核和正式认定为准。' },
+  { id:'yhf',    title:'⑦ 质量检查',     sub:'确认规则更新没有把正常案卷误报成问题',
+    pitch:'系统每次调整后都要跑一遍检查，确保正常材料不会被误伤。', btn:'运行质量检查',
+    ask:'质量检查会覆盖干净案卷、规则状态、提示输出和证据检索，防止一次改动带来新的误报。' },
 ];
 
 const stepsEl = document.getElementById('steps');
@@ -285,7 +346,8 @@ function markDone(id){
   if(idx+1<STEPS.length) unlock(STEPS[idx+1].id);
   if(S.done.size===STEPS.length){
     const mins=((Date.now()-S.t0)/60000).toFixed(1);
-    document.getElementById('finalText').textContent='用时 '+mins+' 分钟：一份案卷从进入到治理沉淀、复跑对比、ROI 测算、回归门禁——同一个引擎，全程留痕，全程可对质。';
+    document.getElementById('finalText').textContent='用时 '+mins+' 分钟：一份案卷从材料检查、证据核对、人工确认，到整改对比和质量检查都走完了。全程有记录，也方便后续复核。';
+    document.getElementById('goWorkbench').href='/index.html?role=audit&case='+encodeURIComponent(CASE_ID);
     document.getElementById('final').classList.add('show');
   }
 }
@@ -312,6 +374,9 @@ function resetSteps(){
 
 setInterval(()=>{ if(!S.t0) return; const s=Math.floor((Date.now()-S.t0)/1000); document.getElementById('clock').textContent=String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0'); },500);
 
+document.getElementById('btnAgain').addEventListener('click',()=>{ resetSteps(); unlock('audit'); document.getElementById('steps').scrollIntoView({behavior:'smooth'}); });
+document.getElementById('btnSwitch').addEventListener('click',()=>{ document.querySelector('.case-panel').scrollIntoView({behavior:'smooth'}); });
+
 async function runAudit(){
   const r=await fetch('/api/audit?mode=exam',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({caseId:CASE_ID})});
   const rep=await r.json(); if(rep.error)throw new Error(rep.error); return rep;
@@ -334,24 +399,24 @@ const HANDLERS = {
     const amt=susp.reduce((s,f)=>s+(+f.amount_involved||0),0);
     out('audit',
       '<div class="kpis">'+
-      '<div class="kpi red"><b>'+susp.length+'</b><span>疑点（证据闭环）</span></div>'+
-      '<div class="kpi amber"><b>'+clue.length+'</b><span>线索（存疑转线索·不误报）</span></div>'+
+      '<div class="kpi red"><b>'+susp.length+'</b><span>明确疑点（证据完整）</span></div>'+
+      '<div class="kpi amber"><b>'+clue.length+'</b><span>待核对线索（不直接定性）</span></div>'+
       '<div class="kpi red"><b>'+fmtY(amt)+'</b><span>疑点涉及金额</span></div>'+
-      '<div class="kpi teal"><b>'+ms+'ms</b><span>本次稽核耗时（引擎 '+ (S.report.report_meta&&S.report.report_meta.elapsed_ms||ms) +'ms）</span></div></div>'+
-      '<p class="msg ok">✓ 已同时落自查快照（第⑤步复跑对比用）</p>');
+      '<div class="kpi teal"><b>'+ms+'ms</b><span>本次检查耗时</span></div></div>'+
+      '<p class="msg ok">✓ 已保存本次检查结果，后面可用于整改前后对比</p>');
   },
 
   async triad(){
     if(!S.report) throw new Error('先跑第①步');
     const fs_=activeFindings(S.report).filter(f=>f.status==='疑点');
-    if(!fs_.length){ out('triad','<p class="msg ok">本案卷未检出疑点（干净件）——这本身就是 G0 零误报能力的展示。</p>'); return; }
+    if(!fs_.length){ out('triad','<p class="msg ok">本案卷未检出明确疑点。系统没有为了“凑结论”而强行提示问题。</p>'); return; }
     out('triad', fs_.map(f=>{
       const refs=(f.policy||[]).map(p=>'<span class="'+((p.verify_status||'').includes('爬虫')?'pend':'')+'">'+esc(p.ref)+'</span>').join('');
       const ev=(f.evidence&&f.evidence[0])?esc(f.evidence[0].loc||''):'';
       return '<div class="f-card"><div class="fh"><b>'+esc(f.rule_name||'')+'</b><span class="rid">'+esc(f.rule_id)+'</span><span class="amt">'+fmtY(f.amount_involved)+'</span></div>'+
-        '<div class="tri">① 证据定位 <em>'+ev+'</em><br>② 政策条款 <em>'+((f.policy||[]).length)+' 条引用（绿=已核验，黄=待人工抽检——诚实标注）</em><br>③ 推理链 <em>'+esc(String(f.reasoning||'').slice(0,110))+'…</em></div>'+
+        '<div class="tri">① 材料位置 <em>'+ev+'</em><br>② 政策依据 <em>'+((f.policy||[]).length)+' 条引用（绿色=已核验，黄色=仍需人工抽检）</em><br>③ 判断理由 <em>'+esc(String(f.reasoning||'').slice(0,110))+'…</em></div>'+
         '<div class="refs">'+refs+'</div></div>';
-    }).join('') + '<p class="msg">每条疑点三要素齐备；缺一要素自动降级为线索——这就是 G0 零误报的机制来源。</p>');
+    }).join('') + '<p class="msg">每条明确疑点都要同时具备材料位置、政策依据和判断理由；缺一项就只作为待核对线索。</p>');
   },
 
   async review(){
@@ -362,9 +427,9 @@ const HANDLERS = {
     if(!susp.length){
       const clue=act.filter(x=>x.status==='线索');
       const msg=clue.length
-        ? '本案无「疑点」档、仅 '+clue.length+' 条线索级——按三档设计,线索证据不足不进人工处置。<b>人是闸门,本案无需介入。</b>'
-        : '<b>✅ 干净件:零疑点、零线索</b>,G0 零误报红线守住——复核环节无对象。';
-      out('review','<div class="f-card clue" style="border-left-color:var(--ok)"><div class="fh"><b>本案无需人工复核</b><span class="rid">'+esc(CASE_ID)+'</span></div><p class="tri" style="color:#3D5A76;margin-top:6px">'+msg+' 直接进入下一步。</p></div>');
+        ? '本案没有明确疑点，只有 '+clue.length+' 条待核对线索。线索不会直接进入处置，人工可按需查看。'
+        : '<b>✅ 本案暂未发现疑点或线索</b>，无需进入人工确认。';
+      out('review','<div class="f-card clue" style="border-left-color:var(--ok)"><div class="fh"><b>本案无需人工确认</b><span class="rid">'+esc(CASE_ID)+'</span></div><p class="tri" style="color:#3D5A76;margin-top:6px">'+msg+' 可以直接进入下一步。</p></div>');
       return;
     }
     const f=susp[0];
@@ -373,11 +438,11 @@ const HANDLERS = {
       '<div class="f-card"><div class="fh"><b>'+esc(f.rule_name)+'</b><span class="rid">'+esc(f.rule_id)+'</span><span class="amt">'+fmtY(f.amount_involved)+'</span></div></div>'+
       '<div class="review-row"><button class="adopt" id="rvAdopt">✓ 采纳</button><button class="reject" id="rvReject">✗ 驳回</button>'+
       '<input id="rvReason" placeholder="驳回理由（必填）：如「临床有开药指征，属合理用药」"></div>'+
-      '<p class="msg" id="rvMsg">选择一个动作——两种都会落库留痕；驳回会累计进第④步的治理台账。</p>');
+      '<p class="msg" id="rvMsg">选择一个动作；采纳和驳回都会保存记录，驳回原因会用于后续校正提示。</p>');
     return new Promise((resolve,reject)=>{
       const post=async(action)=>{
         const reason=document.getElementById('rvReason').value.trim();
-        if(action==='驳回'&&!reason){document.getElementById('rvMsg').textContent='驳回必须填理由（这是留痕纪律）';document.getElementById('rvMsg').className='msg err';return;}
+        if(action==='驳回'&&!reason){document.getElementById('rvMsg').textContent='请填写驳回理由，方便后续复核和改进提示。';document.getElementById('rvMsg').className='msg err';return;}
         const r=await fetch('/api/review',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({finding_id:f.finding_id,rule_id:f.rule_id,case_id:CASE_ID,action,reason})}).then(x=>x.json());
         if(r.error){document.getElementById('rvMsg').textContent=r.error;document.getElementById('rvMsg').className='msg err';return;}
         let m='✓ 已持久化（'+action+'）';
@@ -393,14 +458,14 @@ const HANDLERS = {
   async govern(){
     const r=await fetch('/api/review').then(x=>x.json());
     const st=r.stats||r; const totals=st.totals||{}; const flagged=st.flagged_rules||[];
-    const rows=Object.entries(st.by_rule||{}).map(([rid,v])=>'<tr><td style="font-family:var(--mono)">'+esc(rid)+'</td><td class="num">'+(v.adopted||0)+'</td><td class="num">'+(v.rejected||0)+'</td><td>'+(flagged.some(f=>f.rule_id===rid)?'<span style="color:#C77700;font-weight:700">⚠ 高误报→建议转 shadow</span>':'<span style="color:var(--dim)">在役</span>')+'</td></tr>').join('');
+    const rows=Object.entries(st.by_rule||{}).map(([rid,v])=>'<tr><td style="font-family:var(--mono)">'+esc(rid)+'</td><td class="num">'+(v.adopted||0)+'</td><td class="num">'+(v.rejected||0)+'</td><td>'+(flagged.some(f=>f.rule_id===rid)?'<span style="color:#C77700;font-weight:700">需观察：暂不直接提示</span>':'<span style="color:var(--dim)">正常提示</span>')+'</td></tr>').join('');
     out('govern',
       '<div class="kpis">'+
       '<div class="kpi ok"><b>'+(totals['采纳']||0)+'</b><span>累计采纳</span></div>'+
       '<div class="kpi red"><b>'+(totals['驳回']||0)+'</b><span>累计驳回</span></div>'+
-      '<div class="kpi amber"><b>'+flagged.length+'</b><span>触发高误报阈值（≥'+(st.threshold||3)+'次驳回）</span></div></div>'+
-      (rows?'<table class="mini"><tr><th>规则</th><th style="text-align:right">采纳</th><th style="text-align:right">驳回</th><th>治理状态</th></tr>'+rows+'</table>':'<p class="msg">尚无复核记录</p>')+
-      '<p class="msg">三态治理：在役 → shadow（影子观察，不出疑点只记 would-fire）→ 下线。状态落盘 rule_states.json，与规则定义分离、可逆。</p>');
+      '<div class="kpi amber"><b>'+flagged.length+'</b><span>需观察的提示（≥'+(st.threshold||3)+'次驳回）</span></div></div>'+
+      (rows?'<table class="mini"><tr><th>规则</th><th style="text-align:right">采纳</th><th style="text-align:right">驳回</th><th>当前状态</th></tr>'+rows+'</table>':'<p class="msg">尚无复核记录</p>')+
+      '<p class="msg">复核记录会帮助系统减少重复误提醒：正常提示 → 观察中 → 必要时停用。状态可追溯，也可以人工恢复。</p>');
   },
 
   async diff(){
@@ -413,7 +478,7 @@ const HANDLERS = {
       '<div class="kpi ok"><b>'+s.resolved_count+'</b><span>已消除（整改生效）'+(s.resolved_amount?' '+fmtY(s.resolved_amount):'')+'</span></div>'+
       '<div class="kpi amber"><b>'+s.persisting_count+'</b><span>仍存在 '+fmtY(s.persisting_amount)+'</span></div>'+
       '<div class="kpi red"><b>'+s.added_count+'</b><span>新增</span></div></div>'+
-      '<p class="msg">对比 '+esc(d.from.at.slice(0,19).replace('T',' '))+' → '+esc(d.to.at.slice(0,19).replace('T',' '))+'（finding 指纹对齐：规则+证据定位）。演示案卷未真整改，故以「仍存在」为主——真实使用中此处是院长最关心的一栏。</p>');
+      '<p class="msg">对比 '+esc(d.from.at.slice(0,19).replace('T',' '))+' → '+esc(d.to.at.slice(0,19).replace('T',' '))+'。演示案卷没有真实整改，所以通常会显示“仍存在”；真实使用时，这里会直接展示整改是否生效。</p>');
   },
 
   async refund(){
@@ -423,11 +488,11 @@ const HANDLERS = {
     const rows=(est.tiers||[]).map(t=>'<tr><td>'+esc(t.nature)+'</td><td class="num">'+t.count+'</td><td class="num">'+fmtY(t.amount)+'</td><td style="font-size:11.5px;color:var(--muted)">'+esc(t.action)+'</td></tr>').join('');
     out('refund',
       '<div class="kpis">'+
-      '<div class="kpi teal"><b>'+fmtY(s.suggested_refund)+'</b><span>建议主动退回（自查从宽）</span></div>'+
-      '<div class="kpi red"><b>'+fmtY(s.flying_check_exposure_min)+'~'+fmtY(s.flying_check_exposure_max)+'</b><span>若被飞检查实的暴露区间（含罚款）</span></div>'+
+      '<div class="kpi teal"><b>'+fmtY(s.suggested_refund)+'</b><span>主动退回参考金额</span></div>'+
+      '<div class="kpi red"><b>'+fmtY(s.flying_check_exposure_min)+'~'+fmtY(s.flying_check_exposure_max)+'</b><span>若后续被查实的可能暴露区间</span></div>'+
       '<div class="kpi ok"><b>'+fmtY(s.avoided_loss_min)+'~'+fmtY(s.avoided_loss_max)+'</b><span>自查可避免损失</span></div></div>'+
       '<table class="mini"><tr><th>违规性质</th><th style="text-align:right">项数</th><th style="text-align:right">金额</th><th>处置建议</th></tr>'+rows+'</table>'+
-      '<p class="msg">罚款倍数取条例 38 条（1–2 倍）/ 40 条（2–5 倍）法定区间——这张表就是院端为什么现在付费的答案。</p>');
+      '<p class="msg">测算按不同违规性质和处置区间估算，用于帮助医院先判断自查整改的经济影响；正式金额仍以人工复核和监管认定为准。</p>');
   },
 
   async yhf(){
@@ -435,15 +500,15 @@ const HANDLERS = {
     if(r.error) throw new Error(r.error);
     const g=(r.engine&&r.engine.gates)||{};
     const gates=[
-      ['G0 干净件零误报', g.G0_clean_zero_fp],
-      ['G1 shadow FPR', r.shadow?r.shadow.pass:undefined],
-      ['G2 prompt', r.prompt?r.prompt.pass:undefined],
-      ['G4 RAG recall', r.rag?r.rag.pass:undefined],
-      ['L3 案卷 recall', r.engine&&r.engine.cases?r.engine.cases.every(c=>c.pass):undefined],
+      ['正常案卷不误报', g.G0_clean_zero_fp],
+      ['观察规则检查', r.shadow?r.shadow.pass:undefined],
+      ['提示文案检查', r.prompt?r.prompt.pass:undefined],
+      ['证据检索检查', r.rag?r.rag.pass:undefined],
+      ['示例案卷回归', r.engine&&r.engine.cases?r.engine.cases.every(c=>c.pass):undefined],
     ];
     out('yhf',
       gates.map(([name,v])=>'<span class="gate '+(v===true?'pass':v===false?'fail':'')+'"><i></i>'+esc(name)+' '+(v===true?'PASS':v===false?'FAIL':'—')+'</span>').join('')+
-      '<p class="msg" style="margin-top:10px">G0 是一票否决红线：任何规则/prompt/KB 改动，干净案卷出一条误报就不许合入。刚才第③④步的治理动作，也在这道门的监控之内——<b style="color:var(--ok)">这就是闭环</b>。</p>');
+      '<p class="msg" style="margin-top:10px">质量检查的重点很朴素：正常案卷不能被误报，证据检索不能掉，提示文案不能跑偏。刚才的人工确认和复核记录，也会进入这套检查。</p>');
   },
 };
 
@@ -451,7 +516,7 @@ const HANDLERS = {
 function setCase(id, title){
   const changed = CASE_ID !== id;
   CASE_ID = id;
-  document.getElementById('curCase').textContent = (title||id) + '（' + id + '）';
+  document.getElementById('curCase').textContent = caseLabel({id, title});
   document.querySelectorAll('.chip').forEach(c=>c.classList.toggle('sel', c.dataset.id===id));
   if(changed) resetSteps();
 }
@@ -461,8 +526,8 @@ async function loadCases(sel){
     const list=await fetch('/api/cases').then(x=>x.json());
     const box=document.getElementById('chips');
     box.innerHTML=list.map(c=>
-      '<button type="button" class="chip" data-id="'+esc(c.id)+'">'+esc(c.title||c.id)+
-      '<small>'+esc(c.id)+(c.violations!=null?' · 预埋违规 '+c.violations:'')+'</small></button>').join('') || '<span style="font-size:12px;color:var(--dim)">暂无案卷</span>';
+      '<button type="button" class="chip" data-id="'+esc(c.id)+'">'+esc(caseLabel(c))+
+      '<small>'+esc(caseMeta(c))+'</small></button>').join('') || '<span style="font-size:12px;color:var(--dim)">暂无案卷</span>';
     box.querySelectorAll('.chip').forEach(ch=>ch.addEventListener('click',()=>{
       const c=list.find(x=>x.id===ch.dataset.id);
       setCase(ch.dataset.id, c&&c.title);
@@ -496,7 +561,7 @@ async function handleFiles(files){
     // 加进案卷 chips 并选中
     if(!document.querySelector('.chip[data-id="uploaded"]')){
       const box=document.getElementById('chips');
-      box.insertAdjacentHTML('afterbegin','<button type="button" class="chip" data-id="uploaded">📤 现场上传的案卷<small>uploaded · 刚导入</small></button>');
+      box.insertAdjacentHTML('afterbegin','<button type="button" class="chip" data-id="uploaded">📤 现场上传的材料<small>刚导入，可直接检查</small></button>');
       box.querySelector('.chip[data-id="uploaded"]').addEventListener('click',()=>setCase('uploaded','现场上传的案卷'));
     }
     setCase('uploaded','现场上传的案卷');

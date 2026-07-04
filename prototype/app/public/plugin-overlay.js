@@ -10,7 +10,7 @@
  *   yy.body(html);
  *   yy.chips([{text:'A 24',bg:'#b91c1c'},{text:'B 8',bg:'#d97706'}]);
  *   yy.actions([{label:'生成上会清单',kind:'primary',onClick(){}},{label:'打开行装包',href:'/x'}]);
- *   yy.footer('L1 确定性·毫秒级 · 本地运行,数据不出机');
+ *   yy.footer('确定性规则·毫秒级 · 本地运行,数据不出机');
  *   yy.close();
  *   // 未展开时的入口胶囊：
  *   YY.launcher({ label:'🦅 鹰眼监管助手 已注入', hint:'点此让鹰眼分析当前清单', onClick(){...} });
@@ -94,7 +94,9 @@
       footEl.textContent = text;
       return h;
     }
-    var h = { el: box, bodyEl: bodyEl, close: close, loading: loading, body: body, sub: sub, chips: chips, actions: actions, footer: footer };
+    var h = { el: box, bodyEl: bodyEl, close: close, loading: loading, body: body, sub: sub, chips: chips, actions: actions, footer: footer,
+      debate: function (debateObj, opts) { body(debateHtml(debateObj, opts)); return h; }
+    };
     return h;
   }
 
@@ -119,6 +121,34 @@
     return { remove: function () { chip.remove(); } };
   }
 
+  function debateHtml(debate, opts) {
+    opts = opts || {};
+    if (!debate || !debate.enabled) return '<p style="padding:12px 14px;color:#5b6d82;font-size:12px">暂无合议记录。</p>';
+    var DF = window.DebateFormat;
+    if (!DF) {
+      return '<p style="padding:12px 14px;color:#8a99ab;font-size:12px">合议详情需加载 debate-format.js · <a href="/agent-chain.html?preview=appeal" style="color:#134E72">打开申诉批阅</a></p>';
+    }
+    var roleClass = function (role) {
+      if (role === '控方') return 'yy-d-pro';
+      if (role === '辩方') return 'yy-d-def';
+      if (role === '裁判') return 'yy-d-judge';
+      return '';
+    };
+    var css = '.yy-debate-exch{padding:8px 12px;border-bottom:1px solid #eef2f7;font-size:12px;line-height:1.6}'
+      + '.yy-debate-role{font-size:11px;font-weight:800;margin-bottom:4px;color:#41556b}'
+      + '.yy-d-pro .yy-debate-role{color:#9a2c22}.yy-d-def .yy-debate-role{color:#0E7568}.yy-d-judge .yy-debate-role{color:#5b3a9e}'
+      + '.reb-item{padding:6px 0;border-top:1px dashed #e8edf3}.reb-item:first-child{border-top:0}'
+      + '.reb-target{font-size:10.5px;font-weight:800;color:#41556b;margin-bottom:2px}'
+      + '.exch-summary{font-weight:600;margin:0 0 6px}.exch-points{margin:0;padding-left:16px}';
+    var summary = DF.renderDebateSummary(debate, esc);
+    var exchanges = DF.renderExchangesHtml(debate, esc, { roleClass: roleClass });
+    var cites = (debate.kb_citations || []).length
+      ? '<div style="padding:6px 12px 10px;font-size:10.5px;color:#7a8ba0">依据：' + debate.kb_citations.map(function (c) { return '<code style="background:#f1f5f9;padding:1px 4px;border-radius:3px">' + esc(c) + '</code>'; }).join(' ') + '</div>'
+      : '';
+    return '<style>' + css + '</style>' + summary + exchanges + cites
+      + (opts.linkFull ? '<div style="padding:8px 12px;border-top:1px solid #eef2f7"><a href="/agent-chain.html?preview=appeal" style="font-size:12px;font-weight:700;color:#134E72">完整七环节调用链 →</a></div>' : '');
+  }
+
   // 注入一次全局动画
   if (!document.getElementById('yy-overlay-kf')) {
     var st = document.createElement('style');
@@ -127,5 +157,5 @@
     document.head.appendChild(st);
   }
 
-  window.YY = { panel: panel, launcher: launcher, esc: esc };
+  window.YY = { panel: panel, launcher: launcher, esc: esc, debateHtml: debateHtml };
 })();

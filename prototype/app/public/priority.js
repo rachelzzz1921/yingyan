@@ -27,6 +27,14 @@ const DEFAULT_CONFIG = {
   repeat_upgrade_threshold: 3,
   mask_pii: true,
 };
+const SCORE_STANDARD_MAX = 200;
+const SCORE_BANDS = [
+  { min: 160, label: '立即核查', cls: 'score-critical' },
+  { min: 120, label: '优先处理', cls: 'score-high' },
+  { min: 80, label: '排队关注', cls: 'score-mid' },
+  { min: 1, label: '观察记录', cls: 'score-low' },
+  { min: 0, label: '暂不排序', cls: 'score-zero' },
+];
 const CONFIG_FIELDS = [
   ['beta', '历史命中加权强度', 'HistoryPrior', 'main'],
   ['gamma', '多规则加权强度', 'Breadth', 'main'],
@@ -116,10 +124,20 @@ function amountLabel(row) {
   return examMode ? `<span class="exam-label">${html}</span>` : html;
 }
 
-function scoreBar(row, maxScore) {
+function scoreBand(score) {
+  return SCORE_BANDS.find(b => score >= b.min) || SCORE_BANDS[SCORE_BANDS.length - 1];
+}
+
+function scoreBar(row) {
   const score = Number(row.api_score || 0);
-  const pct = maxScore > 0 ? Math.max(4, Math.min(100, (score / maxScore) * 100)) : 4;
-  return `<div class="score-line"><span>优先指数 ${esc(score)}</span><i style="width:${pct}%"></i></div>`;
+  const pct = score > 0 ? Math.max(4, Math.min(100, (score / SCORE_STANDARD_MAX) * 100)) : 0;
+  const band = scoreBand(score);
+  return `<div class="score-line ${band.cls}" style="--score-pct:${pct}%">
+    <div class="score-line-head"><span>优先指数 <b>${esc(score)}</b></span><em>标准尺 / ${SCORE_STANDARD_MAX}</em></div>
+    <div class="score-line-bar"><i></i></div>
+    <div class="score-line-scale"><span>80</span><span>120</span><span>160</span></div>
+    <div class="score-line-foot">标准档：${esc(band.label)}</div>
+  </div>`;
 }
 
 async function loadRank() {
@@ -167,7 +185,6 @@ function renderQueue(data) {
   updateSelHint();
 
   const queue = data.queue || [];
-  const maxScore = Math.max(1, ...queue.map(r => Number(r.api_score || 0)));
   let lastNature = null;
   const totals = {};
   for (const r of queue) totals[r.nature || '可疑'] = (totals[r.nature || '可疑'] || 0) + 1;
@@ -190,7 +207,7 @@ function renderQueue(data) {
     tr.innerHTML = `
       <td><input type="checkbox" class="row-chk" data-id="${esc(row.case_id)}" aria-label="选择案卷"></td>
       <td class="rank-cell">#${idx + 1}</td>
-      <td class="risk-cell">${riskBadge(nat)} ${tierHint(row.tier)} ${scoreBar(row, maxScore)}</td>
+      <td class="risk-cell">${riskBadge(nat)} ${tierHint(row.tier)} ${scoreBar(row)}</td>
       <td class="case-cell">
         <strong>${esc(row.case_title || row.case_id)}</strong>
         <span class="muted">${esc(row.case_id)} · ${esc(row.dept || '—')}</span>
@@ -328,7 +345,7 @@ async function showDetail(caseId) {
   $('#detailTitle').textContent = '加载中…';
   $('#detailContent').innerHTML = '<p class="muted">正在加载案卷详情…</p>';
   const wb = $('#btnOpenWorkbench');
-  if (wb) wb.href = '/?case=' + encodeURIComponent(caseId);
+  if (wb) wb.href = '/?case=' + encodeURIComponent(caseId) + '&from=priority&role=' + (examMode ? 'hospital' : 'audit');
   openDrawer();
   try {
     const data = await fetchCaseDetail(caseId);
@@ -763,6 +780,18 @@ $('#btnLeaderReport')?.addEventListener('click', () => {
   const ids = [...selected].join(',');
   window.open(`/api/report/leader?format=html${ids ? '&case_ids=' + encodeURIComponent(ids) : ''}${examMode ? '&mode=exam' : ''}`, '_blank');
 });
+
+// 角色跟随：?role= 优先，其次工作台写入的会话角色（yingyan_role）——院端进来自动切自查口径
+(function initRole() {
+  const p = new URLSearchParams(location.search);
+  let role = p.get('role');
+  if (!role) { try { role = sessionStorage.getItem('yingyan_role'); } catch { role = null; } }
+  if (role === 'hospital' || role === 'exam') {
+    examMode = true;
+    const cb = $('#examMode');
+    if (cb) cb.checked = true;
+  }
+})();
 
 initDemoMode();
 loadRank().catch(err => { $('#rankMeta').textContent = '加载失败: ' + err.message; });

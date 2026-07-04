@@ -88,7 +88,13 @@
       <span style="flex:1"></span>
       <a href="javascript:void(0)" id="yy-close" style="text-decoration:none;color:#7a8ba0;font-size:16px">×</a></div>`;
     let body;
-    if (!hits.length) {
+    if (result.error) {
+      body = `<div style="padding:20px 14px;text-align:center">
+        <div style="font-size:15px;color:#b91c1c;font-weight:600">⚠ 事前预检未完成</div>
+        <div style="font-size:12px;color:#5b6d82;margin-top:6px">${esc(result.error)}</div>
+        <div style="font-size:11px;color:#94a3b8;margin-top:8px">请确认鹰眼本地服务已启动并已刷新页面</div>
+      </div>`;
+    } else if (!hits.length) {
       body = `<div style="padding:20px 14px;text-align:center">
         <div style="font-size:15px;color:#0a7a4b;font-weight:600">🟩 合规放行</div>
         <div style="font-size:12px;color:#5b6d82;margin-top:6px">本次开单未命中任何事前提醒规则。已核 ${(result.checked_rules || []).length || result.checked_rules_count || '—'} 条事前规则。</div>
@@ -105,7 +111,7 @@
         <button id="yy-heed" style="flex:1;padding:7px;border:0;border-radius:6px;background:#0a7a4b;color:#fff;font-size:12px;font-weight:700;cursor:pointer">✓ 采纳建议·整改(消灭在萌芽)</button>
         <button id="yy-override" style="padding:7px 10px;border:1px solid #d0a800;border-radius:6px;background:#fffbe6;color:#8a6d00;font-size:12px;cursor:pointer">⚠ 坚持提交</button>
       </div>` : '';
-    const foot = `<div style="padding:8px 14px;font-size:11px;color:#8a99ab;border-top:1px solid #edf1f6">${esc(result.engine || 'L1确定性·毫秒级')} · 本地运行,数据不出机 · 依据国家医保两库与相关号令 · 违规消除在"萌芽"</div>`;
+    const foot = `<div style="padding:8px 14px;font-size:11px;color:#8a99ab;border-top:1px solid #edf1f6">${esc(result.engine || '确定性规则·毫秒级')} · 本地运行,数据不出机 · 依据国家医保两库与相关号令 · 违规消除在"萌芽"</div>`;
     box.innerHTML = head + body + actions + foot;
     document.body.appendChild(box);
     box.querySelector('#yy-close').onclick = () => box.remove();
@@ -178,6 +184,12 @@
         method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload),
       });
       const j = await r.json();
+      if (j.error || !r.ok) {
+        const msg = j.error || ('HTTP ' + r.status);
+        if (opts.silent) return { hits: [], error: msg };
+        showOverlay({ hits: [], error: msg, engine: '事前预检异常: ' + msg }, ctx);
+        return { hits: [], error: msg };
+      }
       // silent(整改验证重校验):只返回结果,不重弹浮层、不写台账(由 heed 流程更新原浮层 slot)
       if (opts.silent) return j;
       // opts.showClean===false 时,合规(无命中)不弹绿浮层(设置项);有命中始终弹
@@ -186,8 +198,9 @@
       return j;
     } catch (e) {
       if (opts.silent) return null;
-      showOverlay({ hits: [], engine: '引擎未连接(' + e.message + ')——请确认鹰眼本地服务已启动' }, ctx);
-      return null;
+      const msg = '引擎未连接(' + e.message + ')——请确认鹰眼本地服务已启动';
+      showOverlay({ hits: [], error: msg, engine: msg }, ctx);
+      return { hits: [], error: msg };
     }
   }
 

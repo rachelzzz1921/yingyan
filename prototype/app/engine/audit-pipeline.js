@@ -51,6 +51,8 @@ async function buildEnrichedContext(record, rules, policyMapsRaw, opts = {}) {
     policyTexts,
     policyVerified,
     policyPending: filtered.policyPending || {},
+    policyMeta: filtered.policyMeta || policyMapsRaw?.policyMeta || {},
+    citationIndex: filtered.citationIndex || policyMapsRaw?.citationIndex || null,
     parseQuality,
     as_of: asOf ? asOf.toISOString().slice(0, 10) : null,
     ragMeta,
@@ -98,6 +100,7 @@ function mergePipelineFindings(detReport, llmReport, opts = {}) {
     retiredRules: opts.retiredRules,
     policyTexts: opts.policyTexts || {},
     policyVerified: opts.policyVerified || {},
+    citationIndex: opts.citationIndex || null,
   });
 
   const merged = gov.findings.map(f => ({ ...f }));
@@ -184,6 +187,8 @@ async function runAuditPipeline(record, rules, opts = {}) {
     policyTexts: ctx.policyTexts,
     policyVerified: ctx.policyVerified,
     policyPending: ctx.policyPending,
+    policyMeta: ctx.policyMeta,
+    citationIndex: ctx.citationIndex,
     parseQuality: ctx.parseQuality,
     shadowRules: opts.shadowRules || [],
     retiredRules: opts.retiredRules || [],
@@ -192,7 +197,7 @@ async function runAuditPipeline(record, rules, opts = {}) {
   let indicationSemantic = 'sync';
   if (profile === 'super' && llmReady()) {
     try {
-      const extraFindings = await buildIndicationLlmFindings(record, rules, ctx.policyTexts, ctx.policyVerified);
+      const extraFindings = await buildIndicationLlmFindings(record, rules, ctx.policyTexts, ctx.policyVerified, ctx.citationIndex);
       if (extraFindings.length) {
         indicationSemantic = 'llm';
         runOpts.extraFindings = extraFindings;
@@ -216,6 +221,7 @@ async function runAuditPipeline(record, rules, opts = {}) {
       kb: ctx.kb,
       policyTexts: ctx.policyTexts,
       policyVerified: ctx.policyVerified,
+      citationIndex: ctx.citationIndex,
       shadowRules: opts.shadowRules,
       retiredRules: opts.retiredRules,
     });
@@ -226,6 +232,7 @@ async function runAuditPipeline(record, rules, opts = {}) {
       retiredRules: opts.retiredRules,
       policyTexts: ctx.policyTexts,
       policyVerified: ctx.policyVerified,
+      citationIndex: ctx.citationIndex,
       ragMeta: ctx.ragMeta,
     });
     merged.report_meta.elapsed_ms = Date.now() - t0;

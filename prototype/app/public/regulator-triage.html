@@ -13,6 +13,7 @@
   <div class="host-topbar">
     <a class="back" href="/plugins.html#regulator">← 工具箱</a>
     <a class="back" href="/home.html">← 三入口</a>
+    <a class="back" href="/regulator-threshold.html" title="监管动线下一站">下一站 · 阈值试算 →</a>
     <span class="hint">演示靶站 · 仿真监管人员打开「智能监管子系统」导出的疑点清单 Excel。鹰眼以插件浮窗贴上来做三档粗筛，不改动你的表格软件。</span>
   </div>
 
@@ -147,13 +148,13 @@ function renderResult(yy){
         funnelCard('补材料', f.by_nature['可疑'], '#d97706')+
         funnelCard('暂缓/观察', money(f.clean_rows), '#0a7a4b')+
       '</div>'+
-      '<div style="font-size:11.5px;color:#0a7a4b;margin-top:8px">✓ 已把三档优先级写回表格 H 列 · 真值误报 '+esc(g.false_positives)+'/'+esc(g.embedded)+'（G0 干净行零误报）</div>'+
+      '<div style="font-size:11.5px;color:#0a7a4b;margin-top:8px">✓ 已把三档优先级写回表格 H 列 · 真值误报 '+esc(g.false_positives)+'/'+esc(g.embedded)+'（干净行零误报）</div>'+
     '</div>'+top);
   yy.actions([
     {label:'生成上会清单',kind:'primary',onClick:function(){ downloadList(rows); }},
     {label:'Top1 飞检行装包',href:'/regulator-fieldkit.html?from=triage&case_id=main'}
   ]);
-  yy.footer('L1 确定性·毫秒级 · 本地运行,数据不出机 · AI 提供线索支持,最终由监管人员裁定');
+  yy.footer('确定性规则·毫秒级 · 本地运行,数据不出机 · AI 提供线索支持,最终由监管人员裁定');
 }
 function funnelCard(label,n,color){
   return '<div style="flex:1;background:#fff;border:1px solid #e3e9f0;border-radius:8px;padding:8px 10px;text-align:center">'+

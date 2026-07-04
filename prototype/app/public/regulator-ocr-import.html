@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#2c5788">
+<title>住院费用明细查询 · 现场 OCR 录入靶站</title>
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="stylesheet" href="/plugin-host.css">
+<style>
+/* 双栏：左=医院 HIS（被拍的对象），右=监管 OCR 录入器 */
+.ocr-layout{max-width:1280px;margin:0 auto;display:grid;grid-template-columns:1fr 380px;gap:16px;align-items:start}
+@media(max-width:980px){.ocr-layout{grid-template-columns:1fr}}
+.his-wrap{background:#d6e2ee;border:1px solid #9db4cb;border-radius:8px;overflow:hidden;box-shadow:0 8px 30px rgba(20,40,70,.15);position:relative}
+.his-top{background:linear-gradient(#3a6ea5,#2c5788);color:#fff;padding:7px 14px;display:flex;justify-content:space-between;align-items:center;font-size:13px}
+.his-top .sys{font-weight:700}
+.his-top .tag{font-size:11px;background:#ffffff22;padding:2px 8px;border-radius:3px}
+.his-bar{background:#e3ecf5;border-bottom:1px solid #b9cadc;padding:6px 14px;font-weight:700;color:#2c5788;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.his-bar select{font-size:12px;padding:3px 6px;border:1px solid #c6d4e2;border-radius:3px;font-weight:400;color:#41556b}
+.his-sec{padding:10px 14px;background:#f4f7fb}
+table.pt{width:100%;border-collapse:collapse;margin-bottom:10px;font-size:12.5px}
+table.pt td{border:1px solid #b9cadc;padding:5px 8px;background:#fff}
+table.pt td.l{background:#e9f0f7;width:88px;color:#41556b;font-weight:600}
+table.fee{width:100%;border-collapse:collapse;font-size:12.5px}
+table.fee th{background:#e3ecf5;border:1px solid #b9cadc;padding:5px 7px;color:#2c5788;font-weight:700}
+table.fee td{border:1px solid #b9cadc;background:#fff;padding:4px 7px}
+.his-foot{padding:6px 14px;background:#eef3f9;border-top:1px solid #b9cadc;font-size:11px;color:#6b7f93}
+.his-note{margin:8px 14px 12px;font-size:11.5px;color:#5b6d82;line-height:1.55;background:#fff;border:1px dashed #b9cadc;border-radius:6px;padding:8px 10px}
+/* OCR 框选高亮 */
+.ocr-sel{position:absolute;border:2px solid #14B8A6;background:rgba(20,184,166,.12);border-radius:4px;pointer-events:none;z-index:4;box-shadow:0 0 0 9999px rgba(11,42,74,.35);animation:ocrpulse .8s ease-in-out}
+@keyframes ocrpulse{0%,100%{border-color:#14B8A6}50%{border-color:#2DD4BF}}
+.ocr-corner{position:absolute;width:10px;height:10px;border:2px solid #14B8A6;background:#fff}
+.ocr-corner.tl{top:-2px;left:-2px}.ocr-corner.tr{top:-2px;right:-2px}
+.ocr-corner.bl{bottom:-2px;left:-2px}.ocr-corner.br{bottom:-2px;right:-2px}
+
+/* 右侧 OCR 工具面板 — 监管侧鹰眼风格 */
+.ocr-panel{background:#fff;border:1px solid #9aa9b8;border-radius:12px;overflow:hidden;box-shadow:0 8px 30px rgba(11,42,74,.12);position:sticky;top:16px}
+.ocr-head{padding:12px 16px;background:linear-gradient(90deg,#0B2A4A,#134E72);color:#fff}
+.ocr-head b{font-size:15px;display:block;margin-bottom:2px}
+.ocr-head span{font-size:11.5px;color:#cfe0ee;line-height:1.45}
+.ocr-steps{display:flex;gap:0;border-bottom:1px solid #e3e9f0;background:#f8fafc}
+.ocr-steps i{flex:1;text-align:center;padding:8px 4px;font-size:11px;font-style:normal;color:#98a6b5;font-weight:700;border-bottom:2px solid transparent}
+.ocr-steps i.on{color:#0B2A4A;border-color:#14B8A6;background:#fff}
+.ocr-steps i.done{color:#0a7a4b}
+.ocr-body{padding:14px 16px}
+.ocr-btn{display:block;width:100%;padding:11px 14px;border:0;border-radius:10px;background:linear-gradient(90deg,#14B8A6,#0D9488);color:#fff;font-size:14px;font-weight:800;cursor:pointer;font-family:inherit;margin-bottom:10px}
+.ocr-btn:hover{filter:brightness(1.06)}
+.ocr-btn:disabled{opacity:.45;cursor:not-allowed;filter:none}
+.ocr-btn.ghost{background:#fff;color:#0B2A4A;border:1px solid #c9d4df;font-weight:700}
+.ocr-meta{font-size:11.5px;color:#7a8ba0;margin:0 0 12px;line-height:1.5}
+.ocr-preview{border:1px solid #e3e9f0;border-radius:8px;overflow:hidden;margin-bottom:12px;max-height:220px;overflow-y:auto}
+.ocr-preview table{width:100%;border-collapse:collapse;font-size:11.5px}
+.ocr-preview th{background:#f1f5f9;padding:5px 8px;text-align:left;color:#5b6d82;font-weight:700;position:sticky;top:0}
+.ocr-preview td{padding:4px 8px;border-top:1px solid #eef2f6;color:#33475b}
+.ocr-preview tr.low td{color:#b45309;background:#fffbeb}
+.ocr-paste{margin-top:10px;padding-top:10px;border-top:1px dashed #e3e9f0}
+.ocr-paste label{display:block;font-size:11px;color:#7a8ba0;margin-bottom:4px}
+.ocr-paste textarea{width:100%;min-height:56px;border:1px solid #dbe2ea;border-radius:8px;padding:8px;font-size:11px;font-family:"SF Mono",Menlo,monospace;resize:vertical}
+.ocr-status{font-size:12px;color:#5b6d82;padding:8px 10px;background:#f6f9fc;border-radius:8px;margin-bottom:10px;display:none}
+.ocr-status.show{display:block}
+.ocr-status.ok{background:#ecfdf5;color:#0a7a4b}
+.ocr-status.warn{background:#fff7e6;color:#b45309}
+</style>
+</head>
+<body>
+<div class="host-desk" style="background:#c8d2dc">
+  <div class="host-topbar">
+    <a class="back" href="/plugins.html#regulator">← 工具箱</a>
+    <a class="back" href="/home.html">← 三入口</a>
+    <a class="back" href="/regulator-triage.html" title="监管动线下一站">下一站 · 疑点分诊 →</a>
+    <span class="hint">演示靶站 · 飞检现场无法导出医院数据时，对着 HIS 屏幕框选 OCR → 结构化导入 → 与 Excel 分诊同引擎筛查。医院侧为只读仿真，右侧为监管录入器。</span>
+  </div>
+
+  <div class="ocr-layout">
+    <!-- 左：模拟医院 HIS 住院费用明细（被拍摄对象） -->
+    <div class="his-wrap" id="hisWrap">
+      <div class="his-top">
+        <span class="sys">🏥 示范市第一人民医院 · 住院费用明细查询 v4.8</span>
+        <span class="tag">院内系统 · 只读查询 · 无导出权限</span>
+      </div>
+      <div class="his-bar">
+        <span>住院费用明细</span>
+        <label style="font-weight:400;font-size:12px;color:#41556b">演示患者
+          <select id="casePick">
+            <option value="field">案卷 main · 王小雨(16岁·呼吸内科)</option>
+            <option value="clean">对照 · 李合规(42岁·干净件)</option>
+          </select>
+        </label>
+        <span style="flex:1"></span>
+        <span style="font-weight:400;font-size:11.5px;color:#6b7f93">查询时间 2026-06-16 14:32 · 操作员 0037</span>
+      </div>
+      <div class="his-sec">
+        <table class="pt" id="ptInfo">
+          <tr>
+            <td class="l">姓名</td><td data-f="name">王小雨</td>
+            <td class="l">性别</td><td data-f="sex">女</td>
+            <td class="l">年龄</td><td data-f="age">16岁</td>
+          </tr>
+          <tr>
+            <td class="l">住院号</td><td>ZY-20260702-0208</td>
+            <td class="l">科室</td><td data-f="dept">呼吸内科</td>
+            <td class="l">住院天数</td><td>6日</td>
+          </tr>
+          <tr>
+            <td class="l">医保类型</td><td colspan="5">城乡居民基本医疗保险</td>
+          </tr>
+        </table>
+        <table class="fee" id="feeTable">
+          <thead><tr><th>序号</th><th>项目名称</th><th>数量</th><th>金额(元)</th><th>结算日期</th><th>追溯码</th></tr></thead>
+          <tbody id="feeBody"></tbody>
+        </table>
+      </div>
+      <div class="his-foot">本院信息系统 · 数据仅供院内查询 · 未经授权禁止拍照外传（演示：监管现场通常拿不到导出接口）</div>
+      <div class="his-note">💡 这是飞检员在医院机房或护士站看到的真实工作界面——不能拷盘、不能导出，只能对着屏幕拍照或手工抄录。鹰眼 OCR 录入器把「拍到的表格」变成可筛查的结构化行。</div>
+    </div>
+
+    <!-- 右：监管侧 OCR 录入器 -->
+    <div class="ocr-panel">
+      <div class="ocr-head">
+        <b>🦅 鹰眼 · 现场 OCR 录入器</b>
+        <span>框选医院屏幕 → 识别费用行 → 导入筛查漏斗（与 Excel 分诊 / 剪贴板哨兵同引擎）</span>
+      </div>
+      <div class="ocr-steps">
+        <i id="st1" class="on">① 框选</i>
+        <i id="st2">② 识别</i>
+        <i id="st3">③ 导入</i>
+      </div>
+      <div class="ocr-body">
+        <div class="ocr-status" id="ocrStatus"></div>
+        <button type="button" class="ocr-btn" id="btnCapture">📷 框选当前费用表 · OCR 识别</button>
+        <p class="ocr-meta" id="ocrMeta">对准左侧费用明细表格，点击识别。演示态用确定性模板匹配模拟 OCR，真部署可接 PaddleOCR / 端侧模型。</p>
+        <div class="ocr-preview" id="previewWrap" style="display:none">
+          <table>
+            <thead><tr><th>行</th><th>项目</th><th>数量</th><th>金额</th><th>置信度</th></tr></thead>
+            <tbody id="previewBody"></tbody>
+          </table>
+        </div>
+        <button type="button" class="ocr-btn" id="btnImport" disabled>▶ 导入并筛查（A/B/C 三档）</button>
+        <div class="ocr-paste">
+          <label>或直接粘贴 Excel 选区（TSV，与桌面剪贴板哨兵同口径）</label>
+          <textarea id="pasteArea" placeholder="结算编号	项目名称	数量	金额	…"></textarea>
+          <button type="button" class="ocr-btn ghost" id="btnPaste" style="margin-top:8px">从剪贴板导入</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="/plugin-overlay.js"></script>
+<script>
+var CASES = {
+  field: {
+    patient: { name:'王小雨', sex:'女', age:16, dept:'呼吸内科' },
+    fees: [
+      { item_name:'床位费(三人间)', qty:6, amount:300, trace_code:'—', settle_date:'2026-06-16' },
+      { item_name:'左氧氟沙星氯化钠注射液', qty:5, amount:140, trace_code:'—', settle_date:'2026-06-16' },
+      { item_name:'静脉输液', qty:35, amount:280, trace_code:'—', settle_date:'2026-06-16' },
+      { item_name:'恩替卡韦分散片', qty:1, amount:145, trace_code:'81069847100523916482', settle_date:'2026-06-11' },
+      { item_name:'恩替卡韦分散片', qty:1, amount:145, trace_code:'81069847100523916482', settle_date:'2026-06-16' },
+      { item_name:'血常规', qty:2, amount:50, trace_code:'—', settle_date:'2026-06-16' }
+    ]
+  },
+  clean: {
+    patient: { name:'李合规', sex:'男', age:42, dept:'心内科' },
+    fees: [
+      { item_name:'床位费(双人间)', qty:4, amount:200, trace_code:'—', settle_date:'2026-06-10' },
+      { item_name:'阿司匹林肠溶片', qty:1, amount:18, trace_code:'—', settle_date:'2026-06-10' },
+      { item_name:'心电图', qty:1, amount:35, trace_code:'—', settle_date:'2026-06-10' }
+    ]
+  }
+};
+var currentCase = 'field';
+var recognizedRows = [];
+var screeningResult = null;
+
+function esc(v){ return String(v==null?'':v).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];}); }
+function money(n){ return Number(n||0).toLocaleString('zh-CN'); }
+function tierOf(h){ return (h.nature==='可疑'||h.rule_id==='QTY-901') ? 'B' : (h.nature==='明确违规' ? 'A' : 'C'); }
+var TIER_BG={ A:'#b91c1c', B:'#d97706', C:'#0a7a4b' };
+var RN={'AGE-101':'未成年用药年龄分层','TRACE-101':'同一追溯码重复结算','F-001':'性别—项目冲突','QTY-901':'单日数量超常'};
+
+function setStep(n){
+  ['st1','st2','st3'].forEach(function(id,i){
+    var el=document.getElementById(id);
+    el.classList.remove('on','done');
+    if(i+1<n) el.classList.add('done');
+    else if(i+1===n) el.classList.add('on');
+  });
+}
+function showStatus(msg, kind){
+  var el=document.getElementById('ocrStatus');
+  el.textContent=msg;
+  el.className='ocr-status show'+(kind==='ok'?' ok':kind==='warn'?' warn':'');
+}
+
+function renderHis(){
+  var c=CASES[currentCase];
+  document.querySelectorAll('#ptInfo [data-f]').forEach(function(td){
+    var f=td.getAttribute('data-f');
+    if(f==='age') td.textContent=c.patient.age+'岁';
+    else td.textContent=c.patient[f]||'';
+  });
+  document.getElementById('feeBody').innerHTML=c.fees.map(function(f,i){
+    var tc=f.trace_code==='—'?'—':(f.trace_code.slice(0,6)+'…'+f.trace_code.slice(-4));
+    return '<tr><td>'+(i+1)+'</td><td>'+esc(f.item_name)+'</td><td>'+f.qty+'</td><td>'+f.amount.toFixed(2)+'</td><td>'+esc(f.settle_date)+'</td><td>'+esc(tc)+'</td></tr>';
+  }).join('');
+  recognizedRows=[];
+  screeningResult=null;
+  document.getElementById('previewWrap').style.display='none';
+  document.getElementById('btnImport').disabled=true;
+  document.getElementById('ocrMeta').textContent='对准左侧费用明细表格，点击识别。当前案卷 '+c.patient.name+' · '+c.fees.length+' 行费用。';
+  setStep(1);
+  showStatus('');
+  document.getElementById('ocrStatus').className='ocr-status';
+}
+
+document.getElementById('casePick').onchange=function(){ currentCase=this.value; renderHis(); };
+
+function feesToRows(fees, patient){
+  return fees.map(function(f,i){
+    return {
+      row_id:'OCR-'+(i+1),
+      item_name:f.item_name,
+      qty:f.qty,
+      amount:f.amount,
+      trace_code:f.trace_code==='—'?undefined:f.trace_code,
+      settle_date:f.settle_date,
+      patient_age:patient.age,
+      patient_sex:patient.sex,
+      dept:patient.dept,
+      _conf: 0.92 + (i%3)*0.02
+    };
+  });
+}
+
+document.getElementById('btnCapture').onclick=function(){
+  var wrap=document.getElementById('hisWrap');
+  var table=document.getElementById('feeTable');
+  var rect=table.getBoundingClientRect();
+  var wrect=wrap.getBoundingClientRect();
+  var sel=document.createElement('div');
+  sel.className='ocr-sel';
+  sel.style.top=(rect.top-wrect.top)+'px';
+  sel.style.left=(rect.left-wrect.left)+'px';
+  sel.style.width=rect.width+'px';
+  sel.style.height=rect.height+'px';
+  ['tl','tr','bl','br'].forEach(function(c){
+    var d=document.createElement('div'); d.className='ocr-corner '+c; sel.appendChild(d);
+  });
+  wrap.querySelectorAll('.ocr-sel').forEach(function(x){x.remove();});
+  wrap.appendChild(sel);
+  setStep(2);
+  showStatus('正在 OCR 识别费用表格…', 'warn');
+  document.getElementById('btnCapture').disabled=true;
+
+  setTimeout(function(){
+    var c=CASES[currentCase];
+    recognizedRows=feesToRows(c.fees, c.patient);
+    // 模拟 OCR 低置信度：静脉输液数量偶发误识
+    if(currentCase==='field'){
+      recognizedRows[2]._conf=0.78;
+      recognizedRows[2]._warn='数量字段置信度偏低，已按上下文校正为 35';
+    }
+    var body=document.getElementById('previewBody');
+    body.innerHTML=recognizedRows.map(function(r,i){
+      var low=r._conf<0.85;
+      return '<tr class="'+(low?'low':'')+'"><td>'+(i+1)+'</td><td>'+esc(r.item_name)+'</td><td>'+r.qty+'</td><td>'+r.amount+'</td><td>'+(low?'⚠ '+Math.round(r._conf*100)+'%':'✓ '+Math.round(r._conf*100)+'%')+'</td></tr>';
+    }).join('');
+    document.getElementById('previewWrap').style.display='block';
+    document.getElementById('btnImport').disabled=false;
+    sel.remove();
+    setStep(3);
+    showStatus('识别完成 · '+recognizedRows.length+' 行 · 患者 '+c.patient.name+' · 可导入筛查', 'ok');
+    document.getElementById('btnCapture').disabled=false;
+  }, 1400);
+};
+
+function parseTsv(text){
+  var lines=text.trim().split(/\r?\n/).filter(Boolean);
+  if(lines.length<2) return [];
+  var headers=lines[0].split('\t').map(function(h){return h.trim();});
+  function col(names){ for(var i=0;i<headers.length;i++){ if(names.some(function(n){return headers[i].indexOf(n)>=0;})) return i; } return -1; }
+  var ic=col(['项目','名称','item']), qc=col(['数量','qty']), ac=col(['金额','amount']), dc=col(['日期','settle']), tc=col(['追溯','trace']);
+  var c=CASES[currentCase].patient;
+  return lines.slice(1).map(function(line,i){
+    var cells=line.split('\t');
+    return {
+      row_id:'P'+(i+1),
+      item_name:cells[ic]||cells[1]||'',
+      qty:Number(cells[qc]||cells[2])||1,
+      amount:Number(String(cells[ac]||cells[3]).replace(/[^\d.]/g,''))||0,
+      settle_date:cells[dc]||'2026-06-16',
+      trace_code:(cells[tc]||'').length>8?cells[tc]:undefined,
+      patient_age:c.age, patient_sex:c.sex, dept:c.dept
+    };
+  }).filter(function(r){return r.item_name;});
+}
+
+document.getElementById('btnPaste').onclick=function(){
+  var text=document.getElementById('pasteArea').value;
+  if(!text.trim()){ showStatus('请先粘贴 TSV 内容', 'warn'); return; }
+  recognizedRows=parseTsv(text);
+  document.getElementById('previewBody').innerHTML=recognizedRows.map(function(r,i){
+    return '<tr><td>'+(i+1)+'</td><td>'+esc(r.item_name)+'</td><td>'+r.qty+'</td><td>'+r.amount+'</td><td>粘贴</td></tr>';
+  }).join('');
+  document.getElementById('previewWrap').style.display='block';
+  document.getElementById('btnImport').disabled=false;
+  setStep(3);
+  showStatus('已从剪贴板解析 '+recognizedRows.length+' 行', 'ok');
+};
+
+document.getElementById('btnImport').onclick=async function(){
+  if(!recognizedRows.length) return;
+  var payload=recognizedRows.map(function(r){
+    var o={ row_id:r.row_id, item_name:r.item_name, qty:r.qty, amount:r.amount, settle_date:r.settle_date, patient_age:r.patient_age, patient_sex:r.patient_sex, dept:r.dept };
+    if(r.trace_code) o.trace_code=r.trace_code;
+    return o;
+  });
+  var yy=YY.panel({ title:'现场 OCR · 导入筛查', sub:'正在写入结构化行并过筛查漏斗…', accent:'#14B8A6' });
+  yy.loading('导入 '+payload.length+' 行 · 调用 /api/screening/rows…');
+  try{
+    var r=await fetch('/api/screening/rows',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({rows:payload})}).then(function(x){return x.json();});
+    if(r.error) throw new Error(r.error);
+    screeningResult=r;
+    renderScreening(yy, r);
+  }catch(e){
+    yy.body('<div style="padding:16px;color:#b91c1c">导入失败：'+esc(e.message)+'</div>');
+  }
+};
+
+function renderScreening(yy, r){
+  var f=r.funnel||{}, hits=(r.top20||[]);
+  var a=f.by_nature['明确违规']||0, b=f.by_nature['可疑']||0;
+  yy.sub('OCR 导入 '+f.total_rows+' 行 → 三档粗筛完成');
+  yy.chips([
+    {text:'A 重点 '+a, bg:'#b91c1c'},
+    {text:'B 补材料 '+b, bg:'#d97706'},
+    {text:'C 暂缓 '+money(f.clean_rows), bg:'#0a7a4b'}
+  ]);
+  var list=hits.slice(0,6).map(function(h){
+    var t=tierOf(h);
+    return '<div style="padding:9px 14px;border-bottom:1px solid #f2f5f9;border-left:4px solid '+TIER_BG[t]+'">'+
+      '<div style="display:flex;align-items:center;gap:6px;margin-bottom:2px">'+
+        '<span style="background:'+TIER_BG[t]+';color:#fff;font-size:11px;font-weight:800;padding:1px 7px;border-radius:20px">'+t+'</span>'+
+        '<b>'+esc(h.rule_id)+' · '+esc(h.item_name)+'</b>'+
+        '<span style="flex:1"></span><span style="font-family:monospace;color:#41556b">¥'+money(h.amount)+'</span></div>'+
+      '<div style="font-size:11.5px;color:#5b6d82">'+esc(h.reason)+'</div></div>';
+  }).join('');
+  yy.body(
+    '<div style="padding:12px 14px 6px;background:#f8fafc;border-bottom:1px solid #edf1f6">'+
+      '<div style="font-size:12px;color:#33475b;margin-bottom:8px">来源：<b>现场 OCR 录入</b> · 患者 '+esc(CASES[currentCase].patient.name)+' · '+esc(r.elapsed_ms||'—')+'ms</div>'+
+      list+
+    '</div>'
+  );
+  yy.actions([
+    {label:'写入疑点分诊清单', kind:'primary', href:'/regulator-triage.html'},
+    {label:'生成飞检行装包', href:'/regulator-fieldkit.html?from=ocr&case_id=main'}
+  ]);
+  yy.footer('与 Excel 分诊 / 桌面剪贴板哨兵同引擎 · 本地运行 · 数据不出机');
+  showStatus('筛查完成 · A '+a+' · B '+b+' · 放行 '+f.clean_rows, 'ok');
+}
+
+renderHis();
+</script>
+</body>
+</html>

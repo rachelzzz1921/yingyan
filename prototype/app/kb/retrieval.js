@@ -8,6 +8,7 @@ const stepfun = require('./stepfun-client');
 const { canEmbed, embedOne } = require('./embedding-provider');
 
 const { buildPolicyMetaFromKb, filterPolicyMaps, parseAdmitDate } = require('./as-of');
+const { buildCitationIndex } = require('../engine/citation-resolver');
 
 const DOMAIN_ALIAS = {
   麻醉: '麻醉', 重症医学: '重症', 定点零售药店: '药店', 医学影像: '影像',
@@ -72,6 +73,7 @@ function buildPolicyMaps(kb1, kb2, pl) {
     policyVerified,
     policyPending,
     policyMeta: buildPolicyMetaFromKb(kb1, kb2),
+    citationIndex: buildCitationIndex(kb1, kb2),
     source: 'json',
   };
 }

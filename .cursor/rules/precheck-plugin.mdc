@@ -1,0 +1,49 @@
+---
+description: 事前提醒插件(/api/precheck)与演示靶站防回归约束
+globs: prototype/app/server.js,prototype/app/engine/precheck*.js,prototype/app/public/plugin/**,plugin/browser-extension/**,prototype/app/public/mockhis.html,prototype/app/public/coder-station.html,yhf/harness/l7-precheck-smoke.js
+alwaysApply: false
+---
+
+# 事前提醒插件防回归
+
+## 单一编排源
+
+- `/api/precheck` **只能**调用 `prototype/app/engine/precheck-runner.js` 的 `runPrecheck()`。
+- 禁止在 `server.js` handler 内联 `precheckToneForRule` / `detectNative` 映射逻辑。
+
+```javascript
+// ❌ handler 内先用后 require（曾导致 S1 全绿误报）
+interaction: precheckToneForRule(rulesById, ...)
+const { precheckToneForRule } = require('./precheck-native');
+
+// ✅ server.js
+const { buildPseudoRecord, runPrecheck } = require('./engine/precheck-runner');
+```
+
+## 客户端：失败 ≠ 合规放行
+
+`yingyan-precheck.js` / `yingyan-disposition.js` 必须：
+
+1. 检查 `j.error || !r.ok`（HTTP 500 的 JSON 也有 `error` 字段）
+2. `showOverlay` / `renderDisposition` 在 `result.error` 时显示**红色异常**，禁止空 `hits` 走绿条「合规放行」
+3. `content.js` 拦截提交前检查 `result.error`
+
+网络 `catch` 也要设置 `error` 字段，不能只写 `engine` 脚注。
+
+## 双份同步
+
+`prototype/app/public/plugin/yingyan-precheck.js` 与 `plugin/browser-extension/yingyan-precheck.js` **必须字节一致**。改完执行：
+
+```bash
+cp prototype/app/public/plugin/yingyan-precheck.js plugin/browser-extension/
+node scripts/verify-precheck-plugin.js
+```
+
+## 改完必跑
+
+```bash
+node scripts/verify-precheck-plugin.js   # 静态 + G7 烟测
+bash yhf/run.sh --strict                 # 含 G7_precheck_smoke
+```
+
+演示场景契约见 `docs/precheck-plugin-guardrails.md`（S0–S4 开单、C0–C2 DRG）。

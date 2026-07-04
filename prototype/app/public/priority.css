@@ -96,12 +96,22 @@
 .problem-cell{min-width:260px}
 .problem-cell strong{display:block;margin-bottom:4px}
 .problem-cell .disposition{margin-top:5px;max-width:260px}
-.score-line{margin-top:7px;font-size:10.5px;color:var(--muted)}
-.score-line span{display:block;margin-bottom:3px;font-family:var(--font-num)}
-.score-line{position:relative}
-.score-line::before,.score-line i{content:'';display:block;height:5px;border-radius:999px}
-.score-line::before{background:#e2e8f0}
-.score-line i{position:absolute;left:0;bottom:0;background:linear-gradient(90deg,var(--yy-iris-d),#14b8a6)}
+.score-line{margin-top:7px;font-size:10.5px;color:var(--muted);font-family:var(--font-num);line-height:1.2;max-width:170px}
+.score-line-head{display:flex;align-items:baseline;justify-content:space-between;gap:8px}
+.score-line-head b{font-size:12px;color:var(--yy-ink-2)}
+.score-line-head em{font-style:normal;font-size:9.5px;color:#64748b;white-space:nowrap}
+.score-line-bar{height:4px;margin:5px 0 2px;border-radius:999px;background:#e2e8f0;overflow:hidden;position:relative}
+.score-line-bar i{display:block;width:var(--score-pct);height:100%;border-radius:999px;background:#14b8a6}
+.score-critical .score-line-bar i{background:#dc2626}
+.score-high .score-line-bar i{background:#f59e0b}
+.score-mid .score-line-bar i{background:#14b8a6}
+.score-low .score-line-bar i,.score-zero .score-line-bar i{background:#94a3b8}
+.score-line-scale{display:grid;grid-template-columns:40% 20% 20% 20%;font-family:var(--font-num);font-size:9px;color:#94a3b8;margin-top:1px}
+.score-line-scale span{position:relative;text-align:right}
+.score-line-scale span::before{content:'';position:absolute;right:0;top:-8px;width:1px;height:5px;background:#94a3b8;opacity:.75}
+.score-line-foot{font-family:var(--font);font-size:10px;color:#64748b;margin-top:2px}
+.score-critical .score-line-foot{color:#b91c1c;font-weight:800}
+.score-high .score-line-foot{color:#92400e;font-weight:800}
 .pri-help{display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;border-radius:999px;border:1px solid var(--line);background:#fff;color:var(--yy-ink-2);font-weight:900;cursor:pointer;margin-left:4px}
 .pri-more{position:relative}
 .pri-menu{display:none;position:absolute;right:0;top:calc(100% + 4px);z-index:20;min-width:98px;background:#fff;border:1px solid var(--line);box-shadow:var(--shadow-lg);border-radius:8px;padding:5px}

@@ -18,6 +18,7 @@
 const { piiRedact, prepareForLlm } = require('./pii-redact');
 const { sanitizeLlmPrompt } = require('./llm-privacy-gate');
 const { applyContextBudget } = require('./context-budget');
+const { resolveCitation, formatCitation } = require('./citation-resolver');
 
 const MODEL = process.env.YINGYAN_MODEL || 'claude-sonnet-4-6';
 const API_URL = 'https://api.anthropic.com/v1/messages';
@@ -106,10 +107,20 @@ async function llmAudit(record, rules, opts = {}) {
 
   // 回填核验状态 + 统计
   const policyVerified = opts.policyVerified || {};
+  const policyTexts = opts.policyTexts || {};
+  const citationIndex = opts.citationIndex || null;
   const findings = (parsed.findings || []).map((f, i) => ({
     finding_id: `F-LLM-${String(i + 1).padStart(3, '0')}`,
     ...f,
-    policy: (f.policy || []).map(pp => ({ ...pp, verify_status: policyVerified[pp.ref] ? '✅已核验' : '⚠待核验' })),
+    policy: (f.policy || []).map(pp => {
+      const hit = resolveCitation(pp.ref, citationIndex);
+      const citation = hit
+        ? formatCitation(hit)
+        : (policyTexts[pp.ref]
+          ? { ref: pp.ref, resolved: false, synthetic: true, note: '聚合/合成条目，无独立官方条目' }
+          : { ref: pp.ref, resolved: false });
+      return { ...pp, verify_status: policyVerified[pp.ref] ? '✅已核验' : '⚠待核验', citation };
+    }),
   }));
   const suspected = findings.filter(f => f.status === '疑点');
   const clues = findings.filter(f => f.status === '线索');

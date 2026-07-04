@@ -107,6 +107,31 @@ button:disabled{opacity:.55;cursor:default}
 @keyframes courtIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
 .court,.dbt-res{animation:courtIn .3s ease both}
 
+/* —— 对抗记录结构化段落 —— */
+.exch-summary{font-size:12px;font-weight:600;color:var(--ink);margin:0 0 6px;line-height:1.55}
+.exch-points{margin:0;padding:0 0 0 16px;font-size:11.5px;line-height:1.65}
+.exch-points li{margin-bottom:5px}
+.point-title{font-weight:700;color:var(--ink);display:block}
+.point-body{display:block;color:#41556b;margin-top:1px}
+.point-ref{display:block;font-size:10.5px;color:var(--dim);font-family:var(--mono);margin-top:2px}
+.reb-item{padding:6px 0;border-top:1px dashed #EDE7FA}
+.reb-item:first-child{border-top:0;padding-top:0}
+.reb-target{font-size:10.5px;font-weight:800;color:#41556b;margin-bottom:3px}
+.msg.pros .reb-target{color:#9a2c22}
+.msg.def .reb-target{color:#0E7568}
+.reb-body{font-size:11.5px;line-height:1.65;color:var(--ink)}
+.reb-ref{font-size:10.5px;color:var(--dim);margin-top:3px;font-family:var(--mono)}
+.verdict-block{font-size:11.5px;line-height:1.65}
+.steel-row{display:flex;flex-direction:column;gap:6px;margin-bottom:8px}
+.steel-p,.steel-d{padding:6px 8px;border-radius:7px;font-size:11.5px;line-height:1.55}
+.steel-p{background:#FBEAEA;color:#7f1d1d}
+.steel-d{background:#E5F5F2;color:#0f5132}
+.steel-tag{display:inline-block;font-size:10px;font-weight:800;border-radius:4px;padding:0 5px;margin-right:5px;background:rgba(255,255,255,.55)}
+.verdict-line{margin:6px 0 4px}
+.verdict-tag{font-size:10.5px;font-weight:800;color:var(--vio);margin-right:6px}
+.verdict-reasoning{margin:4px 0 0;color:#41556b;font-size:11.5px;line-height:1.65}
+.exch-empty,.exch-plain{margin:0;font-size:11.5px;color:var(--muted)}
+
 .note{margin-top:14px;font-size:12px;color:var(--muted);line-height:1.7;border-top:1px solid var(--line);padding-top:12px}
 .note b{color:var(--ink)}
 </style>
@@ -115,7 +140,7 @@ button:disabled{opacity:.55;cursor:default}
 <div class="wrap">
   <div class="top">
     <svg class="mark" viewBox="0 0 64 64" role="img" aria-label="鹰眼"><rect width="64" height="64" rx="14" fill="#0B2A4A"/><path d="M12 32 C17 20 47 20 52 32 C47 44 17 44 12 32 Z" stroke="#fff" stroke-width="2.2" fill="none" opacity=".9"/><circle cx="32" cy="32" r="10" fill="#14B8A6"/><circle cx="32" cy="32" r="4.5" fill="#061829"/></svg>
-    <div><h1 id="pageTitle">七环节 Agent 编排 · 调用链留痕</h1><div class="sub" id="pageSub">白盒审计:一次稽核经过哪些 Agent、每个 Agent 的 harness(数据源/知识源/工具)显式声明、本次触达什么。</div></div>
+    <div><h1 id="pageTitle">七环节 Agent 编排 · 调用链留痕</h1><div class="sub" id="pageSub">白盒审计:一次稽核经过哪些 Agent、每个 Agent 的配置(数据源/知识源/工具)显式声明、本次触达什么。</div></div>
     <a class="home" href="/home.html">← 返回三入口</a>
   </div>
 
@@ -137,11 +162,12 @@ button:disabled{opacity:.55;cursor:default}
   </div>
 
   <div class="note">
-    <b>为什么这条视图重要</b>:回应「多 Agent 不就是套壳?」——编排拓扑 = 部颁智能审核工作规程<b>七个法定环节</b>的 Agent 化;每个 Agent 的知识库与数据源在 harness 显式声明(<b>说给陈猛的 agent 管理平台</b>:账号/编排/知识源可审批),调用链全程留痕(<b>白盒审计</b>)。确定性环节毫秒级打底、LLM 环节(筛查/合议)按需增强;三人格合议结果赛前真实跑出、现场预载。<br>
-    <b>⚔ 对抗分诊 = 语义对抗只花在刀刃上</b>:铁证(明确违规)辩方必认账、对抗是浪费;线索级/干净证据太弱、不值得辩;<b>只有中间带(可疑档)才值得控/辩/裁三人格过一遍</b>——LLM 成本按争议度分诊,不是每条疑点都烧一次大模型。关掉开关即回到「每条手动选择是否对抗」;每条也可「强制对抗」覆盖分诊。<br>
+    <b>为什么这条视图重要</b>:回应「多智能体是不是套壳?」——编排拓扑 = 部颁智能审核工作规程<b>七个法定环节</b>的对位;每个环节的知识库与数据源都在配置中显式声明(账号/编排/知识源可审批,可适配机构已有的智能体管理平台),调用链全程留痕(<b>白盒审计</b>)。确定性环节毫秒级打底、语义环节(筛查/合议)按需增强;三人格合议结论为系统真实运行产出、现场预载。<br>
+    <b>⚔ 对抗分诊 = 语义对抗只花在刀刃上</b>:铁证(明确违规)辩方必认账、对抗是浪费;线索级/干净证据太弱、不值得辩;<b>只有中间带(可疑档)才值得控/辩/裁三人格过一遍</b>——语义分析成本按争议度分诊,不是每条疑点都跑一遍深度对抗。关掉开关即回到「每条手动选择是否对抗」;每条也可「强制对抗」覆盖分诊。<br>
     <b>合议本身就是信息不对称的对抗</b>:辩方只见临床材料、控方只见规则与结算数据、裁判只见双方陈述书——立论→质证→钢人复述→裁定,五轮全程留痕,引不出条目 ID 的裁定转人工。
   </div>
 </div>
+<script src="/debate-format.js"></script>
 <script>
 var query = new URLSearchParams(location.search);
 var APPEAL_PREVIEW = query.get('preview') === 'appeal';
@@ -177,11 +203,11 @@ async function run(){
 
   var s=t.summary||{}, ts=triageStats();
   document.getElementById('kpis').innerHTML=[
-    '<div class="kpi"><b>'+s.total_stages+'</b><span>七环节 · 确定性 '+s.deterministic_stages+'/LLM '+s.llm_stages+'</span></div>',
+    '<div class="kpi"><b>'+s.total_stages+'</b><span>七环节 · 确定性 '+s.deterministic_stages+'/语义 '+s.llm_stages+'</span></div>',
     '<div class="kpi"><b>'+s.findings+'</b><span>本次疑点 · 经全链处置</span></div>',
     '<div class="kpi"><b>'+s.kb_refs_cited+'</b><span>两库引用 · 可溯源</span></div>',
     '<div class="kpi"><b>'+s.human_baseline_minutes+'′→'+s.agent_seconds+'″</b><span>人力对比 · 单案初筛</span></div>',
-    '<div class="kpi vio"><b>'+ts.debate+'/'+ts.total+'</b><span>⚔ 需对抗(中间带) · LLM 省 '+ts.savePct+'%</span></div>',
+    '<div class="kpi vio"><b>'+ts.debate+'/'+ts.total+'</b><span>⚔ 需对抗(中间带) · 语义调用省 '+ts.savePct+'%</span></div>',
   ].join('');
 
   document.getElementById('pipe').innerHTML=(t.stages||[]).map(function(st,i){
@@ -200,7 +226,7 @@ async function run(){
 
 /* —— 对抗分诊:铁证免辩 · 线索/干净不辩 · 中间带(可疑档)对抗 —— */
 function triage(c){
-  if(c.nature==='明确违规') return {k:'skip-hard',label:'免辩 · 铁证(辩方必认账,省 LLM)',debate:false};
+  if(c.nature==='明确违规') return {k:'skip-hard',label:'免辩 · 铁证(辩方必认账,省算力)',debate:false};
   if(c.status==='线索'||(c.path||[]).some(function(p){return p.flag;})) return {k:'skip-weak',label:'不辩 · 线索级/证据弱',debate:false};
   if(c.nature==='可疑'||c.status==='疑点') return {k:'debate',label:'建议对抗 · 中间带',debate:true};
   return {k:'skip-weak',label:'不辩 · 干净',debate:false};
@@ -220,7 +246,7 @@ function renderChains(){
       +'<span class="seg hard">免辩·铁证 '+ts.hard+'</span>'
       +'<span class="seg mid">对抗·中间带 '+ts.debate+'</span>'
       +'<span class="seg weak">不辩·线索/证据弱 '+ts.weak+'</span>'
-      +'<span class="save">LLM 调用 '+ts.debate+'/'+ts.total+' · 省 '+ts.savePct+'%</span></div>'
+      +'<span class="save">语义调用 '+ts.debate+'/'+ts.total+' · 省 '+ts.savePct+'%</span></div>'
     :'';
   document.getElementById('chains').innerHTML=CHAINS.map(function(c,idx){
     var hops=(c.path||[]).map(function(p,i){ var cls='hop'+(p.llm?' llm':'')+(p.flag?' flag':''); return (i>0?'<span class="arrow">→</span>':'')+'<span class="'+cls+'">'+p.no+' '+esc(p.agent)+'<span style="color:#8296A9">·'+esc(p.note)+'</span></span>'; }).join('');
@@ -257,17 +283,21 @@ function courtHtml(r,c){
   var sm=d.steelman||{};
   var steel=(sm.prosecution_strongest||sm.defense_strongest)
     ?'<div class="steel">'
-      +(sm.prosecution_strongest?'<div><span class="s-p">控方最强</span>'+esc(sm.prosecution_strongest)+'</div>':'')
-      +(sm.defense_strongest?'<div><span class="s-d">辩方最强</span>'+esc(sm.defense_strongest)+'</div>':'')
+      +(sm.prosecution_strongest?'<div><span class="s-p">稽核方最强</span>'+esc(sm.prosecution_strongest)+'</div>':'')
+      +(sm.defense_strongest?'<div><span class="s-d">机构方最强</span>'+esc(sm.defense_strongest)+'</div>':'')
       +'</div>'
     :'';
   var ex=(d.exchanges||[]);
+  var DF=window.DebateFormat||{};
   var msgs=ex.length
-    ?'<details><summary>展开控/辩/裁完整对抗记录('+ex.length+' 轮 · 全程留痕)</summary><div class="msgs">'
+    ?'<details open><summary>展开控/辩/裁完整对抗记录('+ex.length+' 轮 · 全程留痕)</summary><div class="msgs">'
       +ex.map(function(e){ var cls=e.role==='控方'?'pros':e.role==='辩方'?'def':'judge';
-        return '<div class="msg '+cls+'"><div class="mrole">'+esc(e.role)+(e.stance?' · '+esc(e.stance):'')+'</div>'+esc(e.text)+'</div>';}).join('')
+        var roleLbl=(DF.roleLabel?DF.roleLabel(e.role):e.role);
+        var stanceLbl=(DF.stanceLabel?DF.stanceLabel(e.stance):e.stance);
+        var body=(DF.renderExchangeBody?DF.renderExchangeBody(e,d,esc):esc(e.text));
+        return '<div class="msg '+cls+'"><div class="mrole">'+esc(roleLbl)+(stanceLbl?' · '+esc(stanceLbl):'')+'</div>'+body+'</div>';}).join('')
       +'</div></details>'
-    :(d.verdict_reason?'<div class="steel">'+esc(d.verdict_reason)+'</div>':'');
+    :(d.verdict_reason?'<div class="steel"><p class="verdict-reasoning">'+esc(d.verdict_reason)+'</p></div>':'');
   var cite=(d.kb_citations&&d.kb_citations.length)
     ?'<div class="cite"><div class="krefs">'+d.kb_citations.map(function(x){return '<code>'+esc(x)+'</code>';}).join('')+'</div></div>'
     :'';

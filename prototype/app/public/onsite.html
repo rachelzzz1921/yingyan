@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>鹰眼 · 飞检现场版</title>
+  <link rel="stylesheet" href="/onsite.css">
+</head>
+<body>
+  <header class="top">
+    <div class="top-inner">
+      <div class="brand">
+        <h1>鹰眼 · 飞检现场版</h1>
+        <p>插件线模块三 · 数据疑点延伸为现场核查闭环</p>
+      </div>
+      <div class="nav">
+        <span class="flag">onsite_mode 显式开启</span>
+        <button class="btn" id="btnSkills">技能清单</button>
+        <button class="btn" id="btnBrief">当日小结</button>
+        <a class="btn" href="/plugins.html?onsite_mode=1#regulator">插件线</a>
+        <a class="btn" href="/priority.html">优先队列</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <div class="grid">
+      <aside class="panel">
+        <div class="panel-h">
+          <div>
+            <h2>行前任务生成器</h2>
+            <small>默认选择 8 条可疑/高金额明确违规</small>
+          </div>
+          <button class="btn primary" id="btnGenerate">生成任务</button>
+        </div>
+        <div class="panel-b">
+          <div class="queue" id="candidateList"></div>
+        </div>
+      </aside>
+
+      <section>
+        <div class="panel">
+          <div class="panel-h">
+            <div>
+              <h2>科室节点图与两条动线</h2>
+              <small id="planMeta">尚未生成现场计划</small>
+            </div>
+            <button class="btn" id="btnRefresh">刷新</button>
+          </div>
+          <div class="panel-b">
+            <div class="map">
+              <div class="svgbox" id="nodeMap"></div>
+              <div>
+                <div class="kpis">
+                  <div class="kpi"><div class="n" id="kTasks">0</div><div class="l">任务数</div></div>
+                  <div class="kpi"><div class="n" id="kDone">0</div><div class="l">已核</div></div>
+                  <div class="kpi"><div class="n" id="kConfirmed">0</div><div class="l">证实</div></div>
+                  <div class="kpi"><div class="n" id="kAmount">0</div><div class="l">证实金额</div></div>
+                </div>
+                <div class="routes">
+                  <div class="route"><h3>动线 A · 医疗/政策</h3><ol><li>病案室 / 医务科</li><li>设备科 / 影像科</li><li>信息科</li></ol></div>
+                  <div class="route"><h3>动线 B · 财务/数据</h3><ol><li>药库 / 耗材库</li><li>财务科 / 结算办</li><li>信息科</li></ol></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel" style="margin-top:16px">
+          <div class="panel-h">
+            <div>
+              <h2>现场任务卡</h2>
+              <small>三态 tick · 取证挂载 · 自动回填改档</small>
+            </div>
+          </div>
+          <div class="panel-b">
+            <div class="tasks" id="taskList"></div>
+          </div>
+        </div>
+
+        <div class="panel" style="margin-top:16px">
+          <div class="panel-h">
+            <div>
+              <h2>技能注册与当日材料</h2>
+              <small>删除任一技能目录，其余技能继续运行</small>
+            </div>
+          </div>
+          <div class="panel-b">
+            <div class="skills" id="skillList"></div>
+            <div class="brief" id="briefBox" style="margin-top:12px">点击“当日小结”生成报告引擎模板产物。</div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+  <div class="toast" id="toast"></div>
+  <script src="/onsite.js"></script>
+</body>
+</html>

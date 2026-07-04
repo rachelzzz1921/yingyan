@@ -4,9 +4,9 @@
     "gold_standard": false,
     "gold_standard_note": "【已去自评化】本文件为引擎回归漂移快照(引擎自动生成),非独立金标准。独立设计真值见 data/ground_truth_manifest.json(按埋点设计意图声明 planted_suspect/planted_clue/is_clean),门禁据其做独立零误报复核与召回 floor。本快照仅供 shadow / 回归漂移探测。",
     "summary": {
-      "suspected_count": 5,
-      "clue_count": 2,
-      "total_findings": 7
+      "suspected_count": 6,
+      "clue_count": 4,
+      "total_findings": 10
     },
     "snapshot_role": "engine_regression_snapshot"
   },
@@ -47,6 +47,20 @@
       "violation_type": "虚构服务项目候选"
     },
     {
+      "rule_id": "L3-DS",
+      "rule_name": "结算/明细数据异常",
+      "status": "疑点",
+      "amount_involved": 25,
+      "violation_type": "数据质量"
+    },
+    {
+      "rule_id": "L3-DRX",
+      "rule_name": "重复开药/药品种类超标",
+      "status": "线索",
+      "amount_involved": 9890,
+      "violation_type": "重复开药"
+    },
+    {
       "rule_id": "T-207",
       "rule_name": "院外购药费用转嫁",
       "status": "线索",
@@ -59,6 +73,13 @@
       "status": "线索",
       "amount_involved": 1180,
       "violation_type": "过度诊疗/重点监控"
+    },
+    {
+      "rule_id": "D-402",
+      "rule_name": "费用转嫁—应保项目让患者自费/院外购买",
+      "status": "线索",
+      "amount_involved": 0,
+      "violation_type": "费用转嫁"
     }
   ],
   "correctly_not_flagged": [

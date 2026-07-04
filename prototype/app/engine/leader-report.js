@@ -172,4 +172,73 @@ function renderLeaderReportMarkdown(rep) {
   return L.join('\n');
 }
 
-module.exports = { buildLeaderReport, renderLeaderReportMarkdown };
+function buildOnsiteDailyBrief(onsiteBrief) {
+  const s = onsiteBrief.summary || {};
+  return {
+    template: 'onsite_daily_brief',
+    generated_at: onsiteBrief.generated_at || new Date().toISOString(),
+    plan: onsiteBrief.plan,
+    summary: {
+      completed_stations: s.completed_stations || 0,
+      verified_tasks: s.verified_tasks || 0,
+      total_tasks: s.total_tasks || 0,
+      confirmed_count: s.confirmed_count || 0,
+      rejected_count: s.rejected_count || 0,
+      pending_evidence_count: s.pending_evidence_count || 0,
+      amount_confirmed: s.amount_confirmed || 0,
+    },
+    by_team: onsiteBrief.by_team || [],
+    stations: onsiteBrief.stations || [],
+    confirmed_tasks: onsiteBrief.confirmed_tasks || [],
+    rejected_tasks: onsiteBrief.rejected_tasks || [],
+    pending_tasks: onsiteBrief.pending_tasks || [],
+  };
+}
+
+function renderOnsiteDailyBriefMarkdown(rep) {
+  const s = rep.summary || {};
+  const dateStr = (rep.generated_at || new Date().toISOString()).slice(0, 10);
+  const plan = rep.plan || {};
+  const L = [
+    '# 飞检现场当日碰头会小结',
+    '',
+    `> 鹰眼报告引擎自动生成 · ${dateStr} · 计划 ${plan.plan_id || '—'} · ${plan.org_id || '—'}`,
+    '',
+    '## 一、今日进展',
+    '',
+    `今日完成站点 **${s.completed_stations}** 个，已核任务 **${s.verified_tasks}/${s.total_tasks}** 条；现场证实 **${s.confirmed_count}** 条，排除 **${s.rejected_count}** 条，需补证 **${s.pending_evidence_count}** 条；证实涉及金额 **¥${fmt(s.amount_confirmed)}**。`,
+    '',
+    '## 二、小组进度',
+    '',
+    '| 小组 | 任务数 | 已核 | 证实 | 证实金额 |',
+    '|---|---:|---:|---:|---:|',
+    ...(rep.by_team || []).map(t => `| ${t.team} | ${t.total} | ${t.done} | ${t.confirmed} | ¥${fmt(t.amount_confirmed)} |`),
+    '',
+    '## 三、站点完成情况',
+    '',
+    '| 站点 | 任务数 | 已核 |',
+    '|---|---:|---:|',
+    ...(rep.stations || []).map(st => `| ${st.name} | ${st.total} | ${st.done} |`),
+    '',
+    '## 四、已证实任务',
+    '',
+    ...(rep.confirmed_tasks || []).slice(0, 20).map(t => `- ${t.team} · ${t.type} · ${t.case_title} · ${t.rule_id} · ¥${fmt(t.amount_involved)}`),
+    (rep.confirmed_tasks || []).length ? '' : '- 暂无',
+    '',
+    '## 五、排除与补证',
+    '',
+    ...(rep.rejected_tasks || []).slice(0, 20).map(t => `- 排除 · ${t.rule_id} · ${t.verify_reason || '—'}`),
+    ...(rep.pending_tasks || []).slice(0, 20).map(t => `- 需补证 · ${t.rule_id} · ${t.case_title}`),
+    (!(rep.rejected_tasks || []).length && !(rep.pending_tasks || []).length) ? '- 暂无' : '',
+    '',
+    '> 程序护栏：任务卡已提示两名持证人员参与；询问类任务提示笔录逐页签字/捺印。现场取证已写入 evidence_links 的 layer=4/source=onsite。',
+  ];
+  return L.join('\n');
+}
+
+module.exports = {
+  buildLeaderReport,
+  renderLeaderReportMarkdown,
+  buildOnsiteDailyBrief,
+  renderOnsiteDailyBriefMarkdown,
+};

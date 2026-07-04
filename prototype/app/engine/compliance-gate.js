@@ -1,16 +1,20 @@
 'use strict';
 
+const { resolveCitation } = require('./citation-resolver');
+
 const OVERCLAIM = /明确诈骗|刑事犯罪|确凿无疑|100%违规|必须定罪/;
 
 function applyComplianceGate(findings, ctx = {}) {
   const policyTexts = ctx.policyTexts || {};
   const policyVerified = ctx.policyVerified || {};
+  const citationIndex = ctx.citationIndex || null;
 
   for (const f of findings) {
     f.compliance_flags = f.compliance_flags || [];
     const add = (code, action, detail) => f.compliance_flags.push({ code, action, detail });
 
     if (f.status === '疑点') {
+      const wasSuspected = true;
       const evCount = (f.evidence || []).length;
       if (evCount < 2) {
         f.status = '线索';
@@ -36,6 +40,14 @@ function applyComplianceGate(findings, ctx = {}) {
         add('C-002', 'downgrade', '政策引用未核验或不在知识库');
       }
 
+      const citationStats = citationIntegrity(policies, policyTexts, citationIndex);
+      f.citation_integrity = citationStats;
+      if (wasSuspected && citationStats.total > 0 && citationStats.resolved === 0) {
+        if (f.status === '疑点') f.status = '线索';
+        f.needs_human = true;
+        add('C-006', 'downgrade_manual', '引用不出可解析条目ID，按 Q9 同款硬约束降级并转人工复核');
+      }
+
       const reasoning = f.reasoning || '';
       if ((!reasoning || reasoning.length < 20) && f.status === '疑点') {
         f.status = '线索';
@@ -55,6 +67,27 @@ function applyComplianceGate(findings, ctx = {}) {
     }
   }
   return findings;
+}
+
+function citationIntegrity(policies, policyTexts, citationIndex) {
+  const list = policies || [];
+  const unresolved = [];
+  let resolved = 0;
+  for (const p of list) {
+    const ref = p.ref || p.ref_id;
+    if (!ref) {
+      unresolved.push('');
+      continue;
+    }
+    const ok = !!resolveCitation(ref, citationIndex) || !!policyTexts[ref] || !!p.citation?.resolved || !!p.citation?.synthetic;
+    if (ok) resolved += 1;
+    else unresolved.push(ref);
+  }
+  return {
+    total: list.length,
+    resolved,
+    unresolved_refs: unresolved.filter(Boolean),
+  };
 }
 
 module.exports = { applyComplianceGate };

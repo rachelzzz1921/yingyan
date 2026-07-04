@@ -54,6 +54,12 @@ bash yhf/run.sh --strict
 # 看板前端跨脚本依赖（语法 + dash-bridges 契约）
 node scripts/verify-dashboard-frontend.js
 
+# 事前提醒插件（双份同步 + G7 场景烟测）
+node scripts/verify-precheck-plugin.js
+
+# 稽核四条通路（renderModeStrip 顺序 + 可选 live API）
+node scripts/verify-audit-pathways.js --live
+
 # Run prompt evaluations after configuring eval/.env
 cd eval
 bash run_baseline.sh
@@ -82,6 +88,8 @@ Important optional keys include `MINIMAX_API_KEY`, `ANTHROPIC_API_KEY`, `SUPABAS
 - Keep prototype changes dependency-light. Runtime serving is intentionally plain Node.js and static frontend code.
 - Prefer small, auditable changes in rule logic, KB content, and harness behavior.
 - When changing audit behavior, run `bash yhf/run.sh --strict` from the repository root.
+- When changing **precheck / plugin / mockhis** behavior, also run `node scripts/verify-precheck-plugin.js` and read `docs/precheck-plugin-guardrails.md`.
+- When changing **`/api/audit` / app.js 报告渲染 / audit-pipeline** behavior, run `node scripts/verify-audit-pathways.js --live` and read `docs/audit-pathways-guardrails.md`.
 - When editing prompt assets, document the motivating failure mode and rerun the relevant `eval/` harness if keys are available.
 - When editing TSX/React code under future app directories, follow the local framework conventions before adding new abstractions.
 

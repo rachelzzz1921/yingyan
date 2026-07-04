@@ -83,17 +83,42 @@ body::after{content:"";position:fixed;top:-24%;right:-12%;width:70vw;height:72vh
 .subgo{display:flex;gap:8px;margin-top:9px}
 .subgo a{flex:1;text-align:center;font-size:12px;color:#3D5A76;border:1px solid var(--line);border-radius:9px;padding:8px 6px;text-decoration:none;transition:.15s;background:#F8FAFC}
 .subgo a:hover{border-color:var(--ink2);color:var(--ink)}
+/* ---------- 常见问题（折叠，不占主视觉） ---------- */
+.pitch-faq{margin-top:14px;border:1px solid var(--line);border-radius:14px;background:rgba(255,255,255,.85);overflow:hidden}
+.pitch-faq summary{cursor:pointer;padding:12px 18px;font-size:13px;font-weight:700;color:var(--ink2);list-style:none;user-select:none}
+.pitch-faq summary::before{content:"▸ ";color:var(--dim)}
+.pitch-faq[open] summary::before{content:"▾ "}
+.pitch-faq .faq-body{padding:0 18px 14px;display:grid;gap:8px}
+.pitch-faq .faq-item{font-size:12.5px;line-height:1.55;color:var(--muted);padding:8px 10px;background:#F8FAFC;border-radius:8px;border-left:3px solid var(--line)}
+.pitch-faq .faq-item b{color:var(--ink);display:block;margin-bottom:2px;font-size:12px}
 
-/* ---------- shared-engine strip ---------- */
-.engine{margin-top:26px;display:flex;align-items:center;gap:0;border:1px solid var(--line);border-radius:14px;overflow:hidden;background:var(--surface);box-shadow:0 3px 14px rgba(11,42,74,.05)}
-.engine .cell{flex:1;padding:13px 18px;font-size:12.5px;color:var(--muted);border-right:1px solid var(--line);display:flex;align-items:center;gap:9px}
-.engine .cell:last-child{border-right:none}
-.engine .cell b{color:var(--ink);font-weight:700}
-.engine .dot{width:8px;height:8px;border-radius:50%;flex:none}
-.engine .dot.t{background:var(--iris2);box-shadow:0 0 8px rgba(20,184,166,.5)}
-.engine .dot.a{background:var(--amber);box-shadow:0 0 8px rgba(232,168,56,.5)}
-.engine .dot.r{background:var(--danger);box-shadow:0 0 8px rgba(220,74,61,.5)}
-@media(max-width:860px){.engine{flex-direction:column;align-items:stretch}.engine .cell{border-right:none;border-bottom:1px solid var(--line)}.engine .cell:last-child{border-bottom:none}}
+/* ---------- 腰封:脚本骨架一句话 ---------- */
+.waist{display:flex;align-items:center;gap:15px;margin:20px 0 0;padding:14px 22px;border-radius:14px;background:linear-gradient(100deg,#0B2A4A,#134E72);color:#fff;box-shadow:0 10px 30px rgba(11,42,74,.26);flex-wrap:wrap}
+.waist .waist-mark{font-size:11px;letter-spacing:.16em;font-family:var(--mono);color:var(--amber2);border:1px solid rgba(245,200,66,.55);border-radius:20px;padding:5px 13px;white-space:nowrap;font-weight:700;flex:none}
+.waist b{font-size:clamp(19px,2.5vw,27px);font-weight:800;letter-spacing:.02em;line-height:1.35}
+.waist u{text-decoration:none;color:var(--amber2);text-underline-offset:4px;border-bottom:2px solid rgba(245,200,66,.5);padding-bottom:1px}
+
+/* ---------- 三个记忆点 ---------- */
+.memband{margin-top:30px;border:1px solid var(--line);border-radius:16px;background:var(--surface);overflow:hidden;box-shadow:0 4px 18px rgba(11,42,74,.06)}
+.mb-label{font-size:11.5px;letter-spacing:.18em;font-weight:700;color:var(--dim);font-family:var(--lat);padding:12px 20px 0;text-transform:uppercase}
+.mempoints{display:grid;grid-template-columns:repeat(3,1fr);gap:0;padding:6px 6px 8px}
+.mp{display:flex;align-items:flex-start;gap:12px;padding:14px 16px;text-decoration:none;color:inherit;border-radius:12px;transition:background .15s,transform .15s}
+.mp:hover{background:#F4F8FB;transform:translateY(-2px)}
+.mp-no{font-family:var(--mono);font-size:26px;font-weight:800;line-height:1;flex:none;margin-top:1px}
+.mp-no.a{color:var(--amber)} .mp-no.r{color:var(--danger)} .mp-no.t{color:var(--iris2)}
+.mp-body b{display:block;font-size:16.5px;font-weight:800;color:var(--ink);margin-bottom:3px;letter-spacing:.01em}
+.mp-body em{font-style:normal;font-size:12.5px;color:var(--muted);line-height:1.55}
+@media(max-width:860px){.mempoints{grid-template-columns:1fr}}
+
+/* ---------- 诚实收尾:79 条覆盖坐标系 ---------- */
+.coverage-honest{margin-top:14px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;padding:13px 20px;border:1px dashed var(--hair);border-radius:14px;background:rgba(255,255,255,.72);text-decoration:none;color:inherit;transition:border-color .15s,box-shadow .15s}
+.coverage-honest:hover{border-color:var(--ink2);box-shadow:0 6px 16px rgba(11,42,74,.08)}
+.coverage-honest .ch-badge{font-size:11px;letter-spacing:.12em;font-weight:700;color:var(--ink);border:1.5px solid var(--hair);border-radius:20px;padding:4px 12px;white-space:nowrap;flex:none;font-family:var(--mono)}
+.coverage-honest .ch-text{font-size:13px;color:var(--muted);flex:1;min-width:260px}
+.coverage-honest .ch-text b{color:var(--ink);font-weight:700}
+.coverage-honest .ch-text em{font-style:normal;font-weight:700}
+.coverage-honest .ch-text em.g{color:var(--ok)} .coverage-honest .ch-text em.y{color:#B07C1B} .coverage-honest .ch-text em.d{color:var(--dim)}
+.coverage-honest .ch-go{font-size:13px;font-weight:700;color:var(--ink2);white-space:nowrap;flex:none}
 
 /* ---------- 补充物料入口 ---------- */
 .materials{margin-top:22px;padding:16px 20px;border:1px dashed var(--hair);border-radius:14px;background:rgba(255,255,255,.78);display:flex;align-items:center;flex-wrap:wrap;gap:12px 16px}
@@ -117,11 +142,12 @@ body::after{content:"";position:fixed;top:-24%;right:-12%;width:70vw;height:72vh
         <h1>鹰眼 <span class="en">EAGLEEYE</span></h1>
         <p>医保基金稽核智能体 · MEDICAL INSURANCE AUDIT AGENT</p>
       </div>
-      <div class="tag">模法黑客松 S4 · 2026</div>
+      <div class="tag">产品演示 · 2026</div>
     </header>
 
     <h2 class="lead">看得懂病历的稽核 AI，<br>把线索变成<span class="red">能对质的证据</span>。</h2>
-    <p class="sub">读懂病程·医嘱·费用清单，做费用-诊断-医嘱三方交叉验证；每条疑点回链原文与政策条款。<b>人少事多场景下的 AI 人力倍增器。</b></p>
+    <p class="sub">读懂病程·医嘱·费用清单，做费用-诊断-医嘱三方交叉验证；每条疑点回链原文与政策条款。<br><b>人少事多场景下的 AI 人力倍增器。</b></p>
+    <div class="waist"><span class="waist-mark">一句话定位</span><b>把医保监管的<u>文件</u>，做成一台<u>能跑的引擎</u>。</b></div>
     <div class="creed">铁律 · 引不出原文的疑点，不输出<i>EVIDENCE-CHAIN FORENSICS</i></div>
 
     <div class="facts">
@@ -131,49 +157,49 @@ body::after{content:"";position:fixed;top:-24%;right:-12%;width:70vw;height:72vh
       <div class="fact hot"><b>40′→90″</b><span>鹰眼单案初筛 · 三要素证据链直出</span></div>
     </div>
 
-    <div class="pick"><b>三个入口</b>同一个引擎 · 同一套两库知识底座 · 同一条 G0 零误报红线</div>
+    <div class="pick"><b>三个入口</b>同一个引擎 · 同一套两库知识底座 · 同一条零误报红线</div>
     <div class="cards">
       <a class="card gold" href="/golden.html">
         <div class="accent"></div>
         <div class="badge">主演示 · 10 分钟</div>
         <div class="role">① GOLDEN PATH</div>
         <h2>黄金闭环 · 一案到底</h2>
-        <div class="who">选一份案卷包（或现场上传病历）走完「稽核 → 举证 → 复核 → 治理 → 复跑 → 测算 → 门禁」七步——每步真 API、有产物、全程留痕、当场可验。</div>
-        <div class="flow"><span class="hot">秒级初筛</span><span class="hot">三要素证据链</span><span>驳回→shadow 治理</span><span>整改复跑 diff</span><span>主动退回 ROI</span><span class="hot">G0 门禁验收</span></div>
+        <div class="who">先看一条事实：<b>同一盒药的追溯码，结算了两次</b>——上月国家局药店飞检刚曝光过同款。鹰眼三秒把它从一千条记录里挑出来，结论旁标着依据的两库批次、原文页码。十分钟走通一条链：<b>分诊 → 举证 → 合议 → 处置 → 进化</b>，任指一条疑点，当场展示它从哪几个字段交叉出来。</div>
+        <div class="flow"><span class="hot">发现·秒级初筛</span><span class="hot">举证·三要素链</span><span>合议·三人格</span><span>处置·一键报告</span><span class="hot">进化·规则沉淀</span></div>
         <div class="kpi"><b>7 步</b><span>闭环走完 · 演示计时器实时走表</span></div>
         <span class="go">开始闭环演示 →</span>
       </a>
-      <div class="card reg" style="cursor:default">
+      <div class="card reg" data-href="/index.html?role=audit">
         <div class="accent"></div>
         <div class="no">02</div>
         <div class="role">② FULL PLATFORM</div>
         <h2>鹰眼平台 · 全面能力</h2>
-        <div class="who">监管飞检取证工作台 + 院端自查驾驶舱 + 优先队列 + 七环节 Agent 编排（白盒审计）+ 材料导入 + 工程看板。评委追问哪一块，当场点开哪一块——这是完整的大平台，不是小工具。</div>
-        <div class="flow"><span>飞检工作台</span><span>院端自查</span><span>优先队列</span><span>七环节 Agent</span><span>三人格合议</span><span>材料导入</span><span>YHF 看板</span></div>
+        <div class="who">给基金监管科审核员：智能监控每月筛出一万多条，初审复审要过三遍——<b>子系统筛出的，正是鹰眼的输入</b>。批量分诊按金额与置信度排队，单案取证 40 分钟缩到 90 秒；可疑档三人格合议，缺手术记录即自动立案。三档分诊（明确违规 / 可疑 / 干净）沿用官方分类。</div>
+        <div class="flow"><span>飞检工作台</span><span>院端自查</span><span>优先队列</span><span>三人格合议</span><span>材料导入</span><span>举证包导出</span></div>
         <div class="kpi"><b>40′→90″</b><span>单案取证提效 · 举证包一键出</span></div>
-        <a class="go" href="/?role=audit">进入鹰眼平台 →</a>
+        <a class="go" href="/index.html?role=audit">进入鹰眼平台 →</a>
         <div class="subgo">
-          <a href="/?role=audit">监管飞检工作台</a>
-          <a href="/?role=hospital">院端自查驾驶舱</a>
+          <a href="/index.html?role=audit">监管飞检工作台</a>
+          <a href="/index.html?role=hospital">院端自查驾驶舱</a>
           <a href="/priority.html">优先队列</a>
-          <a href="/agent-chain.html">Agent 编排</a>
           <a href="/intake.html">材料导入</a>
-          <a href="/dashboard.html">工程看板</a>
         </div>
       </div>
-      <div class="card hos">
+      <div class="card hos" data-href="/plugins.html">
         <div class="accent"></div>
         <div class="no">03</div>
         <div class="role">③ PLUGIN LINE</div>
         <h2>插件 & 小工具箱 · 零对接嵌入</h2>
-        <div class="who">大平台能力拆成小工具，嵌进原有系统和工作习惯——<b>院端</b>：开单/编码/结算三角色事前提醒；<b>监管</b>：疑点分诊、阈值试算、飞检行装包。同一个引擎，换输入和输出就是新插件。</div>
-        <div class="flow"><span class="hot">监管小工具箱</span><span>院端三角色</span><span>桌面哨兵</span><span>浏览器扩展</span><span>本地不出域</span></div>
+        <div class="who">医生开单的瞬间浮层提醒：这条医嘱结算时会被拦，依据是两库条目——<b>现在改，损失是零</b>。政策限定红色拦截、医疗合理黄色只提示，尊重临床。监管不用换大系统：Excel 分诊、规则后台试算、飞检文件夹行装包。系统之间打通很难，鹰眼的答案是<b>不打通，绕过去</b>——装上就能用，数据不出机。</div>
+        <div class="flow"><span class="hot">监管小工具箱</span><span>现场 OCR 录入</span><span>院端三角色</span><span>本地不出域</span></div>
         <div class="kpi"><b>7+3</b><span>监管 3 精做 · 院端 3 触点 · 菜单可扩展</span></div>
         <a class="go" href="/plugins.html">进入插件 & 小工具箱 →</a>
         <div class="subgo">
+          <a href="/regulator-ocr-import.html">现场 OCR</a>
           <a href="/regulator-triage.html">疑点分诊</a>
           <a href="/regulator-threshold.html">阈值试算</a>
           <a href="/regulator-fieldkit.html">飞检行装包</a>
+          <a href="/agent-chain.html?preview=appeal">申诉批阅</a>
           <a href="/mockhis.html">医生开单</a>
           <a href="/coder-station.html">编码员</a>
           <a href="/settle-station.html">结算员</a>
@@ -181,23 +207,59 @@ body::after{content:"";position:fixed;top:-24%;right:-12%;width:70vw;height:72vh
       </div>
     </div>
 
+    <details class="pitch-faq">
+      <summary>关于鹰眼的六个问题</summary>
+      <div class="faq-body">
+        <div class="faq-item"><b>规则是鹰眼自己编的吗？</b>不是，也不能编。全部溯源国家两库已公开批次与相关号令；鹰眼做的是把规则引擎化，并提供地方增补调参的工具。</div>
+        <div class="faq-item"><b>和智能监管子系统重复吗？</b>不重复，补三段：可疑档的合议式明细审核、院端事前插件、人审反哺的规则沉淀。子系统筛出的一万多条，正是鹰眼的输入。</div>
+        <div class="faq-item"><b>多智能体是不是套壳？</b>编排拓扑对位部颁工作规程的七个环节；每个环节装的是两库条目和曝光台判例。壳谁都有，里面的知识通用模型没有。</div>
+        <div class="faq-item"><b>是实时跑的吗？</b>确定性引擎实时出结果；合议结论为系统真实运行的产出、预先载入，任选一条案卷可以当场实时重跑。</div>
+        <div class="faq-item"><b>数据是真的吗？</b>数据结构取自官方四十张脱敏表，违规样例仿国家局曝光台真实案例构造，每条埋点都有底账清单可对照。</div>
+        <div class="faq-item"><b>落地要多久？</b>院端插件下载即装；监管侧对接结算明细表、支持私有化部署，断网环境可完整运行。</div>
+      </div>
+    </details>
+
     <nav class="materials" aria-label="配套资料">
       <span class="materials-label">配套资料</span>
       <a href="/materials/yingyan-rule-architecture-flyer.html" target="_blank" rel="noopener">规则架构 · 能力说明册<em>79 条框架 · 三态工作流 · 三审三验</em></a>
       <a href="/materials/yingyan-eagleeye-whitepaper.html" target="_blank" rel="noopener">产品白皮书 · 全景说明<em>18 页 · 三入口 · 监管小工具箱 · 插件产品线</em></a>
-      <a href="/materials/yingyan-eagleeye-a4-flyer-v1.html" target="_blank" rel="noopener">路演精华 · 双面概要<em>Pitch 三入口 + 小工具箱 · 扫码体验</em></a>
+      <a href="/materials/yingyan-eagleeye-a4-flyer-v1.html" target="_blank" rel="noopener">路演精华 · 双面概要<em>三入口 + 小工具箱 · 扫码体验</em></a>
     </nav>
 
-    <div class="engine">
-      <div class="cell"><span class="dot t"></span><b>同一个确定性引擎</b>·毫秒级·可复现</div>
-      <div class="cell"><span class="dot a"></span><b>站在国家两库肩上</b>·每条规则可溯官方原文</div>
-      <div class="cell"><span class="dot r"></span><b>G0 红线</b>·干净案卷零误报·一票否决</div>
+    <div class="memband">
+      <div class="mb-label">三句话记住鹰眼</div>
+      <div class="mempoints">
+        <a class="mp" href="/index.html?role=audit" title="每条疑点旁标注依据的两库批次与原文页码，点得开">
+          <span class="mp-no a">①</span>
+          <div class="mp-body"><b>每条结论都有出处</b><em>两库第几批 · 哪条判例 · 原文第几页——点得开</em></div>
+        </a>
+        <a class="mp" href="/index.html?role=audit" title="缺证据不是数据不全，系统自动立一条『有收费无记录』的疑点">
+          <span class="mp-no r">②</span>
+          <div class="mp-body"><b>缺证据本身就是疑点</b><em>手术费找不到手术记录，系统自动立案，不是扣分了事</em></div>
+        </a>
+        <a class="mp" href="/plugins.html" title="插件版嵌进院端 HIS / 监管 Excel，本地不出域">
+          <span class="mp-no t">③</span>
+          <div class="mp-body"><b>装上就能用</b><em>不动你任何系统 · 数据不出机 · 断网也照跑</em></div>
+        </a>
+      </div>
     </div>
+
+    <a class="coverage-honest" href="/coverage-map.html">
+      <span class="ch-badge">诚实收尾</span>
+      <span class="ch-text"><b>国家规则库 79 条坐标系</b>：引擎 checker 已挂接 <em class="g">79/79 已实现</em>（62 族 + 埋点 4 + L3×5 + ZB×8）· 覆盖地图实时读 <code>/api/official-coverage</code>。</span>
+      <span class="ch-go">看覆盖地图 →</span>
+    </a>
 
     <div class="foot">
       <span class="slogan">替人扛量<i>·</i>报得准<i>·</i>证得实<i>·</i>扛得住申辩</span>
       <span class="src">数据来源：8600 名医保监管人员·公开行业报道；13.27 亿参保人、28.99 万定点机构·国家医保局《2024年全国医疗保障事业发展统计公报》；500 家·《2024年医保基金违法违规问题专项整治工作方案》。</span>
     </div>
   </div>
+<script>
+document.querySelectorAll('.card[data-href]').forEach(function(c){
+  c.style.cursor='pointer';
+  c.addEventListener('click',function(e){ if(e.target.closest('a')) return; location.href=c.dataset.href; });
+});
+</script>
 </body>
 </html>

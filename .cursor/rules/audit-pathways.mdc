@@ -1,0 +1,34 @@
+---
+description: 稽核四条通路（基础/RAG/LLM/广深）与 app.js 报告渲染防回归
+globs: prototype/app/public/app.js,prototype/app/server.js,prototype/app/engine/audit-pipeline.js,yhf/harness/l6-pipeline.js,scripts/verify-audit-pathways.js
+alwaysApply: false
+---
+
+# 稽核四条通路防回归
+
+## 四条 UI 档位 → server profile
+
+| UI 按钮 | API | pipeline profile |
+|---------|-----|------------------|
+| 基础覆盖 | `POST /api/audit` | `fast` |
+| 广度增强（RAG） | `?rag=1` | `standard` + RAG |
+| 深度增强（LLM） | `?mode=llm` | `deep` |
+| 广深双增强 | `?mode=super` | `super` |
+
+编排只在 `audit-pipeline.js` + `server.js /api/audit`；**不要**在 handler 内联重复逻辑。
+
+## 前端报告渲染
+
+- `renderModeStrip` 必须在 `renderReport` **之前**定义，并挂 `window.renderModeStrip`（onclick 与报告条共用）。
+- 稽核成功后 `renderReport` → `renderModeStrip`；失败时 catch 显示 `稽核失败：…`，**禁止**把 ReferenceError 当合规。
+- 改 `app.js` 后硬刷新；静态资源 `.js/.html` 已设 `Cache-Control: no-cache`。
+
+## 改完必跑
+
+```bash
+node scripts/verify-audit-pathways.js --live
+node scripts/verify-precheck-plugin.js
+bash yhf/run.sh --strict
+```
+
+详见 `docs/audit-pathways-guardrails.md`。

@@ -21,11 +21,11 @@ const { compileCaseObject } = require('./case-object');
 const { resolveEvidence } = require('./evidence-resolver');
 const { NATURE, NATURE_BASIS, findingNature, caseNature, natureCounts } = require('./nature');
 const { applyComplianceGate } = require('./compliance-gate');
+const { resolveCitation, formatCitation } = require('./citation-resolver');
 const { JIANGSU_NURSING_PRICE, REF_ID: JIANGSU_NURSING_REF } = require('../kb/jiangsu-prices');
 const { applyParseQAToConfidence } = require('./parse-qa');
 const { findMutualExclusiveHits, lookupConstraints } = require('./kb-operational-index');
 const { findSurgeryDiscountViolations } = require('./surgery-discount');
-const { evaluateIndicationSync } = require('./indication-semantics');
 const {
   evaluateGenderFeeConflicts,
   evaluateChildFeeConflicts,
@@ -42,7 +42,7 @@ const {
   evaluateTcmUsage,
   evaluateDataSupervision,
 } = require('./l3-family-checkers');
-const { runStatsMonitoring } = require('./stats-monitoring');
+const { EXTENDED_RULE_CHECKERS, ZB_RULE_CHECKERS } = require('./extended-rule-checkers');
 
 // ---------- 工具函数 ----------
 function parseDate(s) {
@@ -990,6 +990,13 @@ const ruleCheckers = {
   'L3-TCM': (ctx) => evaluateTcmUsage(ctx, mkFinding),
   'L3-DS': (ctx) => evaluateDataSupervision(ctx, mkFinding),
 
+  ...Object.fromEntries(
+    Object.entries(EXTENDED_RULE_CHECKERS).map(([id, fn]) => [id, (ctx) => fn(ctx, mkFinding)]),
+  ),
+  ...Object.fromEntries(
+    Object.entries(ZB_RULE_CHECKERS).map(([id, fn]) => [id, (ctx) => fn(ctx, mkFinding)]),
+  ),
+
   'E-503': (ctx) => {
     const inj = ctx.caseObj?.flags?.injection_suspects || [];
     if (!inj.length) return [];
@@ -1178,7 +1185,12 @@ function mkFinding(ctx, ruleId, fields) {
     status: fields.status,
     amount_involved: fields.amount_involved ?? 0,
     evidence: fields.evidence || [],
-    policy: (rule.policy_basis || []).map(ref => ({ ref, text: lookupPolicy(ctx, ref), verify_status: policyVerifyLabel(ctx, ref) })),
+    policy: (rule.policy_basis || []).map(ref => ({
+      ref,
+      text: lookupPolicy(ctx, ref),
+      verify_status: policyVerifyLabel(ctx, ref),
+      citation: buildPolicyCitation(ctx, ref),
+    })),
     reasoning: fields.reasoning || '',
     needs_more: fields.needs_more || [],
     disposal_suggestion: disposal,
@@ -1235,7 +1247,7 @@ function applyTemporalVetoes(findings, rules, asOf, record) {
 }
 
 function lookupPolicy(ctx, ref) {
-  return ctx.policyTexts?.[ref] || `（KB1/KB2 取原文，引用ID: ${ref}）`;
+  return ctx.policyTexts?.[ref] || `（该引用在知识库中无原文——已标记引用未穿透）`;
 }
 
 // 三态核验标注：人工核实 / 爬虫入库待抽检 / 不在库（待核验逐字原文）
@@ -1245,7 +1257,23 @@ function policyVerifyLabel(ctx, ref) {
   return '⚠待核验逐字原文';
 }
 
+function buildPolicyCitation(ctx, ref) {
+  const hit = resolveCitation(ref, ctx.citationIndex);
+  if (hit) return formatCitation(hit);
+  if (ctx.policyTexts?.[ref]) {
+    return {
+      ref,
+      resolved: false,
+      synthetic: true,
+      note: '聚合/合成条目，无独立官方条目',
+    };
+  }
+  return { ref, resolved: false };
+}
+
 // ---------- 升2 触发器路由：每条规则的廉价前置谓词（命中才"激活"，否则零成本跳过）----------
+const KEY_MONITORED_RE = /重点监控|辅助用药|质子泵|PPI|中药注射|喜炎平|热毒宁|参麦|丹参酮/i;
+
 const triggerPredicates = {
   'F-003': (c) => c.timeline.some(t => t.event === '出院') && c.fee_lines.some(f => { const d = parseDate(f.date), dc = parseDate(c.patient.discharge); return d && dc && d > dc; }),
   'A-105': (c) => c.fee_lines.some(f => /护理/.test(f.name)) && c.orders.some(o => /护理/.test(o.content)),
@@ -1313,6 +1341,36 @@ const triggerPredicates = {
   'T-205': (c) => c.fee_lines.some(f => /聚乙二醇化.*粒细胞刺激因子/.test(f.name)),
   'T-207': (c, r) => (r.progress_notes || []).some(p => /外购|自备|院外/.test(p.text)),
   'E-503': (c) => (c.flags.injection_suspects || []).length > 0,
+  'F-005': (c, r) => (r.fee_list?.items || []).length >= 2,
+  'A-103': (c, r) => (r.fee_list?.items || []).some(x => x.price_over_std || x.std_price != null),
+  'A-104': (c, r) => (r.fee_list?.items || []).some(x => x.unit_expansion_flag || (/理疗|康复/.test(x.item_name || '') && Number(x.qty) > 1)),
+  'B-203': (c, r) => c.fee_lines.some(f => /药/.test(f.category || '') || KEY_MONITORED_RE.test(f.name)) || r.case_meta?.monitored_no_indication,
+  'B-204': (c, r) => [...(r.long_term_orders?.items || []), ...(r.temporary_orders?.items || [])].some(o => o.off_label),
+  'B-205': (c, r) => (r.fee_list?.items || []).filter(x => /奥美|泮托|拉唑|PPI/.test(x.item_name || '')).length >= 2,
+  'B-207': (c, r) => r.case_meta?.panel_lab_overuse === true,
+  'B-208': (c, r) => (r.fee_list?.items || []).some(x => /康复|理疗/.test(x.item_name || '')),
+  'C-303': (c, r) => r.case_meta?.low_standard_admission || r.case_meta?.checkup_style_admission,
+  'C-304': (c, r) => (r.progress_notes || []).length >= 3 || r.case_meta?.forged_record_signal,
+  'D-402': (c, r) => r.case_meta?.cost_shift_flag || (r.progress_notes || []).some(p => /外购|自备|院外/.test(p.text)),
+  'D-403': (c, r) => r.case_meta?.service_insufficient === true,
+  'E-501': (c, r) => r.operation_note?.surgeon_license_mismatch || r.case_meta?.practice_scope_mismatch,
+  'E-502': (c, r) => (r.conflicts || []).length > 0 || r.case_meta?.timeline_conflict || r.case_meta?.record_conflicts,
+  'T-202': (c, r) => c.fee_lines.some(f => /替尼|化疗|单抗|培美|卡铂/.test(f.name)) && (!r.pathology_report?.diagnosis || r.pathology_report?.status === '缺失'),
+  'T-203': (c, r) => r.case_meta?.oncology_off_label === true,
+  'T-206': (c, r) => (r.fee_list?.items || []).filter(x => /标志物|CEA|AFP|CA125|基因/.test(x.item_name || '')).length >= 2,
+  'T-208': (c, r) => r.case_meta?.tumor_upcoding || /维持|随诊/.test(r.front_page?.principal_diagnosis?.name || ''),
+  'IMG-303': (c, r) => r.imaging_record?.device_tier != null || r.case_meta?.img_device_downgrade,
+  'CV-301': (c, r) => (r.fee_list?.items || []).some(x => /支架|PCI|冠脉介入/.test(x.item_name)) || r.case_meta?.cv_pci_duplicate,
+  'CV-302': (c, r) => (r.fee_list?.items || []).some(x => /药物涂层|药球/.test(x.item_name)) || r.case_meta?.balloon_swap,
+  'BP-301': (c, r) => (r.fee_list?.items || []).some(x => /血滤|血透|HDF|HD/.test(x.item_name)) || r.case_meta?.dialysis_duplicate,
+  'ZB-001': (c, r) => (r.batch_settlement_rows || []).length > 0,
+  'ZB-002': (c, r) => (r.batch_settlement_rows || []).length > 0,
+  'ZB-003': (c, r) => (r.batch_settlement_rows || []).length > 0,
+  'ZB-004': (c, r) => (r.batch_settlement_rows || []).length > 0,
+  'ZB-005': (c, r) => (r.batch_settlement_rows || []).length > 0,
+  'ZB-006': (c, r) => (r.batch_settlement_rows || []).length > 0,
+  'ZB-007': (c, r) => (r.batch_settlement_rows || []).length > 0,
+  'ZB-008': (c, r) => (r.batch_settlement_rows || []).length > 0,
 };
 function computeRouting(caseObj, record, rulesArray) {
   const activated = [];
@@ -1703,6 +1761,8 @@ function runAudit(record, rulesArray, options = {}) {
     policyTexts: options.policyTexts || {},
     policyVerified: options.policyVerified || {},
     policyPending: options.policyPending || {},
+    policyMeta: options.policyMeta || {},
+    citationIndex: options.citationIndex || null,
   };
 
   // 升2 触发器路由：先算哪些规则被激活（其余零成本跳过）
@@ -1733,21 +1793,10 @@ function runAudit(record, rulesArray, options = {}) {
     trace.push({ rule_id: ruleId, rule_name: rules[ruleId]?.rule_name, hits: got.length, ms: Date.now() - t0 });
     findings.push(...got);
   }
-  if (record.batch_settlement_rows?.length) {
-    try {
-      const batch = runStatsMonitoring(record.batch_settlement_rows, rules, mkFinding, ctx);
-      findings.push(...(batch.findings || []));
-      trace.push({ rule_id: 'ZB-batch', rule_name: '统计指标监测', hits: (batch.findings || []).length, ms: 0 });
-    } catch (e) {
-      trace.push({ rule_id: 'ZB-batch', rule_name: '统计指标监测', hits: 0, ms: 0, error: e.message });
-    }
-  }
+  // ZB 批量指标已并入 ruleCheckers（ZB-001～008），此处不再重复跑
   try {
-    if (!options.skipIndicationSync) {
-      findings.push(...(evaluateIndicationSync(ctx, mkFinding).filter(Boolean) || []));
-    }
     if (options.extraFindings?.length) findings.push(...options.extraFindings.filter(Boolean));
-  } catch (_) { /* 适应症语义层失败不阻断主引擎 */ }
+  } catch (_) { /* 扩展 findings 失败不阻断 */ }
 
   const temporal = applyTemporalVetoes(findings, rules, asOf, record);
   let findingsAfterTemporal = temporal.findings;
@@ -1781,6 +1830,7 @@ function runAudit(record, rulesArray, options = {}) {
     retiredRules: options.retiredRules,
     policyTexts: ctx.policyTexts,
     policyVerified: ctx.policyVerified,
+    citationIndex: ctx.citationIndex,
   });
   merged = gov.findings;
   const { suspected, clues, shadowed, summary: govSummary } = gov;
@@ -1871,6 +1921,7 @@ function applyPostAuditGovernance(findings, options = {}) {
   applyComplianceGate(merged, {
     policyTexts: options.policyTexts || {},
     policyVerified: options.policyVerified || {},
+    citationIndex: options.citationIndex || null,
   });
 
   for (const f of merged) {
@@ -1906,11 +1957,38 @@ function applyPostAuditGovernance(findings, options = {}) {
       retired_rules: [...retiredSet],
       suspected_amount: money(suspected.reduce((s, f) => s + (f.amount_involved || 0), 0)),
       clue_amount_flagged: money(clues.reduce((s, f) => s + (f.amount_involved || 0), 0)),
+      citation: citationSummary(active),
     },
   };
 }
 
-async function buildIndicationLlmFindings(record, rulesArray, policyTexts = {}, policyVerified = {}) {
+function citationSummary(findings) {
+  const all = findings || [];
+  const suspected = all.filter(f => f.status === '疑点');
+  let refsTotal = 0;
+  let refsResolved = 0;
+  let fully = 0;
+  let partial = 0;
+  let manual = all.filter(f => f.needs_human).length;
+  for (const f of suspected) {
+    const total = f.citation_integrity?.total ?? (f.policy || []).length;
+    const resolved = f.citation_integrity?.resolved
+      ?? (f.policy || []).filter(p => p.citation?.resolved || p.citation?.synthetic).length;
+    refsTotal += total;
+    refsResolved += resolved;
+    if (total > 0 && resolved >= total) fully += 1;
+    else if (resolved > 0) partial += 1;
+  }
+  return {
+    findings_fully_cited: fully,
+    findings_partial: partial,
+    findings_manual: manual,
+    refs_total: refsTotal,
+    refs_resolved: refsResolved,
+  };
+}
+
+async function buildIndicationLlmFindings(record, rulesArray, policyTexts = {}, policyVerified = {}, citationIndex = null) {
   const { evaluateIndicationLlm } = require('./indication-semantics');
   const { isReady } = require('./llm-provider');
   if (!isReady()) return [];
@@ -1921,6 +1999,7 @@ async function buildIndicationLlmFindings(record, rulesArray, policyTexts = {}, 
     rules,
     policyTexts,
     policyVerified,
+    citationIndex,
     caseId: (record.case_meta?.case_id || 'CASE').replace(/[^A-Z0-9]/gi, '').slice(-8),
     params: {},
   };

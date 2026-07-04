@@ -50,7 +50,10 @@
   }
 
   function hitCard(h) {
-    const border = h.nature === '明确违规' ? '#b91c1c' : '#f59e0b';
+    const isBlock = h.interaction === 'block' || (h.interaction !== 'suggest' && h.nature === '明确违规');
+    const border = isBlock ? '#b91c1c' : '#f59e0b';
+    const modeLabel = isBlock ? '阻断' : '建议';
+    const modeBg = isBlock ? '#fef2f2' : '#fffbeb';
     const pols = (h.policy || []).slice(0, 3);
     const polRow = (p) => {
       const vcolor = String(p.verify_status || '').indexOf('已核') >= 0 ? '#0a7a4b' : '#a97a00';
@@ -61,8 +64,9 @@
     const polBlock = pols.length
       ? `<details style="margin-top:5px"><summary style="font-size:11.5px;color:#4a7fb5;cursor:pointer;list-style:none">📖 依据 ${pols.length} 条 ›</summary>${pols.map(polRow).join('')}</details>`
       : '';
-    return `<div style="padding:10px 14px;border-bottom:1px solid #f2f5f9;border-left:4px solid ${border}">
-        <div style="margin-bottom:4px">${badge(h.nature)} <b>${esc(h.rule_id)} ${esc(h.rule_name)}</b></div>
+    return `<div style="padding:10px 14px;border-bottom:1px solid #f2f5f9;border-left:4px solid ${border};background:${modeBg}">
+        <div style="margin-bottom:4px">${badge(h.nature)} <span style="font-size:10px;font-weight:800;color:${border};margin-left:4px">${modeLabel}</span> <b>${esc(h.rule_id)} ${esc(h.precheck_title || h.rule_name)}</b></div>
+        ${h.precheck_body ? `<div style="font-size:12px;color:#5b6d82;margin-bottom:4px">${esc(h.precheck_body)}</div>` : ''}
         <div style="color:#3c4d61;line-height:1.55">${esc(h.reasoning)}</div>
         ${polBlock}
         ${h.disposal_suggestion ? `<div style="margin-top:5px;font-size:12px;color:#0a7a4b">✎ ${esc(h.disposal_suggestion)}</div>` : ''}
@@ -75,8 +79,8 @@
     box.id = 'yy-precheck-overlay';
     box.style.cssText = 'position:fixed;right:18px;bottom:18px;width:412px;max-height:74vh;overflow:auto;background:#fff;border:1px solid #d3dce6;border-radius:12px;box-shadow:0 12px 40px rgba(10,30,60,.28);z-index:2147483647;font-family:"PingFang SC","Microsoft YaHei",sans-serif;font-size:13px;color:#1a2b3c';
     const hits = result.hits || [];
-    const hard = hits.filter(h => h.nature === '明确违规');
-    const susp = hits.filter(h => h.nature !== '明确违规');
+    const hard = hits.filter(h => h.interaction === 'block' || (h.interaction !== 'suggest' && h.nature === '明确违规'));
+    const susp = hits.filter(h => !hard.includes(h));
     const countChip = (n, txt, bg) => n ? `<span style="background:${bg};color:#fff;font-size:11px;font-weight:800;padding:1px 8px;border-radius:20px">${txt} ${n}</span>` : '';
     const head = `<div style="padding:10px 14px;border-bottom:1px solid #edf1f6;display:flex;align-items:center;gap:8px">
       <b style="font-size:14px">🦅 鹰眼 · 开单事前提醒</b>
@@ -84,7 +88,13 @@
       <span style="flex:1"></span>
       <a href="javascript:void(0)" id="yy-close" style="text-decoration:none;color:#7a8ba0;font-size:16px">×</a></div>`;
     let body;
-    if (!hits.length) {
+    if (result.error) {
+      body = `<div style="padding:20px 14px;text-align:center">
+        <div style="font-size:15px;color:#b91c1c;font-weight:600">⚠ 事前预检未完成</div>
+        <div style="font-size:12px;color:#5b6d82;margin-top:6px">${esc(result.error)}</div>
+        <div style="font-size:11px;color:#94a3b8;margin-top:8px">请确认鹰眼本地服务已启动并已刷新页面</div>
+      </div>`;
+    } else if (!hits.length) {
       body = `<div style="padding:20px 14px;text-align:center">
         <div style="font-size:15px;color:#0a7a4b;font-weight:600">🟩 合规放行</div>
         <div style="font-size:12px;color:#5b6d82;margin-top:6px">本次开单未命中任何事前提醒规则。已核 ${(result.checked_rules || []).length || result.checked_rules_count || '—'} 条事前规则。</div>
@@ -93,15 +103,15 @@
       const section = (title, arr, color) => arr.length
         ? `<div style="padding:6px 14px;background:#f8fafc;font-size:12px;font-weight:700;color:${color};border-bottom:1px solid #edf1f6">${title} · ${arr.length}</div>` + arr.map(hitCard).join('')
         : '';
-      body = section('🟥 明确违规(硬性交叉核验,可直接拦截)', hard, '#b91c1c')
-           + section('🟨 可疑(需临床合理性合议,软提醒)', susp, '#a15c00');
+      body = section('🟥 阻断（政策限定类，请核对后再开立）', hard, '#b91c1c')
+           + section('🟨 建议（医疗合理类，可继续开立但请确认）', susp, '#a15c00');
     }
     // 闭环:有命中时给医生处置动作(采纳整改 / 坚持提交+理由),写入事前台账
     const actions = hits.length ? `<div id="yy-actions" style="padding:10px 14px;border-top:1px solid #edf1f6;display:flex;gap:8px;align-items:center">
         <button id="yy-heed" style="flex:1;padding:7px;border:0;border-radius:6px;background:#0a7a4b;color:#fff;font-size:12px;font-weight:700;cursor:pointer">✓ 采纳建议·整改(消灭在萌芽)</button>
         <button id="yy-override" style="padding:7px 10px;border:1px solid #d0a800;border-radius:6px;background:#fffbe6;color:#8a6d00;font-size:12px;cursor:pointer">⚠ 坚持提交</button>
       </div>` : '';
-    const foot = `<div style="padding:8px 14px;font-size:11px;color:#8a99ab;border-top:1px solid #edf1f6">${esc(result.engine || 'L1确定性·毫秒级')} · 本地运行,数据不出机 · 依据国家医保两库与相关号令 · 违规消除在"萌芽"</div>`;
+    const foot = `<div style="padding:8px 14px;font-size:11px;color:#8a99ab;border-top:1px solid #edf1f6">${esc(result.engine || '确定性规则·毫秒级')} · 本地运行,数据不出机 · 依据国家医保两库与相关号令 · 违规消除在"萌芽"</div>`;
     box.innerHTML = head + body + actions + foot;
     document.body.appendChild(box);
     box.querySelector('#yy-close').onclick = () => box.remove();
@@ -174,6 +184,12 @@
         method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload),
       });
       const j = await r.json();
+      if (j.error || !r.ok) {
+        const msg = j.error || ('HTTP ' + r.status);
+        if (opts.silent) return { hits: [], error: msg };
+        showOverlay({ hits: [], error: msg, engine: '事前预检异常: ' + msg }, ctx);
+        return { hits: [], error: msg };
+      }
       // silent(整改验证重校验):只返回结果,不重弹浮层、不写台账(由 heed 流程更新原浮层 slot)
       if (opts.silent) return j;
       // opts.showClean===false 时,合规(无命中)不弹绿浮层(设置项);有命中始终弹
@@ -182,8 +198,9 @@
       return j;
     } catch (e) {
       if (opts.silent) return null;
-      showOverlay({ hits: [], engine: '引擎未连接(' + e.message + ')——请确认鹰眼本地服务已启动' }, ctx);
-      return null;
+      const msg = '引擎未连接(' + e.message + ')——请确认鹰眼本地服务已启动';
+      showOverlay({ hits: [], error: msg, engine: msg }, ctx);
+      return { hits: [], error: msg };
     }
   }
 

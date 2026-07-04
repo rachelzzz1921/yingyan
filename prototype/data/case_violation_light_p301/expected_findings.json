@@ -5,8 +5,8 @@
     "gold_standard_note": "【已去自评化】本文件为引擎回归漂移快照(引擎自动生成),非独立金标准。独立设计真值见 data/ground_truth_manifest.json(按埋点设计意图声明 planted_suspect/planted_clue/is_clean),门禁据其做独立零误报复核与召回 floor。本快照仅供 shadow / 回归漂移探测。",
     "summary": {
       "suspected_count": 2,
-      "clue_count": 2,
-      "total_findings": 4
+      "clue_count": 3,
+      "total_findings": 5
     },
     "snapshot_role": "engine_regression_snapshot"
   },
@@ -31,6 +31,13 @@
       "status": "线索",
       "amount_involved": 100,
       "violation_type": "欺诈骗保/串换"
+    },
+    {
+      "rule_id": "L3-SAF",
+      "rule_name": "用药安全(禁忌/相互作用/妊娠)",
+      "status": "线索",
+      "amount_involved": 100,
+      "violation_type": "用药安全"
     },
     {
       "rule_id": "P-301",

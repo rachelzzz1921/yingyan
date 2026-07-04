@@ -4,9 +4,9 @@
     "gold_standard": false,
     "gold_standard_note": "【已去自评化】本文件为引擎回归漂移快照(引擎自动生成),非独立金标准。独立设计真值见 data/ground_truth_manifest.json(按埋点设计意图声明 planted_suspect/planted_clue/is_clean),门禁据其做独立零误报复核与召回 floor。本快照仅供 shadow / 回归漂移探测。",
     "summary": {
-      "suspected_count": 3,
-      "clue_count": 3,
-      "total_findings": 6
+      "suspected_count": 4,
+      "clue_count": 5,
+      "total_findings": 9
     },
     "snapshot_role": "engine_regression_snapshot"
   },
@@ -17,6 +17,13 @@
       "status": "疑点",
       "amount_involved": 145,
       "violation_type": "欺诈骗保/回流药重复结算"
+    },
+    {
+      "rule_id": "L3-DS",
+      "rule_name": "结算/明细数据异常",
+      "status": "疑点",
+      "amount_involved": 145,
+      "violation_type": "数据质量"
     },
     {
       "rule_id": "P-303",
@@ -33,6 +40,20 @@
       "violation_type": "串换项目"
     },
     {
+      "rule_id": "L3-DRX",
+      "rule_name": "重复开药/药品种类超标",
+      "status": "线索",
+      "amount_involved": 145,
+      "violation_type": "重复开药"
+    },
+    {
+      "rule_id": "B-201-IND",
+      "rule_name": "药品限适应症（两库索引·语义层）",
+      "status": "线索",
+      "amount_involved": 145,
+      "violation_type": "将不属于医保基金支付范围的费用纳入医保结算"
+    },
+    {
       "rule_id": "P-302",
       "rule_name": "回流药二次销售",
       "status": "线索",
@@ -40,18 +61,18 @@
       "violation_type": "欺诈骗保/串换"
     },
     {
+      "rule_id": "L3-SAF",
+      "rule_name": "用药安全(禁忌/相互作用/妊娠)",
+      "status": "线索",
+      "amount_involved": 100,
+      "violation_type": "用药安全"
+    },
+    {
       "rule_id": "P-301",
       "rule_name": "药店空刷医保凭证骗保",
       "status": "线索",
       "amount_involved": 38,
       "violation_type": "虚构医药服务项目"
-    },
-    {
-      "rule_id": "B-201-IND",
-      "rule_name": "药品限适应症（L3语义层）",
-      "status": "线索",
-      "amount_involved": 145,
-      "violation_type": "超标准收费/限定支付"
     }
   ],
   "correctly_not_flagged": [

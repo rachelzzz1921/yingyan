@@ -52,6 +52,17 @@ gates:
     description: "统一管线(runAuditPipeline)包装：干净件零误报、疑点不丢失"
     layer: pipeline
 
+  G7_precheck_smoke:
+    enabled: true
+    description: "MockHIS/编码员 DRG 演示场景事前提醒零漏报(S0-S4/C0-C2)"
+    layer: precheck
+
+  G8_citation_integrity:
+    enabled: true
+    description: "疑点必须引出可解析条目ID（处方级引用红线）；引不出=数据bug"
+    layer: citation
+    min_resolved_rate: 0.9
+
 engine:
   # 与 prototype/server.js /api/bench 对齐：跳过临时导入件
   skip_case_ids: ["uploaded"]

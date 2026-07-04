@@ -11,6 +11,7 @@
 
 const path = require('path');
 const fs = require('fs');
+const { mergeOnsiteLinks } = require('./evidence-link-store');
 
 let EXP = null;
 function expectations() {
@@ -279,7 +280,7 @@ function isOutpatient(record) {
 // ============================================================================
 // 主入口：resolveEvidence(record) — 一次性物化，只读（§4.3）
 // ============================================================================
-function resolveEvidence(record) {
+function resolveEvidence(record, opts = {}) {
   const exp = expectations();
   const items = (record.fee_list?.items || []).filter(Boolean);
   if (!items.length) return null;
@@ -410,7 +411,7 @@ function resolveEvidence(record) {
   // 未提供的材料类型（案卷层面）
   const notProvidedTypes = Object.keys(providedCache).filter(t => !providedCache[t]);
 
-  return {
+  const chain = {
     version: 2, anchor: '结算费用明细行（主锚）',
     case_score: caseScore, case_tier: caseTier,
     fee_lines: feeLines, evidence_links, missing_evidence,
@@ -427,6 +428,10 @@ function resolveEvidence(record) {
       ? `本案卷可评估费用行不足（多为最小 fixture / 仅上下文材料），完整度未评估。（数据侧口径，与规则覆盖度分开）`
       : `以费用明细行为锚，${scored.length} 行计完整度，金额加权案卷完整度 ${Math.round(caseScore * 100)}/100（${caseTier}）。分布：完整 ${dist.完整.rows} 行 · 部分 ${dist.部分.rows} 行 · 薄弱 ${dist.薄弱.rows} 行${notProvidedTypes.length ? `；整卷未提供：${notProvidedTypes.map(t => MAT_LABEL[t] || t).join('、')}（已从分母移除，不计缺失）` : ''}。（数据侧口径，与规则覆盖度分开）`,
   };
+  const includeOnsite = opts.includeOnsite
+    || process.env.ONSITE_MODE === '1'
+    || process.env.onsite_mode === '1';
+  return includeOnsite ? mergeOnsiteLinks(record, chain, opts.caseId || opts.case_id) : chain;
 }
 
 // ---------- §7 缺失 → 规则映射 ----------

@@ -29,11 +29,12 @@ function loadRuntimeStats() {
 }
 
 /** @param {string[]} checkerIds audit-engine 已注册 checker */
-function computeOfficialCoverage(checkerIds = []) {
+function computeOfficialCoverage(checkerIds = [], opts = {}) {
   const catalog = loadCatalog();
   const mappingDoc = loadMapping();
   const byCode = new Map((mappingDoc.mappings || []).map((m) => [m.official_code, m]));
   const checkerSet = new Set(checkerIds);
+  const batchEngineReady = opts.batchEngine !== false;
   const runtimeStats = loadRuntimeStats();
 
   const cells = [];
@@ -46,7 +47,12 @@ function computeOfficialCoverage(checkerIds = []) {
     let status = m.coverage_status || 'candidate';
     const eagleIds = m.eagle_rule_ids || [];
     if (status === 'implemented' && eagleIds.length) {
-      const wired = eagleIds.some((id) => id === 'precheck-tcm' || checkerSet.has(id));
+      const wired = eagleIds.some((id) => {
+        if (id === 'precheck-tcm') return true;
+        if (/^ZB-/.test(id)) return batchEngineReady;
+        if (id === 'B-201-IND') return checkerSet.has('B-201-IND') || checkerSet.has('B-201');
+        return checkerSet.has(id);
+      });
       if (!wired && !eagleIds.includes('precheck-tcm')) status = 'pilot';
     }
     summary.total += 1;
@@ -65,6 +71,8 @@ function computeOfficialCoverage(checkerIds = []) {
       tier2_id: r.tier2_id,
       coverage_status: status,
       eagle_rule_ids: eagleIds,
+      checker_wired: status === 'implemented',
+      handler: m.production?.handler || null,
       tier: m.tier || 'core',
       l3_families: m.l3_families || [],
       notes: m.notes || '',
@@ -74,6 +82,15 @@ function computeOfficialCoverage(checkerIds = []) {
   }
 
   const productionReady = cells.filter((c) => c.production?.workflow === 'complete' && c.production?.yhf_verified && c.coverage_status === 'implemented').length;
+
+  const yamlRules = new Set((opts.rulesYamlIds || []));
+  const registeredCheckers = checkerIds.filter((id) => yamlRules.size === 0 || yamlRules.has(id) || id === 'A-109MAT');
+  const familyBreakdown = {
+    naming_62: checkerIds.filter((id) => /^(F|A|B|C|D|E|T|M|ICU|P|IMG|CV|BP)-/.test(id)).length,
+    embed_4: ['SUR-401', 'TRACE-101', 'NUR-303', 'AGE-101'].filter((id) => checkerSet.has(id)).length,
+    l3_5: ['L3-DRX', 'L3-CDM', 'L3-SAF', 'L3-TCM', 'L3-DS'].filter((id) => checkerSet.has(id)).length,
+    zb_8: checkerIds.filter((id) => /^ZB-/.test(id)).length,
+  };
 
   const tier1 = (catalog.tier1 || []).map((t1) => ({
     ...t1,
@@ -96,6 +113,9 @@ function computeOfficialCoverage(checkerIds = []) {
       roadmap: summary.roadmap,
       production_ready: productionReady,
       production_ready_total: summary.total,
+      rule_checker_count: registeredCheckers.length,
+      rules_yaml_count: yamlRules.size || null,
+      family_breakdown: familyBreakdown,
       core_checker_count: coreRules.size,
       enhancement_checker_count: enhancementRules.size,
       core_checker_ids: [...coreRules].sort(),

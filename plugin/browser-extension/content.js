@@ -27,7 +27,7 @@
     e.preventDefault();
     e.stopImmediatePropagation();
     const result = await window.YingyanPrecheck.run({ engineBase: CFG.engineBase, showClean: CFG.showCleanBadge });
-    if (!result) return;
+    if (!result || result.error) return;
     const hits = result.hits || [];
     const hardHits = hits.filter(h => h.nature === '明确违规');
     const shouldHold = CFG.natureFilter === 'hard' ? hardHits.length > 0 : hits.length > 0;

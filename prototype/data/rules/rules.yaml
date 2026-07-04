@@ -19,7 +19,7 @@ meta:
   schema_version: "3.3"
   rules_version: "v0.3"
   generated_date: "2026-06-12"
-  total_rules: 79  # 66基线 + L3族5 + ZB批量8
+  total_rules: 79  # 62(13族 F~BP) + 4(埋点) + 5(L3族) + 8(ZB) — 见 docs/规则库三层结构说明.md
   three_element_gate: ["原始证据定位", "违反的政策条款原文", "完整推理过程"]
   output_states: ["疑点", "线索", "不输出"]
   execution_order:

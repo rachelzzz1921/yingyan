@@ -25,8 +25,8 @@
   <div class="topbar-actions">
     <a class="role-home" href="/home.html" title="返回选择工作台（监管侧 / 院端）">⌂ 切换工作台</a>
     <div class="mode-toggle" id="modeToggle" title="一套引擎两种模式">
-      <button class="mode-btn active" data-mode="audit">🛡 稽核</button>
-      <button class="mode-btn" data-mode="exam">🏥 体检</button>
+      <button class="mode-btn active" data-mode="audit">🛡 监管稽核</button>
+      <button class="mode-btn" data-mode="exam">🩺 院端体检</button>
     </div>
     <div class="health" id="health">规则加载中…</div>
     <button class="btn-primary" id="btnAudit"><span class="btn-icon">▶</span> 开始稽核</button>
@@ -37,52 +37,33 @@
   <div class="v2bar-group v2bar-primary">
     <span class="v2bar-label" data-audit-label="主流程" data-exam-label="院端自查流程">主流程</span>
     <div class="v2dropdown" id="ddEngine">
-      <button class="v2btn accent real" id="btnEngineMenu" type="button" title="选择稽核档位（覆盖广度 × 稽核强度）">⚙ 稽核档位 ▾</button>
+      <button class="v2btn accent" id="btnEngineMenu" type="button" title="选择档位（仅切换，点顶栏开始执行）">⚙ 档位 · 基础覆盖 ▾</button>
       <div class="v2dropdown-menu" id="engineMenu">
-        <div class="v2dd-section">覆盖×深度 档位（默认基础覆盖）</div>
-        <button class="v2btn" id="btnEngStd" type="button" title="确定性规则 · 基础覆盖">⚙ 基础覆盖</button>
-        <button class="v2btn real" id="btnRag" type="button" title="语义检索补全政策上下文 · 信息广度增强">🌐 广度增强（RAG）</button>
-        <button class="v2btn real" id="btnLLM" type="button" title="LLM 语义推理 · 稽核深度增强">🧠 深度增强（LLM）</button>
-        <button class="v2btn real" id="btnSuperAudit" type="button" title="广度+深度双增强 · 含对抗注入防护">⚡ 广深双增强</button>
+        <div class="v2dd-section">覆盖×深度 · 选中后点顶栏「开始」</div>
+        <button class="v2btn engine-tier active" data-tier="standard" type="button" title="确定性规则 · 基础覆盖">⚙ 基础覆盖</button>
+        <button class="v2btn engine-tier" data-tier="rag" type="button" title="语义检索补全政策上下文">🌐 广度增强 · 政策检索</button>
+        <button class="v2btn engine-tier" data-tier="llm" type="button" title="语义推理 · 稽核深度增强">🧠 深度增强 · 语义分析</button>
+        <button class="v2btn engine-tier" data-tier="super" type="button" title="广度+深度双增强">⚡ 广深双增强</button>
       </div>
     </div>
-    <a href="/dashboard.html" class="v2btn accent" title="项目看板">项目看板</a>
+    <a href="/priority.html" class="v2btn accent audit-only" id="lnkPriority">稽核队列</a>
   </div>
   <div class="v2bar-divider"></div>
   <div class="v2bar-group">
     <span class="v2bar-label subtle" data-audit-label="材料与规则" data-exam-label="自查物料与规则">材料与规则</span>
-    <a href="/priority.html" class="v2btn accent" title="稽核优先队列">稽核队列</a>
-    <a href="/intake.html" class="v2btn accent" title="材料导入中心（完整页）">材料导入</a>
-    <button class="v2btn" id="btnIngest" type="button" title="弹窗快速导入">快速导入</button>
+    <a href="/intake.html" class="v2btn accent" title="材料导入中心">材料导入</a>
     <button class="v2btn" id="btnRuleCatalog" type="button">规则目录</button>
-    <button class="v2btn" id="btnGovernance" type="button">规则治理</button>
-  </div>
-  <div class="v2bar-divider"></div>
-  <div class="v2bar-group">
-    <div class="v2dropdown" id="ddInsight">
-      <button class="v2btn real" id="btnInsightMenu" type="button" title="洞察面板：本案事实/机构画像 · 护城河合规地基/取证三件套/三阶段自查">🔍 洞察 ▾</button>
-      <div class="v2dropdown-menu" id="insightMenu">
-        <div class="v2dd-section">本案洞察</div>
-        <button class="v2btn" id="btnFacts" type="button">事实层</button>
-        <button class="v2btn" id="btnInstitution" type="button">机构画像</button>
-        <button class="v2btn real" id="btnAgentRuntime" type="button" title="agent 运行时：13 单元各司其职的实测时延/命中/合并/分层，逐个可调优">🛠 agent 运行时</button>
-        <div class="v2dd-section">护城河 · 合规根基</div>
-        <button class="v2btn real" id="btnFoundation" type="button" title="站在国家两库肩上 · 规则↔官方政策可溯源">🏛 合规地基</button>
-        <button class="v2btn real" id="btnTriad" type="button" title="取证可信度三件套：合议去重·覆盖度声明·置信度传播">🔬 取证三件套</button>
-        <button class="v2btn real" id="btnThreeStage" type="button" title="院端三阶段自查：事前开单可防 / 事中结算前可拦 / 事后需深查 · 关口前移">🗺 三阶段自查</button>
-      </div>
-    </div>
+    <button class="v2btn" id="btnFacts" type="button">事实层</button>
+    <button class="v2btn" id="btnInstitution" type="button">机构画像</button>
+    <button class="v2btn exam-only hidden" id="btnThreeStage" type="button" title="事前可防 / 事中可拦 / 事后深查">三阶段自查</button>
   </div>
   <div class="v2bar-divider"></div>
   <div class="v2dropdown" id="ddTools">
-    <button class="v2btn ghost" id="btnToolsMenu" type="button" title="工具与演示">⋯ 工具与演示 ▾</button>
+    <button class="v2btn ghost" id="btnToolsMenu" type="button" title="导出与重置">⋯ 工具 ▾</button>
     <div class="v2dropdown-menu v2dropdown-menu-right" id="toolsMenu">
-      <div class="v2dd-section">工具</div>
-      <button class="v2btn" id="btnExport" type="button">导出清单</button>
-      <button class="v2btn" id="btnBench" type="button">AuditBench</button>
-      <div class="v2dd-section">演示</div>
-      <button class="v2btn danger" id="btnInject" type="button">注入对抗</button>
-      <button class="v2btn" id="btnPitch" type="button">演示要点</button>
+      <button class="v2btn" id="btnExport" type="button">导出举证包</button>
+      <button class="v2btn danger audit-only" id="btnInject" type="button">注入对抗</button>
+      <a href="/dashboard.html" class="v2btn audit-only" id="lnkDashboard">项目看板</a>
       <button class="v2btn ghost" id="btnReset" type="button" title="重置">↺ 重置</button>
     </div>
   </div>
@@ -96,6 +77,8 @@
   <div class="wf-step" data-step="3"><span class="wf-num">3</span><span class="wf-text">看报告</span></div>
   <div class="wf-arrow wf-exam-only hidden">→</div>
   <div class="wf-step wf-exam-only hidden" data-step="4"><span class="wf-num">4</span><span class="wf-text">登记整改</span></div>
+  <div class="wf-arrow wf-exam-only hidden">→</div>
+  <div class="wf-step wf-exam-only hidden" data-step="5"><span class="wf-num">5</span><span class="wf-text">复检对比</span></div>
 </div>
 
 <div class="case-meta-bar hidden" id="caseMetaBar"></div>
@@ -106,12 +89,12 @@
       <h2><span class="panel-icon">📁</span> 患者就诊材料包</h2>
       <select id="caseSelect" class="case-select" title="切换演示案卷"></select>
     </div>
-    <div class="ev-casehead" id="evCaseHead"></div>
     <div class="source-view-bar" id="sourceViewBar" role="tablist" aria-label="材料视图切换">
       <button type="button" class="svtab active" data-view="fee" role="tab" aria-selected="true">⚓ 费用锚</button>
       <button type="button" class="svtab" data-view="raw" role="tab" aria-selected="false">📄 原始材料</button>
     </div>
     <div class="source-pane source-pane-fee" id="sourcePaneFee">
+      <div class="ev-casehead" id="evCaseHead"></div>
       <div class="anchor-pane" id="anchorPane">
         <div class="anchor-col-head">
           <span class="acol-title">费用明细行 · 锚 <span class="acol-hint">左选行 · 右看证据链</span></span>
@@ -119,6 +102,7 @@
             <button type="button" class="asort active" data-sort="risk">疑点档</button>
             <button type="button" class="asort" data-sort="amount">金额</button>
             <button type="button" class="asort" data-sort="weak">薄弱优先</button>
+            <button type="button" class="asort exam-only hidden" data-sort="rect">整改状态</button>
           </div>
         </div>
         <div class="anchor-split">
@@ -160,10 +144,11 @@
       <ol class="empty-steps">
         <li>材料包选案卷 → 费用锚点行看<strong>嵌入证据链</strong></li>
       </ol>
-      <p class="muted">引不出原文的疑点，不输出 · G0 干净件零误报红线</p>
+      <p class="muted" id="emptyFootnote">引不出原文的疑点，不输出 · 干净案卷零误报红线</p>
     </div>
 
     <div id="reportBody" class="report hidden">
+      <div id="modeStrip" class="hidden"></div>
       <div class="report-pager" id="reportPager">
         <div class="report-pager-nav" id="reportPagerNav"></div>
         <div class="report-pager-body" id="reportPagerBody">
@@ -185,10 +170,20 @@
 </main>
 
 <footer class="foot">
-  <span class="foot-brand">鹰眼 EagleEye Audit</span> v0.4 · 事实层 + YHF 评测门禁 + 规则治理 · 虚构演示数据 · 政策引自国家医保局公开文件
+  <span class="foot-brand">鹰眼 EagleEye Audit</span> v0.4 · 事实层 + 质量门禁 + 规则治理 · 虚构演示数据 · 政策引自国家医保局公开文件
 </footer>
 
 <div class="modal-overlay hidden" id="modalRoot"><div class="modal" id="modalBox"></div></div>
+<script>
+(function(){
+  var q = new URLSearchParams(location.search);
+  if (q.get('from') === 'priority') {
+    var lnk = document.getElementById('lnkPriority');
+    if (lnk) lnk.textContent = '← 返回稽核队列';
+  }
+})();
+</script>
+<script src="/debate-format.js"></script>
 <script src="/app.js"></script>
 </body>
 </html>

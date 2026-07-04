@@ -32,18 +32,18 @@ function renderStatus(h) {
   pills.push(`<span class="pill ok">规则 ${h.rules ?? '—'}</span>`);
   const pp = h.ppstructure || {};
   if (pp.reachable) {
-    const tag = pp.deployment === 'cloud' ? 'L1 云端' : 'L1 本地';
+    const tag = pp.deployment === 'cloud' ? '解析服务 · 云端' : '解析服务 · 本地';
     pills.push(`<span class="pill ok">${tag} ${esc(pp.recommended_engine || '就绪')}</span>`);
   } else if (h.hosted && h.llm_ready) {
-    pills.push(`<span class="pill ok">LLM 视觉 ${esc(h.vision_provider || h.provider || '')}</span>`);
-    pills.push(`<span class="pill warn">L1 PDF 待接入</span>`);
+    pills.push(`<span class="pill ok">视觉解析已接入</span>`);
+    pills.push(`<span class="pill warn">PDF 解析待接入</span>`);
   } else if (h.hosted) {
-    pills.push(`<span class="pill warn">L1 待配置</span>`);
+    pills.push(`<span class="pill warn">解析服务待配置</span>`);
   } else {
-    pills.push(`<span class="pill warn">L1 未启动</span>`);
+    pills.push(`<span class="pill warn">解析服务未启动</span>`);
   }
-  if (h.llm_ready) pills.push(`<span class="pill ok">LLM ${esc(h.provider || '')}</span>`);
-  else pills.push(`<span class="pill warn">LLM 未配置</span>`);
+  if (h.llm_ready) pills.push(`<span class="pill ok">语义分析已接入</span>`);
+  else pills.push(`<span class="pill warn">语义分析未接入</span>`);
   $('#statusPills').innerHTML = pills.join('');
 }
 
@@ -57,36 +57,36 @@ function renderServiceCard(h) {
   if (pp.reachable) {
     const loc = pp.deployment === 'cloud' ? '云端' : '本地';
     lines = [
-      ['L1 Sidecar', `✓ ${loc}已连接`],
+      ['解析服务', `✓ ${loc}已连接`],
       ['解析引擎', pp.recommended_engine || '就绪'],
       ['Paddle OCR', pp.paddle_available ? '已安装' : 'lite + Tesseract'],
       ['Tesseract', pp.tesseract_available ? '可用' : '—'],
-      ['LLM 语义', h.llm_ready ? h.provider : '未配置（OCR 回退受限）'],
+      ['语义分析', h.llm_ready ? '已接入' : '未接入（扫描件识别受限）'],
       ['演示案卷', casesLabel],
     ];
   } else if (h.hosted) {
     lines = [
       ['运行环境', '☁ 云端生产'],
       ['结构化导入', cap.json_csv !== false ? '✓ JSON / CSV / TXT' : '—'],
-      ['PDF / 扫描件', cap.pdf ? '✓ L1 解析' : '需配置 PPSTRUCTURE_URL'],
-      ['图片识图', cap.llm_vision ? `✓ ${h.vision_provider || h.provider}` : '未配置 LLM'],
-      ['LLM 语义', h.llm_ready ? h.provider : '未配置'],
+      ['PDF / 扫描件', cap.pdf ? '✓ 已支持' : '需配置 PPSTRUCTURE_URL'],
+      ['图片识图', cap.llm_vision ? '✓ 已支持' : '未接入'],
+      ['语义分析', h.llm_ready ? '已接入' : '未接入'],
       ['演示案卷', casesLabel],
     ];
     if (!cap.pdf) {
-      hint = `<div class="svc-hint">完整 PDF 解析：Render 部署 L1 sidecar 后，Vercel 设置 <code>PPSTRUCTURE_URL</code><br>
+      hint = `<div class="svc-hint">完整 PDF 解析：部署解析服务后，设置 <code>PPSTRUCTURE_URL</code><br>
         <code>node scripts/setup-l1-cloud.mjs https://yingyan-l1.onrender.com</code></div>`;
     }
   } else {
     lines = [
-      ['L1 Sidecar', '✗ 未连接'],
-      ['解析引擎', pp.recommended_engine || '需启动 sidecar'],
+      ['解析服务', '✗ 未连接'],
+      ['解析引擎', pp.recommended_engine || '需启动解析服务'],
       ['Paddle OCR', pp.paddle_available ? '已安装' : '未安装（lite 模式）'],
       ['Tesseract', pp.tesseract_available ? '可用' : '可选'],
-      ['LLM 语义', h.llm_ready ? h.provider : '未配置（OCR 回退受限）'],
+      ['语义分析', h.llm_ready ? '已接入' : '未接入（扫描件识别受限）'],
       ['演示案卷', casesLabel],
     ];
-    hint = `<div class="svc-hint">启动 L1 解析（支持 PDF 直传）：<br><code>cd prototype/ppstructure && bash run.sh</code></div>`;
+    hint = `<div class="svc-hint">启动本地解析服务（支持 PDF 直传）：<br><code>cd prototype/ppstructure && bash run.sh</code></div>`;
   }
 
   $('#serviceCard').innerHTML = lines.map(([k, v]) =>
@@ -247,7 +247,7 @@ async function renderPreview(batchResult) {
       <span class="k">案卷</span><span class="v">📥 导入的材料</span>
       <span class="k">患者</span><span class="v">${esc(fp.patient_name || '—')}</span>
       <span class="k">诊断</span><span class="v">${esc(fp.principal_diagnosis?.name || '—')}</span>
-      <span class="k">费用行</span><span class="v">${fees.length} 行${layouts ? ` · L1布局 ${layouts} 文件` : ''}</span>
+      <span class="k">费用行</span><span class="v">${fees.length} 行${layouts ? ` · 版面解析 ${layouts} 文件` : ''}</span>
     </div>
     ${fees.length ? `<table class="fee-mini"><thead><tr><th>行</th><th>项目</th><th class="num">金额</th></tr></thead><tbody>${feeRows}</tbody></table>
       ${fees.length > 8 ? `<p class="muted" style="margin-top:6px">… 另有 ${fees.length - 8} 行</p>` : ''}` : '<p class="muted">暂无费用行，可继续追加费用清单文件</p>'}`;

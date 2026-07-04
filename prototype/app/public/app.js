@@ -4,6 +4,55 @@ const $ = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => [...r.querySelectorAll(s)];
 const esc = (s) => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 
+/** 可悬停/点击展开的提示泡（替代仅靠原生 title —— 延迟长且常被 overflow 裁切） */
+function yyTip(triggerHtml, bodyHtml, align = 'right') {
+  const cls = align === 'left' ? 'yy-tip-left' : align === 'wide' ? 'yy-tip-wide' : 'yy-tip-right';
+  return `<span class="yy-tip-wrap ${cls}" tabindex="0">${triggerHtml}<span class="yy-tip-pop">${bodyHtml}</span></span>`;
+}
+
+function bindYyTips(root = document) {
+  root.querySelectorAll('.yy-tip-wrap:not([data-tip-bound])').forEach(wrap => {
+    wrap.dataset.tipBound = '1';
+    wrap.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const open = wrap.classList.contains('yy-tip-open');
+      $$('.yy-tip-wrap.yy-tip-open').forEach(w => w.classList.remove('yy-tip-open'));
+      if (!open) wrap.classList.add('yy-tip-open');
+    });
+  });
+}
+document.addEventListener('click', (e) => {
+  if (e.target.closest('.yy-tip-wrap')) return;
+  $$('.yy-tip-wrap.yy-tip-open').forEach(w => w.classList.remove('yy-tip-open'));
+});
+document.addEventListener('keydown', (e) => { if (e.key === 'Escape') $$('.yy-tip-wrap.yy-tip-open').forEach(w => w.classList.remove('yy-tip-open')); });
+
+/** 将带 title 的徽章/标签升级为可见悬浮泡（原生 title 延迟长、移动端无效） */
+function upgradeTitleTips(root = document) {
+  const sel = [
+    '.forensic-badge', '.compliance-chip', '.stage-chip', '.tri-badge', '.nature-badge',
+    '.shadow-badge', '.merge-chip', '.dept-chip', '.conf', '.kind-tag', '.source-chip',
+    '.rbadge[title]', '.bbox-dot', '.anchor-chip', '.cmeta-demo',
+  ].join(',');
+  root.querySelectorAll(sel).forEach(el => {
+    if (el.closest('.yy-tip-wrap') || el.dataset.tipUpgraded) return;
+    const tip = el.getAttribute('title');
+    if (!tip) return;
+    el.dataset.tipUpgraded = '1';
+    el.removeAttribute('title');
+    const wrap = document.createElement('span');
+    wrap.className = 'yy-tip-wrap yy-tip-inline yy-tip-right';
+    wrap.tabIndex = 0;
+    el.replaceWith(wrap);
+    wrap.appendChild(el);
+    const pop = document.createElement('span');
+    pop.className = 'yy-tip-pop';
+    pop.innerHTML = `<div class="yy-tip-text">${esc(tip)}</div>`;
+    wrap.appendChild(pop);
+  });
+  bindYyTips(root);
+}
+
 function refreshRuleMap() {
   RULE_MAP = Object.fromEntries((RULES?.rules || []).map(r => [r.rule_id, r]));
 }
@@ -28,7 +77,7 @@ function ruleLink(ruleId, opts = {}) {
   if (compact) {
     const hit = opts.hit ? ' hit' : '';
     const off = offline ? ' offline' : '';
-    const tip = opts.locateHint ? '点击查看规则 · 旁 ↗ 定位疑点' : (offline ? '规则已下线 deprecated' : '查看规则说明');
+    const tip = offline ? '规则已下线 deprecated' : '查看规则说明';
     const suffix = offline ? '<span class="rule-offline-tag">已下线</span>' : '';
     return `<button type="button" class="rule-link rule-link-compact rchip${hit}${off}" data-rule-id="${esc(ruleId)}" title="${esc(tip)}：${esc(title)}">${esc(ruleId)}${suffix}</button>`;
   }
@@ -50,11 +99,11 @@ function pulseHighlight(el) {
   setTimeout(() => { el.style.boxShadow = prev; }, 1200);
 }
 
-/** 覆盖度表等：多条命中规则，编号可查说明、↗ 可定位疑点 */
+/** 覆盖度表等：多条命中规则，点编号查判定逻辑与政策依据 */
 function ruleHitCell(ruleIds) {
   if (!ruleIds?.length) return '<span class="muted">—</span>';
   return `<span class="rule-hit-cell">${ruleIds.map(id =>
-    `<span class="rule-hit-wrap">${ruleLink(id, { compact: true, hit: true, locateHint: true })}<button type="button" class="rule-locate-btn" data-locate-rule="${esc(id)}" title="定位到本案疑点">↗</button></span>`
+    ruleLink(id, { compact: true, hit: true })
   ).join('')}</span>`;
 }
 
@@ -63,10 +112,14 @@ function ruleLinksInline(ruleIds, opts = {}) {
   return ruleIds.map(id => ruleLink(id, { compact: true, hit: !!opts.hit })).join('<span class="rule-sep">、</span>');
 }
 
+function policyRefButton(ref) {
+  return `<button type="button" class="policy-ref-link" data-policy-ref="${esc(ref)}" title="查看知识库条目：${esc(ref)}"><code>${esc(ref)}</code></button>`;
+}
+
 function renderRuleDetailBody(rule) {
   if (!rule) return '<p class="muted">未找到该规则，请刷新页面后重试。</p>';
   const c = rule.catalog || {};
-  const pol = (rule.policy_basis || []).map(p => `<li>${esc(p)}</li>`).join('') || '<li class="muted">—</li>';
+  const pol = (rule.policy_basis || []).map(p => `<li>${policyRefButton(p)}</li>`).join('') || '<li class="muted">—</li>';
   const applies = (rule.applies_to || []).join('、') || '—';
   const examNote = c.exam_scope === false ? '<span class="rule-tag exam-off">体检模式不跑</span>' : '<span class="rule-tag">体检/稽核均适用</span>';
   return `
@@ -90,13 +143,135 @@ function renderRuleDetailBody(rule) {
     <div class="rule-detail-actions">
       ${findingForRule(rule.rule_id) ? `<button type="button" class="v2btn accent" onclick="closeModal();jumpToRuleFinding('${esc(rule.rule_id)}')">↗ 定位到本案疑点</button>${findingForRule(rule.rule_id)?.evidence?.[0]?.loc ? `<button type="button" class="v2btn" onclick="closeModal();jumpToRuleEvidence('${esc(rule.rule_id)}')">📄 定位证据原文</button>` : ''}` : ''}
       <button type="button" class="v2btn" onclick="showRuleCatalog('${esc(rule.rule_id)}')">在目录中定位</button>
-      <button type="button" class="v2btn" onclick="closeModal();showGovernance();">规则治理</button>
+      <a href="/dashboard.html#governance" class="v2btn">规则治理</a>
     </div>`;
 }
 
 window.showRuleDetail = function (ruleId) {
   const rule = RULE_MAP[ruleId];
   openModal('📘 规则说明 · ' + esc(ruleId), renderRuleDetailBody(rule));
+};
+
+function policyRxText(c, opts = {}) {
+  if (!c) return '';
+  if (!c.resolved && !c.synthetic) {
+    return opts.exam ? `引用 ${c.ref || ''} 未穿透到知识库条目 · 建议人工核对依据` : `引用 ${c.ref || ''} 未穿透到知识库条目 · 转人工复核`;
+  }
+  if (c.synthetic) return `行业问题清单（聚合口径）${c.ref ? ' · ' + c.ref : ''}`;
+  const parts = [];
+  if (c.source_kind === '法规条款') {
+    parts.push(c.batch_label || (c.doc_name ? `《${c.doc_name}》` : '法规条款'));
+    if (c.doc_no) parts.push(c.doc_no);
+    if (c.locator) parts.push(c.locator);
+    if (c.effective_from) parts.push(`自${c.effective_from}施行`);
+  } else if (c.source_kind === '两库知识点') {
+    if (c.batch_label) parts.push(c.batch_label);
+    if (c.rule_category || c.item_name) parts.push(`${c.rule_category || '两库规则'}${c.item_name ? `「${c.item_name}」` : ''}`);
+    if (c.seq != null) parts.push(`知识点 #${c.seq}`);
+    if (c.codes?.length) parts.push(`代码 ${c.codes[0]}`);
+    if (c.effective_from) parts.push(`生效 ${c.effective_from}`);
+  } else if (c.source_kind === '目录') {
+    if (c.doc_name) parts.push(c.doc_name);
+    if (c.locator) parts.push(c.locator);
+    if (c.region && c.region !== '全国') parts.push(c.region);
+  } else if (c.source_kind === '问题清单') {
+    parts.push('行业问题清单（聚合口径）');
+    if (c.locator) parts.push(c.locator);
+  } else {
+    if (c.doc_name) parts.push(c.doc_name);
+    if (c.locator) parts.push(c.locator);
+  }
+  return parts.filter(Boolean).join(' · ') || c.ref || '';
+}
+
+function policyRxHTML(p, opts = {}) {
+  const c = p.citation || { ref: p.ref, resolved: false };
+  const unresolved = !c.resolved && !c.synthetic;
+  const icon = c.source_kind === '临床指南' ? '📖' : (unresolved ? '⚠' : '📜');
+  const chipCls = /已核/.test(p.verify_status || '') ? 'ok' : 'warn';
+  const text = policyRxText(c, opts);
+  const sourceLabel = c.source_kind === '法规条款' ? '政府网全文 ↗' : '来源页 ↗';
+  const action = c.source_url ? `<a class="policy-source-link" href="${esc(c.source_url)}" target="_blank" rel="noopener" onclick="event.stopPropagation()">${sourceLabel}</a>` : '<span class="policy-source-link muted">来源页</span>';
+  const excerpt = (p.text || '').length > 240 ? `${(p.text || '').slice(0, 240)}…` : (p.text || '');
+  return `<div class="policy ${unresolved ? 'unresolved' : ''}" data-policy-ref="${esc(p.ref)}" title="${esc(p.ref)}">
+    <div class="policy-rx"><span class="policy-step-dot">2</span><span>${icon} ${esc(text)}</span><span class="vchip ${chipCls}">${esc(p.verify_status || c.verify_status || '')}</span>${action}</div>
+    <div class="policy-text">${esc(excerpt)}</div>
+  </div>`;
+}
+
+function kvRow(label, value, html = false) {
+  if (value == null || value === '' || (Array.isArray(value) && !value.length)) return '';
+  return `<div class="kv-row"><b>${esc(label)}</b><span>${html ? value : esc(value)}</span></div>`;
+}
+
+function policySourceHost(url) {
+  try { return new URL(url).host.replace(/^app\./, ''); } catch { return ''; }
+}
+
+function policyExternalNote(c) {
+  if (!c?.source_url) return '';
+  const host = policySourceHost(c.source_url);
+  if (c.source_kind === '法规条款') return `外部链接打开 ${host || '官方'} 全文页；本弹窗已摘出命中条款，不依赖官网页面锚点。`;
+  if (c.attachment_name) return `外部链接打开 ${host || '官方'} 发布页；来源附件为 ${c.attachment_name}。`;
+  return `外部链接打开 ${host || '官方'} 来源页；本弹窗展示本地知识库快照中的命中条目。`;
+}
+
+window.showPolicyEntry = async function (ref) {
+  openModal('📜 官方条目 · ' + esc(ref), '<p class="muted">正在加载知识库条目…</p>');
+  try {
+    const d = await fetch('/api/kb/entry?ref=' + encodeURIComponent(ref)).then(r => r.json().then(j => ({ ok: r.ok, data: j })));
+    const data = d.data || {};
+    if (!d.ok) {
+      openModal('⚠ 引用不可解析', `<p class="policy-unresolved-note">引用不可解析——本条已按规程转人工复核</p><p><code>${esc(ref)}</code></p>`);
+      return;
+    }
+    const c = data.citation || { ref, resolved: false };
+    const e = data.entry || {};
+    const meta = e.metadata || {};
+    const text = data.text || e.text || '';
+    const sourceLink = c.source_url ? `<a class="policy-primary-link" href="${esc(c.source_url)}" target="_blank" rel="noopener">${c.source_kind === '法规条款' ? '打开中国政府网全文 ↗' : '打开官方来源页 ↗'}</a>` : '';
+    const linkedRules = (c.linked_rules || e.linked_rules || []).map(id => ruleLink(id, { compact: true })).join(' ');
+    const kv = [
+      kvRow('来源文件', c.attachment_name || meta.attachment),
+      kvRow('外部链接', sourceLink, true),
+      kvRow('发布机关', c.authority || e.authority),
+      kvRow('生效日', c.effective_from || e.effective_from),
+      kvRow('文号', c.doc_no || e.doc_no),
+      kvRow('定位', c.locator || e.locator),
+      kvRow('检出逻辑', meta.detect_logic),
+      kvRow('关联规则', linkedRules, true),
+    ].join('');
+    const note = data.synthetic
+      ? '问题清单聚合条目 · 无独立官方条目，供旁证参考'
+      : '条目取自本地知识库快照 · 绝不凭记忆生成条款';
+    openModal('📜 官方条目 · ' + esc(ref), `
+      <div class="policy-entry-head">
+        <div class="policy-flow">
+          <span class="flow-chip done">1 疑点引用</span>
+          <span class="flow-arrow">→</span>
+          <span class="flow-chip active">2 本库条目</span>
+          <span class="flow-arrow">→</span>
+          <span class="flow-chip">3 官方全文</span>
+        </div>
+        <div class="policy-entry-title">
+          <div class="policy-rx full">📜 ${esc(policyRxText(c) || ref)} ${c.verify_status ? `<span class="vchip ${/已核/.test(c.verify_status) ? 'ok' : 'warn'}">${esc(c.verify_status)}</span>` : ''}</div>
+          <code>${esc(ref)}</code>
+        </div>
+      </div>
+      <div class="policy-entry-actions">
+        ${sourceLink || '<span class="policy-source-missing">未入库官方外链</span>'}
+        ${linkedRules ? '<span class="policy-action-hint">关联规则可在下方点击回看</span>' : ''}
+      </div>
+      ${policyExternalNote(c) ? `<p class="policy-source-note">${esc(policyExternalNote(c))}</p>` : ''}
+      <h4 class="policy-entry-section">命中条款原文</h4>
+      <pre class="policy-entry-text">${esc(text)}</pre>
+      <h4 class="policy-entry-section">溯源信息</h4>
+      <div class="policy-entry-kv">${kv || '<p class="muted">无更多溯源字段</p>'}</div>
+      <p class="policy-entry-foot">${esc(note)}</p>
+    `);
+  } catch (e) {
+    openModal('⚠ 引用不可解析', `<p class="policy-unresolved-note">加载失败：${esc(String(e.message || e))}</p>`);
+  }
 };
 
 window.showRuleCatalog = function (highlightId) {
@@ -149,11 +324,11 @@ window.showRuleCatalog = function (highlightId) {
 
 function bindRuleLinkDelegation() {
   document.addEventListener('click', (e) => {
-    const locBtn = e.target.closest('[data-locate-rule]');
-    if (locBtn) {
+    const policyBtn = e.target.closest('[data-policy-ref]');
+    if (policyBtn) {
       e.preventDefault();
       e.stopPropagation();
-      jumpToRuleFinding(locBtn.dataset.locateRule);
+      showPolicyEntry(policyBtn.dataset.policyRef);
       return;
     }
     const el = e.target.closest('[data-rule-id]');
@@ -173,6 +348,7 @@ let REVIEW_CACHE = [];
 let RECT_MAP = {}, REPORT_VIEW = 'report', PRECIP_DATA = { items: [], drafts: [] };
 let REPORT_PAGE = 0, FINDING_PAGE = 0;
 let LAST_RUN_PROFILE = 'standard';
+let ENGINE_TIER = 'standard'; // standard | rag | llm | super
 let APP_HEALTH = { llm_ready: false };
 let scanWaitTimer = null;
 let AUDIT_RUN_ID = 0;
@@ -190,6 +366,52 @@ const CASE_LABELS = {
   icu: '重症ICU · 呼吸机/CRRT', edge_egfr: '边界件 · 奥希替尼(应不报)', edge_gcsf: '边界件 · 升白针(应不报)',
   uploaded: '导入的材料',
 };
+
+const ENGINE_TIER_LABELS = {
+  standard: '基础覆盖',
+  rag: '广度增强',
+  llm: '深度增强',
+  super: '广深双增强',
+};
+
+function getEngineTierOpts() {
+  if (ENGINE_TIER === 'rag') return { rag: true };
+  if (ENGINE_TIER === 'llm') return { llm: true };
+  if (ENGINE_TIER === 'super') return { super: true, rag: true };
+  return {};
+}
+
+function setEngineTier(tier) {
+  if (!ENGINE_TIER_LABELS[tier]) return;
+  ENGINE_TIER = tier;
+  syncEngineTierUI();
+}
+
+function syncEngineTierUI() {
+  $$('.engine-tier').forEach(b => b.classList.toggle('active', b.dataset.tier === ENGINE_TIER));
+  const menu = $('#btnEngineMenu');
+  if (menu) menu.innerHTML = `⚙ 档位 · ${ENGINE_TIER_LABELS[ENGINE_TIER] || '基础覆盖'} ▾`;
+  updateAuditBtnLabel();
+}
+
+function updateAuditBtnLabel() {
+  const btn = $('#btnAudit');
+  if (!btn || btn.disabled) return;
+  const tierShort = ENGINE_TIER_LABELS[ENGINE_TIER] || '';
+  const exam = MODE === 'exam';
+  const action = exam
+    ? (REPORT ? '复检对比' : '开始体检')
+    : (REPORT ? '重新稽核' : '开始稽核');
+  btn.innerHTML = `<span class="btn-icon">▶</span> ${action}${tierShort ? ` · ${tierShort}` : ''}`;
+}
+
+function inferEngineTierFromReport(m) {
+  if (!m) return 'standard';
+  if (m.super_fused) return 'super';
+  if (m.real_agent) return 'llm';
+  if (/RAG/.test(m.engine_mode || '')) return 'rag';
+  return 'standard';
+}
 
 function setWorkflowStep(n) {
   $$('.wf-step').forEach(el => {
@@ -221,7 +443,7 @@ function applyModeUI() {
   const panelTitle = document.querySelector('.panel-right .panel-head h2');
   if (panelTitle) {
     panelTitle.innerHTML = exam
-      ? '<span class="panel-icon">🏥</span> <span id="panelReportTitle">自查台</span>'
+      ? '<span class="panel-icon">🩺</span> <span id="panelReportTitle">自查台</span>'
       : '<span class="panel-icon">🛡</span> <span id="panelReportTitle">稽核台</span>';
   }
   const leftTitle = document.querySelector('.panel-source .panel-head h2');
@@ -229,26 +451,40 @@ function applyModeUI() {
   else if (leftTitle && !exam) leftTitle.innerHTML = '<span class="panel-icon">📁</span> 患者就诊材料包';
 
   const btnAudit = $('#btnAudit');
-  if (btnAudit) btnAudit.innerHTML = `<span class="btn-icon">▶</span> ${exam ? '开始自查' : '开始稽核'}`;
+  if (btnAudit && !btnAudit.disabled) updateAuditBtnLabel();
 
   const wf2 = document.querySelector('.wf-step[data-step="2"] .wf-text');
   const wf3 = document.querySelector('.wf-step[data-step="3"] .wf-text');
-  if (wf2) wf2.textContent = exam ? '开始自查' : '开始稽核';
+  if (wf2) wf2.textContent = exam ? '开始体检' : '开始稽核';
   if (wf3) wf3.textContent = exam ? '看报告' : '看报告 · 点证据';
   const wf4 = document.querySelector('.wf-step[data-step="4"] .wf-text');
   if (wf4) wf4.textContent = '登记整改';
+  const wf5 = document.querySelector('.wf-step[data-step="5"] .wf-text');
+  if (wf5) wf5.textContent = '复检对比';
   $$('.wf-exam-only').forEach(el => el.classList.toggle('hidden', !exam));
 
   const tabs = $('#reportTabs');
   if (tabs) tabs.classList.toggle('hidden', !exam || !REPORT);
 
   const btnExport = $('#btnExport');
-  if (btnExport) btnExport.textContent = exam ? '导出自查清单' : '导出清单';
-  const btnInject = $('#btnInject');
-  if (btnInject) btnInject.classList.toggle('hidden', exam);
+  if (btnExport) btnExport.textContent = exam ? '导出整改清单' : '导出举证包';
+
+  $$('.audit-only').forEach(el => el.classList.toggle('hidden', exam));
+  $$('.exam-only').forEach(el => el.classList.toggle('hidden', !exam));
+
+  const btnInstitution = $('#btnInstitution');
+  if (btnInstitution) btnInstitution.textContent = exam ? '本院画像' : '机构画像';
+
+  $$('.asort.exam-only').forEach(b => b.classList.toggle('hidden', !exam));
+  if (exam && REPORT && ANCHOR_SORT !== 'rect') ANCHOR_SORT = 'rect';
+  if (!exam && ANCHOR_SORT === 'rect') ANCHOR_SORT = 'risk';
+  $$('.asort').forEach(b => b.classList.toggle('active', b.dataset.sort === ANCHOR_SORT));
+  if (EV_CHAIN) renderAnchorList();
+  if (REPORT) renderModeStrip(REPORT);
 
   document.title = exam ? '鹰眼 · 医保飞检自查体检' : '鹰眼 · 医保基金稽核智能体';
   updateEmptyState(exam);
+  syncEngineTierUI();
 }
 
 function updateEmptyState(exam) {
@@ -256,16 +492,20 @@ function updateEmptyState(exam) {
   if (!empty) return;
   const title = empty.querySelector('.empty-title');
   const steps = empty.querySelector('.empty-steps');
-  if (title) title.textContent = exam ? '就绪 · 飞检前 90 秒完成院端自查初筛' : '就绪 · 把线索到证据的距离，缩短到 90 秒';
+  const footnote = $('#emptyFootnote');
+  if (title) title.textContent = exam ? '就绪 · 飞检来之前，自己先把体检做了' : '就绪 · 把线索到证据的距离，缩短到 90 秒';
   if (steps) {
     steps.innerHTML = exam
       ? `<li>材料包<strong>选演示案卷</strong>（院端规则子集）</li>
-         <li>点<strong>「开始自查」</strong> — 只跑住院/临床相关规则</li>
-         <li>右栏<strong>自查台</strong>登记整改 → 导出自查清单</li>`
+         <li>点<strong>「开始体检」</strong> — 只跑住院/临床相关规则</li>
+         <li>右栏出体检总分与风险点 → 逐条登记整改 → 复检看分数涨回来</li>`
       : `<li>材料包选案卷 → 费用锚点行看<strong>嵌入证据链</strong></li>
-         <li>点<strong>「开始稽核」</strong> — 文档索引与条款交叉验证</li>
+         <li>选档位后点顶栏<strong>「开始稽核」</strong> — 文档索引与条款交叉验证</li>
          <li>右栏<strong>稽核台</strong>看疑点 → 点证据定位跳材料包</li>`;
   }
+  if (footnote) footnote.textContent = exam
+    ? '自查从宽、被查从严 · 整改留痕就是飞检答卷'
+    : '引不出原文的疑点，不输出 · 干净案卷零误报红线';
 }
 
 async function loadRectification(caseId) {
@@ -297,8 +537,10 @@ function renderCaseMeta() {
       <strong>${esc(m.case_title || CASE_LABELS[CURRENT_CASE] || CURRENT_CASE)}</strong>
       <span class="muted">${esc(RECORD.front_page?.patient_name || '')} · ${esc(RECORD.front_page?.admit_dept || '')}</span>
     </div>
-    <div class="cmeta-right">${(m.demo_note || m.embedded_note) ? `<span class="cmeta-demo" title="${esc(m.demo_note || m.embedded_note)}">ⓘ 演示说明</span>` : ''}</div>`;
+    <div class="cmeta-right">${(m.demo_note || m.embedded_note) ? yyTip('<span class="cmeta-demo">ⓘ 演示说明</span>', `<div class="yy-tip-text">${esc(m.demo_note || m.embedded_note)}</div>`, 'left') : ''}</div>`;
   bar.classList.remove('hidden');
+  bindYyTips(bar);
+  upgradeTitleTips(bar);
 }
 
 // ---------- 文档标签配置 ----------
@@ -353,7 +595,7 @@ async function init() {
     refreshRuleMap();
     const l1Ok = health.ppstructure?.reachable;
     const healthEl = $('#health');
-    healthEl.textContent = `规则 ${rules.rules.length} · 案卷 ${cases.length} · ${health.llm_ready ? 'LLM 就绪' : '确定性引擎'}${l1Ok ? ` · L1✓(${health.ppstructure.recommended_engine || 'ok'})` : ' · L1—(sidecar 未启动)'}`;
+    healthEl.textContent = `规则 ${rules.rules.length} · 案卷 ${cases.length} · ${health.llm_ready ? '深度分析就绪' : '确定性引擎'}${l1Ok ? ' · 解析服务✓' : ' · 解析服务未启动'}`;
     healthEl.title = l1Ok ? 'L1 解析 sidecar 已连接' : '启动: cd prototype/ppstructure && bash run.sh';
     $('#caseSelect').innerHTML = cases.map(c => {
       const lbl = CASE_LABELS[c.id] || c.id;
@@ -365,7 +607,7 @@ async function init() {
     const qAudit = new URLSearchParams(location.search).get('audit');
     const caseId = qCase && cases.some(c => c.id === qCase) ? qCase : 'main';
     await loadCase(caseId);
-    if (qAudit === '1' && caseId === 'uploaded') setTimeout(() => runAudit(), 400);
+    if (qAudit === '1' && caseId === 'uploaded') setTimeout(() => runAudit(getEngineTierOpts()), 400);
     applyModeUI();
     bindReviewActionDelegation();
     bindRuleLinkDelegation();
@@ -398,11 +640,12 @@ async function loadCase(id) {
   setWorkflowStep(1);
   // 重置报告区
   $('#reportBody').classList.add('hidden'); $('#reportEmpty').classList.remove('hidden');
+  $('#modeStrip')?.classList.add('hidden');
   $('#rectificationBody').classList.add('hidden');
   $('#reportTabs')?.classList.add('hidden');
   REPORT_VIEW = 'report';
   $$('.rtab').forEach(t => t.classList.toggle('active', t.dataset.view === 'report'));
-  const btn = $('#btnAudit'); if (btn) { btn.disabled = false; btn.innerHTML = `<span class="btn-icon">▶</span> ${MODE === 'exam' ? '开始自查' : '开始稽核'}`; }
+  const btn = $('#btnAudit'); if (btn) { btn.disabled = false; updateAuditBtnLabel(); }
 }
 
 function renderTabs() {
@@ -517,11 +760,11 @@ function renderDoc(key, targetEl) {
   else if (key === 'path') {
     const p = r.pathology_report, g = r.gene_test_report;
     if (!p || p.diagnosis === '本例无病理（非肿瘤）' || /不适用|—/.test(p.report_id || '')) {
-      b.innerHTML = dh('病理/基因') + `<div class="note-line muted">本例为${esc(r.front_page?.admit_dept || '非肿瘤')}病例，无病理/基因检测报告（相关肿瘤规则不适用）。</div>`; return;
+      b.innerHTML = dh('病理/基因') + `<div class="note-line muted">本例为${esc(r.front_page?.admit_dept || '非肿瘤')}病例，无分子病理/基因检测证据（相关肿瘤规则不适用）。</div>`; return;
     }
     b.innerHTML = dh('病理报告 · ' + p.report_time) + field('标本', p.specimen) + field('镜下', p.microscopic) + field('免疫组化', p.immunohistochemistry)
       + `<div class="kv"><span class="k">病理诊断</span><span class="v"><b style="color:var(--red)">${esc(p.diagnosis)}</b></span></div>` + `<div class="note-line muted">${esc(p.note)}</div>`
-      + dh('基因检测报告') + `<div class="absent-note"><b>⚠ ${esc(g.status)}</b><br>${esc(g.note)}</div>`;
+      + dh('分子病理/基因检测证据') + `<div class="absent-note"><b>⚠ ${esc(g.status)}</b><br>${esc(g.note)}</div>`;
   }
   else if (key === 'fee') {
     b.innerHTML = feeTable(r);
@@ -580,8 +823,9 @@ function buildLineNature(report) {
       if (mm) mm[1].split(/[、,，]/).forEach(n => { const v = Number(n); if (v) lines.add(v); });
     }
     for (const ln of lines) {
-      if (!map[ln]) map[ln] = { nature: f.nature || '可疑', findings: [] };
+      if (!map[ln]) map[ln] = { nature: f.nature || '可疑', findings: [], finding_ids: [] };
       map[ln].findings.push(f);
+      if (f.finding_id) map[ln].finding_ids.push(f.finding_id);
       if (f.nature === '明确违规') map[ln].nature = '明确违规';
     }
   }
@@ -597,6 +841,17 @@ function riskOf(lineNo) {
   // 一线规则未命中，但完整度补位生成了管理类可疑（§7 缺失即疑点）→ 归入可疑档
   if ((EV_CHAIN?.auto_suspects || []).some(a => a.line_no === lineNo)) return { cls: 'amber', label: '可疑·完整度', rank: 2 };
   return { cls: 'green', label: '干净', rank: 0 };
+}
+function lineRectStatus(lineNo) {
+  const ids = (LINE_NATURE[lineNo]?.finding_ids || []).filter(Boolean);
+  if (!ids.length) return null;
+  const entries = ids.map(id => RECT_MAP[`${CURRENT_CASE}::${id}`]).filter(Boolean);
+  const statuses = ids.map(id => (RECT_MAP[`${CURRENT_CASE}::${id}`] || {}).status || '待整改');
+  if (entries.length < ids.length || statuses.some(s => !s || s === '待整改')) return { key: 'todo', cls: 'red', label: '待整改' };
+  if (statuses.some(s => s === '整改中')) return { key: 'doing', cls: 'amber', label: '整改中' };
+  if (statuses.some(s => s === '延期申请')) return { key: 'delay', cls: 'delay', label: '延期' };
+  if (statuses.every(s => s === '已整改' || s === '已主动退回')) return { key: 'done', cls: 'green', label: '✓ 已整改' };
+  return { key: 'todo', cls: 'red', label: '待整改' };
 }
 function compOf(line) {
   const c = line?.completeness;
@@ -671,20 +926,18 @@ function renderEvCaseHead() {
   const totalRows = d.完整.rows + d.部分.rows + d.薄弱.rows || 1;
   const pct = k => Math.round((d[k].rows / totalRows) * 100);
   const np = (EV_CHAIN.not_provided_types || []).map(t => MAT_NAME[t] || t);
-  el.innerHTML = `
-    <span class="ch-label">案卷完整度</span>
-    <span class="comp-badge ${cls}">⛓ ${s == null ? '未评估' : Math.round(s * 100) + '/100'} · ${tier}</span>
-    <span class="comp-mini" title="完整/部分/薄弱 行数占比">
-      <i class="f" style="width:${pct('完整')}%"></i><i class="p" style="width:${pct('部分')}%"></i><i class="w" style="width:${pct('薄弱')}%"></i>
-    </span>
-    <span class="ch-hint">数据侧 · 与规则覆盖度分开 ⓘ</span>
-    <div class="ch-pop">
+  const popBody = `
       <div class="cp-row"><span>金额加权口径（大钱证据链更重要）</span><b>${EV_CHAIN.anchor || '费用明细行为锚'}</b></div>
       <div class="cp-row"><span style="color:var(--comp-full)">完整 ≥85</span><span>${d.完整.rows} 行 · ¥${fmt(Math.round(d.完整.amount))}</span></div>
       <div class="cp-row"><span style="color:var(--comp-partial)">部分 50–85</span><span>${d.部分.rows} 行 · ¥${fmt(Math.round(d.部分.amount))}</span></div>
       <div class="cp-row"><span style="color:var(--comp-weak)">薄弱 &lt;50</span><span>${d.薄弱.rows} 行 · ¥${fmt(Math.round(d.薄弱.amount))}</span></div>
-      ${np.length ? `<div class="cp-row"><span>整卷未提供（不计缺失）</span><span>${np.map(esc).join('、')}</span></div>` : ''}
-    </div>`;
+      ${np.length ? `<div class="cp-row"><span>整卷未提供（不计缺失）</span><span>${np.map(esc).join('、')}</span></div>` : ''}`;
+  el.innerHTML = `
+    <span class="ch-label">案卷完整度</span>
+    <span class="comp-badge ${cls}">⛓ ${s == null ? '未评估' : Math.round(s * 100) + '/100'} · ${tier}</span>
+    ${yyTip(`<span class="comp-mini" aria-label="完整/部分/薄弱行数占比"><i class="f" style="width:${pct('完整')}%"></i><i class="p" style="width:${pct('部分')}%"></i><i class="w" style="width:${pct('薄弱')}%"></i></span>`, popBody, 'left')}
+    ${yyTip('<span class="ch-hint">数据侧 · 与规则覆盖度分开 <span class="yy-tip-mark">ⓘ</span></span>', popBody, 'left')}`;
+  bindYyTips(el);
 }
 
 function renderAnchorList() {
@@ -693,9 +946,13 @@ function renderAnchorList() {
   const lines = (EV_CHAIN.fee_lines || []).filter(l => !l.is_reversal);
   const rowHTML = (l) => {
     const r = riskOf(l.line_no), c = compOf(l);
+    const rect = MODE === 'exam' ? lineRectStatus(l.line_no) : null;
     const selected = l.line_no === ANCHOR_SEL;
     const reversed = l.reversed_by ? '<span class="chip-reversed">已冲销</span>' : '';
     const sub = `${esc(l.category || '')}${l.class_guessed ? ' <span title="类别未识别（诚实标记）">·类别未识别</span>' : ''}`;
+    const primaryBadge = rect
+      ? `<span class="rbadge rect-${rect.key} ${rect.cls}" title="整改状态">${rect.label}</span>`
+      : `<span class="rbadge ${r.cls === 'pending' ? 'green' : r.cls}">${r.label}</span>`;
     return `<div class="anchor-row ${selected ? 'sel' : ''} ${l.reversed_by ? 'reversed' : ''}" data-line="${l.line_no}">
       <div class="ar-main">
         <div class="ar-name">${esc(l.item_name)} ${reversed}</div>
@@ -703,13 +960,27 @@ function renderAnchorList() {
       </div>
       <div class="ar-amt">¥${fmt(l.amount)}</div>
       <div class="ar-badges">
-        <span class="rbadge ${r.cls === 'pending' ? 'green' : r.cls}">${r.label}</span>
+        ${primaryBadge}
         <span class="cbadge ${c.cls}">${c.label}</span>
       </div>
     </div>`;
   };
   let html = '';
-  if (ANCHOR_SORT === 'risk') {
+  if (ANCHOR_SORT === 'rect') {
+    const rectOf = l => lineRectStatus(l.line_no);
+    const groups = [
+      { cls: 'red', label: '未整改', pred: l => rectOf(l)?.key === 'todo' },
+      { cls: 'amber', label: '整改中 / 延期', pred: l => ['doing', 'delay'].includes(rectOf(l)?.key) },
+      { cls: 'green', label: '已整改留痕', pred: l => rectOf(l)?.key === 'done' },
+      { cls: 'green', label: '无风险', pred: l => !rectOf(l) },
+    ];
+    for (const g of groups) {
+      const rows = lines.filter(g.pred).sort((a, b) => Math.abs(b.amount) - Math.abs(a.amount));
+      if (!rows.length) continue;
+      html += `<div class="agroup-head ${g.cls}"><span class="gh-dot"></span>${g.label} <span class="gh-count">· ${rows.length} 行 · ¥${fmt(Math.round(rows.reduce((s, x) => s + Math.abs(x.amount), 0)))}</span></div>`;
+      html += rows.map(rowHTML).join('');
+    }
+  } else if (ANCHOR_SORT === 'risk') {
     const groups = [
       { cls: 'red', label: '明确违规', pred: l => riskOf(l.line_no).cls === 'red' },
       { cls: 'amber', label: REPORT ? '可疑' : '待稽核', pred: l => { const c = riskOf(l.line_no).cls; return c === 'amber' || c === 'pending'; } },
@@ -735,6 +1006,7 @@ function renderAnchorList() {
     renderEvChainPanel();
     row.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
   });
+  upgradeTitleTips(el);
 }
 
 // 证据链四层视图（选中费用锚）
@@ -761,7 +1033,19 @@ function evChainHTML(line) {
       <div class="ev-nodes">${layerNodes.map(n => evNodeHTML(n, line)).join('')}</div>
     </div>`;
   }
+  html += lineRectAdviceHTML(line);
   return html;
+}
+function lineRectAdviceHTML(line) {
+  if (MODE !== 'exam' || !REPORT || !line) return '';
+  const f = (LINE_NATURE[line.line_no]?.findings || [])[0];
+  if (!f) return '';
+  const st = lineRectStatus(line.line_no);
+  const status = st ? st.label.replace(/^✓\s*/, '') : '未登记';
+  const suggestion = examDisposal(f.disposal_suggestion) || '登记整改状态并留存说明材料';
+  return `<div class="evc-rect-advice">🔧 <b>整改建议：</b>${esc(suggestion)}
+    <div class="muted">当前状态：${esc(status)} · <button type="button" class="linkish" onclick="switchReportView('rectification');setTimeout(()=>document.getElementById('rect-${esc(f.finding_id)}')?.scrollIntoView({behavior:'smooth',block:'center'}),120)">去登记 ↗</button></div>
+  </div>`;
 }
 function bindEvNodes(scope, line) {
   if (!scope || !line) return;
@@ -845,7 +1129,8 @@ const pill = (c) => `<span class="pill ${/乙|甲/.test(c) ? 'yi' : ''}">${esc(c
 const flagCell = (f) => /升高|偏低|异常/.test(f) ? `<span style="color:var(--red)">${esc(f)}</span>` : `<span class="muted">${esc(f)}</span>`;
 
 // ---------- 运行稽核 ----------
-const REPORT_PAGER_SHELL = `<div class="report-pager" id="reportPager">
+const REPORT_PAGER_SHELL = `<div id="modeStrip" class="hidden"></div>
+<div class="report-pager" id="reportPager">
   <div class="report-pager-nav" id="reportPagerNav"></div>
   <div class="report-pager-body" id="reportPagerBody">
     <section class="report-page" id="page-overview"></section>
@@ -941,15 +1226,16 @@ async function auditFetch(query, body, timeoutMs) {
 
 async function runAudit(opts = {}) {
   const btn = $('#btnAudit');
-  const btnSuper = $('#btnSuperAudit');
   const rag = !!opts.rag;
   // shadow 提速：LLM/超级增强先用「确定性+RAG」秒出首屏，真·LLM 作为影子后台跑完再静默合并
   const wantsLLM = !!(opts.llm || opts.super);
   const myRunId = ++AUDIT_RUN_ID;
   if (llmShadowTimer) { clearInterval(llmShadowTimer); llmShadowTimer = null; }
   LAST_RUN_PROFILE = opts.super ? 'super' : (opts.llm ? 'llm' : (rag ? 'rag' : (INJECT ? 'inject' : 'standard')));
-  btn.disabled = true; btn.textContent = opts.llm ? 'LLM 分析中…' : (opts.super ? '超级增强中…' : (rag ? 'RAG 增强稽核中…' : '稽核中…'));
-  if (btnSuper) btnSuper.disabled = true;
+  btn.disabled = true; btn.textContent = MODE === 'exam'
+    ? (opts.super ? '超级体检中…' : (rag ? '知识库增强体检中…' : '体检中…'))
+    : (opts.llm ? '深度分析中…' : (opts.super ? '超级增强中…' : (rag ? '知识库增强稽核中…' : '稽核中…')));
+  $$('.engine-tier').forEach(b => { b.disabled = true; });
   setWorkflowStep(2);
   $('#reportEmpty').classList.add('hidden');
   showScanOverlay();
@@ -971,7 +1257,7 @@ async function runAudit(opts = {}) {
   const waitHint = opts.super
     ? '广深双增强融合中'
     : (rag
-      ? '广度增强（RAG）检索中'
+      ? '广度增强 · 政策检索中'
       : (opts.llm ? '先出基础覆盖，深度增强后台补齐' : '基础覆盖档'));
   startScanWaitTicker('已提交稽核任务', waitHint);
   const fastPromise = auditFetch(fastQ, fastBody, fastTimeout);
@@ -982,9 +1268,9 @@ async function runAudit(opts = {}) {
         const d = document.createElement('div'); d.style.animationDelay = '0s'; d.textContent = '› ' + steps[i]; logEl.appendChild(d);
       }
     }
-    if (opts.super) scanAppend('⚡ 广深双增强：RAG 召回 + 注入对抗 + 规则合议…');
+    if (opts.super) scanAppend('⚡ 广深双增强：政策检索 + 注入对抗 + 规则合议…');
     else if (rag) scanAppend('🌐 广度增强：案卷关键词 → pgvector 召回政策上下文…');
-    if (wantsLLM) scanAppend('🧠 深度增强（LLM 语义）转入后台影子运行（先看基础结果，完成后自动合并）…');
+    if (wantsLLM) scanAppend('🧠 深度增强（语义分析）转入后台运行（先看基础结果，完成后自动合并）…');
     const report = await fastPromise;
     stopScanWaitTicker();
     if (myRunId !== AUDIT_RUN_ID) return;
@@ -996,8 +1282,12 @@ async function runAudit(opts = {}) {
     // 锚视图：跑稽核后用报告的 evidence_chain（含 auto_suspects/covered_gaps）+ 每行疑点档重绘
     if (report.report_meta?.evidence_chain) EV_CHAIN = report.report_meta.evidence_chain;
     LINE_NATURE = buildLineNature(report);
+    if (MODE === 'exam') {
+      await loadRectification(CURRENT_CASE);
+      ANCHOR_SORT = 'rect';
+      $$('.asort').forEach(b => b.classList.toggle('active', b.dataset.sort === ANCHOR_SORT));
+    }
     renderAnchorView();
-    if (MODE === 'exam') await loadRectification(CURRENT_CASE);
     if (MODE === 'exam') await loadPrecipitationData();
     await refreshReviewCache();
     await sleep(150);
@@ -1008,7 +1298,7 @@ async function runAudit(opts = {}) {
     renderTabs();
     setWorkflowStep(3);
     if (wantsLLM) {
-      setLlmShadowBanner('pending', '🧠 深度增强（LLM 语义）后台运行中…（通常 1–2 分钟，完成后自动更新报告）');
+      setLlmShadowBanner('pending', '🧠 深度增强（语义分析）后台运行中…（通常 1–2 分钟，完成后自动更新报告）');
       launchLlmShadow(myRunId, { inject: fastBody.inject, caseId: CURRENT_CASE, fused: !!opts.super });
     }
   } catch (e) {
@@ -1030,8 +1320,9 @@ async function runAudit(opts = {}) {
     }
     setWorkflowStep(1);
   }
-  btn.disabled = false; btn.innerHTML = `<span class="btn-icon">▶</span> ${MODE === 'exam' ? '重新自查' : '重新稽核'}`;
-  if (btnSuper) btnSuper.disabled = false;
+  btn.disabled = false;
+  updateAuditBtnLabel();
+  $$('.engine-tier').forEach(b => { b.disabled = false; });
 }
 
 // LLM 影子运行：后台拉真·LLM 报告，完成后静默合并进当前报告（带运行号防竞态）
@@ -1041,16 +1332,16 @@ async function launchLlmShadow(runId, { inject, caseId, fused }) {
   llmShadowTimer = setInterval(() => {
     if (runId !== AUDIT_RUN_ID) { clearInterval(llmShadowTimer); llmShadowTimer = null; return; }
     const sec = Math.floor((Date.now() - t0) / 1000);
-    setLlmShadowBanner('pending', `🧠 深度增强（LLM 语义）后台运行中… 已等待 ${sec}s（完成后自动更新报告）`);
+    setLlmShadowBanner('pending', `🧠 深度增强（语义分析）后台运行中… 已等待 ${sec}s（完成后自动更新报告）`);
   }, 1000);
   try {
     const llm = await auditFetch('?mode=llm', { inject, caseId }, 180000);
     if (llmShadowTimer) { clearInterval(llmShadowTimer); llmShadowTimer = null; }
     if (runId !== AUDIT_RUN_ID) return;
-    if (!llm?.report_meta) throw new Error('LLM 返回格式异常');
+    if (!llm?.report_meta) throw new Error('深度分析返回格式异常');
     if (!llm.report_meta.real_agent) {
-      const why = llm.report_meta.llm_needs_key ? '（需配置 LLM API Key：SiliconFlow / MiniMax，已保留基础结果）' : '（LLM 路径回退，已保留基础结果）';
-      setLlmShadowBanner('failed', `⚠ 深度增强（LLM 语义）未启用${why}`);
+      const why = llm.report_meta.llm_needs_key ? '（深度分析服务未接入，已保留基础结果）' : '（深度分析回退，已保留基础结果）';
+      setLlmShadowBanner('failed', `⚠ 深度增强（语义分析）未启用${why}`);
       return;
     }
     llm.report_meta.llm_shadow = 'done';
@@ -1062,12 +1353,12 @@ async function launchLlmShadow(runId, { inject, caseId, fused }) {
     FINDING_PAGE = 0;
     renderReport(llm);
     renderTabs();
-    setLlmShadowBanner('done', `✅ 深度增强（LLM 语义）已完成并合并（耗时 ${Math.round((Date.now() - t0) / 1000)}s · ${esc(llm.report_meta.llm_provider || 'LLM')}）`);
+    setLlmShadowBanner('done', `✅ 深度增强（语义分析）已完成并合并（耗时 ${Math.round((Date.now() - t0) / 1000)}s）`);
   } catch (e) {
     if (llmShadowTimer) { clearInterval(llmShadowTimer); llmShadowTimer = null; }
     if (runId !== AUDIT_RUN_ID) return;
     const msg = e.name === 'AbortError' ? '后台分析超时' : e.message;
-    setLlmShadowBanner('failed', `⚠ 深度增强（LLM 语义）未完成：${esc(msg)}（已保留基础稽核结果）`);
+    setLlmShadowBanner('failed', `⚠ 深度增强（语义分析）未完成：${esc(msg)}（已保留基础稽核结果）`);
   }
 }
 
@@ -1099,20 +1390,29 @@ function statusLineHTML(m, exam) {
   const engCls = m.real_agent ? 'real' : (m.llm_needs_key ? 'warn' : 'det');
   const eng = m.super_fused
     ? '⚡ 广深双增强'
-    : (m.real_agent ? '🧠 深度增强（LLM）' : (m.llm_needs_key ? '⚠ 深度增强未启用（缺 Key）' : '⚙ 基础覆盖'));
-  const chips = [`<span class="sl-chip ${engCls}" title="${esc(m.engine_mode || '')}">${eng}</span>`];
+    : (m.real_agent ? '🧠 深度增强 · 语义分析' : (m.llm_needs_key ? '⚠ 深度增强未启用（服务未接入）' : '⚙ 基础覆盖'));
+  const chip = (cls, label, tip) => tip
+    ? yyTip(`<span class="sl-chip ${cls}">${label}</span>`, `<div class="yy-tip-text">${esc(tip)}</div>`, 'left')
+    : `<span class="sl-chip ${cls}">${label}</span>`;
+  const chips = [chip(engCls, eng, m.engine_mode || '')];
   const superOn = !!(m.super_fused || LAST_RUN_PROFILE === 'super');
   if (superOn) {
     const llmOn = m.super_llm === 'ok' || m.real_agent;
     const ragOn = !!(m.layers?.rag?.ran || m.rag?.hits?.length || /RAG/.test(m.engine_mode || ''));
-    chips.push(`<span class="sl-chip super">⚡ 超级增强 · LLM${llmOn ? '✓' : '—'} RAG${ragOn ? '✓' : '—'} 防护${m.injected ? '✓' : '—'}</span>`);
+    chips.push(chip('super', `⚡ 广深双增强 · 语义${llmOn ? '✓' : '—'} 检索${ragOn ? '✓' : '—'} 防护${m.injected ? '✓' : '—'}`, '广深双增强：政策检索 + 语义深审 + 注入对抗防护'));
   } else if (m.layers?.rag?.ran) {
-    chips.push('<span class="sl-chip">🔍 RAG 知识库增强</span>');
+    chips.push(chip('', '🔍 知识库检索增强', '已召回政策上下文补全广度'));
   }
-  if (exam) chips.push(`<span class="sl-chip">🏥 院端规则子集 ${m.exam_rule_filter?.used ?? '—'}/${m.exam_rule_filter?.total ?? '—'} 条</span>`);
-  if (m.injected_attack) chips.push(`<span class="sl-chip warn" title="目标 ${esc(m.injected_attack.targets)}：${esc(m.injected_attack.goal)}">🎭 对抗注入·${esc(m.injected_attack.technique)}（已防御）</span>`);
+  if (exam) chips.push(`<span class="sl-chip">🩺 院端规则子集 ${m.exam_rule_filter?.used ?? '—'}/${m.exam_rule_filter?.total ?? '—'} 条</span>`);
+  const cite = m.summary?.citation;
+  if (cite) {
+    if ((cite.findings_manual || 0) > 0) chips.push(chip('warn', `⚠ ${cite.findings_manual} 条转人工`, 'C-006：引用不出可解析条目ID的结论不出机器定性'));
+    else chips.push('<span class="sl-chip real">📜 引用全穿透</span>');
+  }
+  if (m.injected_attack) chips.push(chip('warn', `🎭 对抗注入·${esc(m.injected_attack.technique)}（已防御）`, `目标 ${m.injected_attack.targets}：${m.injected_attack.goal}`));
   if ((m.overlay_rules || []).length) chips.push(`<span class="sl-chip">📎 overlay ${m.overlay_rules.map(esc).join('、')}</span>`);
-  return `<div class="status-line" title="${esc(m.engine_mode || '')}">${chips.join('')}<span class="sl-hint">ⓘ 悬停看引擎明细</span></div>`;
+  const engineDetail = m.engine_mode || '运行稽核后显示引擎档位与路径明细';
+  return `<div class="status-line">${chips.join('')}${yyTip('<span class="sl-hint">ⓘ 悬停看引擎明细</span>', `<div class="yy-tip-text">${esc(engineDetail)}</div>`, 'left')}</div>`;
 }
 
 // 人力倍增卡：40分钟VS实测 + 人少事多语境 合成单块（默认展开，核心论题）
@@ -1126,7 +1426,7 @@ function leverageCardHTML(m, report, exam) {
       <div class="vs">≈</div>
       <div class="compare-col mult"><span class="big">${Math.round(40 * 60 / 90)}<small>×</small></span><span>人力倍增</span></div>
     </div>
-    <div class="leverage-note">🚀 <b>人少事多 · AI 人力倍增器</b>：全国 <b>8600</b> 名医保监管员盯 <b>13 亿</b>参保人 / <b>28.99 万</b>家机构（人均是美国 4 倍），飞检一年只查得过来 <b>500</b> 家。${exam ? '院端把历史案卷自查干净、主动退回，<b>从源头替监管侧卸载工作量</b>；' : '本次把一名稽核员 <b>40 分钟</b>的单案初筛压到 90 秒内，'}${n} 条疑点已带三要素证据链——<b>人只需复核真争议、真违规</b>。</div>
+    <div class="leverage-note">🚀 <b>人少事多 · AI 人力倍增器</b>：全国 <b>8600</b> 名医保监管员盯 <b>13 亿</b>参保人 / <b>28.99 万</b>家机构（人均是美国 4 倍），飞检一年只查得过来 <b>500</b> 家。${exam ? '院端把历史案卷自查干净、主动退回，<b>从源头替监管侧卸载工作量</b>；' : '本次把一名稽核员 <b>40 分钟</b>的单案初筛压到 90 秒内，'}${n} 条${exam ? '风险点' : '疑点'}已带三要素证据链——<b>人只需复核真争议、真违规</b>。</div>
   </div>`;
 }
 
@@ -1135,13 +1435,80 @@ function evidenceActionsHTML(report) {
   const fs = report.findings || [];
   const suspected = fs.filter(f => f.status === '疑点').length;
   const needMore = fs.filter(f => (f.needs_more || []).length > 0 || f.status === '线索').length;
+  const cite = report.report_meta?.summary?.citation || {};
   if (!suspected && !needMore) return '';
   const llmReady = !!(window.APP_HEALTH && APP_HEALTH.llm_ready);
   const chips = [`🛡 <b>${suspected}</b> 条可生成申诉材料`];
+  if (cite.refs_total != null) chips.push(`📜 引用可穿透 <b>${cite.findings_fully_cited || 0}</b>/<b>${suspected}</b>`);
+  if (cite.findings_manual) chips.push(`⚠ 待人工 <b>${cite.findings_manual}</b> 条`);
   if (needMore) chips.push(`⊕ <b>${needMore}</b> 条标注需补材料/线索`);
   if (llmReady && suspected) chips.push(`⚔ <b>${suspected}</b> 条可对抗辩论`);
   return `<div class="evidence-actions" onclick="switchReportPage(1)" title="点开疑点卡逐条操作">🔗 证据链动作：${chips.join(' · ')} <span class="ea-go">→ 去疑点页操作</span></div>`;
 }
+
+function rectProgress(report) {
+  const findings = (report.findings || []).filter(f => !f.shadow);
+  let done = 0;
+  for (const f of findings) {
+    const r = RECT_MAP[rectKey(f)] || {};
+    if (r.submitted && r.judgment) done++;
+  }
+  return { total: findings.length, done };
+}
+
+function modeStripDeadline(report) {
+  const findings = (report?.findings || []).filter(f => !f.shadow);
+  const dates = [];
+  for (const f of findings) {
+    const r = RECT_MAP[rectKey(f)] || {};
+    if (!r.deadline || r.status === '已整改' || r.status === '已主动退回') continue;
+    dates.push(r.deadline);
+  }
+  if (!dates.length) return '';
+  dates.sort();
+  const d = dates[0];
+  const today = new Date().toISOString().slice(0, 10);
+  if (d < today) {
+    const days = Math.ceil((new Date(today) - new Date(d)) / 86400000);
+    return ` · 最近期限 <span class="strip-overdue">逾期 ${days} 天</span>`;
+  }
+  return ` · 最近期限 ${d.slice(5)}`;
+}
+
+function renderModeStrip(report) {
+  const el = $('#modeStrip');
+  if (!el || !report) return;
+  const s = report.report_meta?.summary || {};
+  const findings = (report.findings || []).filter(f => !f.shadow);
+  if (MODE === 'exam') {
+    const prog = rectProgress(report);
+    if (prog.total === 0) {
+      el.innerHTML = `🩺 本轮体检未发现待整改项 · 建议留存本次体检报告作为飞检前自查凭证 <button type="button" class="strip-btn" onclick="showExportMenu()">导出体检报告</button>`;
+      el.className = 'mode-strip mode-strip-exam clean';
+      el.classList.remove('hidden');
+      return;
+    }
+    const pct = prog.total ? Math.round((prog.done / prog.total) * 100) : 0;
+    const diff = report.report_meta?.exam_diff;
+    const resolved = diff ? ` · 已消除 ¥${fmt(diff.resolved_amount || 0)}` : '';
+    el.innerHTML = `🩺 <b>整改进度</b> <span class="strip-progress" title="${prog.done}/${prog.total} 条已登记"><i style="width:${pct}%"></i></span> ${prog.done}/${prog.total} 条已登记${resolved}${modeStripDeadline(report)}
+      <button type="button" class="strip-btn" onclick="switchReportView('rectification')">继续登记 →</button>
+      <button type="button" class="strip-btn" onclick="showExportMenu()">导出整改清单</button>`;
+    el.className = 'mode-strip mode-strip-exam';
+    el.classList.remove('hidden');
+    return;
+  }
+  const ready = findings.filter(f => (f.evidence || []).length && (f.policy || []).length && f.reasoning).length;
+  const cite = s.citation || {};
+  const fully = cite.findings_fully_cited ?? 0;
+  const manual = cite.findings_manual ?? 0;
+  const suspectedN = s.suspected_count ?? findings.filter(f => f.status === '疑点').length;
+  el.innerHTML = `⛓ <b>三要素齐</b> ${ready}/${findings.length} · 疑点引用可穿透 ${fully}/${suspectedN} · 待人工 ${manual} 条 · 疑点涉及 ¥${fmt(s.suspected_amount || 0)}
+    <button type="button" class="strip-btn" onclick="showExportMenu()">生成举证包</button>`;
+  el.className = 'mode-strip mode-strip-audit';
+  el.classList.remove('hidden');
+}
+window.renderModeStrip = renderModeStrip;
 
 let VIEW_EXAM = false;
 function renderReport(report) {
@@ -1150,16 +1517,8 @@ function renderReport(report) {
   $('#reportBody')?.classList.remove('hidden');
   const m = report.report_meta, s = m.summary;
   const exam = m.panel === '体检'; VIEW_EXAM = exam;
-  // 引擎档位回显（4入口收进下拉后，运行后在引擎钮上亮当前档位，保标杆可见性）
-  const engBtn = $('#btnEngineMenu');
-  if (engBtn) {
-    const tag = m.super_fused
-      ? '⚡广深双增强'
-      : (m.real_agent
-        ? '🧠深度增强'
-        : (/RAG/.test(m.engine_mode || '') ? '🌐广度增强' : '⚙基础覆盖'));
-    engBtn.innerHTML = `档位·${tag} ▾`;
-  }
+  ENGINE_TIER = inferEngineTierFromReport(m);
+  syncEngineTierUI();
 
   const ruleCount = exam
     ? (m.exam_rule_filter?.used ?? RULES.rules.length)
@@ -1183,19 +1542,21 @@ function renderReport(report) {
   const pDetail = $('#page-detail');
   if (!nav || !pOverview || !pFindings || !pShield || !pDetail) return;
 
-  nav.innerHTML = REPORT_PAGES.map((p, i) =>
-    `<button type="button" class="pager-tab ${REPORT_PAGE === i ? 'active' : ''}" data-page="${i}">${p.label}</button>`
+  nav.innerHTML = REPORT_PAGES.map((p, i) => {
+    const label = exam && p.id === 'findings' ? '风险点' : p.label;
+    return `<button type="button" class="pager-tab ${REPORT_PAGE === i ? 'active' : ''}" data-page="${i}">${label}</button>`;
+  }
   ).join('');
   $$('.pager-tab', nav).forEach(b => b.onclick = () => switchReportPage(Number(b.dataset.page)));
 
-  // 体检模式复跑对比横幅：与上一次自查 diff（已消除=整改生效 / 仍存在 / 新增）
+  // 体检模式复检对比横幅：与上一次自查 diff（已消除=整改生效 / 仍存在 / 新增）
   const diffBanner = exam && m.exam_diff ? `
     <div class="recon-banner" title="与上次自查快照（${esc(m.exam_diff.from_at || '')}）对比">
-      🔁 <b>复跑对比</b>：较上次自查
+      🩺 <b>复检对比</b>：较上次自查
       <b style="color:var(--green,#2c6e49)">已消除 ${m.exam_diff.resolved_count} 项（¥${fmt(m.exam_diff.resolved_amount)}）</b> ·
       仍存在 ${m.exam_diff.persisting_count} 项（¥${fmt(m.exam_diff.persisting_amount)}） ·
       ${m.exam_diff.added_count ? `<b style="color:var(--red)">新增 ${m.exam_diff.added_count} 项（¥${fmt(m.exam_diff.added_amount)}）</b>` : '无新增'}
-      <span class="muted">— 整改留痕已存快照，可供飞检对质</span>
+      <span class="muted">— 每次体检存快照，整改前后分数与金额对得上，飞检来了拿得出手</span>
     </div>` : '';
 
   // 三档(Q4 第一层级)案卷定档横幅:明确违规/可疑/干净(老快照无字段时由 findings 客户端回推)
@@ -1213,10 +1574,10 @@ function renderReport(report) {
   pOverview.innerHTML = `
     ${reportHeroHTML(report, s, exam)}
     ${statusLineHTML(m, exam)}
-    ${triBanner}
+    ${exam ? '' : triBanner}
     ${diffBanner}
     <div class="summary-cards">${cards.map(c => `<div class="scard ${c.c}"><img class="scard-icon" src="/brand/icons/${c.icon || 'rules'}.svg" alt="" width="28" height="28"><div class="scard-body"><div class="n">${c.n}</div><div class="l">${c.l}</div></div></div>`).join('')}</div>
-    ${evidenceActionsHTML(report)}
+    ${exam ? '' : evidenceActionsHTML(report)}
     ${leverageCardHTML(m, report, exam)}
   `;
 
@@ -1231,7 +1592,7 @@ function renderReport(report) {
       </div>
     </div>
     ${findingCard(cur)}
-  ` : `<div class="empty">本案未命中疑点</div>`;
+  ` : `<div class="empty">${exam ? '本轮体检未发现待整改项' : '本案未命中疑点'}</div>`;
   const prevFinding = $('#btnFindingPrev');
   const nextFinding = $('#btnFindingNext');
   if (prevFinding) prevFinding.onclick = () => { FINDING_PAGE = Math.max(0, FINDING_PAGE - 1); renderReport(report); switchReportPage(1, true); };
@@ -1240,7 +1601,7 @@ function renderReport(report) {
   pShield.innerHTML = `<div class="findings-section"><h3 class="sect-title green"><img src="/brand/icons/ok.svg" alt="" width="18" height="18" style="vertical-align:-3px"> 正确「不报」（误报防控 · 存疑转线索·不误报）</h3><div id="distractorList">${(report.correctly_not_flagged || []).map(distractorCard).join('')}</div></div>`;
   pDetail.innerHTML = `
     ${s.merged_count ? `<div class="recon-banner">🔗 <b>合议层</b>：合并前 ${s.raw_findings_before_merge} 条原始命中 → 去重后 <b>${s.total_findings} 条</b>（${s.merged_count} 条同笔费用多规则命中已合并）。疑点金额按费用行去重 <b>¥${fmt(s.suspected_amount)}</b>——若像传统做法各规则各算各的，会虚高到 <b style="color:var(--red)">¥${fmt(s.amount_if_double_counted)}</b>。</div>` : ''}
-    ${s.shadow_count ? `<div class="shadow-banner">🌓 <b>规则状态机·观察期（shadow）</b>：${s.shadow_count} 条命中来自被复核高频驳回规则，暂不计入疑点/金额（扣留 ¥${fmt(s.shadow_amount_withheld)}）。</div>` : ''}
+    ${s.shadow_count ? `<div class="shadow-banner">🌓 <b>规则观察期</b>：${s.shadow_count} 条命中来自被复核高频驳回规则，暂不计入疑点/金额（扣留 ¥${fmt(s.shadow_amount_withheld)}）。</div>` : ''}
     ${routingBar(m.routing, exam)}
     ${renderRagSection(m)}
     ${renderEvidenceChain(m.evidence_chain)}
@@ -1261,6 +1622,9 @@ function renderReport(report) {
     $('#reportTabs')?.classList.add('hidden');
     $('#rectificationBody')?.classList.add('hidden');
   }
+  renderModeStrip(report);
+  bindYyTips($('#reportBody') || document);
+  upgradeTitleTips($('#reportBody') || document);
 }
 
 // 超级增强状态已合入 statusLineHTML 的单行面包屑（P3 报告顶部横条精简），原 renderSuperAuditStatus 已移除
@@ -1275,7 +1639,8 @@ function switchReportPage(idx, keepScroll = false) {
   });
   const nav = $('#reportPagerNav');
   if (nav) $$('.pager-tab', nav).forEach((b, i) => b.classList.toggle('active', i === REPORT_PAGE));
-  $('#pageHint').textContent = REPORT_PAGES[REPORT_PAGE].label;
+  const curPage = REPORT_PAGES[REPORT_PAGE];
+  $('#pageHint').textContent = VIEW_EXAM && curPage?.id === 'findings' ? '风险点' : curPage.label;
   const prev = $('#btnPagePrev');
   const next = $('#btnPageNext');
   if (prev) prev.disabled = REPORT_PAGE <= 0;
@@ -1299,16 +1664,6 @@ window.switchReportView = (view, opts = {}) => {
     if (typeof switchReportPage === 'function') switchReportPage(0);
   }
 };
-
-function rectProgress(report) {
-  const findings = (report.findings || []).filter(f => !f.shadow);
-  let done = 0;
-  for (const f of findings) {
-    const r = RECT_MAP[rectKey(f)] || {};
-    if (r.submitted && r.judgment) done++;
-  }
-  return { total: findings.length, done };
-}
 
 function renderRectificationRegistry(report) {
   const box = $('#rectificationBody');
@@ -1371,6 +1726,19 @@ window.pickJudgment = (btn, j) => {
   card.querySelectorAll('.judgment-btn').forEach(b => b.classList.toggle('chosen', b === btn));
   card.querySelector('.rect-judgment').value = j;
 };
+
+function refreshExamAfterRectification() {
+  if (!REPORT || MODE !== 'exam') return;
+  renderAnchorList();
+  renderEvChainPanel();
+  renderModeStrip(REPORT);
+  const oldHero = document.querySelector('#page-overview .report-hero');
+  if (oldHero) oldHero.outerHTML = reportHeroHTML(REPORT, REPORT.report_meta.summary, true);
+  if (REPORT_VIEW === 'report' && REPORT_PAGE === 1) {
+    renderReport(REPORT);
+    switchReportPage(1, true);
+  }
+}
 
 window.jumpToFinding = (fid) => {
   switchReportView('report');
@@ -1443,6 +1811,7 @@ window.saveRectificationCard = async (btn, submit) => {
       renderRectificationRegistry(REPORT);
       loadPrecipitationData();
     }
+    refreshExamAfterRectification();
   } catch (e) { if (tip) tip.textContent = '失败:' + e.message; }
 };
 
@@ -1462,7 +1831,7 @@ function formatChainProgress(chain) {
 function precipDraftCards(drafts, track) {
   return (drafts || []).slice(-5).reverse().map(d => {
     const patch = d.patches?.exclusions_append || d.patches?.exclusions || d.patches?.trigger_logic || '';
-    return `<div class="precip-draft precip-${track}"><div class="precip-draft-head"><b>${esc(d.rule_id)}</b> · ${esc(d.recommendation)} <span class="kind-tag ${d.agent_mode === 'llm' ? 'real' : 'script'}">${d.agent_mode === 'llm' ? 'LLM' : '模板'}</span></div>
+    return `<div class="precip-draft precip-${track}"><div class="precip-draft-head"><b>${esc(d.rule_id)}</b> · ${esc(d.recommendation)} <span class="kind-tag ${d.agent_mode === 'llm' ? 'real' : 'script'}">${d.agent_mode === 'llm' ? '语义分析' : '模板'}</span></div>
     <p>${esc(d.rationale || '')}</p>
     ${patch ? `<div class="muted"><b>patch：</b>${esc(String(patch).slice(0, 180))}${String(patch).length > 180 ? '…' : ''}</div>` : ''}
     ${d.confidence_boost_note ? `<div class="muted">${esc(d.confidence_boost_note)}</div>` : ''}
@@ -1476,7 +1845,7 @@ function renderPrecipTrackPanel(track, label, icon, promptPath) {
   const pending = items.filter(i => i.status === 'pending' || i.status === 'draft_ready');
   const th = track === 'adopt'
     ? '采纳≥3 且近10条有效反馈驳回≤1 → 自动跑巩固 Agent'
-    : '有效驳回≥3 → auto shadow + 自动跑误报 Agent';
+    : '有效驳回≥3 → 自动转观察期 + 自动复核误报';
   const rows = pending.map(i => `<tr><td>${esc(i.rule_id)}</td><td>${esc(i.trigger)}</td><td>${esc(i.status)}</td><td><button type="button" class="rect-btn" onclick="runPrecipitationAgent('${esc(i.rule_id)}','${track}')">🧠 重跑 Agent</button></td></tr>`).join('');
   return `<div class="precip-track" data-track="${track}">
     <h4>${icon} ${label} <span class="muted">${th}</span></h4>
@@ -1500,7 +1869,7 @@ function renderPrecipitationPanel() {
 window.runPrecipitationAgent = async (ruleId, track = 'reject') => {
   try {
     const r = await fetch('/api/rule-precipitation/run', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ rule_id: ruleId, track }) }).then(x => x.json());
-    if (r.error) { alert(r.error + (r.needsKey ? '\n（可配 LLM key 启用真·Agent）' : '')); return; }
+    if (r.error) { alert(r.error + (r.needsKey ? '\n（接入深度分析服务可启用真实合议）' : '')); return; }
     await loadPrecipitationData();
     if (REPORT && VIEW_EXAM) renderRectificationRegistry(REPORT);
   } catch (e) { alert(e.message); }
@@ -1522,18 +1891,85 @@ window.applyPrecipDraft = async (draftId, action) => {
   if (r.note) alert(r.note);
 };
 
+function scoreTone(score) {
+  if (score >= 90) return { grade: 'A', text: '飞检准备良好', color: 'var(--green)', cls: 'a' };
+  if (score >= 75) return { grade: 'B', text: '少量风险待整改', color: '#B07C1B', cls: 'b' };
+  if (score >= 60) return { grade: 'C', text: '存在暴露风险', color: '#D97706', cls: 'c' };
+  return { grade: 'D', text: '高暴露 · 立即整改', color: 'var(--red)', cls: 'd' };
+}
+
+function examHealthScore(report) {
+  const s = report?.report_meta?.summary || {};
+  const suspected = s.suspected_count || 0;
+  const clues = s.clue_count || 0;
+  const prog = rectProgress(report || { findings: [] });
+  const clean = suspected + clues === 0;
+  const fee = clean ? 100 : Math.max(0, 100 - 12 * suspected - 4 * clues);
+  const ev = EV_CHAIN || report?.report_meta?.evidence_chain;
+  const mat = ev?.case_score != null ? Math.round(ev.case_score * 100) : null;
+  const rect = prog.total === 0 ? 100 : Math.round((prog.done / prog.total) * 100);
+  const total = clean ? 100 : (mat != null
+    ? Math.round(fee * 0.5 + mat * 0.3 + rect * 0.2)
+    : Math.round(fee * 0.7 + rect * 0.3));
+  return { fee, mat, rect, total, done: prog.done, rectTotal: prog.total, clean, tone: scoreTone(total) };
+}
+
+function scoreDot(score) {
+  if (score == null) return '#94A3B8';
+  return scoreTone(score).color;
+}
+
+function examHeroHTML(report, s) {
+  const hs = examHealthScore(report);
+  const t = hs.tone;
+  const circumference = 2 * Math.PI * 42;
+  const dash = Math.max(0, Math.min(100, hs.total)) / 100 * circumference;
+  const title = hs.clean
+    ? '体检通过 — 未发现暴露风险'
+    : `暴露 ${s.suspected_count || 0} 处风险点 · ¥${fmt(s.suspected_amount || 0)} 待整改`;
+  const matText = hs.mat == null ? '未评估' : hs.mat;
+  const weightLine = hs.mat == null ? '加权 70% / 30%（材料分缺失时重分配）' : '加权 50% / 30% / 20%';
+  const gradePop = `
+          <div class="cp-row"><span>体检总分构成（演示口径 · 全部可溯源）</span><b>${hs.total}/100</b></div>
+          <div class="cp-row"><span>费用合规 ${hs.fee}/100 —— 每疑点 -12 · 每线索 -4</span></div>
+          <div class="cp-row"><span>材料完整 ${hs.mat == null ? '未评估' : hs.mat + '/100'} —— 即左栏「案卷完整度」金额加权分</span></div>
+          <div class="cp-row"><span>整改闭环 ${hs.rect}/100 —— 已提交登记 ${hs.done}/${hs.rectTotal} 条</span></div>
+          <div class="cp-row"><span>${weightLine}</span></div>`;
+  return `<section class="report-hero exam-health ${hs.clean ? 'pass' : 'warn'}" data-exam-hero="1">
+    <div class="health-ring" style="--score-color:${t.color};--score-dash:${dash};--score-circ:${circumference}">
+      <svg viewBox="0 0 92 92" width="92" height="92" aria-hidden="true">
+        <circle class="hr-bg" cx="46" cy="46" r="42"></circle>
+        <circle class="hr-fg" cx="46" cy="46" r="42"></circle>
+      </svg>
+      <div class="hr-center"><b>${hs.total}</b><span>体检总分</span></div>
+    </div>
+    <div class="rh-main">
+      <div class="exam-hero-line"><span class="rh-badge">院端体检报告</span>
+        ${yyTip(`<span class="exam-grade grade-${t.cls}">等级 ${t.grade} · ${t.text} <span class="yy-tip-mark">ⓘ</span></span>`, gradePop, 'left')}
+      </div>
+      <h3 class="rh-title">${title}</h3>
+      <p class="rh-sub health-parts">
+        <span><i style="background:${scoreDot(hs.fee)}"></i>费用合规 ${hs.fee}</span>
+        <span><i style="background:${scoreDot(hs.mat)}"></i>材料完整 ${matText}</span>
+        <span><i style="background:${scoreDot(hs.rect)}"></i>整改闭环 ${hs.rect}</span>
+      </p>
+    </div>
+  </section>`;
+}
+
 function reportHeroHTML(report, s, exam) {
+  if (exam) return examHeroHTML(report, s);
   const m = report.report_meta;
   const hasFindings = (s.suspected_count || 0) + (s.clue_count || 0) > 0;
   const level = hasFindings ? (s.suspected_count ? 'warn' : 'info') : 'pass';
   const title = hasFindings
-    ? (exam ? `已定位 ${s.suspected_count} 条风险点 · 待复核 ${s.clue_count} 条线索` : `已定位 ${s.suspected_count} 条可回链疑点 · 待复核 ${s.clue_count} 条线索`)
+    ? `已定位 ${s.suspected_count} 条可回链疑点 · 待复核 ${s.clue_count} 条线索`
     : '未检出疑点 — 合规放行';
   const sub = hasFindings
-    ? `把线索到证据的距离，缩短到 ${m.elapsed_ms != null && m.elapsed_ms < 60000 ? Math.round(m.elapsed_ms / 1000) + ' 秒' : '90 秒'} · ${exam ? '飞检暴露' : '疑点涉及'} ¥${fmt(s.suspected_amount)}`
-    : '本案卷通过 G0 误报防控校验';
+    ? `把线索到证据的距离，缩短到 ${m.elapsed_ms != null && m.elapsed_ms < 60000 ? Math.round(m.elapsed_ms / 1000) + ' 秒' : '90 秒'} · 疑点涉及 ¥${fmt(s.suspected_amount)}`
+    : '本案卷通过干净案卷误报防控校验';
   return `<section class="report-hero ${level}">
-    <div class="rh-main"><span class="rh-badge">${exam ? '体检模式' : '稽核模式'}</span><h3 class="rh-title">${title}</h3><p class="rh-sub">${sub}</p></div>
+    <div class="rh-main"><span class="rh-badge">稽核模式</span><h3 class="rh-title">${title}</h3><p class="rh-sub">${sub}</p></div>
     <div class="rh-meta"><span>⚡ ${m.elapsed_ms != null ? m.elapsed_ms + 'ms' : '—'}</span></div>
   </section>`;
 }
@@ -1557,7 +1993,7 @@ function routingBar(routing, exam) {
     : `全 ${routing.total} 条，本案只<b>激活 ${routing.activated_count} 条</b>，${sc ? sc.saved + ' 零成本跳过' : '其余跳过'}（90秒承诺的工程基础）`;
   return `<div class="routing-bar">🔀 <b>${label}</b>：${sub}
     <div class="routing-chips">${chips}${offlineOnly ? `<span class="routing-offline-sep muted">· 已下线</span>${offlineOnly}` : ''}</div>
-    ${sc && !exam ? `<span class="muted">L1确定性 ${sc.level1_L1_deterministic} · L2语义候选 ${sc.level3_L2_llm_candidates}（朴素实现需全 ${routing.total} 条调LLM）· 红=已命中</span>` : '<span class="muted">红=已出疑点/线索</span>'}</div>`;
+    ${sc && !exam ? `<span class="muted">确定性 ${sc.level1_L1_deterministic} · 语义候选 ${sc.level3_L2_llm_candidates}（朴素做法需全 ${routing.total} 条走深度分析）· 红=已命中</span>` : '<span class="muted">红=已出疑点/线索</span>'}</div>`;
 }
 function renderRagSection(m) {
   const rag = m?.rag;
@@ -1569,7 +2005,7 @@ function renderRagSection(m) {
     <td class="muted">${esc((h.content || '').slice(0, 160))}${(h.content || '').length > 160 ? '…' : ''}</td>
   </tr>`).join('');
   return `<div class="findings-section rag-section">
-    <h3 class="sect-title">📚 RAG 知识库增强 <span class="muted">${rag.hits.length} 条语义命中 · 已 merge 进政策上下文</span></h3>
+    <h3 class="sect-title">📚 知识库检索增强 <span class="muted">${rag.hits.length} 条语义命中 · 已并入政策上下文</span></h3>
     <p class="muted" style="margin:0 0 8px">检索 query：${esc((rag.query || '').slice(0, 240))}</p>
     <table class="fee-table"><thead><tr><th>ref_id</th><th class="num">相似度</th><th>来源</th><th>摘要</th></tr></thead><tbody>${rows}</tbody></table>
   </div>`;
@@ -1582,21 +2018,22 @@ function renderCoverage(cov) {
   return `<div class="findings-section"><h3 class="sect-title">📋 覆盖度声明（查了什么·没查什么·为什么）</h3>
     <div class="cov-statement">${esc(cov.statement)}</div>
     <div class="cov-mats">材料完整性：${mats}</div>
-    <p class="muted cov-hit-hint">命中规则：<b>点编号</b> 查判定逻辑与政策依据 · <b>↗</b> 定位到本案疑点 · 弹窗内可跳转规则目录 / 治理</p>
+    <p class="muted cov-hit-hint">命中规则：<b>点编号</b> 查判定逻辑与政策依据 · 弹窗内可跳转规则目录 / 治理</p>
     <table class="fee-table" style="margin-top:8px"><thead><tr><th>应查维度</th><th class="num">激活/规则数</th><th>命中规则</th><th>状态</th></tr></thead><tbody>${dims}</tbody></table></div>`;
 }
 function confBadge(f) {
   if (f.confidence == null) return '';
   const cls = f.confidence >= 85 ? 'hi' : f.confidence >= 65 ? 'mid' : '';
   const parseWarn = f._parse_qa_warn ? '<span class="lowocr" title="解析质量偏低，建议人工核对原件">⚠解析待核</span>' : '';
-  return `<span class="conf ${cls}" title="置信度=f(三要素完整度·控辩裁·OCR置信·CoVe)"><span class="conf-bar"><i style="width:${f.confidence}%"></i></span>置信${f.confidence}</span>${f._low_ocr ? '<span class="lowocr">⚠OCR低置信</span>' : ''}${parseWarn}`;
+  return `<span class="conf ${cls}" title="置信度=f(三要素完整度·控辩裁·OCR置信·取证自检)"><span class="conf-bar"><i style="width:${f.confidence}%"></i></span>置信${f.confidence}</span>${f._low_ocr ? '<span class="lowocr">⚠OCR低置信</span>' : ''}${parseWarn}`;
 }
 
 function findingSourceChip(f) {
   const src = f.ran_by || 'deterministic';
-  if (src === 'llm') return '<span class="kind-tag real source-chip" title="此疑点由 LLM 语义分析生成">🧠 LLM</span>';
-  if (src === 'both') return '<span class="kind-tag super source-chip" title="规则命中 + LLM 语义印证">⚙+🧠 融合</span>';
-  return '<span class="kind-tag script source-chip" title="此疑点由确定性规则引擎生成">⚙ 规则</span>';
+  const noun = VIEW_EXAM ? '风险点' : '疑点';
+  if (src === 'llm') return `<span class="kind-tag real source-chip" title="此${noun}由语义分析生成">🧠 语义</span>`;
+  if (src === 'both') return '<span class="kind-tag super source-chip" title="规则命中 + 语义印证">⚙+🧠 融合</span>';
+  return `<span class="kind-tag script source-chip" title="此${noun}由确定性规则引擎生成">⚙ 规则</span>`;
 }
 
 function renderComplianceFlags(f) {
@@ -1612,7 +2049,7 @@ function renderLlmInsights(f) {
   if (f.ran_by === 'deterministic') return '';
   const info = f.llm_corroboration || { reasoning: f.reasoning, cove: f.cove };
   if (!info) return '';
-  const headLabel = f.ran_by === 'llm' ? 'LLM 推理' : 'LLM 语义印证';
+  const headLabel = f.ran_by === 'llm' ? '深度推理' : '语义印证';
   const verdict = info.cove?.verdict ? ` · ${esc(info.cove.verdict)}` : '';
   const reasoning = info.reasoning ? `<p class="muted llm-reason">${esc(info.reasoning)}</p>` : '';
   if (!reasoning) return '';
@@ -1623,7 +2060,7 @@ function renderCoVe(cove) {
   const realAgent = REPORT?.report_meta?.real_agent;
   const allPass = cove.all_pass != null ? cove.all_pass : cove.items.every(i => i.pass);
   const qs = cove.items.map(i => `<div class="cove-q"><span class="qm">Q：${esc(i.q)}</span><span class="pf ${i.pass ? 'ok' : 'no'}">${i.pass ? '✓核实' : '✗未闭环'}</span><br><span class="am">A：${esc(i.a)}</span></div>`).join('');
-  return `<div class="cove"><div class="cove-h">🔁 CoVe 取证自检（定稿前逐题独立回查）<span class="kind-tag ${realAgent ? 'real' : 'script'}">${realAgent ? '真·LLM' : '脚本演示'}</span><span class="muted"> ${allPass ? '全部核实通过' : '存在未闭环项→影响定级'}${cove.verdict_reason ? '·' + esc(cove.verdict_reason) : ''}</span></div>${qs}</div>`;
+  return `<div class="cove"><div class="cove-h">🔁 取证自检（定稿前逐题独立回查）<span class="kind-tag ${realAgent ? 'real' : 'script'}">${realAgent ? '真·语义推理' : '脚本演示'}</span><span class="muted"> ${allPass ? '全部核实通过' : '存在未闭环项→影响定级'}${cove.verdict_reason ? '·' + esc(cove.verdict_reason) : ''}</span></div>${qs}</div>`;
 }
 function renderActions(f) {
   if (VIEW_EXAM) return '';
@@ -1685,17 +2122,62 @@ function renderExamRectification(f) {
   if (!VIEW_EXAM) return '';
   const key = rectKey(f);
   const cur = RECT_MAP[key] || {};
-  const done = cur.submitted && cur.judgment;
-  return `<div class="rect-mini-link"><button type="button" class="linkish" onclick="switchReportView('rectification');setTimeout(()=>document.getElementById('rect-${esc(f.finding_id)}')?.scrollIntoView({behavior:'smooth',block:'center'}),120)">${done ? '✓ 已登记 · 查看/修改' : '→ 去登记整改'}</button></div>`;
+  const statuses = ['待整改', '整改中', '已整改', '已主动退回', '延期申请'];
+  const status = cur.status || '待整改';
+  const deadline = cur.deadline || defaultDeadline();
+  const saved = cur.updated_at
+    ? `<span class="rect-mini-saved">✓ 已暂存 ${esc(status)} · 期限 ${esc(deadline || '—')}</span>`
+    : '';
+  return `<div class="rect-mini-bar" data-fid="${esc(f.finding_id)}" data-rule="${esc(f.rule_id)}">
+    <label>整改状态
+      <select class="rect-mini-status">${statuses.map(s => `<option value="${esc(s)}"${s === status ? ' selected' : ''}>${esc(s)}</option>`).join('')}</select>
+    </label>
+    <label>期限
+      <input type="date" class="rect-mini-deadline" value="${esc(deadline)}">
+    </label>
+    <button type="button" class="rect-btn primary" onclick="quickRectSave(this)">💾 快速暂存</button>
+    <button type="button" class="linkish" onclick="switchReportView('rectification');setTimeout(()=>document.getElementById('rect-${esc(f.finding_id)}')?.scrollIntoView({behavior:'smooth',block:'center'}),120)">完整登记 ↗</button>
+    ${saved}<span class="rect-mini-tip muted"></span>
+  </div>`;
 }
 
 window.saveRectification = async () => { /* 旧入口保留，主流程在 saveRectificationCard */ };
+window.quickRectSave = async (btn) => {
+  const bar = btn.closest('.rect-mini-bar');
+  const finding_id = bar?.dataset.fid;
+  const f = (REPORT?.findings || []).find(x => x.finding_id === finding_id);
+  if (!bar || !f) return;
+  const tip = bar.querySelector('.rect-mini-tip');
+  if (tip) tip.textContent = '保存中…';
+  try {
+    const r = await fetch('/api/rectification', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({
+        case_id: CURRENT_CASE,
+        finding_id,
+        rule_id: f.rule_id,
+        rule_name: f.rule_name,
+        amount_involved: f.amount_involved,
+        deadline: bar.querySelector('.rect-mini-deadline').value,
+        status: bar.querySelector('.rect-mini-status').value,
+        submitted: false,
+      }),
+    }).then(x => x.json());
+    if (r.error) { if (tip) tip.textContent = r.error; return; }
+    RECT_MAP[rectKey({ finding_id })] = r.entry;
+    if (tip) tip.textContent = `✓ 已暂存 ${r.entry.status} · 期限 ${r.entry.deadline || '—'}`;
+    refreshExamAfterRectification();
+  } catch (e) {
+    if (tip) tip.textContent = '失败:' + e.message;
+  }
+};
 window.quickRectStatus = () => {};
 
 function askRejectReason() {
   return new Promise((resolve) => {
     openModal('✗ 驳回原因（必填）', `
-      <p class="muted">将回流用于规则复审。某规则被驳回 ≥3 次将自动转观察期（shadow）。</p>
+      <p class="muted">将回流用于规则复审。某规则被驳回 ≥3 次将自动转观察期。</p>
       <textarea id="rejectReasonInput" class="ingest-ta" rows="4" placeholder="例：外院已做过基因检测，本案应降为线索而非疑点…"></textarea>
       <div class="rect-actions" style="margin-top:12px">
         <button type="button" class="rect-btn accent" id="rejectConfirmBtn">确认驳回</button>
@@ -1737,6 +2219,43 @@ function askGovernanceReason(title, placeholder) {
   });
 }
 
+async function exportAppealPackage(f, format, openPreview) {
+  const res = await fetch('/api/appeal-package', {
+    method: 'POST',
+    headers: { 'content-type': 'application/json' },
+    body: JSON.stringify({
+      caseId: CURRENT_CASE,
+      finding: f,
+      finding_id: f.finding_id || f.rule_id,
+      format,
+      download: !openPreview,
+    }),
+  });
+  if (!res.ok) {
+    let msg = `${res.status} ${res.statusText}`;
+    try {
+      const j = await res.json();
+      msg = j.error || msg;
+    } catch (_) {}
+    throw new Error(msg);
+  }
+  const blob = await res.blob();
+  const url = URL.createObjectURL(blob);
+  if (openPreview) {
+    window.open(url, '_blank', 'noopener');
+    setTimeout(() => URL.revokeObjectURL(url), 60000);
+    return;
+  }
+  const ext = format === 'markdown' ? 'md' : 'html';
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `鹰眼-申诉材料与举证包-${CURRENT_CASE}-${f.rule_id || 'finding'}.${ext}`;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+
 // 申诉副驾:疑点 → 申诉书草稿 + 举证材料清单 + 医理/药理循证依据
 async function showAppealDraft(btn) {
   const box = btn.closest('.actions');
@@ -1753,23 +2272,43 @@ async function showAppealDraft(btn) {
   const matRows = (d.materials || []).map(m => `<tr><td>${esc(m.item)}</td><td>${esc(m.status)}</td><td class="muted">${esc(m.note)}</td></tr>`).join('');
   const refs = (d.clinical_refs || []).map(r => `<li><b>${esc(r.ref)}</b> ${esc(r.verify_status)}<div class="muted" style="font-size:11.5px">${esc(r.text)}…</div></li>`).join('');
   const html = `
-    <p class="muted">把疑点自动落成<b>申诉书草稿 + 举证材料清单 + 医理/药理依据</b>——对齐官方法定申诉六环、10 工作日死线。 可申诉性:<span class="kind-tag ${ap.color === 'green' ? 'real' : 'script'}">${esc(ap.level || '')}</span></p>
+    <p class="muted">把疑点落成<b>正式申诉说明 + 举证材料清单 + 医理/药理依据 + 监管举证包</b>。 可申诉性:<span class="kind-tag ${ap.color === 'green' ? 'real' : 'script'}">${esc(ap.level || '')}</span></p>
     <div class="cov-statement">${esc(ap.reason || '')}　|　${esc(d.process_note || '')}</div>
-    <div class="facts-h">📄 申诉书草稿</div>
-    <pre class="rule-detail-pre">【标题】${esc(dr.title || '')}
-【患者】${esc(dr.patient || '')}
-【问题陈述】${esc(dr.problem_statement || '')}
-【逐条核查】
-${(dr.item_review || []).map(esc).join('\n')}
-【申诉理由】${esc(dr.appeal_reason || '')}
-【结论】${esc(dr.conclusion || '')}
-${esc(dr.deadline || '')}</pre>
+    <div class="appeal-export-bar">
+      <button type="button" class="rect-btn accent" id="appealPkgPreview">预览/打印申诉举证包</button>
+      <button type="button" class="rect-btn ghost" id="appealPkgHtml">下载 HTML 包</button>
+      <button type="button" class="rect-btn ghost" id="appealPkgMd">下载 Markdown</button>
+      <span class="muted" id="appealPkgTip"></span>
+    </div>
+    <div class="facts-h">📄 申诉说明正文</div>
+    <pre class="rule-detail-pre appeal-draft-pre">${esc(dr.full_text || '')}</pre>
     <div class="ins-2col">
       <div><div class="facts-h">📎 举证材料清单</div><table class="fee-table"><thead><tr><th>材料</th><th>状态</th><th>说明</th></tr></thead><tbody>${matRows}</tbody></table></div>
       <div><div class="facts-h">📖 医理/药理循证依据</div><ul style="font-size:12.5px;padding-left:18px;margin:6px 0">${refs || '<li class="muted">附诊疗规范/药品说明书</li>'}</ul></div>
     </div>
+    <details class="appeal-prompt-box"><summary>写作口径 / Prompt 契约</summary><pre>${esc(d.prompt_contract || '')}</pre></details>
     <div class="cov-statement" style="margin-top:10px">📌 ${esc(d.honesty_note || '')}</div>`;
   openModal('📝 申诉副驾 · ' + esc(d.rule_name || d.rule_id || ''), html);
+  const tip2 = $('#appealPkgTip');
+  const wire = (id, format, preview) => {
+    const el = $(id);
+    if (!el) return;
+    el.onclick = async () => {
+      el.disabled = true;
+      if (tip2) tip2.textContent = preview ? '正在生成预览…' : '正在打包下载…';
+      try {
+        await exportAppealPackage(f, format, preview);
+        if (tip2) tip2.textContent = preview ? '已打开预览页，可打印为 PDF' : '已生成下载文件';
+      } catch (e) {
+        if (tip2) tip2.textContent = '失败: ' + e.message;
+      } finally {
+        el.disabled = false;
+      }
+    };
+  };
+  wire('#appealPkgPreview', 'html', true);
+  wire('#appealPkgHtml', 'html', false);
+  wire('#appealPkgMd', 'markdown', false);
 }
 
 window.reviewAction = async (btn, kind) => {
@@ -1797,7 +2336,7 @@ window.reviewAction = async (btn, kind) => {
       if (kind === '补材料' || r.buffered) msg += ' · 缓冲态（不入沉淀队列）';
       if (kind === '驳回') {
         const rej = r.stats?.by_rule?.[box.dataset.rule]?.rejected || 0;
-        if (rej >= (r.stats?.threshold || 3)) msg += ' · 已触发 shadow 观察期';
+        if (rej >= (r.stats?.threshold || 3)) msg += ' · 已触发观察期';
       }
       tip.textContent = msg;
     }
@@ -1855,37 +2394,89 @@ function evidenceChainFooter(f) {
   return `<div class="ec-footer"><img src="/brand/icons/evidence.svg" alt="" width="14" height="14"><span>案卷 ${esc(CURRENT_CASE || '—')}</span><span>·</span><span>规则 ${ruleLink(f.rule_id, { compact: true })}</span><span>·</span><span>${esc(ts)}</span><span>·</span><span>引擎 ${esc(m?.engine_mode || 'deterministic')}</span></div>`;
 }
 
+// 与 engine/three-stage.js classifyStage 保持同步——改动必须双边同改
+function examStageOf(f) {
+  const id = f.rule_id || '';
+  const vt = f.violation_type || '';
+  const layer = String(f.layer_label || f.layer || '');
+  const reason = f.reasoning || '';
+  if (/超目录|限定支付|限性别|限年龄|限工伤|限生育|政策限定/.test(vt) || /^B-2/.test(id) || /^F-00[12]$/.test(id)) return '事前';
+  if (/^A-/.test(id) && !/L2|语义/.test(layer)) return '事中';
+  if (/L2|语义/.test(layer) || /无指征|证据缺口|无.*(证据|检测|报告)|适应症|指征/.test(vt + reason) || /^T-/.test(id)) return '事后';
+  return '事中';
+}
+
+function examStageChip(f) {
+  const st = examStageOf(f);
+  const meta = {
+    事前: { cls: 'st-pre', icon: '🟢', label: '事前 · 开单可防', title: '开单/上传前两库提醒即可拦住——建议接入事前提醒' },
+    事中: { cls: 'st-mid', icon: '🟡', label: '事中 · 结算前可拦', title: '结算上传前自查可发现——避免被退回/拒付' },
+    事后: { cls: 'st-post', icon: '🔴', label: '事后 · 需深查', title: '深读案卷才能发现——飞检重点，优先整改' },
+  }[st];
+  return `<span class="stage-chip ${meta.cls}" title="${meta.title}">${meta.icon} ${meta.label}</span>`;
+}
+
+function isRectifiedFinding(f) {
+  const st = (RECT_MAP[rectKey(f)] || {}).status;
+  return st === '已整改' || st === '已主动退回';
+}
+
+function forensicReadyBadge(f) {
+  const missing = [];
+  if (!(f.evidence || []).length) missing.push('证据定位');
+  if (!(f.policy || []).length) missing.push('政策条款');
+  if (!f.reasoning) missing.push('推理过程');
+  const ci = f.citation_integrity || {};
+  const total = ci.total ?? (f.policy || []).length;
+  const resolved = ci.resolved ?? (f.policy || []).filter(p => p.citation?.resolved || p.citation?.synthetic).length;
+  if (f.needs_human || (total > 0 && resolved === 0)) {
+    const label = VIEW_EXAM ? '建议人工核对依据' : '引用未穿透 · 转人工';
+    return `<span class="forensic-badge warn danger" title="按 Q9 同款硬约束：引不出可解析条目ID的结论不出机器定性">${label}</span>`;
+  }
+  if (!missing.length && total > 0 && resolved >= total) return '<span class="forensic-badge ok" title="证据定位 + 政策条款 + 推理过程齐备，引用可穿透">⛓ 三要素齐 · 引用可穿透</span>';
+  if (!missing.length && resolved > 0) return `<span class="forensic-badge warn" title="部分条款可穿透">${VIEW_EXAM ? '⛓ 三要素齐' : '⛓ 三要素齐'}（${resolved}/${total} 条款可穿透）</span>`;
+  return `<span class="forensic-badge warn" title="缺失项：${missing.map(esc).join('、')}">⛓ 缺${missing.map(esc).join('、')}</span>`;
+}
+
 function findingCard(f) {
   const evHtml = f.evidence.map(e => `<div class="ev"><span class="ev-type">${esc(e.type)}</span><span class="ev-loc" data-loc="${esc(e.loc)}">${esc(e.loc)}</span><span class="ev-text">${esc(e.text)}${e.anchor ? ` <span class="anchor-chip" title="事实层锚点">⚓${esc(e.anchor.doc)} OCR${e.anchor.ocr_conf}</span>` : ''}</span></div>`).join('');
-  const polHtml = (f.policy || []).map(p => `<div class="policy"><span class="pref">${esc(p.ref)}</span><span class="vchip ${(/已核/.test(p.verify_status || '')) ? 'ok' : 'warn'}">${esc(p.verify_status || '')}</span><div>${esc(p.text)}</div></div>`).join('');
+  const polHtml = (f.policy || []).map(p => policyRxHTML(p, { exam: VIEW_EXAM })).join('');
   const needsLabel = VIEW_EXAM ? '建议补全材料：' : '需调阅材料清单：';
   const needs = (f.needs_more && f.needs_more.length) ? `<div class="needs"><b>${needsLabel}</b><ul>${f.needs_more.map(n => `<li>${esc(n)}</li>`).join('')}</ul></div>` : '';
   const statusLabel = VIEW_EXAM && f.status === '疑点' ? '风险点' : f.status;
   const triCls = f.nature === '明确违规' ? 'tri-hard' : 'tri-suspect';
   const sourceChip = findingSourceChip(f);
-  return `<div class="finding ${esc(f.status)}${f.shadow ? ' shadow' : ''}" data-fid="${esc(f.finding_id)}">
+  const rectified = VIEW_EXAM && isRectifiedFinding(f);
+  const dept = RECORD?.front_page?.admit_dept || '医保办';
+  const policyLabel = VIEW_EXAM ? '对照条款（飞检依据）' : '违反的政策条款（引用原文）';
+  const technicalFoot = VIEW_EXAM
+    ? `<div class="muted" style="margin-top:8px">规则命中类型（官方术语）：${esc(f.violation_type)} · 规则层级：${esc(f.layer || f.layer_label || '')} · 优先分(金额×置信)：${f.priority_score ?? '—'}</div>`
+    : `<div class="muted" style="margin-top:8px">违规类型（官方术语）：${esc(f.violation_type)}${f.violation_nature ? ' · 违规性质：' + esc(f.violation_nature) : ''}${f.disposition_suggestion ? ' · ' + esc(f.disposition_suggestion) : ''} · 规则层级：${esc(f.layer || f.layer_label || '')} · 优先分(金额×置信)：${f.priority_score ?? '—'}</div>`;
+  return `<div class="finding ${esc(f.status)}${f.shadow ? ' shadow' : ''}${rectified ? ' f-rectified' : ''}" data-fid="${esc(f.finding_id)}">
     <div class="f-head">
-      ${f.nature ? `<span class="tri-badge ${triCls}" title="${esc(f.nature_basis || '')}">${esc(f.nature)}</span>` : ''}
+      ${VIEW_EXAM ? examStageChip(f) : ''}
+      ${VIEW_EXAM ? `<span class="dept-chip" title="默认按入院科室归属，登记整改时可改责任人">🏥 ${esc(dept)}</span>` : ''}
+      ${!VIEW_EXAM && f.nature ? `<span class="tri-badge ${triCls}" title="${esc(f.nature_basis || '')}">${esc(f.nature)}</span>` : ''}
       <span class="status-badge ${esc(f.status)}">${esc(statusLabel)}</span>
-      ${f.violation_nature ? `<span class="nature-badge n-${f.violation_nature === '主观嫌疑' ? 'subj' : f.violation_nature === '非主观差错' ? 'obj' : 'tbd'}" title="违规性质（主观嫌疑/非主观差错/待定）${esc(f.nature_upgrade_reason ? '·' + f.nature_upgrade_reason : '')}">${esc(f.violation_nature)}</span>` : ''}
+      ${!VIEW_EXAM && f.violation_nature ? `<span class="nature-badge n-${f.violation_nature === '主观嫌疑' ? 'subj' : f.violation_nature === '非主观差错' ? 'obj' : 'tbd'}" title="违规性质（主观嫌疑/非主观差错/待定）${esc(f.nature_upgrade_reason ? '·' + f.nature_upgrade_reason : '')}">${esc(f.violation_nature)}</span>` : ''}
       ${f.shadow ? '<span class="shadow-badge" title="规则因高频驳回转入观察期，暂不计分">🌓 观察期·不计分</span>' : ''}
       <span class="f-title">${ruleLink(f.rule_id)}${f.corroborations && f.corroborations.length ? `<span class="merge-chip" title="合议层合并">🔗合议 ${f._merged_count}→1</span>` : ''}</span>
       ${sourceChip}
-      <span class="f-meta">${confBadge(f)}<span class="risk ${esc(f.risk_level)}">${esc(f.risk_level)}</span><span class="amount">${f.shadow ? '<s>¥' + fmt(f.amount_involved) + '</s>' : '¥' + fmt(f.amount_involved)}</span><span class="chev">▶</span></span>
+      <span class="f-meta">${confBadge(f)}<span class="risk ${esc(f.risk_level)}">${esc(f.risk_level)}</span>${!VIEW_EXAM ? forensicReadyBadge(f) : ''}<span class="amount">${f.shadow ? '<s>¥' + fmt(f.amount_involved) + '</s>' : '¥' + fmt(f.amount_involved)}</span>${rectified ? '<span class="rectified-badge">✓ 已整改留痕</span>' : ''}<span class="chev">▶</span></span>
     </div>
     <div class="f-body">
       ${f.shadow ? `<div class="shadow-note">🌓 ${esc(f.shadow_reason)}</div>` : ''}
       <div class="evidence-chain">
         <div class="ec-grid">
           <div class="ec-col"><div class="three-label"><span class="idx">1</span>原始证据定位</div>${evHtml || '<p class="muted">—</p>'}</div>
-          <div class="ec-col"><div class="three-label"><span class="idx">2</span>违反的政策条款（引用原文）</div>${polHtml || '<p class="muted">—</p>'}</div>
+          <div class="ec-col"><div class="three-label"><span class="idx">2</span>${policyLabel}</div>${polHtml || '<p class="muted">—</p>'}</div>
           <div class="ec-col"><div class="three-label"><span class="idx">3</span>完整推理过程</div><div class="reason">${esc(f.reasoning)}</div></div>
         </div>
         ${evidenceChainFooter(f)}
       </div>
         ${needs}
         ${f.disposal_suggestion ? `<div class="disposal"><b>${VIEW_EXAM ? '自查整改建议：' : '处置建议：'}</b>${esc(VIEW_EXAM ? examDisposal(f.disposal_suggestion) : f.disposal_suggestion)}</div>` : ''}
-        ${renderReconciliation(f)}
+        ${VIEW_EXAM ? '' : renderReconciliation(f)}
         ${renderCoVe(f.cove)}
         ${renderLlmInsights(f)}
         ${renderDebate(f.debate)}
@@ -1893,7 +2484,7 @@ function findingCard(f) {
         ${renderExamRectification(f)}
         ${renderActions(f)}
         ${renderComplianceFlags(f)}
-        <div class="muted" style="margin-top:8px">违规类型（官方术语）：${esc(f.violation_type)}${f.violation_nature ? ' · 违规性质：' + esc(f.violation_nature) : ''}${f.disposition_suggestion ? ' · ' + esc(f.disposition_suggestion) : ''} · 规则层级：${esc(f.layer || f.layer_label || '')} · 优先分(金额×置信)：${f.priority_score ?? '—'}</div>
+        ${technicalFoot}
     </div></div>`;
 }
 
@@ -1906,19 +2497,23 @@ function renderDebate(d) {
   if (!d) return '';
   if (!d.enabled) return VIEW_EXAM ? '' : `<div class="debate-skip">🗣 控辩裁：<b>不启动辩论</b> — ${esc(d.skip_reason)}</div>`;
   const downgrade = /降级/.test(d.verdict);
+  const DF = window.DebateFormat || {};
   const exch = d.exchanges.map(e => {
     const meta = ROLE_META[e.role] || { icon: '·', cls: '', tag: e.role };
-    return `<div class="exch ${meta.cls}"><div class="exch-role">${meta.icon} ${esc(meta.tag)}<span class="stance">${esc(e.stance)}</span></div><div class="exch-text">${esc(e.text)}</div></div>`;
+    const roleLbl = DF.roleLabel ? DF.roleLabel(e.role) : meta.tag;
+    const stanceLbl = DF.stanceLabel ? DF.stanceLabel(e.stance) : e.stance;
+    const body = DF.renderExchangeBody ? DF.renderExchangeBody(e, d, esc) : esc(e.text);
+    return `<div class="exch ${meta.cls}"><div class="exch-role">${meta.icon} ${esc(roleLbl)}<span class="stance">${esc(stanceLbl)}</span></div><div class="exch-text">${body}</div></div>`;
   }).join('');
   const realAgent = d.real_agent || d.p5_v7 || REPORT?.report_meta?.real_agent;
-  const agentLabel = d.tri_persona ? '真·三人格合议(信息不对称)' : (d.p5_v7 ? `真·P5 v7${d.prompt ? ' · ' + d.prompt : ''}` : (realAgent ? '真·LLM多Agent' : '脚本演示·真版切LLM'));
+  const agentLabel = d.tri_persona ? '真·三人格合议(信息不对称)' : (d.p5_v7 ? '真·裁判位置双跑' : (realAgent ? '真·多角色推理' : '脚本演示·可切真实推理'));
   const scoreChip = d.tri_persona && d.score != null ? ` <span class="verdict keep" title="申诉评定打分形态:指控成立程度 0-100">评分 ${esc(String(d.score))}/100</span>` : '';
   const citeLine = d.tri_persona && (d.kb_citations || []).length
     ? `<div class="muted" style="padding:2px 12px;font-size:11px">依据链(可解析条目ID): ${d.kb_citations.map(c => `<code>${esc(c)}</code>`).join(' · ')}</div>` : '';
   const footNote = d.tri_persona
     ? '三人格信息不对称：辩方只见临床材料、控方只见规则命中+结算数据、专家只见双方陈述书+弹药库(两库/判例/裁量依据)；裁定引用不出可解析 KB 条目 ID 即自动转人工（代码硬校验）。'
     : '裁判防偏见：控辩材料位置交换二次裁决，不一致判平→降级线索；裁判与辩手用不同模型（防自我偏好）。';
-  const inner = `<div class="debate-head">🗣 ${d.tri_persona ? '对抗合议·三人格' : '控辩裁三方对质'} <span class="kind-tag ${realAgent || d.p5_v7 ? 'real' : 'script'}">${agentLabel}</span> <span class="muted">（${d.rounds}轮封顶${d.tri_persona ? ' · 立论→质证→裁定' : ' · 申诉Agent=误报过滤器'}）</span>
+  const inner = `<div class="debate-head">🗣 ${d.tri_persona ? '对抗合议 · 三人格' : '控辩裁三方对质'} <span class="kind-tag ${realAgent || d.p5_v7 ? 'real' : 'script'}">${agentLabel}</span> <span class="muted">（${d.rounds}轮 · ${d.tri_persona ? '提出指控 → 逐条反驳 → 专家裁定' : '申诉Agent=误报过滤器'}）</span>
       <span class="verdict ${downgrade ? 'down' : 'keep'}">裁定：${esc(d.verdict)}</span>${scoreChip}</div>
     <div class="exch-list">${exch}</div>
     <div class="verdict-reason ${downgrade ? 'down' : ''}">▸ ${esc(d.verdict_reason)}</div>
@@ -2035,7 +2630,7 @@ function scanningHTML() {
     <div class="scan-bar"><i></i></div><div class="scan-log" id="scanLog"></div></div>`;
 }
 
-$('#btnAudit').onclick = () => runAudit();
+$('#btnAudit').onclick = () => runAudit(getEngineTierOpts());
 $('#btnReset').onclick = () => location.reload();
 // 双模式
 function setMode(mode) {
@@ -2043,28 +2638,19 @@ function setMode(mode) {
   MODE = mode;
   sessionStorage.setItem('yingyan_mode', mode);
   applyModeUI();
-  if (REPORT) runAudit();
+  if (REPORT) runAudit(getEngineTierOpts());
 }
 $$('.mode-btn').forEach(b => b.onclick = () => setMode(b.dataset.mode));
 $$('.rtab').forEach(b => b.onclick = () => switchReportView(b.dataset.view));
 // v2 工具
-$('#btnInject').onclick = showInjectionDefense;
-$('#btnLLM').onclick = () => runAudit({ llm: true });
-const btnRag = $('#btnRag');
-if (btnRag) btnRag.onclick = () => runAudit({ rag: true });
-const btnSuperAudit = $('#btnSuperAudit');
-if (btnSuperAudit) btnSuperAudit.onclick = () => { INJECT = true; runAudit({ super: true, rag: true }); };
+const btnInject = $('#btnInject');
+if (btnInject) btnInject.onclick = showInjectionDefense;
+$$('.engine-tier').forEach(b => { b.onclick = () => setEngineTier(b.dataset.tier); });
 bindReportPagerControls();
-const btnIngest = $('#btnIngest');
-if (btnIngest) btnIngest.onclick = showIngest;
 $('#btnFacts').onclick = showFacts;
-$('#btnBench').onclick = showBench;
 $('#btnInstitution').onclick = showInstitution;
-const _btnFoundation = $('#btnFoundation'); if (_btnFoundation) _btnFoundation.onclick = () => showHaven(0);
-const _btnTriad = $('#btnTriad'); if (_btnTriad) _btnTriad.onclick = () => showHaven(1);
 const _btnThreeStage = $('#btnThreeStage'); if (_btnThreeStage) _btnThreeStage.onclick = showThreeStage;
-const _btnAgentRuntime = $('#btnAgentRuntime'); if (_btnAgentRuntime) _btnAgentRuntime.onclick = showAgentRuntime;
-// v2bar 下拉（洞察/稽核引擎/工具与演示）：开合 + 点项后收起 + 点外部收起。
+// v2bar 下拉（稽核引擎/工具）：开合 + 点项后收起 + 点外部收起。
 // 关键：v2bar 有 backdrop-filter（给 fixed 建了包含块）+ overflow-x:auto（裁剪）——会把展开的菜单裁掉看不全。
 // 解法：把菜单 portal 到 <body>，脱离 v2bar 的包含块与 overflow，position:fixed 按触发钮定位，永不被裁。
 (function setupV2Dropdowns() {
@@ -2099,9 +2685,6 @@ const _btnAgentRuntime = $('#btnAgentRuntime'); if (_btnAgentRuntime) _btnAgentR
   window.addEventListener('scroll', closeAll, true); // fixed 菜单不随滚动移动 → 滚动即收起
   window.addEventListener('resize', () => { if (openMenu) positionMenu(openMenu, openMenu._btn); });
 })();
-// 稽核引擎档位：标准（默认主CTA走标准）
-const _btnEngStd = $('#btnEngStd'); if (_btnEngStd) _btnEngStd.onclick = () => runAudit();
-$('#btnGovernance').onclick = showGovernance;
 const btnRuleCatalog = $('#btnRuleCatalog');
 if (btnRuleCatalog) btnRuleCatalog.onclick = () => showRuleCatalog();
 $('#btnExport').onclick = showExportMenu;
@@ -2111,16 +2694,16 @@ function showExportMenu() {
   const chkQ = (ex ? 'mode=exam&' : '') + caseQ;
   const item = (href, icon, title, sub) => `<a class="export-item" href="/api/export/${href}" target="_blank" rel="noopener"><span class="ex-ic">${icon}</span><span class="ex-tx"><b>${title}</b><span class="muted">${sub}</span></span><span class="ex-dl">⬇</span></a>`;
   const html = `
-    <p class="muted">当前案卷 <code>${esc(CASE_LABELS[CURRENT_CASE] || CURRENT_CASE)}</code> · ${ex ? '体检' : '稽核'}模式 —— 一键下载结构化数据 / 清单 / 打印版。</p>
+    <p class="muted">当前案卷 <code>${esc(CASE_LABELS[CURRENT_CASE] || CURRENT_CASE)}</code> · ${ex ? '体检' : '稽核'}模式 —— 一键下载结构化数据 / ${ex ? '整改清单' : '举证包'} / 打印版。</p>
     <div class="export-grid">
-      ${item(`findings?format=csv&${caseQ}`, '📊', '疑点表 · CSV', 'Excel 直接打开，逐条疑点带证据/金额/置信')}
-      ${item(`findings?format=json&${caseQ}`, '{ }', '疑点 · JSON', '结构化数据，供接口/二次处理')}
-      ${item(`checklist?${chkQ}`, '📄', ex ? '自查整改清单 · Markdown' : '飞检举证包 · Markdown', '三要素证据链清单 + 检查结论草稿')}
-      ${item(`checklist?format=pdf&${chkQ}`, '📕', ex ? '自查整改清单 · PDF' : '飞检举证包 · PDF', '服务端一键 PDF（未装 PDF 引擎则自动转浏览器打印）')}
+      ${item(`findings?format=csv&${caseQ}`, '📊', `${ex ? '风险点' : '疑点'}表 · CSV`, `Excel 直接打开，逐条${ex ? '风险点' : '疑点'}带证据/金额/置信`)}
+      ${item(`findings?format=json&${caseQ}`, '{ }', `${ex ? '风险点' : '疑点'} · JSON`, '结构化数据，供接口/二次处理')}
+      ${item(`checklist?${chkQ}`, '📄', ex ? '整改清单 · Markdown' : '举证包 · Markdown', ex ? '风险点登记状态 + 飞检前主动自查凭证' : '三要素证据链清单 + 检查结论草稿')}
+      ${item(`checklist?format=pdf&${chkQ}`, '📕', ex ? '整改清单 · PDF' : '举证包 · PDF', '服务端一键 PDF（未装 PDF 引擎则自动转浏览器打印）')}
     </div>`;
-  openModal('⬇ 导出报告 · 一键下载', html);
+  openModal(`⬇ ${ex ? '导出整改清单' : '导出举证包'} · 一键下载`, html);
 }
-$('#btnPitch').onclick = showPitch;
+window.showExportMenu = showExportMenu;
 $('#modalRoot').onclick = (e) => { if (e.target.id === 'modalRoot') closeModal(); };
 
 // ---------- 模态 ----------
@@ -2332,7 +2915,7 @@ async function showFacts() {
   const feeRows = c.fee_lines.map(f => `<tr><td class="ln">${f.id}</td><td>${esc(f.name)}</td><td class="num">${f.amount.toFixed(2)}</td><td><span class="anchor-chip">${esc(f.anchor.doc)}·${esc(f.anchor.locator)}</span></td><td><span class="ocr-chip ${f.anchor.ocr_conf < 0.8 ? 'lo' : 'hi'}">OCR ${f.anchor.ocr_conf}${f.anchor.bbox ? ' ⌖' : ''}${f.anchor.ocr_conf < 0.8 ? ' ⚠' : ''}</span></td></tr>`).join('');
   const inj = (c.flags.injection_suspects || []).length;
   const html = `
-    <p class="muted">事实层把材料包一次性编译为类型化"稽核案卷对象"，<b>每条事实自带源锚点(文档/定位/OCR置信度)</b>——证据定位从"LLM临场摘录"变为"事实自身携带出处"，三要素门禁的"证据定位"成为数据结构的硬字段。规则在对象上跑，不重读全文（token降一个量级、判定可复现）。</p>
+    <p class="muted">事实层把材料包一次性编译为类型化"稽核案卷对象"，<b>每条事实自带源锚点(文档/定位/OCR置信度)</b>——证据定位从"模型临场摘录"变为"事实自身携带出处"，三要素门禁的"证据定位"成为数据结构的硬字段。规则在对象上跑，不重读全文（开销降一个量级、判定可复现）。</p>
     <div class="bench-kpis">
       <div class="bkpi"><div class="n">${c.summary.fee_lines}</div><div class="l">费用行事实</div></div>
       <div class="bkpi"><div class="n">${c.summary.orders}</div><div class="l">医嘱事实</div></div>
@@ -2356,15 +2939,15 @@ async function showBench() {
   const rows = b.cases.map(c => `<tr><td>${c.is_clean ? '🟢干净件' : '🔴违规件'}</td><td>${esc(c.title || c.id)}</td><td class="num">${c.found_suspected}</td><td class="num">${c.found_clue}</td><td class="num">${c.false_positives != null ? c.false_positives : '—'}</td><td class="num">${c.latency_ms}ms</td><td class="num">${c.routing}</td></tr>`).join('');
   const yhfBlock = yhf && yhf.engine ? `
     <div class="yhf-gate">
-      <h4><span class="gate-badge">YHF</span> 变更门禁 · Oracle 模式（零治理叠加）</h4>
-      <div class="yhf-row"><span>G0 干净件零误报</span><b>${yhf.engine.gates.G0_clean_zero_fp ? '✅ PASS' : '❌ FAIL'}</b></div>
+      <h4><span class="gate-badge">门禁</span> 变更门禁 · 基准模式（零治理叠加）</h4>
+      <div class="yhf-row"><span>干净件零误报</span><b>${yhf.engine.gates.G0_clean_zero_fp ? '✅ PASS' : '❌ FAIL'}</b></div>
       <div class="yhf-row"><span>案卷 / 干净件误报</span><b>${yhf.engine.meta.total_cases} / ${yhf.engine.meta.clean_false_positive_total}</b></div>
       <div class="yhf-row"><span>规则缺 6 用例</span><b>${yhf.rule?.missing_test_cases ?? '—'} 条</b></div>
       <div class="yhf-row"><span>整体门禁</span><b>${yhf.overall_pass ? '✅ PASS' : '❌ FAIL'}</b></div>
-      <p class="muted" style="margin-top:8px">CLI: <code>bash yhf/run.sh --strict</code> · shadow 公理：bench=Oracle，live 才读 rule_states</p>
+      <p class="muted" style="margin-top:8px">每次规则或文案改动都先过这道门禁再发布：干净案卷零误报是一票否决项</p>
     </div>` : '';
   const html = `
-    <p class="muted">AuditBench + YHF：任何 prompt/规则/模型变更都跑回归。<b>干净件误报=0 是红线</b>。</p>
+    <p class="muted">基准案卷 + 变更门禁：任何规则/文案/模型变更都跑回归。<b>干净件误报=0 是红线</b>。</p>
     <div style="text-align:center;margin:10px 0"><span class="redline ${b.meta.red_line_clean_zero_fp ? 'pass' : 'fail'}">红线：干净件零误报 ${b.meta.red_line_clean_zero_fp ? '✓ PASS' : '✗ FAIL'}</span></div>
     ${yhfBlock}
     <div class="bench-kpis">
@@ -2376,7 +2959,7 @@ async function showBench() {
     <table class="fee-table"><thead><tr><th>类型</th><th>案卷</th><th class="num">疑点</th><th class="num">线索</th><th class="num">误报</th><th class="num">时延</th><th class="num">路由</th></tr></thead><tbody>${rows}</tbody></table>
     ${renderReviewFlow(rev.stats)}
     <p class="muted" style="margin-top:10px">注：产品态≥20份标注案卷。指标盘随引擎实测刷新。</p>`;
-  openModal('📊 AuditBench · YHF 评测基准', html);
+  openModal('📊 评测基准 · 变更门禁', html);
 }
 
 async function showInstitution() {
@@ -2472,7 +3055,7 @@ async function foundationHtml() {
         <span class="ins-bar-label">${esc(x.name)}</span>
         <span class="ins-bar-track"><span class="ins-bar-fill ${x.operationalized ? 'dom' : ''}" style="width:${Math.max(5, Math.round(x.items / maxFam * 100))}%"></span></span>
         <span class="ins-bar-val">${x.items}${x.operationalized ? ' ✓' : ''}</span>
-      </div><div class="muted" style="font-size:11px;margin:-2px 0 7px 38%">${x.operationalized ? esc(x.checker + ' · ' + (x.note || '')) : esc(x.note || '待 LLM/专项 checker')}</div>`).join('');
+      </div><div class="muted" style="font-size:11px;margin:-2px 0 7px 38%">${x.operationalized ? esc(x.checker + ' · ' + (x.note || '')) : esc(x.note || '待语义/专项检测')}</div>`).join('');
       return `<div class="facts-h" style="margin-top:14px">🧬 模式族覆盖（L3 索引 ${fmt(fam.merged_items)} 项 · ${fam.exclusive_pairs} 对互斥 · ${fam.operationalized_pct}% 已操作化）</div><div class="ins-bars">${famBars}</div>`;
     })() : ''}
     <p class="muted" style="font-size:11.5px">来源：${g.top_sources.slice(0, 4).map(s => esc(s.source) + ' ' + s.count).join(' · ')}　|　layer：${Object.entries(g.layers).map(([k, v]) => esc(k) + v).join(' ')}</p>
@@ -2604,16 +3187,16 @@ function showAgentRuntime() {
   const llmStat = (v, alt) => v != null ? `<b class="rt-teal">${v}ms</b> · ${alt}` : '<span class="muted">未启用</span>';
   const llmRows = [
     stage('① 控方 prosecutor', '真读病历自由文本 · 三方交叉验证', llmStat(stg.prosecutor, '读病历提疑点'), 'system 人格 / 三要素门禁', 'rt-teal'),
-    stage('② CoVe 取证自检', '每疑点生成2问 · 独立回查', m.cove_error ? `<span class="rt-red">失败降级</span> <span class="muted">${esc(m.cove_error).slice(0, 30)}</span>` : llmStat(stg.cove, '维持/降级/撤销'), '批量vs逐条 / 并发池', 'rt-teal'),
+    stage('② 取证自检', '每疑点生成2问 · 独立回查', m.cove_error ? `<span class="rt-red">失败降级</span> <span class="muted">${esc(m.cove_error).slice(0, 30)}</span>` : llmStat(stg.cove, '维持/降级/撤销'), '批量vs逐条 / 并发池', 'rt-teal'),
     stage('③ 控辩裁 P5', '辩方反驳 + 裁判位置交换防偏见', llmOn ? '<span class="muted">按需（点疑点「对抗辩论」启动）</span>' : '<span class="muted">未启用</span>', '模板版本 / 短路规则', 'rt-teal'),
   ].join('');
   const html = `
     <p class="muted">同一个疑点报告，背后是 <b>13 个单元各司其职</b>。下面是本次实测（案卷 <code>${esc(CURRENT_CASE)}</code>）——每行第三列是该单元<b>可独立调优的旋钮</b>。</p>
     <div class="facts-h">⚙ 确定性引擎路径 <span class="muted">（本次实跑 · 纯计算可复现）</span></div>
     <table class="fee-table rt-table"><thead><tr><th>单元 / 职责</th><th>本次实测</th><th>调优旋钮</th></tr></thead><tbody>${detRows}</tbody></table>
-    <div class="facts-h" style="margin-top:14px">🧠 真·LLM 多 agent 路径 <span class="muted">（${llmOn ? (superOn ? '超级增强·已跑' : 'LLM·已跑') : '点「⚙稽核引擎 → LLM语义/超级增强」启用'}）</span></div>
+    <div class="facts-h" style="margin-top:14px">🧠 真·语义多角色路径 <span class="muted">（${llmOn ? (superOn ? '广深双增强·已跑' : '深度增强·已跑') : '点「⚙档位 → 深度增强/广深双增强」启用'}）</span></div>
     <table class="fee-table rt-table"><thead><tr><th>agent / 职责</th><th>本次实测</th><th>调优旋钮</th></tr></thead><tbody>${llmRows}</tbody></table>
-    <div class="cov-statement" style="margin-top:12px">📌 各 agent 职责单一、互不混淆——所以可以<b>逐个精调</b>（改一个 agent 的 prompt/阈值/模型不影响其它）。harness 现状:防注入基线 + PII脱敏 + context预算 + 重试退避 + 结构化输出 + 失败不阻断。</div>`;
+    <div class="cov-statement" style="margin-top:12px">📌 各 agent 职责单一、互不混淆——所以可以<b>逐个精调</b>（改一个环节的模板/阈值/模型不影响其它）。运行防护:防注入基线 + 隐私脱敏 + 上下文预算 + 重试退避 + 结构化输出 + 失败不阻断。</div>`;
   openModal('🛠 agent 运行时 · 13 单元各司其职（本次实测）', html);
 }
 
@@ -2659,7 +3242,7 @@ async function showGovernance() {
       : `<button class="act adopt" onclick="governanceAction('${esc(e.rule_id)}','restore')">✓ 复审恢复·重新在役</button>`;
     return `<div class="gv-card"><div class="gv-head"><span class="gv-badge ${sm.cls}">${sm.label}</span>${ruleLink(e.rule_id)}</div>
       <div class="gv-reason">${esc(e.reason || '')}</div><div class="gv-flow">${hist}</div><div class="actions">${btns}<span class="act-tip muted"></span></div></div>`;
-  }).join('') : '<div class="cov-statement" style="color:var(--green)">全部 79 条规则均在役（active）。某规则被复核驳回 ≥3 次会自动转入 shadow 观察期、在此复审——目前无规则进观察期/下线。</div>';
+  }).join('') : '<div class="cov-statement" style="color:var(--green)">全部 79 条规则均在役（active）。某规则被复核驳回 ≥3 次会自动转入观察期、在此复审——目前无规则进观察期/下线。</div>';
   const restoreHints = (d.restore_hints || []).map(h =>
     `<div class="exam-banner">✓ ${ruleLink(h.rule_id, { compact: true })} 巩固链建议恢复在役：${esc((h.rationale || '').slice(0, 100))}… <button type="button" class="rect-btn accent" onclick="governanceAction('${esc(h.rule_id)}','restore')">人工 restore</button></div>`
   ).join('');
@@ -2703,31 +3286,8 @@ function renderReviewFlow(stats) {
   return `<div class="facts-h" style="margin-top:14px">🔁 规则沉淀双链（驳回=误报淘汰 · 采纳=规则巩固）</div>
     ${has ? `<div class="cov-statement">累计：采纳 ${totals['采纳'] || 0} · 驳回 ${totals['驳回'] || 0} · 补材料 ${totals['补材料'] || 0}（缓冲不入队）</div>
     <div class="muted" style="font-size:12px;margin-bottom:8px">误报链：有效驳回≥${stats.threshold || 3} → shadow + 误报 Agent · 巩固链：采纳≥3 且近10条驳回≤1 → 巩固 Agent</div>
-    ${flagged.length ? `<div class="ingest-err">🌓 shadow 观察期：${flagged.map(f => `${ruleLink(f.rule_id, { compact: true })}(驳回${f.rejected})`).join('、')} → 到「规则治理」restore 或「登记整改/疑点卡」继续巩固链</div>` : ''}` :
+    ${flagged.length ? `<div class="ingest-err">🌓 观察期：${flagged.map(f => `${ruleLink(f.rule_id, { compact: true })}(驳回${f.rejected})`).join('、')} → 到「规则治理」restore 或「登记整改/疑点卡」继续巩固链</div>` : ''}` :
       `<div class="cov-statement muted">暂无复核反馈。稽核模式点 采纳/驳回；体检模式到「登记整改」提交成立/不成立。</div>`}`;
-}
-function showPitch() {
-  const html = `
-    <div class="pitch-block"><h4>一句话定位</h4><div class="pitch-quote">人少事多——8600 名监管员盯 13 亿参保人。鹰眼是<b>医保监管的 AI 人力倍增器</b>：看得懂非结构化病历，40 分钟→90 秒把线索变成<b>能对质的证据链</b>。</div></div>
-    <div class="pitch-block"><h4>三支点</h4>
-      <div class="pitch-quote">① 地位：站在官方规则库(88类/24.7万知识点)肩上的<b>语义增强层</b>，国家系统的"取证放大镜"。</div>
-      <div class="pitch-quote">② 被验证：政策(AI+医保监管/智能监管年追26.72亿) · 商业(美国Alaffia·LLM读病历证据回链·提速20倍·收入翻4倍) · 地方(苏州4个月追回8151万·已自研AI比对模型)。</div>
-      <div class="pitch-quote">③ 蓝海：三层玩家无人做飞检台非结构化语义初筛；官方规则全公开→壁垒迁移到语义稽核+证据链工程+对抗复核。</div></div>
-    <div class="pitch-block"><h4>数字弹药库（引用前核对口径）</h4>
-      <table class="ammo"><tbody>
-      <tr><td><b>342亿</b></td><td>2025全国医保系统全口径追回（278亿经办挽回·查实骗保1626家）</td></tr>
-      <tr><td><b>30009亿</b></td><td>2025基本医保基金总支出首破3万亿（参保13.3亿人）</td></tr>
-      <tr><td><b>8151.79万</b></td><td>苏州2026年1-4月追回（注：非全年）</td></tr>
-      <tr><td><b>40分→90秒</b></td><td>单份材料人工 vs 鹰眼</td></tr>
-      <tr><td><b>70%</b></td><td>2026年底事前提醒系统定点机构接入率目标</td></tr>
-      </tbody></table></div>
-    <div class="pitch-block"><h4>金句</h4>
-      <div class="pitch-quote">引不出原文的疑点，我们不输出。</div>
-      <div class="pitch-quote">能不报，比能报更难，也更值钱。</div>
-      <div class="pitch-quote">疑点有三要素门禁，规则进库要过三审三验——规则本身也有证据链。</div>
-      <div class="pitch-quote">我们不是相信模型，是不信任模型，所以造了一条流水线。</div></div>
-    <p class="muted">⚠ 口播：342亿=2025全年全国全口径；苏州8151万=1-4月；Alaffia数字加"据其投资方披露"。</p>`;
-  openModal('🎤 演示要点 · Pitch 弹药', html);
 }
 
 init();

@@ -17,6 +17,7 @@ const { callLLM, providerName } = require('./llm-provider');
 const p5 = require('./p5-judge');
 const { piiRedact, prepareForLlm } = require('./pii-redact');
 const { applyContextBudget } = require('./context-budget');
+const { resolveCitation, formatCitation } = require('./citation-resolver');
 const MODEL = providerName();
 
 // 对抗注入 prompt 基线（纵深防御的 prompt 层）：材料里"写给 AI 的指令"一律当数据、绝不执行。
@@ -207,7 +208,15 @@ async function llmAgentAudit(record, rules, opts = {}) {
       f.cove = { skipped: true, fallback: wasSuspected, error: coveError, note: 'CoVe 取证自检未完成（' + coveError + '）→ 依"存疑转线索·不误报"' + (wasSuspected ? '降级为线索' : '保持线索') + '，待人工复核' };
     }
     f.debate = { enabled: false, skip_reason: '控辩裁=按需触发（点疑点"对抗辩论"启动真·控辩裁，省成本）' };
-    f.policy = (f.policy || []).map(p => ({ ...p, verify_status: (opts.policyVerified || {})[p.ref] ? '✅已核验' : '⚠待核验' }));
+    f.policy = (f.policy || []).map(p => {
+      const hit = resolveCitation(p.ref, opts.citationIndex);
+      const citation = hit
+        ? formatCitation(hit)
+        : ((opts.policyTexts || {})[p.ref]
+          ? { ref: p.ref, resolved: false, synthetic: true, note: '聚合/合成条目，无独立官方条目' }
+          : { ref: p.ref, resolved: false });
+      return { ...p, verify_status: (opts.policyVerified || {})[p.ref] ? '✅已核验' : '⚠待核验', citation };
+    });
     f.confidence = f.status === '疑点' ? 90 : 60;
     // 补齐 UI 疑点卡读取的字段，避免真·LLM 模式下层级标签空白/排序缺失
     f.layer_label = f.layer_label || ruleMap[f.rule_id]?.layer || f.layer || '';

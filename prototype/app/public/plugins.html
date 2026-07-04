@@ -58,6 +58,7 @@
 .card.reg1 .accent{background:linear-gradient(90deg,var(--danger),#F15B52)}
 .card.reg2 .accent{background:linear-gradient(90deg,var(--amber),var(--amber2))}
 .card.reg3 .accent{background:linear-gradient(90deg,var(--ink),var(--ink2))}
+.card.reg4 .accent{background:linear-gradient(90deg,#14B8A6,#0D9488)}
 .card.doc .accent{background:linear-gradient(90deg,#3a6ea5,#2c5788)}
 .card.code .accent{background:linear-gradient(90deg,var(--amber),var(--amber2))}
 .card.settle .accent{background:linear-gradient(90deg,var(--iris),var(--iris2))}
@@ -65,6 +66,8 @@
 .card.sentinel .accent{background:linear-gradient(90deg,var(--danger),#F15B52)}
 .card.ext .accent{background:linear-gradient(90deg,#0D9B6A,#12B981)}
 .card.pv .accent{background:linear-gradient(90deg,var(--dim),#a8b8c8)}
+.onsite-only{display:none}
+body.onsite-enabled .onsite-only{display:inline-flex}
 .cbadge{position:absolute;top:14px;right:14px;font-size:10px;font-weight:800;padding:3px 8px;border-radius:6px;background:#FFEDEB;color:#9a2c22}
 .cbadge.prev{background:#F1F5F9;color:var(--dim)}
 .ico{font-size:26px;margin:4px 0 6px}
@@ -97,18 +100,18 @@
   <h2 class="lead-xl">同一个引擎，<span class="r">嵌进院端 HIS</span> 也 <span class="g">嵌进监管 Excel / 飞检文件夹</span>。</h2>
   <p class="sub">用户不一定打开鹰眼大平台（②），但在原有工作流旁边需要小工具。每个工具都不是独立开发的：换一种输入通道 + 换一个输出模板，就是一个新工具，引擎不重写。</p>
   <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin:2px 0 12px;padding:13px 20px;border-radius:13px;background:linear-gradient(100deg,#0B2A4A,#134E72);color:#fff;box-shadow:0 8px 24px rgba(11,42,74,.22)"><span style="font-size:11px;letter-spacing:.15em;font-weight:700;color:#F5C842;border:1px solid rgba(245,200,66,.55);border-radius:20px;padding:4px 12px;white-space:nowrap;font-family:var(--mono,monospace)">装上就能用</span><b style="font-size:clamp(18px,2.3vw,24px);font-weight:800;letter-spacing:.02em">把医保监管的<span style="color:#F5C842;border-bottom:2px solid rgba(245,200,66,.5)">文件</span>，做成一台<span style="color:#F5C842;border-bottom:2px solid rgba(245,200,66,.5)">能跑的引擎</span>——不动你任何系统，数据不出机。</b></div>
-  <div class="creed">同一引擎 · 同一套 KB · G0 零误报 · AI 提供线索支持，最终由人裁定</div>
+  <div class="creed">同一引擎 · 同一套两库知识底座 · 干净件零误报 · AI 提供线索支持，最终由人裁定</div>
 
   <!-- ============ 引擎脊柱：为什么这些工具是一个整体 ============ -->
   <div class="spine" aria-label="同一引擎架构">
     <div class="col">
       <h3>输入通道 · 换着接</h3>
-      <div class="pills"><span>Excel 复制粘贴</span><span>疑点清单 CSV</span><span>HIS 开单表单</span><span>飞检文件夹拖入</span><span>追溯码扫码</span><span>报送月表</span></div>
+      <div class="pills"><span>现场 OCR 框选</span><span>Excel 复制粘贴</span><span>疑点清单 CSV</span><span>HIS 开单表单</span><span>飞检文件夹拖入</span><span>追溯码扫码</span></div>
     </div>
     <div class="arrow">→</div>
     <div class="col core">
       <h3>鹰眼引擎 · 只有一个</h3>
-      <div class="pills"><span>确定性规则 L1</span><span>两库 KB 政策依据</span><span>三档口径 A/B/C</span><span class="hard">G0 干净件零误报红线</span><span>LLM 深审可选</span></div>
+      <div class="pills"><span>确定性规则打底</span><span>两库政策依据</span><span>三档分诊 A/B/C</span><span class="hard">干净件零误报红线</span><span>深度语义分析可选</span></div>
     </div>
     <div class="arrow">→</div>
     <div class="col">
@@ -116,19 +119,31 @@
       <div class="pills"><span>三档分诊单</span><span>阈值试算 diff</span><span>飞检行装包</span><span>事前提醒浮层</span><span>运营台账</span><span>判例参照卡</span></div>
     </div>
   </div>
-  <p class="spine-note"><b>把这页读成一句话：</b>左边换一个输入、右边换一个输出，中间的引擎和红线从不变——所以每张卡片都能追溯到主平台的同一套能力，而不是七个拼起来的小工程。</p>
+  <p class="spine-note"><b>把这页读成一句话：</b>左边换一个输入、右边换一个输出，中间的引擎和红线从不变——所以每张卡片都能追溯到主平台的同一套能力（79 条规则 · 三人格合议 · 覆盖地图），而不是七个拼起来的小工程。</p>
 
   <!-- ============ 监管侧 ============ -->
   <div id="regulator" class="sect"><b>监管侧 · 小工具箱</b> · 嵌进 Excel / 线索台账 / 飞检材料流程</div>
-  <p class="sect-say">监管人员不一定换平台。三件精做工具答三个问题：<b>先查谁</b>（分诊）、<b>规则怎么定</b>（试算）、<b>查什么带什么</b>（行装包）。每个都是<b>插件形态演示靶站</b>——先仿真你原有的工作界面（Excel 疑点清单 / 规则管理后台 / 飞检文件夹），鹰眼以右下角浮窗贴上来提建议，点靶站里的「🦅 鹰眼助手」即可。</p>
+  <p class="sect-say">监管人员不一定换平台。精做工具答四个现场问题：<b>数据从哪来</b>（OCR 录入）、<b>先查谁</b>（分诊）、<b>规则怎么定</b>（试算）、<b>查什么带什么</b>（行装包）。每个都是<b>插件形态演示靶站</b>——先仿真你原有的工作界面（医院 HIS / Excel 疑点清单 / 规则管理后台 / 飞检文件夹），鹰眼以浮窗贴上来提建议。</p>
   <div class="flow-strip">
+    <span class="n">0</span><a href="/regulator-ocr-import.html">现场 OCR·医院 HIS</a> →
     <span class="n">1</span><a href="/regulator-triage.html">疑点分诊·Excel</a> →
     <span class="n">2</span><a href="/regulator-threshold.html">阈值试算·规则后台</a> →
     <span class="n">3</span><a href="/regulator-fieldkit.html">飞检行装包·文件夹</a> →
     <a href="/agent-chain.html?preview=appeal&case_id=main">申诉批阅（加映）</a>
-    <a class="go red go-chain" href="/regulator-triage.html">▶ 从疑点分诊靶站开始</a>
+    <a class="go red go-chain" href="/regulator-ocr-import.html">▶ 从现场 OCR 靶站开始</a>
   </div>
   <div class="cards">
+    <div class="card reg4">
+      <div class="accent"></div><span class="cbadge">精做 ⓪</span>
+      <div class="ico">📷</div><div class="role">监管 · 飞检现场</div>
+      <h2>现场 OCR 录入器</h2>
+      <dl class="spec">
+        <div><dt>给谁用</dt><dd>飞检员 / 现场核查员——医院不给导出时</dd></div>
+        <div><dt>宿主仿真</dt><dd>院内 HIS「住院费用明细查询」只读界面</dd></div>
+        <div><dt>浮窗做什么</dt><dd>框选屏幕 → OCR 结构化 → 导入同引擎三档筛查</dd></div>
+      </dl>
+      <div class="acts"><a class="go red" href="/regulator-ocr-import.html">打开医院 HIS 靶站 →</a></div>
+    </div>
     <div class="card reg1">
       <div class="accent"></div><span class="cbadge">精做 ①</span>
       <div class="ico">📋</div><div class="role">监管 · 线索核查</div>
@@ -160,7 +175,10 @@
         <div><dt>宿主仿真</dt><dd>飞检组长笔记本上的案卷材料文件夹</dd></div>
         <div><dt>浮窗做什么</dt><dd>读文件夹 → 疑点清单 + 证据索引 + 任务单五件套</dd></div>
       </dl>
-      <div class="acts"><a class="go" href="/regulator-fieldkit.html">打开文件夹靶站 →</a></div>
+      <div class="acts">
+        <a class="go" href="/regulator-fieldkit.html">打开文件夹靶站 →</a>
+        <a class="go onsite-only" href="/onsite.html?onsite_mode=1" style="margin-left:8px;background:#0B2A4A;color:#fff">飞检现场闭环 →</a>
+      </div>
     </div>
   </div>
   <div class="cards" style="margin-top:16px">
@@ -180,7 +198,8 @@
       <h2>申诉批阅助手</h2>
       <dl class="spec">
         <div><dt>给谁用</dt><dd>医保 / 医疗 / 药学专家会审争议费用</dd></div>
-        <div><dt>输入→输出</dt><dd>医院申诉材料 → 控辩裁参考意见（人工最终评定）</dd></div>
+        <div><dt>输入→输出</dt><dd>争议费用 → 稽核/机构/专家三轮合议（质证逐条分段 · 人工最终评定）</dd></div>
+        <div><dt>与主平台</dt><dd>复用 <code>/api/debate</code> + <code>debate-format.js</code> · 同工作台疑点「对抗辩论」</dd></div>
       </dl>
       <div class="acts"><a class="go" href="/agent-chain.html?preview=appeal&case_id=main">打开 →</a></div>
     </div>
@@ -210,10 +229,19 @@
 
   <!-- ============ 院端侧 ============ -->
   <div class="sect"><b>院端侧 · 三角色事前触点</b> · 浏览器扩展 / 内嵌 · 命中即处置</div>
-  <p class="sect-say">政策原文：「将不合规行为消除在萌芽阶段」。同一个引擎换到院端，输出模板变成三个时点的事前提醒——开单时、编码时、结算时。工作站故意做成老 HIS 观感：演示的就是插件<b>套在旧系统上、零对接</b>。</p>
+  <p class="sect-say">政策原文：「将不合规行为消除在萌芽阶段」。同一个引擎换到院端，输出模板变成三个时点的事前提醒——开单时、编码时、结算时。工作站故意做成老 HIS 观感：演示的就是插件<b>套在旧系统上、零对接</b>。当场改掉的违规，稽核员案头就少一条疑点；对方坚持提交的，带着理由自动流向监管预警台账——<b>院端故事的终点，正是监管故事的起点</b>。</p>
+  <div class="flow-strip">
+    <span class="n" style="background:var(--iris2)">1</span><a href="/mockhis.html?tour=1">医生开单被拦 · HIS</a> →
+    <span class="n" style="background:var(--iris2)">2</span><a href="/coder-station.html?tour=1">编码高套校验</a> →
+    <span class="n" style="background:var(--iris2)">3</span><a href="/settle-station.html?tour=1">结算整单自查</a> →
+    <span class="n" style="background:var(--iris2)">4</span><a href="/plugin-dashboard.html?tour=1">运营看板汇总</a> →
+    <a href="/priority.html">监管预警台账（收口）</a>
+    <a class="go go-chain" style="background:var(--iris2)" href="/mockhis.html?tour=1">▶ 从医生开单开始</a>
+  </div>
   <div class="cards">
     <div class="card doc">
-      <div class="accent"></div><div class="ico">👨‍⚕️</div>
+      <div class="accent"></div><span class="cbadge">精做</span>
+      <div class="ico">👨‍⚕️</div>
       <div class="role">医生 · 开单时</div>
       <h2>开单事前提醒</h2>
       <dl class="spec">
@@ -223,7 +251,8 @@
       <div class="acts"><a class="go" href="/mockhis.html">打开开单靶站 →</a></div>
     </div>
     <div class="card code">
-      <div class="accent"></div><div class="ico">📑</div>
+      <div class="accent"></div><span class="cbadge">精做</span>
+      <div class="ico">📑</div>
       <div class="role">编码员 · 编码时</div>
       <h2>DRG 高套事前校验</h2>
       <dl class="spec">
@@ -233,7 +262,8 @@
       <div class="acts"><a class="go" href="/coder-station.html">打开编码站 →</a></div>
     </div>
     <div class="card settle">
-      <div class="accent"></div><div class="ico">💳</div>
+      <div class="accent"></div><span class="cbadge">精做</span>
+      <div class="ico">💳</div>
       <div class="role">结算员 · 结算时</div>
       <h2>出院整单自查</h2>
       <dl class="spec">
@@ -242,44 +272,53 @@
       </dl>
       <div class="acts"><a class="go" href="/settle-station.html">打开结算站 →</a></div>
     </div>
-  </div>
-
-  <!-- ============ 汇聚与桌面 ============ -->
-  <div class="sect"><b>汇聚与桌面</b> · 三角色台账 · 桌面哨兵 · 浏览器扩展</div>
-  <p class="sect-say">院端三个触点的每次提醒都落进同一本台账；桌面哨兵把引擎装进剪贴板和文件夹，Excel 一复制就能筛。</p>
-  <div class="cards">
     <div class="card board">
-      <div class="accent"></div><div class="ico">📊</div>
+      <div class="accent"></div><span class="cbadge">精做</span>
+      <div class="ico">📊</div>
+      <div class="role">医保办 · 运营</div>
       <h2>院端运营看板</h2>
       <dl class="spec">
-        <div><dt>输入→输出</dt><dd>三角色台账汇总 → 遵从率 / 萌芽拦截 / 未遵从→监管回执</dd></div>
+        <div><dt>嵌入场景</dt><dd>开单、编码、结算三个触点的提醒与处置汇入同一事前台账</dd></div>
+        <div><dt>输入→输出</dt><dd>事前台账 → 今日提醒 / 遵从率 / 萌芽拦截 / 未遵从待监管 + 监管回执</dd></div>
       </dl>
-      <div class="acts"><a class="go ghost" style="flex:1" href="/plugin-dashboard.html">打开看板 →</a></div>
+      <div class="acts"><a class="go" href="/plugin-dashboard.html">打开运营看板 →</a></div>
+    </div>
+  </div>
+
+  <!-- ============ 生产形态 ============ -->
+  <div class="sect"><b>生产形态 · 「装上就能用」的实体</b> · 页面里的靶站是演示形态，真实部署用这两样</div>
+  <div class="cards" style="grid-template-columns:1fr 1fr">
+    <div class="card ext">
+      <div class="accent"></div><span class="cbadge prev">生产形态</span>
+      <div class="ico">🧩</div><div class="role">院端 · 浏览器扩展</div>
+      <h2>鹰眼审方扩展</h2>
+      <dl class="spec">
+        <div><dt>怎么用</dt><dd>Chrome / Edge 加载 <code>plugin/browser-extension</code>，打开 HIS 开单页自动注入审方浮层——本页三个院端靶站内嵌的是同一套脚本</dd></div>
+        <div><dt>边界</dt><dd>演示版只匹配靶站页面；接入真实 HIS 需把院内地址加入扩展白名单</dd></div>
+      </dl>
     </div>
     <div class="card sentinel">
-      <div class="accent"></div><div class="ico">🖥</div>
-      <h2>桌面哨兵 CLI</h2>
+      <div class="accent"></div><span class="cbadge prev">生产形态</span>
+      <div class="ico">🖥</div><div class="role">监管 / 院端 · 桌面哨兵</div>
+      <h2>桌面哨兵 · 零对接通道</h2>
       <dl class="spec">
-        <div><dt>嵌入场景</dt><dd>Excel 复制 / 文件夹拖拽 → 秒出三档，院端监管都能用</dd></div>
+        <div><dt>剪贴板</dt><dd>Excel 里选中几行复制 → 秒出三档结论（与疑点分诊同口径）</dd></div>
+        <div><dt>文件夹</dt><dd>把 xlsx / pdf / 扫描件拖进「哨兵收件箱」→ 自动导入、稽核并播报</dd></div>
       </dl>
-      <div class="cli">node plugin/desktop-sentinel/clipboard-sentinel.js</div>
-      <div class="cli">node plugin/desktop-sentinel/sentinel.js  # 文件夹收件箱</div>
-    </div>
-    <div class="card ext">
-      <div class="accent"></div><div class="ico">🧩</div>
-      <h2>浏览器扩展 MV3</h2>
-      <dl class="spec">
-        <div><dt>嵌入场景</dt><dd>套在老 HIS 上，零对接。<code>plugin/browser-extension</code></dd></div>
-      </dl>
-      <div class="acts"><a class="go ghost" style="flex:1" href="/mockhis.html">靶站体验 →</a></div>
+      <div class="cli">node plugin/desktop-sentinel/sentinel.js　# 监听 ~/Desktop/鹰眼哨兵收件箱 · 数据不出机</div>
     </div>
   </div>
 
   <div class="foot">
-    <b>在 Pitch 三入口里</b>：① 黄金闭环 · <a href="/index.html?role=audit">② 鹰眼大平台</a> · <b>③ 本页（插件 & 小工具箱）</b>。<br>
+    <b>在三入口里</b>：<a href="/golden.html">① 黄金闭环</a> · <a href="/index.html?role=audit">② 鹰眼大平台</a> · <b>③ 本页（插件 & 小工具箱）</b> · <a href="/coverage-map.html">79 条覆盖地图</a> · <a href="/agent-chain.html">七环节调用链</a><br>
     <b>院端</b>：「将不合规行为消除在萌芽阶段」——政策原文。<b>监管</b>：不替换监管大系统，在 Excel / 线索台账 / 飞检文件夹旁边用小工具。<br>
-    <b>一句话</b>：监管人员不一定换平台——鹰眼把大平台拆成小工具箱：分诊帮第一遍粗筛，试算帮地方定参数，行装包帮现场标准化取证——同一个引擎，换输入和输出就是新工具。
+    <b>一句话</b>：监管人员不一定换平台——鹰眼把大平台拆成小工具箱：分诊帮第一遍粗筛，试算帮地方定参数，行装包帮现场标准化取证，申诉批阅帮专家会审前先看结构化合议——同一个引擎，换输入和输出就是新工具。
   </div>
 </div>
+<script>
+  if (new URLSearchParams(location.search).get('onsite_mode') === '1') {
+    document.body.classList.add('onsite-enabled');
+  }
+</script>
 </body>
 </html>

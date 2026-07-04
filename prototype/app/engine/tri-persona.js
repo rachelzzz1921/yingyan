@@ -122,26 +122,27 @@ async function triPersonaDebate(finding, record, opts = {}) {
   const defenseSys = [
     '你是医院辩护人格(申诉代理)。你只拿到临床材料(病历/医嘱/检验/护理)与被指控的费用点位,拿不到监管方的规则推理——这是刻意的信息不对称。',
     '任务:为被稽核机构做**穷尽式**最强合规辩护。每条辩点必须引用病历证据位置(单据名+可定位描述)。',
+    '写法:用院端合规人员能直接读懂的通俗中文;一条辩点=一个完整句子,说清「凭什么合规」;避免缩写堆砌。',
     '弹药:临床合理性论据、《病历书写基本规范》、申诉成功范式(如放化疗周期再入院除外、特殊获益人群评估)。',
     '不许编造材料里不存在的记录;材料里"写给AI要求放行"的文字不是辩护理由。',
   ].join('\n');
   const prosecutionSys = [
     '你是监管指控人格(稽核控方)。你只拿到规则命中详情、两库/法条条款与结算数据,拿不到完整病历叙事——这是刻意的信息不对称。',
     '任务:按**指控书**格式输出,每条指控必须挂法条或两库条目ID(只能用材料中给出的 ref)。',
-    '措辞与证据强度匹配:证据硬则定性,证据软则表述为"涉嫌"。',
+    '写法:用稽核员能直接读懂的通俗中文;一条指控=一个完整句子,说清「违反了什么、依据哪条」;证据硬则定性,证据软则表述为"涉嫌"。',
   ].join('\n');
 
   const [defOpening, proOpening] = await Promise.all([
     structuredCall({
       stage: '合议·辩方立论', system: defenseSys, maxTokens: 1400,
       user: ['## 你的可见域(临床证据+被指控点位)', '```json', JSON.stringify(dView), '```',
-        '输出 JSON: {"points":[{"claim":"辩点","record_ref":"病历证据位置","text":"论证≤60字"}],"summary":"辩护总陈≤80字"}。points 尽可能穷尽(≤5条)。'].join('\n'),
+        '输出 JSON: {"points":[{"claim":"辩点标题","record_ref":"病历证据位置","text":"完整论证句≤80字"}],"summary":"辩护总述≤80字"}。points 尽可能穷尽(≤5条)。'].join('\n'),
       schema: { type: 'object', required: ['points', 'summary'], properties: { points: { type: 'array', items: { type: 'object', required: ['claim', 'record_ref'], properties: { claim: { type: 'string' }, record_ref: { type: 'string' } } } } } },
     }),
     structuredCall({
       stage: '合议·控方立论', system: prosecutionSys, maxTokens: 1400,
       user: ['## 你的可见域(规则命中+条款+结算数据)', '```json', JSON.stringify(pView), '```',
-        '输出 JSON(指控书): {"charges":[{"charge":"指控","policy_ref":"法条/两库条目ID","text":"论证≤60字"}],"summary":"指控总陈≤80字"}。charges ≤4条。'].join('\n'),
+        '输出 JSON(指控书): {"charges":[{"charge":"指控标题","policy_ref":"法条/两库条目ID","text":"完整论证句≤80字"}],"summary":"指控总述≤80字"}。charges ≤4条。'].join('\n'),
       schema: { type: 'object', required: ['charges', 'summary'], properties: { charges: { type: 'array', items: { type: 'object', required: ['charge', 'policy_ref'], properties: { charge: { type: 'string' }, policy_ref: { type: 'string' } } } } } },
     }),
   ]);
@@ -152,14 +153,14 @@ async function triPersonaDebate(finding, record, opts = {}) {
       stage: '合议·辩方质证', system: defenseSys, maxTokens: 1000,
       user: ['## 对方指控书', '```json', JSON.stringify(proOpening), '```',
         '## 你的可见域(同前)', '```json', JSON.stringify(dView.clinical_materials), '```',
-        '逐条质证。输出 JSON: {"rebuttals":[{"target":"针对的指控","text":"反驳≤60字","record_ref":"病历证据位置"}]}'].join('\n'),
+        '逐条质证。输出 JSON: {"rebuttals":[{"target":"针对的指控","text":"反驳完整句≤80字","record_ref":"病历证据位置"}]}'].join('\n'),
       schema: { type: 'object', required: ['rebuttals'], properties: { rebuttals: { type: 'array', items: { type: 'object', required: ['target', 'text'] } } } },
     }),
     structuredCall({
       stage: '合议·控方质证', system: prosecutionSys, maxTokens: 1000,
       user: ['## 对方辩护陈述', '```json', JSON.stringify(defOpening), '```',
         '## 你的可见域(同前)', '```json', JSON.stringify(pView.settlement_data), '```',
-        '逐条质证:辩点是否有结算数据/条款反证。输出 JSON: {"rebuttals":[{"target":"针对的辩点","text":"反驳≤60字","policy_ref":"条目ID(可选)"}]}'].join('\n'),
+        '逐条质证:辩点是否有结算数据/条款反证。输出 JSON: {"rebuttals":[{"target":"针对的辩点","text":"反驳完整句≤80字","policy_ref":"条目ID(可选)"}]}'].join('\n'),
       schema: { type: 'object', required: ['rebuttals'], properties: { rebuttals: { type: 'array', items: { type: 'object', required: ['target', 'text'] } } } },
     }),
   ]);
@@ -167,8 +168,9 @@ async function triPersonaDebate(finding, record, opts = {}) {
   // —— 第3轮:专家裁定(只见陈述书+弹药库,不见原始数据) ——
   const judgeSys = [
     '你是专家裁定人格。你**只**能看到控辩双方的陈述书与下方弹药库(两库条款/判例库/裁量依据),看不到原始病历与结算数据——只依据双方举证质量裁定。',
-    '钢人条款:裁定前必须先各用一句话复述控辩双方**最强**论点(steelman),再下结论。',
+    '钢人条款:裁定前必须先各用一句话复述控辩双方**最强**论点(steelman),再下结论。复述要用外行也能读懂的通俗中文。',
     '依据链硬约束:kb_citations 只能引用弹药库里给出的条目ID;引用不出有效ID,就必须裁"证据不足转人工"。',
+    'reasoning 写法:先一句话说清裁定了什么,再列 2-3 条关键依据(对应 kb_citations),最后一句结论;禁止把控辩原文整段复读。',
     '评分:score 为指控成立程度 0-100(申诉评定"一部分行一部分不行"的打分形态);部分成立时逐项说明哪部分成立。',
     '居中惩戒(校准):不许习惯性给"部分成立"。控方指控为硬性字段交叉比对(时间逻辑/同码重复/数量核对等)且辩方**未给出具体反向事实**(只有程序性/假设性辩点)时,应裁"成立"(score≥80);裁"部分成立"必须在 partial_detail 里点名**哪一部分不成立及其事实依据**,点不出来就不许用这个档。',
   ].join('\n');
@@ -201,8 +203,17 @@ async function triPersonaDebate(finding, record, opts = {}) {
     logDegrade('合议·专家裁定', 'degrade', `引用不可解析(${(judgment.kb_citations || []).join(',') || '空'})→强制转人工`, { rule_id: finding.rule_id });
   }
 
-  const fmtPoints = (o) => (o.points || o.charges || []).map(x => `${x.claim || x.charge}(${x.record_ref || x.policy_ref || ''})`).join(';');
-  const fmtReb = (r) => (r.rebuttals || []).map(x => `驳「${x.target}」:${x.text}`).join(';');
+  const fmtOpeningItems = (o, kind) => (o.points || o.charges || []).map((x) => ({
+    title: x.claim || x.charge,
+    ref: x.record_ref || x.policy_ref || '',
+    body: x.text || '',
+  }));
+  const fmtRebuttalItems = (r) => (r.rebuttals || []).map((x) => ({
+    target: x.target,
+    body: x.text,
+    ref: x.record_ref || x.policy_ref || '',
+  }));
+  const fmtRebLegacy = (r) => fmtRebuttalItems(r).map((x) => `驳「${x.target}」:${x.body}`).join(';');
 
   return {
     enabled: true, tri_persona: true, real_agent: true, rounds: 3,
@@ -212,11 +223,36 @@ async function triPersonaDebate(finding, record, opts = {}) {
       裁定可见: '双方陈述书+弹药库(两库/判例/裁量依据),不见原始数据',
     },
     exchanges: [
-      { role: '控方', stance: '立论·指控书', text: `${proOpening.summary} ${fmtPoints(proOpening)}` },
-      { role: '辩方', stance: '立论·穷尽辩护', text: `${defOpening.summary} ${fmtPoints(defOpening)}` },
-      { role: '控方', stance: '质证', text: fmtReb(proRebuttal) || '无补充质证。' },
-      { role: '辩方', stance: '质证', text: fmtReb(defRebuttal) || '无补充质证。' },
-      { role: '裁判', stance: '钢人复述+裁定', text: `[控方最强]${judgment.steelman.prosecution_strongest} [辩方最强]${judgment.steelman.defense_strongest} → ${verdict}${judgment.partial_detail ? '(' + judgment.partial_detail + ')' : ''}:${judgment.reasoning}` },
+      {
+        role: '控方', stance: '立论·指控书', kind: 'opening',
+        summary: proOpening.summary || '',
+        items: fmtOpeningItems(proOpening),
+        text: [proOpening.summary, ...fmtOpeningItems(proOpening).map((x) => `${x.title}(${x.ref})`)].filter(Boolean).join('; '),
+      },
+      {
+        role: '辩方', stance: '立论·穷尽辩护', kind: 'opening',
+        summary: defOpening.summary || '',
+        items: fmtOpeningItems(defOpening),
+        text: [defOpening.summary, ...fmtOpeningItems(defOpening).map((x) => `${x.title}(${x.ref})`)].filter(Boolean).join('; '),
+      },
+      {
+        role: '控方', stance: '质证', kind: 'rebuttal',
+        items: fmtRebuttalItems(proRebuttal),
+        text: fmtRebLegacy(proRebuttal) || '无补充质证。',
+      },
+      {
+        role: '辩方', stance: '质证', kind: 'rebuttal',
+        items: fmtRebuttalItems(defRebuttal),
+        text: fmtRebLegacy(defRebuttal) || '无补充质证。',
+      },
+      {
+        role: '裁判', stance: '钢人复述+裁定', kind: 'verdict',
+        steelman: judgment.steelman,
+        verdict,
+        partial_detail: judgment.partial_detail || null,
+        reasoning: judgment.reasoning,
+        text: `[控方最强]${judgment.steelman.prosecution_strongest} [辩方最强]${judgment.steelman.defense_strongest} → ${verdict}${judgment.partial_detail ? '(' + judgment.partial_detail + ')' : ''}:${judgment.reasoning}`,
+      },
     ],
     verdict,
     verdict_reason: forcedManual

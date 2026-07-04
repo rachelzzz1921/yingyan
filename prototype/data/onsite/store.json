@@ -1,0 +1,26 @@
+{
+  "schema_version": "1.0",
+  "plans": [],
+  "tasks": [],
+  "stations": [
+    { "station_id": "station-equipment", "name": "设备科 / 影像科" },
+    { "station_id": "station-pharmacy", "name": "药库 / 耗材库" },
+    { "station_id": "station-records", "name": "病案室 / 医务科" },
+    { "station_id": "station-finance", "name": "财务科 / 结算办" },
+    { "station_id": "station-info", "name": "信息科" }
+  ],
+  "routes": [
+    {
+      "route_id": "route-a",
+      "name": "动线 A",
+      "teams": ["医疗组", "政策组"],
+      "station_ids": ["station-records", "station-equipment", "station-info"]
+    },
+    {
+      "route_id": "route-b",
+      "name": "动线 B",
+      "teams": ["财务组", "数据组"],
+      "station_ids": ["station-pharmacy", "station-finance", "station-info"]
+    }
+  ]
+}

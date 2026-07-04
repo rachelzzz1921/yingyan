@@ -24,6 +24,7 @@
   <div class="host-topbar">
     <a class="back" href="/plugins.html#regulator">← 工具箱</a>
     <a class="back" href="/home.html">← 三入口</a>
+    <a class="back" href="/regulator-fieldkit.html" title="监管动线下一站">下一站 · 飞检行装包 →</a>
     <span class="hint">演示靶站 · 仿真地方医保局的「规则管理系统」。国家把阈值下放地方自定，规则管理员改参数时，鹰眼以插件浮窗即时试算影响。</span>
   </div>
 
@@ -100,7 +101,7 @@ function render(r){
       card('误报压力', fp, fp>0?'#b91c1c':'#0a7a4b')+
     '</div>'+
     '<div style="padding:10px 14px;font-size:12.5px;color:'+(fp>0?'#b91c1c':'#0a7a4b')+';border-bottom:1px solid #edf1f6">'+
-      (fp>0?'⚠ 干净行新增命中 '+fp+' 条 —— 该阈值不建议直接下发':'✓ 干净行零新增命中(与主平台 G0 同一条红线)')+'</div>'+
+      (fp>0?'⚠ 干净行新增命中 '+fp+' 条 —— 该阈值不建议直接下发':'✓ 干净行零新增命中(与主平台同一条零误报红线)')+'</div>'+
     (changed||'<div style="padding:14px;color:#98a6b5">该阈值变化未改变当前演示集命中。</div>'));
   yy.actions([{label:'把试算结论存入下发说明',kind:'primary',onClick:function(){ document.getElementById('saveHint').textContent='已附试算：'+r.conclusion; yy.close(); }}]);
   yy.footer('历史回放试算 · 不改引擎 · 结论口径：'+r.conclusion);

@@ -30,6 +30,7 @@
   <div class="host-topbar">
     <a class="back" href="/plugins.html#regulator">← 工具箱</a>
     <a class="back" href="/home.html">← 三入口</a>
+    <a class="back" href="/agent-chain.html?preview=appeal&case_id=main" title="监管动线加映">加映 · 申诉批阅 →</a>
     <span class="hint">演示靶站 · 仿真飞检组长笔记本上的案卷材料文件夹。进场前，鹰眼把散落的材料聚合成一份标准化行装包。</span>
   </div>
 
@@ -55,6 +56,7 @@
   <button class="fx-cta" id="fxCta">▶ 一键聚合成标准行装包<span class="k"> · 读取这 6 份散落材料 → 疑点清单 / 证据索引 / 现场任务 / 缺失材料 / 询问要点</span></button>
 </div>
 
+<script src="/debate-format.js"></script>
 <script src="/plugin-overlay.js"></script>
 <script>
 var params=new URLSearchParams(location.search);
@@ -65,6 +67,8 @@ var TIER_BG={A:'#b91c1c',B:'#d97706',C:'#0a7a4b'};
 
 if(params.get('from')==='triage'){
   document.getElementById('fxStatus').textContent='案卷 '+CASE+'（从疑点分诊 Top1 带入）· 待聚合行装包';
+}else if(params.get('from')==='ocr'){
+  document.getElementById('fxStatus').textContent='案卷 '+CASE+'（从现场 OCR 录入带入）· 待聚合行装包';
 }
 
 async function fetchKit(format){
@@ -106,7 +110,8 @@ function render(yy,k){
     (miss?'<div style="padding:8px 14px;font-size:12px;font-weight:700;color:#b45309;background:#fffaf0">现场需调阅</div><ul style="margin:0;padding:6px 14px 10px 30px;font-size:12px;color:#5b6d82">'+miss+'</ul>':''));
   yy.actions([
     {label:'下载行装包 Markdown',kind:'primary',onClick:function(){ download(); }},
-    {label:'争议项进复核',href:'/agent-chain.html?preview=appeal&case_id='+encodeURIComponent(CASE)}
+    {label:'争议项合议预览',onClick:function(){ previewDebate(k); }},
+    {label:'完整申诉批阅',href:'/agent-chain.html?preview=appeal&case_id='+encodeURIComponent(CASE)}
   ]);
   yy.footer('复用单案稽核 + 举证包 · 换飞检输出模板 · 五个人拿到同一份口径');
   document.getElementById('fxStatus').textContent='✓ 已聚合行装包五件套 · 可下载随身带';
@@ -121,6 +126,21 @@ async function download(){
     var blob=new Blob(['﻿'+md],{type:'text/markdown;charset=utf-8'});
     var a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='飞检行装包-'+CASE+'.md'; a.click(); URL.revokeObjectURL(a.href);
   }catch(e){ alert('下载失败:'+e.message); }
+}
+function previewDebate(k){
+  var top=(k.suspicious_list||[])[0];
+  if(!top){ alert('暂无疑点可预览合议'); return; }
+  var yy=YY.panel({title:'鹰眼 · 合议预览', sub:esc(top.rule_id)+' · '+esc(top.rule_name||''), accent:'#5b3a9e'});
+  yy.loading('读取预载合议…');
+  fetch('/api/debate',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({caseId:CASE,finding:{rule_id:top.rule_id,finding_id:top.finding_id,status:'疑点'},log_review:false,eval_draft:false})})
+    .then(function(r){return r.json();})
+    .then(function(r){
+      if(r.error){ yy.body('<div style="padding:14px;color:#b91c1c">'+esc(r.error)+'</div>'); return; }
+      yy.sub('三人格合议 · 质证逐条分段 · 与主平台疑点「对抗辩论」同源');
+      yy.debate(r.debate||{}, {linkFull:true});
+      yy.footer('预载优先 · 实时兜底 · 人工最终评定');
+    })
+    .catch(function(e){ yy.body('<div style="padding:14px;color:#b91c1c">'+esc(e.message)+'</div>'); });
 }
 // 多入口触发,修掉"一次性浮标用过即消失导致整页点不动":整卡片可点 + 显式按钮 + 常驻浮标
 var BUSY=false;

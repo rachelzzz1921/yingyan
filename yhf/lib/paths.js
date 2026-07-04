@@ -46,6 +46,13 @@ function loadGateConfig() {
   const g2ScoreMode = g2.match(/score_mode:\s*(\S+)/)?.[1] || 'all';
   const g2Primary = g2.match(/primary_judge:\s*["']?([^"'\n#]+)["']?/)?.[1]?.trim() || 'MiniMax-Text-01';
   const g2Secondary = /secondary_report:\s*true/.test(g2);
+  const g6 = gateBlock(raw, 'G6_pipeline_oracle');
+  const g7 = gateBlock(raw, 'G7_precheck_smoke');
+  const g8 = gateBlock(raw, 'G8_citation_integrity');
+  const g6Enabled = /enabled:\s*true/.test(g6);
+  const g7Enabled = /enabled:\s*true/.test(g7);
+  const g8Enabled = /enabled:\s*true/.test(g8);
+  const g8Min = g8.match(/min_resolved_rate:\s*([\d.]+)/);
   return {
     skip_case_ids: skip,
     shadow_max_fpr: maxFprMatch ? parseFloat(maxFprMatch[1]) : 0.10,
@@ -61,7 +68,14 @@ function loadGateConfig() {
         primary_judge: g2Primary,
         secondary_report: g2Secondary,
       },
+      G6_pipeline_oracle: { enabled: g6Enabled },
+      G7_precheck_smoke: { enabled: g7Enabled },
+      G8_citation_integrity: {
+        enabled: g8Enabled,
+        min_resolved_rate: g8Min ? parseFloat(g8Min[1]) : 0.9,
+      },
     },
+    citation_min_resolved_rate: g8Min ? parseFloat(g8Min[1]) : 0.9,
   };
 }
 

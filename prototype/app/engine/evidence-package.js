@@ -3,6 +3,7 @@
 const crypto = require('crypto');
 const { activeFindings } = require('./priority-score');
 const priorityStore = require('./priority-store');
+const { citationLine } = require('./citation-resolver');
 
 function amountAlgorithmNote(finding) {
   if (finding.amount_involved == null) {
@@ -45,6 +46,7 @@ function buildPackagePayload({ finding, record, caseRow, auditRecords, maskPii }
       disposition_suggestion: finding.disposition_suggestion,
       evidence: finding.evidence,
       policy: finding.policy,
+      citation_integrity: finding.citation_integrity,
       reasoning: finding.reasoning,
       needs_more: finding.needs_more,
     } : null,
@@ -64,7 +66,11 @@ function renderPackageHtml(payload) {
   const f = payload.finding;
   const esc = s => String(s ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;');
   const ev = (f?.evidence || []).map(e => `<li><strong>${esc(e.type)}</strong> ${esc(e.loc)}<br>${esc(e.text)}</li>`).join('');
-  const pol = (f?.policy || []).map(p => `<li><code>${esc(p.ref)}</code><br>${esc(p.text)}</li>`).join('');
+  const pol = (f?.policy || []).map(p => {
+    const line = citationLine(p.citation || { ref: p.ref, resolved: false });
+    const src = p.citation?.source_url ? `<br><span class="meta">出处：${esc(p.citation.source_url)}</span>` : '';
+    return `<li><strong>${esc(line || p.ref)}</strong> <code>${esc(p.ref)}</code><br>${esc(p.text)}${src}</li>`;
+  }).join('');
   return `<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8"><title>鹰眼·举证包</title>
 <style>body{font-family:"Noto Sans SC",sans-serif;padding:32px;color:#0B2A4A;max-width:820px;margin:0 auto}
 h1{font-size:20px}h2{font-size:15px;margin-top:20px;border-bottom:1px solid #dde4ec;padding-bottom:6px}
@@ -80,7 +86,7 @@ h1{font-size:20px}h2{font-size:15px;margin-top:20px;border-bottom:1px solid #dde
 <h2>三要素 · 推理过程</h2><div class="box">${esc(f?.reasoning)}</div>
 <h2>违规金额与算法</h2><div class="box">¥${esc(f?.amount_involved)} · ${esc(f?.amount_algorithm)}</div>
 <h2>审计链</h2><div class="box">CoVe/控辩裁/合规门禁记录见 JSON 附件；申诉渠道：${esc(payload.audit_chain.appeal_channel)}</div>
-<p class="meta">由鹰眼自动生成 · 政策条款取自知识库 · 未凭记忆编造</p>
+<p class="meta">由鹰眼自动生成 · 政策条款取自知识库快照并附条目ID与官方出处 · 引用不可穿透的结论已按规程转人工，未进入本举证包</p>
 </body></html>`;
 }
 
@@ -114,7 +120,11 @@ function renderPackageMarkdown(p) {
     ...(f?.evidence || []).map(e => `- [${e.type}] ${e.loc}: ${e.text}`),
     '',
     '## 条款',
-    ...(f?.policy || []).map(pol => `- ${pol.ref}: ${pol.text}`),
+    ...(f?.policy || []).map(pol => {
+      const line = citationLine(pol.citation || { ref: pol.ref, resolved: false });
+      const src = pol.citation?.source_url ? `\n  出处：${pol.citation.source_url}` : '';
+      return `- ${line || pol.ref}（${pol.ref}）\n  原文：${pol.text}${src}`;
+    }),
     '',
     '## 推理',
     f?.reasoning || '',

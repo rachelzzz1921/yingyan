@@ -2,9 +2,10 @@
   "report_meta": {
     "case_id": "YY-BENCH-VIOL-F006-001",
     "gold_standard": false,
+    "gold_standard_note": "【已去自评化】本文件为引擎回归漂移快照(引擎自动生成),非独立金标准。独立设计真值见 data/ground_truth_manifest.json(按埋点设计意图声明 planted_suspect/planted_clue/is_clean),门禁据其做独立零误报复核与召回 floor。本快照仅供 shadow / 回归漂移探测。",
     "summary": {
-      "suspected_count": 0,
-      "clue_count": 1,
+      "suspected_count": 1,
+      "clue_count": 0,
       "total_findings": 1
     },
     "snapshot_role": "engine_regression_snapshot"
@@ -12,9 +13,11 @@
   "findings": [
     {
       "rule_id": "F-006",
-      "rule_name": "限频/疗程超限",
-      "status": "线索",
-      "amount_involved": 688
+      "rule_name": "限频项目超频次",
+      "status": "疑点",
+      "amount_involved": 688,
+      "violation_type": "重复收费"
     }
-  ]
+  ],
+  "correctly_not_flagged": []
 }

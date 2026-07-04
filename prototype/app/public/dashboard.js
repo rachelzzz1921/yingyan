@@ -243,8 +243,8 @@ function navigate(id) {
 
 function fallbackCoreData() {
   return {
-    bench: { cases: [], meta: { total_cases: 0, clean_false_positive_total: 0, avg_latency_ms: 0, red_line_clean_zero_fp: false } },
-    yhf: { overall_pass: false, generated: Date.now(), engine: { gates: {}, cases: [], meta: { total_cases: 0, avg_latency_ms: 0, clean_false_positive_total: 0 } }, shadow: null, prompt: null, rule: { missing_test_cases: 0, total_rules: 0, core_rules: [] } },
+    bench: { cases: [], meta: { total_cases: 0, clean_false_positive_total: 0, avg_latency_ms: 0, red_line_clean_zero_fp: null } },
+    yhf: { _fetchFailed: true, overall_pass: null, generated: Date.now(), engine: { gates: {}, cases: [], meta: { total_cases: 0, avg_latency_ms: 0, clean_false_positive_total: null } }, shadow: null, prompt: null, rule: { missing_test_cases: 0, total_rules: 0, core_rules: [] } },
     health: { rules: 0, rules_count: 0, llm_ready: false, llm_provider: '' },
     inst: { hospital: '机构画像', summary: { audited_cases: 0, suspected_total: 0, amount_total: 0, clean_pass: 0 }, top_rules: [] },
     gov: { model: 'local', summary: { total_rules: 0, shadow: 0, deprecated: 0 }, entries: [] },
@@ -254,13 +254,21 @@ function fallbackCoreData() {
   };
 }
 
+function resolveG0(d) {
+  const yhfG0 = d.yhf?.engine?.gates?.G0_clean_zero_fp;
+  if (yhfG0 === true || yhfG0 === false) return yhfG0;
+  const benchG0 = d.bench?.meta?.red_line_clean_zero_fp;
+  if (benchG0 === true || benchG0 === false) return benchG0;
+  return null;
+}
+
 async function loadData(force = false) {
   if (loadDataPromise && !force) return loadDataPromise;
   const run = (async () => {
   const fallback = fallbackCoreData();
   const settled = await Promise.allSettled([
-    fetchJSON('/api/bench', 3500),
-    fetchJSON('/api/yhf', 3500),
+    fetchJSON('/api/bench', 8000),
+    fetchJSON('/api/yhf', 20000),
     fetchJSON('/api/health', 2500),
     fetchJSON('/api/institution', 3000),
     fetchJSON('/api/rule-governance', 3000),
@@ -271,7 +279,10 @@ async function loadData(force = false) {
   const [bench, yhf, health, inst, gov, tasks, kb, maturity] = settled.map((r, i) => {
     const keyOrder = ['bench', 'yhf', 'health', 'inst', 'gov', 'tasks', 'kb', 'maturity'];
     const key = keyOrder[i];
-    return r.status === 'fulfilled' ? r.value : fallback[key];
+    if (r.status === 'fulfilled') return r.value;
+    const fb = fallback[key];
+    if (key === 'yhf' && fb) fb._fetchFailed = true;
+    return fb;
   });
   cache = { bench, yhf, health, inst, gov, tasks, kb, maturity, at: new Date(), _coreLoaded: true };
   saveCacheSnapshot();
@@ -485,10 +496,19 @@ function kpiCard(lbl, val, cls, sub) {
 function collectBlockers(d) {
   const items = [];
   for (const c of (d.yhf?.engine?.cases || [])) {
-    if (!c.pass) items.push({ kind: 'gate', id: c.case_id, text: (c.failures || []).join('；') || '案卷未通过' });
+    if (!c.pass) {
+      items.push({
+        kind: c.is_clean ? 'gate' : 'recall',
+        id: c.case_id,
+        text: (c.failures || []).join('；') || '案卷未通过',
+      });
+    }
   }
-  if (!d.yhf?.engine?.gates?.G0_clean_zero_fp) {
+  const g0 = resolveG0(d);
+  if (g0 === false) {
     items.push({ kind: 'gate', id: 'G0', text: '干净件存在误报 — 红线未过' });
+  } else if (g0 == null && d.yhf?._fetchFailed) {
+    items.push({ kind: 'info', id: 'YHF', text: 'YHF 门禁加载超时 — 请刷新或打开 YHF 页跑全量' });
   }
   if (d.yhf?.rule?.missing_test_cases > 0) {
     const core = d.yhf.rule.core_rules?.length ? '核心集' : '';
@@ -504,16 +524,18 @@ function collectBlockers(d) {
 
 function heroStatus(d) {
   const blockers = collectBlockers(d);
-  const g0 = d.yhf?.engine?.gates?.G0_clean_zero_fp;
+  const g0 = resolveG0(d);
+  const gateHard = blockers.filter(b => b.kind === 'gate');
   const l3AllPass = (d.yhf?.engine?.cases || []).every(c => c.pass);
-  if (!g0 || blockers.some(b => b.kind === 'gate')) return { level: 'fail', label: '有阻塞项', blockers };
+  if (g0 === false || gateHard.some(b => b.id === 'G0')) return { level: 'fail', label: '有阻塞项', blockers };
+  if (gateHard.length) return { level: 'fail', label: '有阻塞项', blockers };
   if (blockers.length) return { level: 'warn', label: '可运行 · 有待办', blockers };
   return { level: 'pass', label: '评测就绪', blockers: [] };
 }
 
 function statusHeroHTML(d) {
   const st = heroStatus(d);
-  const g0 = d.yhf?.engine?.gates?.G0_clean_zero_fp;
+  const g0 = resolveG0(d);
   const l3Pass = (d.yhf?.engine?.cases || []).filter(c => c.pass).length;
   const l3Total = (d.yhf?.engine?.cases || []).length;
   const smart = d.tasks?.meta?.smart_goal || 'Phase 4 评测闭环';
@@ -522,7 +544,9 @@ function statusHeroHTML(d) {
     ? `G0 零误报 PASS · L3 案卷 ${l3Pass}/${l3Total} 全绿`
     : st.level === 'warn'
       ? `G0 PASS · 尚有 ${st.blockers.length} 项待办${p0Count ? `（P0 ×${p0Count}）` : ''}`
-      : `门禁未全绿 · ${st.blockers.filter(b => b.kind === 'gate').length || 1} 处需修复`;
+      : g0 === false
+        ? `门禁未全绿 · ${st.blockers.filter(b => b.kind === 'gate').length || 1} 处需修复`
+        : `门禁加载中或待确认 · 请刷新`;
   return `
     <section class="status-hero ${st.level}">
       <div class="hero-body">
@@ -542,8 +566,8 @@ function statusHeroHTML(d) {
 function blockersHTML(blockers) {
   if (!blockers.length) return '';
   const rows = blockers.map(b => {
-    const tag = b.kind === 'gate' ? '门禁' : b.kind === 'rule' ? '规则' : 'P0';
-    const cls = b.kind === 'gate' ? 'gate' : b.kind === 'task' ? 'task' : 'rule';
+    const tag = b.kind === 'gate' ? '门禁' : b.kind === 'recall' ? '召回' : b.kind === 'rule' ? '规则' : b.kind === 'info' ? '提示' : 'P0';
+    const cls = b.kind === 'gate' ? 'gate' : b.kind === 'recall' ? 'recall' : b.kind === 'task' ? 'task' : b.kind === 'info' ? 'info' : 'rule';
     const extra = b.status === 'doing' ? ' · 进行中' : '';
     return `<li class="blocker-item ${cls}"><span class="blocker-tag">${tag}</span><strong>${esc(b.id)}</strong><span>${esc(b.text)}${extra}</span></li>`;
   }).join('');
@@ -566,7 +590,9 @@ function p0TasksHTML(tasks) {
 function overviewHTML(d) {
   const st = heroStatus(d);
   const { bench, yhf, health, inst, gov, kb } = d;
-  const g0 = yhf?.engine?.gates?.G0_clean_zero_fp;
+  const g0 = resolveG0(d);
+  const g0Label = g0 === true ? 'PASS' : g0 === false ? 'FAIL' : '—';
+  const g0Cls = g0 === true ? 'pass' : g0 === false ? 'fail' : '';
   const kbLive = kb?.live?.active && kb?.live?.vector_ready;
   const kbSub = kb
     ? `${kb.live?.supabase?.entry_count ?? kb.oracle?.ref_count ?? '—'} 条 · ${kb.embedding?.embedded_chunks ?? 0} 向量 · ${kb.embedding?.provider || '—'}`
@@ -575,7 +601,7 @@ function overviewHTML(d) {
     ${statusHeroHTML(d)}
     ${blockersHTML(st.blockers)}
     <section class="kpi-grid kpi-compact">
-      ${kpiCard('G0 零误报', g0 ? 'PASS' : 'FAIL', g0 ? 'pass' : 'fail', `误报 ${bench.meta.clean_false_positive_total}`)}
+      ${kpiCard('G0 零误报', g0Label, g0Cls, `误报 ${bench.meta.clean_false_positive_total ?? '—'}`)}
       ${kpiCard('L3 案卷', `${(yhf.engine?.cases || []).filter(c => c.pass).length}/${yhf.engine?.cases?.length || 0}`, 'accent', 'recall 对齐')}
       ${kpiCard('规则', health.rules ?? health.rules_count ?? '—', '', `shadow ${gov.summary?.shadow ?? 0}`)}
       ${kpiCard('KB/RAG', kbLive ? 'Live' : (kb ? 'JSON' : '—'), kbLive ? 'pass' : '', kbSub)}
@@ -820,6 +846,8 @@ function bindBatchView(root) {
 }
 
 function yhfViewHTML(yhf, bench) {
+  const g0 = resolveG0({ yhf, bench });
+  const g0Pass = g0 === true;
   const cases = (yhf.engine?.cases || []).map(c => `<tr class="${c.pass ? '' : 'warn'}">
     <td>${esc(c.case_id)}</td><td class="num">${c.found_suspected}</td><td>${c.is_clean ? '🟢' : '🔴'}</td>
     <td>${c.failures?.length ? esc(c.failures.join('; ')) : '✓'}</td>
@@ -828,7 +856,7 @@ function yhfViewHTML(yhf, bench) {
     <div class="doc-toolbar"><h2 style="margin:0">YHF 变更门禁</h2><span class="badge teal">Oracle · 零 governance 叠加</span></div>
     <div class="grid-2"><div class="gate-rings">${gateRingsHTML(yhf)}</div>
       <div class="mini-stats">
-        ${kpiCard('G0', yhf.engine?.gates?.G0_clean_zero_fp ? 'PASS' : 'FAIL', yhf.engine?.gates?.G0_clean_zero_fp ? 'pass' : 'fail', '干净件零误报')}
+        ${kpiCard('G0', g0Pass ? 'PASS' : (g0 === false ? 'FAIL' : '—'), g0Pass ? 'pass' : (g0 === false ? 'fail' : ''), '干净件零误报')}
         ${kpiCard('缺用例', yhf.rule?.missing_test_cases, 'warn', `/${yhf.rule?.total_rules} 规则`)}
       </div></div>
     <article class="card"><h3 style="margin-bottom:10px">L3 案卷明细</h3>
@@ -901,13 +929,14 @@ function coverageMiniMatrixHTML(cov) {
       <a class="action-btn secondary" href="/coverage-map.html" style="font-size:12px;padding:6px 12px">全屏地图 →</a>
     </div>
     <div class="mini-stats" style="margin:10px 0">
-      ${kpiCard('已实现', s.implemented ?? 0, 'pass', '核心+增强')}
+      ${kpiCard('已实现', s.implemented ?? 0, 'pass', `${s.total ? Math.round((s.implemented||0)/s.total*100) : 0}%`)}
+      ${kpiCard('生产就绪', oc.production_ready ?? 0, 'pass', 'YHF 已验')}
       ${kpiCard('试运行', s.pilot ?? 0, 'warn', '')}
-      ${kpiCard('候选', s.candidate ?? 0, '', '已入库待接')}
-      ${kpiCard('路线图', s.roadmap ?? 0, '', '统计指标监测等')}
-      ${kpiCard('核心', oc.core_checker_count ?? 0, 'accent', '对齐国家框架')}
+      ${kpiCard('checker', oc.rule_checker_count ?? 0, 'accent', '引擎注册')}
+      ${kpiCard('核心', oc.core_checker_count ?? 0, '', '对齐国家框架')}
       ${kpiCard('增强', oc.enhancement_checker_count ?? 0, '', '专科扩展')}
     </div>
+    ${oc.family_breakdown ? `<p class="muted" style="margin:0 0 8px;font-size:11px">规则库分层：13族 <b>${oc.family_breakdown.naming_62 ?? '—'}</b> · 埋点 <b>${oc.family_breakdown.embed_4 ?? 0}</b>/4 · L3 <b>${oc.family_breakdown.l3_5 ?? 0}</b>/5 · ZB <b>${oc.family_breakdown.zb_8 ?? 0}</b>/8 · <a href="/coverage-map.html">全屏地图</a></p>` : ''}
     <div class="cov-matrix" style="display:flex;flex-wrap:wrap;gap:3px;max-height:72px;overflow:hidden">${cells}</div>
     <p class="muted" style="margin:8px 0 0;font-size:11px">绿=已实现 · 黄=试运行 · 灰=候选 · 紫虚线格=路线图（含跨就诊统计指标监测 8 条）</p>
   </section>`;

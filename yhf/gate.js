@@ -126,6 +126,35 @@ function renderMarkdown(report, cfg) {
       lines.push('## L2 Rule (stub)', '', `- ${report.rule.missing_test_cases}/${report.rule.total_rules} rules lack 6 test_cases`, '');
     }
   }
+  if (report.pipeline) {
+    const p = report.pipeline;
+    lines.push('## L6 Pipeline (Oracle)', '');
+    lines.push(`- **G6 pipeline oracle**: ${p.pass ? '✅ PASS' : '❌ FAIL'}`);
+    for (const c of (p.cases || []).filter(x => !x.pass).slice(0, 5)) {
+      lines.push(`- ❌ \`${c.case_id}\` ${(c.failures || []).join('; ')}`);
+    }
+    lines.push('');
+  }
+  if (report.precheck) {
+    const p = report.precheck;
+    lines.push('## L7 Precheck Smoke (MockHIS/DRG)', '');
+    lines.push(`- **G7 precheck smoke**: ${p.pass ? '✅ PASS' : '❌ FAIL'}`);
+    for (const c of (p.cases || []).filter(x => !x.pass)) {
+      lines.push(`- ❌ \`${c.id}\` ${(c.failures || []).join('; ')}`);
+    }
+    lines.push('');
+  }
+  if (report.citation) {
+    const c = report.citation;
+    lines.push('## L8 Citation Integrity', '');
+    const rate = c.refs_resolved_rate != null ? `${Math.round(c.refs_resolved_rate * 1000) / 10}%` : '—';
+    lines.push(`- **G8 citation integrity**: ${c.pass ? '✅ PASS' : '❌ FAIL'}${c.warn ? ' ⚠ resolved-rate below soft floor' : ''}`);
+    lines.push(`- refs: ${c.refs_resolved ?? '—'}/${c.refs_total ?? '—'} (${rate}) · soft floor ${(c.min_resolved_rate ?? 0.9) * 100}%`);
+    for (const item of (c.cases || []).filter(x => !x.pass).slice(0, 5)) {
+      lines.push(`- ❌ \`${item.case_id}\` ${(item.failures || []).join('; ')}`);
+    }
+    lines.push('');
+  }
   if (report.rag) {
     const r = report.rag;
     lines.push('## L5 RAG (recall@k)', '');
@@ -161,6 +190,18 @@ function main() {
     console.error('\n❌ 看板前端静态门禁失败 — 见 scripts/verify-dashboard-frontend.js');
     process.exit(1);
   }
+  try {
+    execSync('node scripts/verify-precheck-plugin.js', { cwd: REPO_ROOT, stdio: 'inherit' });
+  } catch {
+    console.error('\n❌ 事前提醒插件门禁失败 — 见 scripts/verify-precheck-plugin.js');
+    process.exit(1);
+  }
+  try {
+    execSync('node scripts/verify-audit-pathways.js --live', { cwd: REPO_ROOT, stdio: 'inherit' });
+  } catch {
+    console.error('\n❌ 稽核通路门禁失败 — 见 scripts/verify-audit-pathways.js');
+    process.exit(1);
+  }
 
   runYhfGate({
     layers: LAYERS,
@@ -175,6 +216,9 @@ function main() {
       report.overall_pass = false;
     }
     if (report.gz_production?.pass === false) report.overall_pass = false;
+    if (report.pipeline?.pass === false) report.overall_pass = false;
+    if (report.precheck?.pass === false) report.overall_pass = false;
+    if (report.citation?.pass === false) report.overall_pass = false;
 
     const outDir = path.join(YHF_ROOT, 'results');
     fs.mkdirSync(outDir, { recursive: true });
