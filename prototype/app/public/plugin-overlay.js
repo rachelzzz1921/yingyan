@@ -112,7 +112,8 @@
       '</button>';
     document.body.appendChild(chip);
     chip.querySelector('#yy-launch-btn').onclick = function () {
-      if (opts.hideOnClick !== false) chip.remove();
+      // 默认常驻:浮标点后不自我移除 → 关闭 panel 后仍可反复触发,防"用一次即整页点不动"。仅显式 hideOnClick:true 才移除。
+      if (opts.hideOnClick === true) chip.remove();
       opts.onClick && opts.onClick();
     };
     return { remove: function () { chip.remove(); } };
