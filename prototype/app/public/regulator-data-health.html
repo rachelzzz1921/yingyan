@@ -7,6 +7,7 @@
 <title>医院报送月表.xlsx · 数据体检(演示靶站)</title>
 <link rel="icon" type="image/svg+xml" href="/favicon.svg">
 <link rel="stylesheet" href="/plugin-host.css">
+<link rel="stylesheet" href="/plugin-import.css">
 </head>
 <body>
 <div class="host-desk">
@@ -24,6 +25,7 @@
     </div>
     <div class="xl-ribbon"><span class="tab">文件</span><span class="tab on">开始</span><span class="tab">插入</span><span class="tab">数据</span><span class="tab">审阅</span></div>
     <div class="xl-formula"><span class="xl-namebox">A1</span><span class="xl-fx">fx</span><span class="cell-ref">项目名称</span></div>
+    <div id="yyImportHealth"></div>
     <div class="xl-grid-wrap" id="gridWrap" style="position:relative">
       <table class="xl">
         <colgroup><col style="width:38px"><col><col style="width:70px"><col style="width:70px"><col style="width:70px"><col style="width:90px"><col style="width:96px"><col style="width:88px"><col style="width:180px"></colgroup>
@@ -106,6 +108,26 @@ function issue(title,arr,okText){
 }
 renderSheet();
 YY.launcher({label:'鹰眼体检助手 · 已注入', hint:'报送进引擎前先体检数据质量', onClick:check});
+</script>
+<script src="/plugin-import.js"></script>
+<script>
+YingyanPluginImport.mount('#yyImportHealth', {
+  hint: '拖入医院报送 CSV/Excel · 覆盖演示月表后点右下角体检',
+  onImport: function (payload) {
+    if (payload.kind !== 'table' || !payload.table.rows.length) return;
+    var h = payload.table.headers;
+    HEADER = h.slice();
+    ROWS = payload.table.rows.map(function (row) {
+      return h.map(function (col) { return row[col] != null ? String(row[col]) : ''; });
+    });
+    renderSheet();
+    document.getElementById('stCount').textContent = '已导入报送月表 · ' + ROWS.length + ' 行 · 待体检';
+  },
+  onImage: function () {
+    var el = document.querySelector('#yyImportHealth .yy-import-status');
+    if (el) { el.innerHTML = '扫描件已接收 · <a href="/intake.html" target="_blank" style="color:#134E72">材料导入中心 OCR →</a>'; el.className = 'yy-import-status show'; }
+  }
+});
 </script>
 </body>
 </html>

@@ -25,7 +25,9 @@ table.orders input,table.orders select{width:100%;border:1px solid #c6d4e2;paddi
 button{padding:6px 18px;border:1px solid #2c5788;background:linear-gradient(#4a7fb5,#33608f);color:#fff;cursor:pointer;border-radius:3px;font-size:13px}
 button.ghost{background:#fff;color:#2c5788}
 .note{font-size:11px;color:#6b7f93;padding:4px 14px 12px}
+.yy-import{margin:8px 14px 0}
 </style>
+<link rel="stylesheet" href="/plugin-import.css">
 </head>
 <body>
 <div class="his-top">
@@ -45,6 +47,7 @@ button.ghost{background:#fff;color:#2c5788}
       </select>
     </label>
   </div>
+  <div id="yyImportOrders"></div>
   <div class="his-sec">
     <table class="pt" id="patientInfo">
       <tr>
@@ -171,6 +174,17 @@ document.getElementById('btnEmbedCheck').onclick = async () => {
   s.onload = () => window.YingyanPrecheck && window.YingyanPrecheck.run({ engineBase: '', source: 'embed', scenario });
   document.body.appendChild(s);
 };
+</script>
+<script src="/plugin-import.js"></script>
+<script>
+YingyanPluginImport.mount('#yyImportOrders', {
+  mode: 'orders',
+  hint: '拖入医嘱 CSV/Excel 或处方图片 · 演示场景下拉仍可用',
+  onImage: function () {
+    var el = document.querySelector('#yyImportOrders .yy-import-status');
+    if (el) { el.innerHTML = '图片已接收 · <a href="/intake.html" target="_blank" style="color:#2c5788">前往材料导入中心 OCR 解析 →</a>'; el.className = 'yy-import-status show'; }
+  }
+});
 </script>
 <script src="/plugin-chip.js"></script>
 </body>

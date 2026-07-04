@@ -30,7 +30,9 @@ button.ghost{background:#fff;color:#2c5788}
 a{color:#2c5788}
 #result{padding:0 14px 14px}
 .tri{display:inline-block;padding:1px 8px;border-radius:5px;font-size:11px;font-weight:800;color:#fff}
+.yy-import{margin:8px 14px 0}
 </style>
+<link rel="stylesheet" href="/plugin-import.css">
 </head>
 <body>
 <div class="his-top">
@@ -39,6 +41,7 @@ a{color:#2c5788}
 </div>
 <div class="his-main">
   <div class="his-bar">出院费用结算</div>
+  <div id="yyImportFee"></div>
   <div class="his-sec">
     <table class="pt">
       <tr><td class="l">姓名</td><td data-field="name">王小雨</td><td class="l">性别</td><td data-field="sex">女</td><td class="l">年龄</td><td data-field="age">16岁</td></tr>
@@ -112,6 +115,18 @@ document.getElementById('btnCheck').onclick = async function(){
     onSubmit: function(){ alert('整改后医保结算已提交:明确违规行已撤销收费/退费,超量行已核减(每条整改已入事前台账留痕)'); }
   });
 };
+</script>
+<script src="/plugin-import.js"></script>
+<script>
+YingyanPluginImport.mount('#yyImportFee', {
+  mode: 'fee',
+  hint: '拖入费用明细 CSV/Excel 或清单图片 · 覆盖下方演示表格',
+  onFeeRows: function (rows) { FEE.length = 0; rows.forEach(function (r) { FEE.push(r); }); renderFee(); },
+  onImage: function () {
+    var el = document.querySelector('#yyImportFee .yy-import-status');
+    if (el) { el.innerHTML = '图片已接收 · <a href="/intake.html" target="_blank" style="color:#2c5788">材料导入中心解析费用清单 →</a>'; el.className = 'yy-import-status show'; }
+  }
+});
 </script>
 <script src="/plugin-chip.js"></script>
 </body>

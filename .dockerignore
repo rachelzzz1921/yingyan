@@ -5,7 +5,18 @@ node_modules
 prototype/data/_runtime_backup
 prototype/ppstructure/__pycache__
 eval/.env
-assets/posters
+# posters：离线包带 pitch HTML + 轻量 QR/SVG，排除印刷大图与 PDF
+assets/posters/**/*.pdf
+assets/posters/**/*.tiff
+assets/posters/yingyan-print-pack/
+assets/posters/鹰眼*
+assets/posters/yingyan-eagleeye-rollup-v5-80x180cm-150dpi-rgb.png
+assets/posters/yingyan-eagleeye-rollup-v5-preview-2400w.png
+assets/posters/yingyan-eagleeye-rollup-v5-preview.png
+assets/posters/yingyan-eagleeye-rollup-v5.png
+assets/posters/yingyan-eagleeye-a4-flyer-v1-front.png
+assets/posters/yingyan-eagleeye-a4-flyer-v1-back.png
+assets/posters/yingyan-eagleeye-a4-flyer-v1-preview.png
 *.tar
 *.tar.gz
 team-app-demo-delivery

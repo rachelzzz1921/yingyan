@@ -7,6 +7,7 @@
 <title>飞检材料文件夹 · 飞检组长工作台(演示靶站)</title>
 <link rel="icon" type="image/svg+xml" href="/favicon.svg">
 <link rel="stylesheet" href="/plugin-host.css">
+<link rel="stylesheet" href="/plugin-import.css">
 <style>
   /* 让整个文件夹卡片可点 → 一键聚合（不再只靠右下角小浮标） */
   .hostwin{cursor:pointer;transition:box-shadow .18s ease,transform .18s ease;position:relative}
@@ -42,6 +43,7 @@
       <span class="badge" id="fileCount">6 个项目</span>
     </div>
     <div class="fx-path">🖥 桌面 › 飞检材料 › <b id="pathCase">示范医院_2026-06（案卷 main）</b></div>
+    <div id="yyImportFieldkit"></div>
     <div class="fx-list" id="fxList" style="position:relative">
       <div class="fx-item"><div class="ic">📄</div><div class="nm">病案首页.pdf</div><div class="mt">1.2 MB</div></div>
       <div class="fx-item"><div class="ic">📊</div><div class="nm">费用明细清单.xlsx</div><div class="mt">340 KB</div></div>
@@ -149,6 +151,34 @@ document.querySelector('.hostwin').addEventListener('click', triggerAggregate);
 document.getElementById('fxCta').addEventListener('click', triggerAggregate);
 var _aggBtn=document.getElementById('fxAggBtn'); if(_aggBtn) _aggBtn.addEventListener('click', triggerAggregate);
 YY.launcher({label:'鹰眼飞检助手 · 已注入', hint:'点文件夹 / 此浮标 · 聚合成标准行装包', onClick:triggerAggregate, hideOnClick:false});
+</script>
+<script src="/plugin-import.js"></script>
+<script>
+var IMPORTED_FILES = 0;
+YingyanPluginImport.mount('#yyImportFieldkit', {
+  hint: '拖入 PDF/Excel/JSON/图片 · 追加到案卷文件夹（演示）',
+  onImport: function (payload) {
+    var list = document.getElementById('fxList');
+    var name = payload.filename || (payload.kind === 'image' ? payload.name : '导入数据');
+    var icon = payload.kind === 'image' ? '🖼' : (String(name).indexOf('.pdf') >= 0 ? '📄' : '📊');
+    var item = document.createElement('div');
+    item.className = 'fx-item';
+    item.innerHTML = '<div class="ic">' + icon + '</div><div class="nm">' + name + '</div><div class="mt">导入</div>';
+    list.appendChild(item);
+    IMPORTED_FILES++;
+    document.getElementById('fileCount').textContent = (6 + IMPORTED_FILES) + ' 个项目';
+    document.getElementById('fxStatus').textContent = '已追加导入 ' + IMPORTED_FILES + ' 份 · 可聚合行装包';
+  },
+  onImage: function (img) {
+    var list = document.getElementById('fxList');
+    var item = document.createElement('div');
+    item.className = 'fx-item';
+    item.innerHTML = '<div class="ic">🖼</div><div class="nm">' + img.name + '</div><div class="mt">导入</div>';
+    list.appendChild(item);
+    IMPORTED_FILES++;
+    document.getElementById('fileCount').textContent = (6 + IMPORTED_FILES) + ' 个项目';
+  }
+});
 </script>
 </body>
 </html>

@@ -80,8 +80,12 @@ cat > "$ROOT/$DELIVERY/README-内网部署.txt" <<'EOF'
    docker image inspect team-app:arm64 --format '{{.Os}}/{{.Architecture}}'
    应输出 linux/arm64
 5. 启动：docker compose config && docker compose up -d
-6. 验收：curl http://127.0.0.1:8080/health
-   浏览器打开 http://<服务器IP>:8080
+6. 验收：
+   curl http://127.0.0.1:8080/health
+   浏览器打开 http://<服务器IP>:8080/          ← 三入口 Pitch 首页
+   http://<服务器IP>:8080/golden.html           ← ① 黄金闭环
+   http://<服务器IP>:8080/plugins.html         ← ③ 插件工具箱
+   http://<服务器IP>:8080/materials/yingyan-s4-interactive.html  ← 作品互动页
 
 故障排查：
 - 架构不符 → 在外网机用 --platform linux/arm64 重建

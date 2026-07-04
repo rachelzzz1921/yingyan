@@ -7,6 +7,7 @@
 <title>住院费用明细查询 · 现场 OCR 录入靶站</title>
 <link rel="icon" type="image/svg+xml" href="/favicon.svg">
 <link rel="stylesheet" href="/plugin-host.css">
+<link rel="stylesheet" href="/plugin-import.css">
 <style>
 /* 双栏：左=医院 HIS（被拍的对象），右=监管 OCR 录入器 */
 .ocr-layout{max-width:1280px;margin:0 auto;display:grid;grid-template-columns:1fr 380px;gap:16px;align-items:start}
@@ -126,6 +127,7 @@ table.fee td{border:1px solid #b9cadc;background:#fff;padding:4px 7px}
         <i id="st3">③ 导入</i>
       </div>
       <div class="ocr-body">
+        <div id="yyImportOcr"></div>
         <div class="ocr-status" id="ocrStatus"></div>
         <button type="button" class="ocr-btn" id="btnCapture">📷 框选当前费用表 · OCR 识别</button>
         <p class="ocr-meta" id="ocrMeta">对准左侧费用明细表格，点击识别。演示态用确定性模板匹配模拟 OCR，真部署可接 PaddleOCR / 端侧模型。</p>
@@ -361,6 +363,43 @@ function renderScreening(yy, r){
 }
 
 renderHis();
+</script>
+<script src="/plugin-import.js"></script>
+<script>
+function importOcrRows(rows) {
+  recognizedRows = rows;
+  document.getElementById('previewBody').innerHTML = recognizedRows.map(function (r, i) {
+    return '<tr><td>' + (i + 1) + '</td><td>' + esc(r.item_name) + '</td><td>' + r.qty + '</td><td>' + r.amount + '</td><td>导入</td></tr>';
+  }).join('');
+  document.getElementById('previewWrap').style.display = 'block';
+  document.getElementById('btnImport').disabled = false;
+  setStep(3);
+  showStatus('已导入 ' + recognizedRows.length + ' 行 · 可筛查', 'ok');
+}
+YingyanPluginImport.mount('#yyImportOcr', {
+  hint: '拖入费用 CSV/Excel · 或拍摄/拖入 HIS 屏幕照片',
+  onImport: function (payload) {
+    if (payload.kind === 'table') {
+      var h = payload.table.headers;
+      var c = CASES[currentCase].patient;
+      importOcrRows(payload.table.rows.map(function (row, i) {
+        return {
+          row_id: 'IMP-' + (i + 1),
+          item_name: YingyanPluginImport.pick(row, h, 'name') || '',
+          qty: Number(YingyanPluginImport.pick(row, h, 'qty')) || 1,
+          amount: Number(String(YingyanPluginImport.pick(row, h, 'amount')).replace(/[^\d.]/g, '')) || 0,
+          settle_date: YingyanPluginImport.pick(row, h, 'date') || '2026-06-16',
+          trace_code: YingyanPluginImport.pick(row, h, 'trace') || undefined,
+          patient_age: c.age, patient_sex: c.sex, dept: c.dept
+        };
+      }).filter(function (r) { return r.item_name; }));
+    }
+  },
+  onImage: function (img) {
+    showStatus('图片 ' + img.name + ' 已接收 · 演示态请用「框选 OCR」或粘贴 TSV；完整解析请用材料导入中心', 'warn');
+    setStep(2);
+  }
+});
 </script>
 </body>
 </html>

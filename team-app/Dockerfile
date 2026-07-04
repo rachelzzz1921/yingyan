@@ -19,6 +19,10 @@ WORKDIR /app
 COPY prototype/app/ /app/prototype/app/
 COPY prototype/data/ /app/prototype/data/
 COPY docs/deliverables/ /app/docs/deliverables/
+# 三入口 Pitch 配套物料（home.html → /materials/*）
+COPY assets/posters/*.html /app/assets/posters/
+COPY assets/posters/*.svg /app/assets/posters/
+COPY assets/posters/qr-yingyan.png assets/posters/yingyan-experience-qr.png assets/posters/yingyan-experience-qr.svg /app/assets/posters/
 
 WORKDIR /app/prototype/app
 
