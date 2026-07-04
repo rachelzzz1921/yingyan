@@ -257,37 +257,7 @@ section{padding:clamp(90px,13vh,150px) 0;position:relative}
 .verdict p{font-size:15px;line-height:1.75;color:var(--ink);max-width:600px}
 .verdict p b{color:var(--evidence-d);font-weight:500}
 
-/* ---------- 05 院端 ---------- */
-.his{margin-top:40px;border:1px solid var(--line2);border-radius:3px;overflow:hidden;background:#fff}
-.his-bar{background:var(--ink);color:var(--paper);padding:11px 18px;display:flex;justify-content:space-between;font-family:var(--mono);font-size:11.5px;letter-spacing:.05em}
-.his-body{padding:18px 20px}
-.his-body table{width:100%;border-collapse:collapse;font-size:13.5px}
-.his-body td,.his-body th{border:1px solid var(--line);padding:8px 11px;text-align:left}
-.his-body th{background:var(--paper2);color:var(--ash);font-weight:500;font-size:12px;font-family:var(--mono);letter-spacing:.04em}
-.his-body .pt td.l{background:var(--paper2);color:var(--ash);width:62px;font-size:12px}
-.his-body tr.struck td{opacity:.32;text-decoration:line-through;transition:opacity .5s}
-.his-foot{padding:14px 20px;background:var(--paper2);border-top:1px solid var(--line);display:flex;gap:14px;align-items:center;flex-wrap:wrap}
-.his-foot .n{font-family:var(--mono);font-size:11px;color:var(--faint);flex:1;min-width:180px;letter-spacing:.02em}
-.ov{margin-top:0;border-left:3px solid var(--evidence);background:var(--paper2);display:none}
-.ov.show{display:block;animation:vin .5s var(--e-in)}
-.ov-h{padding:13px 20px;font-family:var(--serif);font-weight:700;font-size:15px;color:var(--evidence-d);display:flex;justify-content:space-between;align-items:center;gap:12px;border-bottom:1px solid var(--line)}
-.ov-h .mini{font-family:var(--mono);font-weight:400;font-size:10.5px;color:var(--ash);letter-spacing:.06em}
-.ov-b{padding:16px 20px;font-size:14px;line-height:1.75}
-.ov-b .refs{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}
-.ov-b .refs span{font-family:var(--mono);font-size:10.5px;color:var(--gold-d);border:1px solid var(--line3);padding:3px 9px;border-radius:2px}
-.ov-b b{font-weight:500}
-.ov-acts{display:flex;gap:12px;padding:0 20px 18px;flex-wrap:wrap}
-.rn{margin-top:16px;font-size:14px;line-height:1.7;display:none;padding-left:16px;border-left:2px solid}
-.rn.heed{border-color:var(--gold);color:var(--gold-d)}
-.rn.insist{border-color:var(--evidence);color:var(--evidence-d)}
-.rn b{font-weight:500}
-.refund{margin-top:64px}
-.refund .rl{font-family:var(--serif);font-size:clamp(22px,2.6vw,30px);font-weight:700;line-height:1.35;max-width:680px}
-.refund .rl .big{font-family:var(--grotesk);font-weight:700;letter-spacing:-.02em}
-.refund .rl .g{color:var(--evidence)} .refund .rl .gg{color:var(--gold-d)}
-.refund .rc{margin-top:18px;font-size:14px;color:var(--faint);font-family:var(--mono);letter-spacing:.04em}
-
-/* ---------- 06 地基漏斗 ---------- */
+/* ---------- 05 地基漏斗 ---------- */
 .base{margin-top:48px}
 .brow{display:grid;grid-template-columns:minmax(0,1fr) 96px;align-items:center;gap:20px;padding:16px 0;border-bottom:1px solid var(--line);cursor:pointer;transition:background .3s}
 .brow:hover{background:rgba(198,64,46,.03)}
@@ -354,9 +324,8 @@ section{padding:clamp(90px,13vh,150px) 0;position:relative}
   <a href="#s-screen" data-ch="2"><span class="dot"></span><span class="lbl">02 分诊</span></a>
   <a href="#s-evidence" data-ch="3"><span class="dot"></span><span class="lbl">03 证据链</span></a>
   <a href="#s-debate" data-ch="4"><span class="dot"></span><span class="lbl">04 合议</span></a>
-  <a href="#s-hospital" data-ch="5"><span class="dot"></span><span class="lbl">05 院端</span></a>
-  <a href="#s-foundation" data-ch="6"><span class="dot"></span><span class="lbl">06 两库</span></a>
-  <a href="#s-close" data-ch="7"><span class="dot"></span><span class="lbl">07 收尾</span></a>
+  <a href="#s-foundation" data-ch="5"><span class="dot"></span><span class="lbl">05 两库</span></a>
+  <a href="#s-close" data-ch="6"><span class="dot"></span><span class="lbl">06 收尾</span></a>
 </nav>
 
 <div class="fab-dock" id="fabDock" aria-label="快捷操作">
@@ -469,48 +438,9 @@ section{padding:clamp(90px,13vh,150px) 0;position:relative}
     </div>
   </section>
 
-  <!-- ============ 05 院端 ============ -->
-  <section id="s-hospital" data-node="4">
-    <div class="eyebrow rv"><span class="idx">05 —</span> 关口前移 · 装上就能用 HOSPITAL</div>
-    <h2 class="title rv" data-d="1">拦在开单，<span class="red">算在退回。</span></h2>
-    <p class="lead col rv" data-d="1">同一台引擎掉头装进医院：医生开单的瞬间浮层提醒——政策限定类红色拦截、医疗合理类只提示，尊重临床。当场改掉的违规，稽核员案头就少一条疑点。鹰眼以浏览器扩展注入，<b>HIS 无需任何对接改造</b>。</p>
-    <div class="his rv" data-d="1">
-      <div class="his-bar"><span>示范市第一人民医院 · 医生工作站 v6.2</span><span>演示靶站 · 虚构数据</span></div>
-      <div class="his-body">
-        <table class="pt" style="margin-bottom:10px"><tr><td class="l">姓名</td><td>王小雨</td><td class="l">性别</td><td>女</td><td class="l">年龄</td><td>16 岁</td><td class="l">科室</td><td>呼吸内科</td></tr></table>
-        <table><thead><tr><th>药品 / 项目</th><th style="width:112px">规格</th><th style="width:56px">数量</th><th style="width:78px">用法</th></tr></thead>
-        <tbody>
-          <tr id="ord1"><td>左氧氟沙星氯化钠注射液</td><td>0.5g:100ml</td><td>5 袋</td><td>ivgtt qd</td></tr>
-          <tr><td>小儿氨酚黄那敏颗粒</td><td>6g×10袋</td><td>2 盒</td><td>po tid</td></tr>
-          <tr><td>血常规</td><td>—</td><td>1 次</td><td>立即</td></tr>
-        </tbody></table>
-      </div>
-      <div class="his-foot"><span class="n">鹰眼以浏览器扩展注入此页 · 数据不出机 · 断网可跑</span><button class="act" id="btnPre" style="padding:9px 18px;font-size:13.5px"><span class="ar">▸</span><span class="lbl" id="lblPre">鹰眼审方</span></button></div>
-      <div class="ov" id="ov">
-        <div class="ov-h"><span>AGE-101 · 未成年用药年龄分层 — 拦截</span><span class="mini">毫秒级 · 本地运行</span></div>
-        <div class="ov-b">
-          患者 16 岁（未成年 18 岁档），第 1 行开立喹诺酮类「左氧氟沙星氯化钠注射液」。喹诺酮类说明书明确 18 岁以下禁用，属超说明书禁忌用药且超限定支付范围。
-          <div class="refs"><span>KB1-条例-第38条(六)</span><span>两库·药品限儿童使用</span><span>喹诺酮说明书禁忌·18岁以下</span></div>
-          <b>处置建议</b>：更换为未成年适用抗菌药物；如有特殊获益评估依据，请在病历记载后再开立。
-        </div>
-        <div class="ov-acts">
-          <button class="act" id="btnHeed" style="padding:9px 18px;font-size:13.5px">✓ 采纳 · 当场整改</button>
-          <button class="act hollow" id="btnInsist" style="padding:9px 18px;font-size:13.5px">坚持提交 · 带理由转监管</button>
-        </div>
-      </div>
-    </div>
-    <div class="rn heed" id="heedNote"><b>已撤销这行医嘱</b>——这条违规被消灭在萌芽，不会进入结算数据，也不会出现在任何稽核员的案头。</div>
-    <div class="rn insist" id="insistNote">已记录"开单时已提醒 · 未遵从"，该单据带医生理由进入监管预警台账。<b>消灭不掉的，不放过</b>——院端故事的终点，正是监管故事的起点。</div>
-
-    <div class="refund rv">
-      <p class="rl">政策明文"自查从宽、被查从严"。主案卷 6 条疑点若在自查期限内主动退回 <span class="big g">¥6,326</span>，对照被飞检查实的暴露区间 <span class="big g">¥12,652–18,978</span>——<span class="gg">主动自查，一张表算给院长看。</span></p>
-      <div class="rc">建议主动退回 = 疑点金额　|　暴露区间 = 退回 + 1~2 倍罚款　|　差额即自查可避免的损失</div>
-    </div>
-  </section>
-
-  <!-- ============ 06 地基 ============ -->
-  <section id="s-foundation" data-node="5">
-    <div class="eyebrow rv"><span class="idx">06 —</span> 站在两库肩上 · FOUNDATION</div>
+  <!-- ============ 05 地基 ============ -->
+  <section id="s-foundation" data-node="4">
+    <div class="eyebrow rv"><span class="idx">05 —</span> 站在两库肩上 · FOUNDATION</div>
     <h2 class="title rv" data-d="1">不是"号称"站在两库肩上，<br><span class="red">每条都点得开。</span></h2>
     <p class="lead col rv" data-d="1">我们不造规则。下面是产品内"合规地基"面板的实时漏斗：从官方公开发布批次入库，到操作化成引擎规则，到本案真实命中——每一层都可溯源到"文号 · 条款 · 生效日"。</p>
     <div class="base rv" data-d="1" id="base">
@@ -528,9 +458,9 @@ section{padding:clamp(90px,13vh,150px) 0;position:relative}
     </div>
   </section>
 
-  <!-- ============ 07 收尾 ============ -->
-  <section id="s-close" data-node="6">
-    <div class="eyebrow rv"><span class="idx">07 —</span> 走的时候 · 脑子里剩这三句</div>
+  <!-- ============ 06 收尾 ============ -->
+  <section id="s-close" data-node="5">
+    <div class="eyebrow rv"><span class="idx">06 —</span> 走的时候 · 脑子里剩这三句</div>
     <div class="mems rv">
       <div class="mem"><div class="no">01</div><div class="bd"><h4>每条结论都有出处</h4><p>两库第几批 · 哪条判例 · 原文第几页——点得开。</p></div></div>
       <div class="mem"><div class="no">02</div><div class="bd"><h4>缺证据本身就是疑点</h4><p>手术费找不到手术记录，系统自动立案，不是扣分了事。</p></div></div>
@@ -641,8 +571,8 @@ var sectNav=document.getElementById('sectNav'), fabDock=document.getElementById(
 var fabPrimary=document.getElementById('fabPrimary'), fabSecondary=document.getElementById('fabSecondary');
 var CHAPTERS=[
   {id:'hero',lab:'封面'},{id:'s-pain',lab:'01 · 人少事多'},{id:'s-screen',lab:'02 · 分诊'},
-  {id:'s-evidence',lab:'03 · 证据链'},{id:'s-debate',lab:'04 · 合议'},{id:'s-hospital',lab:'05 · 院端'},
-  {id:'s-foundation',lab:'06 · 两库'},{id:'s-close',lab:'07 · 收尾'}
+  {id:'s-evidence',lab:'03 · 证据链'},{id:'s-debate',lab:'04 · 合议'},
+  {id:'s-foundation',lab:'05 · 两库'},{id:'s-close',lab:'06 · 收尾'}
 ];
 var chapEls=CHAPTERS.map(function(c){ return document.getElementById(c.id); });
 var navLinks=[].slice.call(sectNav.querySelectorAll('a'));
@@ -700,9 +630,6 @@ function updateFab(){
   } else if(id==='s-debate'){
     fabPrimary.textContent=debDone?'合议已播':'播放合议';
     fabSecondary.textContent='自动播放';
-  } else if(id==='s-hospital'){
-    fabPrimary.textContent='鹰眼审方';
-    fabSecondary.textContent='采纳整改';
   } else if(id==='s-foundation'){
     fabPrimary.textContent='展开漏斗';
     fabSecondary.textContent='下一条疑点';
@@ -717,7 +644,6 @@ fabPrimary.addEventListener('click', function(){
   else if(id==='s-screen'){ scrollToId('s-screen'); runScreen(); }
   else if(id==='s-evidence') selectF(Math.min(curF+1, F.length-1));
   else if(id==='s-debate'){ scrollToId('s-debate'); if(!debDone) debateStep(); else scrollToId('s-debate'); }
-  else if(id==='s-hospital') document.getElementById('btnPre').click();
   else if(id==='s-foundation'){ scrollToId('s-foundation'); var open=base.querySelector('.brow.open'); if(open) open.classList.remove('open'); else base.querySelector('.brow').classList.add('open'); }
   else scrollToId('s-screen');
 });
@@ -726,7 +652,6 @@ fabSecondary.addEventListener('click', function(){
   if(id==='hero'||id==='s-pain'||id==='s-screen') scrollToId('s-evidence');
   else if(id==='s-evidence') selectF(Math.max(curF-1, 0));
   else if(id==='s-debate') debateAuto();
-  else if(id==='s-hospital') document.getElementById('btnHeed').click();
   else selectF(Math.min(curF+1, F.length-1));
 });
 (function(){
@@ -913,25 +838,7 @@ document.getElementById('btnDebate').addEventListener('click', debateStep);
 document.getElementById('btnDebateAuto').addEventListener('click', debateAuto);
 updateDebProg();
 
-/* ---- 05 院端 ---- */
-document.getElementById('btnPre').addEventListener('click', function(){
-  if(this.disabled) return;
-  this.disabled=true; setLbl('lblPre','审方中…'); var self=this;
-  setTimeout(function(){ setLbl('lblPre','已审方'); document.getElementById('ov').classList.add('show'); }, 480);
-});
-document.getElementById('btnHeed').addEventListener('click', function(){
-  document.getElementById('ord1').classList.add('struck');
-  document.getElementById('ov').classList.remove('show');
-  document.getElementById('insistNote').style.display='none';
-  document.getElementById('heedNote').style.display='block';
-});
-document.getElementById('btnInsist').addEventListener('click', function(){
-  document.getElementById('ov').classList.remove('show');
-  document.getElementById('heedNote').style.display='none';
-  document.getElementById('insistNote').style.display='block';
-});
-
-/* ---- 06 地基漏斗 ---- */
+/* ---- 05 地基漏斗 ---- */
 observeOnce(base, function(){
   base.querySelectorAll('.fill').forEach(function(el,k){ setTimeout(function(){ el.style.width=Math.max(parseFloat(el.dataset.w),2)+'%'; }, k*120); });
 });
@@ -943,7 +850,7 @@ observeOnce(base, function(){
   });
 });
 
-/* ---- 07 记忆卡 + 验证跳转 ---- */
+/* ---- 06 记忆卡 + 验证跳转 ---- */
 [].slice.call(document.querySelectorAll('.mem')).forEach(function(m){
   m.setAttribute('tabindex','0');
   m.setAttribute('role','button');
