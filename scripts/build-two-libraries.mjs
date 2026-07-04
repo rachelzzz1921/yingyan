@@ -24,6 +24,7 @@ const OUT_KB = path.join(ROOT, 'kb/two_libraries');
 const OUT_BATCHES = path.join(OUT_KB, 'batches');
 const OUT_CODESETS = path.join(ROOT, 'codesets');
 const OUT_COVERAGE = path.join(ROOT, 'coverage_map.json');
+const OUT_COVERAGE_PUBLIC = path.join(ROOT, 'prototype/app/public/two-libraries-coverage.json'); // 前台覆盖地图静态数据(88类)
 const OUT_REPORT_MD = path.join(ROOT, 'docs/two-libraries-reconciliation.md');
 const OUT_REPORT_JSON = path.join(ROOT, 'eval/results/two-libraries-reconciliation.json');
 const CATALOG = path.join(ROOT, 'public-data-corpus/kb/official_rules_catalog.json');
@@ -342,7 +343,7 @@ function main() {
     .filter(([rc]) => !frameNames.has(rc))
     .map(([rc, n]) => ({ rule_class: rc, knowledge_points: n, note: `${frameLabel} 坐标未命中(命名差异或框架外)` }));
   const covSummary = cells.reduce((a, c) => { a[c.status] = (a[c.status] || 0) + 1; return a; }, {});
-  fs.writeFileSync(OUT_COVERAGE, JSON.stringify({
+  const coveragePayload = {
     meta: {
       coordinate_frame: frameLabel,
       coordinate_source: frame88 ? frame88.meta.source : '框架体系1.0(79条)',
@@ -350,6 +351,7 @@ function main() {
       new_in_2025: cells.filter((c) => c.new_in_2025).length,
       official_kp_detail_rules: cells.filter((c) => c.official_has_kp_detail === true).length,
       mapped_to_1_0_gz: cells.filter((c) => c.gz_code_1_0).length,
+      ingested_knowledge_points: allRecords.length,
       summary: covSummary,
       four_layer_numbers: {
         frame_1_0: '框架体系1.0：79条，政策类30/管理类28/医疗类21，带GZ编码（覆盖地图骨架）',
@@ -363,7 +365,9 @@ function main() {
       caveat_pre_exhibition: '批次一周一发；时效数字(第十七批/日期)须于 7/5 上午布展前用 col109 复核，防第十八批突袭。',
     },
     cells,
-  }, null, 2) + '\n');
+  };
+  fs.writeFileSync(OUT_COVERAGE, JSON.stringify(coveragePayload, null, 2) + '\n');
+  try { fs.writeFileSync(OUT_COVERAGE_PUBLIC, JSON.stringify(coveragePayload, null, 2) + '\n'); } catch { /* 前台目录可能不存在，忽略 */ }
 
   // ---- 对账报告 ----
   writeReconciliation({ sources, perFile, allRecords, batchIndex, codesetIndex, covSummary, unmapped, chained });
