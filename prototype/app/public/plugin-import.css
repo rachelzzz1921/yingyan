@@ -38,3 +38,36 @@
 }
 /* Excel 靶站 */
 .hostwin .yy-import{margin:0 12px 8px}
+
+/* ---------- 手机 / 触屏 ---------- */
+.yy-import-actions{
+  display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px
+}
+.yy-import-btn{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;
+  min-height:52px;padding:12px 10px;border:0;border-radius:12px;
+  font-size:14px;font-weight:800;font-family:inherit;cursor:pointer;
+  -webkit-tap-highlight-color:transparent;touch-action:manipulation
+}
+.yy-import-btn-cam{
+  background:linear-gradient(180deg,#14B8A6,#0D9488);color:#fff;
+  box-shadow:0 4px 14px rgba(13,148,136,.35)
+}
+.yy-import-btn-file{
+  background:#fff;color:#0B2A4A;border:1.5px solid #8fb4d4
+}
+.yy-import-btn:active{transform:scale(.98);opacity:.92}
+.yy-import-btn small{font-size:10px;font-weight:600;opacity:.85}
+.yy-import.yy-import--mobile{margin:0 0 10px}
+.yy-import.yy-import--mobile .yy-import-drop{
+  padding:10px;font-size:11.5px;text-align:center;justify-content:center
+}
+.yy-import.yy-import--mobile .yy-import-drop .yy-import-ico{font-size:22px}
+
+@media (max-width:768px){
+  .yy-import{margin:0 0 10px}
+  .yy-import-preview-body{max-height:min(50vh,420px)}
+  .yy-import-preview-body iframe,.yy-import-preview-body embed,.yy-import-preview-body object{
+    min-height:min(45vh,360px)
+  }
+}

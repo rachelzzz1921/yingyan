@@ -271,17 +271,47 @@
     }).then(function (x) { return x.json(); });
   }
 
+  function prefersMobileActions(opts) {
+    if (opts.cameraCapture === false) return false;
+    if (opts.cameraCapture === true) return true;
+    try {
+      return global.matchMedia('(max-width: 768px)').matches ||
+        global.matchMedia('(pointer: coarse)').matches;
+    } catch (_) { return false; }
+  }
+
   function mount(el, opts) {
     opts = opts || {};
     var root = typeof el === 'string' ? document.querySelector(el) : el;
     if (!root) return;
 
-    root.className = (root.className || '') + ' yy-import';
+    var mobileUi = prefersMobileActions(opts);
+    var accept = esc(opts.accept || DEFAULT_ACCEPT);
+    root.className = (root.className || '') + ' yy-import' + (mobileUi ? ' yy-import--mobile' : '');
+
+    var actionsHtml = mobileUi
+      ? '<div class="yy-import-actions">' +
+          '<button type="button" class="yy-import-btn yy-import-btn-cam">' +
+            '📷 拍照识别<small>对着费用表拍</small></button>' +
+          '<button type="button" class="yy-import-btn yy-import-btn-file">' +
+            '📂 选 PDF/表格<small>相册或文件</small></button>' +
+        '</div>' +
+        '<input type="file" class="yy-import-camera" accept="image/*" capture="environment" hidden>' +
+        '<input type="file" class="yy-import-input" multiple accept="' + accept + '" hidden>'
+      : '';
+
+    var dropInputHtml = mobileUi
+      ? ''
+      : '<input type="file" class="yy-import-input" multiple accept="' + accept + '" hidden>';
+
     root.innerHTML =
+      actionsHtml +
       '<div class="yy-import-drop" tabindex="0" role="button">' +
-        '<span class="yy-import-ico">📂</span>' +
-        '<span class="yy-import-label"><strong>导入数据</strong> · ' + esc(opts.hint || '拖入 CSV / Excel 另存 CSV / PDF / JSON / 图片，或点击选择') + '</span>' +
-        '<input type="file" class="yy-import-input" multiple accept="' + esc(opts.accept || DEFAULT_ACCEPT) + '">' +
+        '<span class="yy-import-ico">' + (mobileUi ? '📥' : '📂') + '</span>' +
+        '<span class="yy-import-label"><strong>' + (mobileUi ? '或点此处选文件' : '导入数据') + '</strong> · ' +
+          esc(opts.hint || (mobileUi ? 'PDF / Excel / 照片' : '拖入 CSV / Excel 另存 CSV / PDF / JSON / 图片，或点击选择')) +
+        '</span>' +
+        dropInputHtml +
       '</div>' +
       '<div class="yy-import-status"></div>' +
       '<div class="yy-import-preview-slot"></div>' +
@@ -289,9 +319,18 @@
 
     var drop = root.querySelector('.yy-import-drop');
     var input = root.querySelector('.yy-import-input');
+    var cameraInput = root.querySelector('.yy-import-camera');
     var status = root.querySelector('.yy-import-status');
     var previewSlot = root.querySelector('.yy-import-preview-slot');
     var thumb = root.querySelector('.yy-import-thumb');
+
+    if (mobileUi) {
+      var btnCam = root.querySelector('.yy-import-btn-cam');
+      var btnFile = root.querySelector('.yy-import-btn-file');
+      if (btnCam && cameraInput) btnCam.addEventListener('click', function (e) { e.stopPropagation(); cameraInput.click(); });
+      if (btnFile && input) btnFile.addEventListener('click', function (e) { e.stopPropagation(); input.click(); });
+      if (cameraInput) cameraInput.addEventListener('change', function () { handleFiles(cameraInput.files); cameraInput.value = ''; });
+    }
 
     function setStatus(msg, kind) {
       status.textContent = msg;
@@ -424,9 +463,9 @@
       else if (opts.mode === 'files' && payload.kind === 'image') { /* thumb only */ }
     }
 
-    drop.addEventListener('click', function () { input.click(); });
-    drop.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); input.click(); } });
-    input.addEventListener('change', function () { handleFiles(input.files); input.value = ''; });
+    drop.addEventListener('click', function () { if (input) input.click(); });
+    drop.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); if (input) input.click(); } });
+    if (input) input.addEventListener('change', function () { handleFiles(input.files); input.value = ''; });
     ['dragenter', 'dragover'].forEach(function (ev) {
       drop.addEventListener(ev, function (e) { e.preventDefault(); drop.classList.add('dragover'); });
     });
@@ -509,6 +548,7 @@
     pickSmart: pickSmart,
     isLikelyPdf: isLikelyPdf,
     renderInlinePreview: renderInlinePreview,
+    prefersMobileActions: prefersMobileActions,
     ALIASES: ALIASES,
   };
 })(typeof window !== 'undefined' ? window : global);

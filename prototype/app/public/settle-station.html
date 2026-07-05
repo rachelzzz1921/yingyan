@@ -122,6 +122,7 @@ YingyanPluginImport.mount('#yyImportFee', {
   mode: 'fee',
   parseImages: true,
   showPreview: true,
+  cameraCapture: true,
   slot: 'fee_list',
   hint: '拖入费用明细 CSV/Excel/PDF 或清单图片 · 覆盖下方演示表格',
   onFeeRows: function (rows) { FEE.length = 0; rows.forEach(function (r) { FEE.push(r); }); renderFee(); },

@@ -74,9 +74,56 @@ table.fee td{border:1px solid #b9cadc;background:#fff;padding:4px 7px}
 .his-source-bar button:hover{background:#e3ecf5}
 .his-source-bar .fn{font-size:12px;color:#5b6d82;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .his-demo-wrap.off{display:none}
+
+/* ---------- 手机端：录入器优先、大按钮、原件全宽 ---------- */
+@media (max-width:768px){
+  .ocr-layout{display:flex;flex-direction:column;gap:12px;padding:0 2px}
+  .ocr-panel{order:-1;position:static;border-radius:10px}
+  .ocr-head b{font-size:14px}
+  .ocr-head span{font-size:11px}
+  .ocr-body{padding:12px}
+  .ocr-btn{
+    min-height:48px;font-size:15px;padding:14px 12px;
+    -webkit-tap-highlight-color:transparent;touch-action:manipulation
+  }
+  .ocr-btn#btnImport:not(:disabled){
+    position:sticky;bottom:max(8px, env(safe-area-inset-bottom));z-index:20;
+    box-shadow:0 -4px 24px rgba(11,42,74,.18)
+  }
+  .ocr-btn.demo-only{display:none}
+  .ocr-meta{font-size:11px}
+  .ocr-preview{max-height:min(38vh,280px)}
+  .ocr-paste textarea{font-size:13px;min-height:72px}
+  .his-wrap{border-radius:10px}
+  .his-source-view{min-height:0}
+  .his-source-frame{padding:6px;max-height:min(55vh,480px);overflow:auto;-webkit-overflow-scrolling:touch}
+  .his-source-frame iframe,.his-source-frame embed,.his-source-frame object{
+    min-height:min(50vh,420px)
+  }
+  .his-demo-wrap .his-note,.his-demo-wrap .his-foot{font-size:10.5px}
+  .his-sec{overflow-x:auto;-webkit-overflow-scrolling:touch}
+  table.fee{min-width:520px}
+  table.pt{font-size:11.5px}
+  .his-top{flex-wrap:wrap;gap:6px;font-size:12px}
+  .his-top .tag{font-size:10px}
+  .his-bar{font-size:11px;gap:8px}
+  .his-demo-collapsed .his-demo-wrap{display:none}
+  .his-demo-collapsed .his-wrap:has(.his-source-view:not(.on)){min-height:0}
+  .ocr-mobile-tip{
+    display:block;font-size:11.5px;color:#cfe0ee;line-height:1.5;margin-top:6px;
+    padding:8px 10px;background:rgba(255,255,255,.08);border-radius:8px
+  }
+  .ocr-mobile-only{display:block!important}
+  body.ocr-mobile-first:not(.his-demo-visible) .his-demo-wrap{display:none}
+  body.ocr-mobile-first:not(.his-demo-visible) .his-wrap:not(:has(.his-source-view.on)){display:none}
+}
+@media (min-width:769px){
+  .ocr-mobile-tip{display:none}
+  .ocr-mobile-only{display:none!important}
+}
 </style>
 </head>
-<body>
+<body class="ocr-mobile-first">
 <div class="host-desk" style="background:#c8d2dc">
   <div class="host-topbar">
     <a class="back" href="/plugins.html#regulator">← 工具箱</a>
@@ -86,7 +133,7 @@ table.fee td{border:1px solid #b9cadc;background:#fff;padding:4px 7px}
   </div>
 
   <div class="ocr-layout">
-    <!-- 左：模拟医院 HIS 住院费用明细（被拍摄对象） -->
+    <!-- 左：模拟医院 HIS / 用户导入原件 -->
     <div class="his-wrap" id="hisWrap">
       <!-- 用户拖入的原件预览（PDF/照片） -->
       <div class="his-source-view" id="hisSource">
@@ -147,7 +194,8 @@ table.fee td{border:1px solid #b9cadc;background:#fff;padding:4px 7px}
     <div class="ocr-panel">
       <div class="ocr-head">
         <b>🦅 鹰眼 · 现场 OCR 录入器</b>
-        <span>框选医院屏幕 → 识别费用行 → 导入筛查漏斗（与 Excel 分诊 / 剪贴板哨兵同引擎）</span>
+        <span>拍照 / 选 PDF → 识别费用行 → 三档筛查</span>
+        <div class="ocr-mobile-tip">📱 手机：点「拍照识别」对着费用表拍一张，或「选 PDF/表格」上传案卷；原件会展示在下方。</div>
       </div>
       <div class="ocr-steps">
         <i id="st1" class="on">① 框选</i>
@@ -157,8 +205,8 @@ table.fee td{border:1px solid #b9cadc;background:#fff;padding:4px 7px}
       <div class="ocr-body">
         <div id="yyImportOcr"></div>
         <div class="ocr-status" id="ocrStatus"></div>
-        <button type="button" class="ocr-btn" id="btnCapture">📷 框选当前费用表 · OCR 识别</button>
-        <p class="ocr-meta" id="ocrMeta">对准左侧费用明细表格，点击识别。演示态用确定性模板匹配模拟 OCR，真部署可接 PaddleOCR / 端侧模型。</p>
+        <button type="button" class="ocr-btn demo-only" id="btnCapture">📷 框选当前费用表 · OCR 识别</button>
+        <p class="ocr-meta" id="ocrMeta">对准左侧费用明细表格，点击识别。也可在上方拍照或拖入 PDF/Excel。</p>
         <div class="ocr-preview" id="previewWrap" style="display:none">
           <table>
             <thead><tr><th>行</th><th>项目</th><th>数量</th><th>金额</th><th>置信度</th></tr></thead>
@@ -166,6 +214,7 @@ table.fee td{border:1px solid #b9cadc;background:#fff;padding:4px 7px}
           </table>
         </div>
         <button type="button" class="ocr-btn" id="btnImport" disabled>▶ 导入并筛查（A/B/C 三档）</button>
+        <button type="button" class="ocr-btn ghost ocr-mobile-only" id="btnShowDemo" style="margin-top:4px">🖥 查看演示 HIS 界面</button>
         <div class="ocr-paste">
           <label>或直接粘贴 Excel 选区（TSV，与桌面剪贴板哨兵同口径）</label>
           <textarea id="pasteArea" placeholder="结算编号	项目名称	数量	金额	…"></textarea>
@@ -235,8 +284,12 @@ function showSourceDocument(meta){
   document.getElementById('sourceTag').textContent=isPdfSource(meta)?'PDF 原件':'照片原件';
   document.getElementById('hisSource').classList.add('on');
   document.getElementById('hisDemo').classList.add('off');
-  document.getElementById('ocrMeta').textContent='左侧为导入原件 · 右侧为识别出的费用行 · 确认后可筛查';
+  document.getElementById('hisWrap').style.display='';
+  document.getElementById('ocrMeta').textContent=window.matchMedia('(max-width:768px)').matches
+    ? '下方为导入原件 · 上方为识别结果 · 确认后可筛查'
+    : '左侧为导入原件 · 右侧为识别出的费用行 · 确认后可筛查';
   setStep(2);
+  scrollSourceIntoView();
 }
 function hideSourceDocument(){
   revokeSourceUrl();
@@ -244,6 +297,20 @@ function hideSourceDocument(){
   document.getElementById('hisDemo').classList.remove('off');
   document.getElementById('sourceFrame').innerHTML='';
 }
+function scrollSourceIntoView(){
+  try{
+    if(window.matchMedia('(max-width:768px)').matches){
+      var w=document.getElementById('hisWrap');
+      if(w) setTimeout(function(){ w.scrollIntoView({behavior:'smooth',block:'start'}); }, 120);
+    }
+  }catch(_){}
+}
+document.getElementById('btnShowDemo').onclick=function(){
+  document.body.classList.add('his-demo-visible');
+  document.getElementById('hisWrap').style.display='';
+  document.getElementById('hisDemo').classList.remove('off');
+  scrollSourceIntoView();
+};
 document.getElementById('btnBackDemo').onclick=function(){
   hideSourceDocument();
   renderHis();
@@ -451,8 +518,9 @@ function importOcrRows(rows) {
   showStatus('已导入 ' + recognizedRows.length + ' 行 · 可筛查', 'ok');
 }
 YingyanPluginImport.mount('#yyImportOcr', {
-  hint: '拖入费用 CSV/Excel/PDF · 或拍摄/拖入 HIS 屏幕照片',
+  hint: '拖入或点下方按钮 · PDF / Excel / 拍照',
   parseImages: true,
+  cameraCapture: true,
   slot: 'fee_list',
   onSourcePreview: function (meta) {
     showSourceDocument(meta);
