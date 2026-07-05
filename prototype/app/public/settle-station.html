@@ -120,13 +120,20 @@ document.getElementById('btnCheck').onclick = async function(){
 <script>
 YingyanPluginImport.mount('#yyImportFee', {
   mode: 'fee',
-  hint: '拖入费用明细 CSV/Excel 或清单图片 · 覆盖下方演示表格',
+  parseImages: true,
+  showPreview: true,
+  slot: 'fee_list',
+  hint: '拖入费用明细 CSV/Excel/PDF 或清单图片 · 覆盖下方演示表格',
   onFeeRows: function (rows) { FEE.length = 0; rows.forEach(function (r) { FEE.push(r); }); renderFee(); },
-  onImage: function () {
+  onImage: function (img) {
     var el = document.querySelector('#yyImportFee .yy-import-status');
-    if (el) { el.innerHTML = '图片已接收 · <a href="/intake.html" target="_blank" style="color:#2c5788">材料导入中心解析费用清单 →</a>'; el.className = 'yy-import-status show'; }
+    if (el && img && img.error) {
+      el.innerHTML = escHtml(img.error) + ' · <a href="/intake.html" target="_blank" style="color:#2c5788">材料导入中心 →</a>';
+      el.className = 'yy-import-status show err';
+    }
   }
 });
+function escHtml(s){ return String(s||'').replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];}); }
 </script>
 <script src="/plugin-chip.js"></script>
 </body>

@@ -59,8 +59,21 @@ table.fee td{border:1px solid #b9cadc;background:#fff;padding:4px 7px}
 .ocr-paste textarea{width:100%;min-height:56px;border:1px solid #dbe2ea;border-radius:8px;padding:8px;font-size:11px;font-family:"SF Mono",Menlo,monospace;resize:vertical}
 .ocr-status{font-size:12px;color:#5b6d82;padding:8px 10px;background:#f6f9fc;border-radius:8px;margin-bottom:10px;display:none}
 .ocr-status.show{display:block}
-.ocr-status.ok{background:#ecfdf5;color:#0a7a4b}
-.ocr-status.warn{background:#fff7e6;color:#b45309}
+.his-source-view{display:none;flex-direction:column;min-height:480px}
+.his-source-view.on{display:flex}
+.his-source-frame{flex:1;background:#1a2a3a;padding:8px;overflow:auto}
+.his-source-frame img{display:block;width:100%;height:auto;border-radius:4px;box-shadow:0 8px 30px rgba(0,0,0,.35)}
+.his-source-frame iframe,.his-source-frame embed,.his-source-frame object{
+  display:block;width:100%;min-height:520px;border:0;border-radius:4px;background:#fff
+}
+.his-source-bar{padding:8px 14px;background:#eef3f9;border-top:1px solid #b9cadc;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.his-source-bar button{
+  padding:5px 12px;border:1px solid #9db4cb;border-radius:6px;background:#fff;color:#2c5788;
+  font-size:12px;font-weight:700;cursor:pointer;font-family:inherit
+}
+.his-source-bar button:hover{background:#e3ecf5}
+.his-source-bar .fn{font-size:12px;color:#5b6d82;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.his-demo-wrap.off{display:none}
 </style>
 </head>
 <body>
@@ -75,6 +88,20 @@ table.fee td{border:1px solid #b9cadc;background:#fff;padding:4px 7px}
   <div class="ocr-layout">
     <!-- 左：模拟医院 HIS 住院费用明细（被拍摄对象） -->
     <div class="his-wrap" id="hisWrap">
+      <!-- 用户拖入的原件预览（PDF/照片） -->
+      <div class="his-source-view" id="hisSource">
+        <div class="his-top">
+          <span class="sys">📄 导入原件 · 现场拍摄 / PDF</span>
+          <span class="tag" id="sourceTag">待识别</span>
+        </div>
+        <div class="his-source-frame" id="sourceFrame"></div>
+        <div class="his-source-bar">
+          <span class="fn" id="sourceName">—</span>
+          <button type="button" id="btnBackDemo">← 返回演示 HIS</button>
+        </div>
+      </div>
+      <!-- 演示 HIS（默认） -->
+      <div class="his-demo-wrap" id="hisDemo">
       <div class="his-top">
         <span class="sys">🏥 示范市第一人民医院 · 住院费用明细查询 v4.8</span>
         <span class="tag">院内系统 · 只读查询 · 无导出权限</span>
@@ -113,6 +140,7 @@ table.fee td{border:1px solid #b9cadc;background:#fff;padding:4px 7px}
       </div>
       <div class="his-foot">本院信息系统 · 数据仅供院内查询 · 未经授权禁止拍照外传（演示：监管现场通常拿不到导出接口）</div>
       <div class="his-note">💡 这是飞检员在医院机房或护士站看到的真实工作界面——不能拷盘、不能导出，只能对着屏幕拍照或手工抄录。鹰眼 OCR 录入器把「拍到的表格」变成可筛查的结构化行。</div>
+      </div><!-- /hisDemo -->
     </div>
 
     <!-- 右：监管侧 OCR 录入器 -->
@@ -174,6 +202,52 @@ var CASES = {
 var currentCase = 'field';
 var recognizedRows = [];
 var screeningResult = null;
+var sourceObjectUrl = null;
+
+function revokeSourceUrl(){
+  if(sourceObjectUrl){ try{ URL.revokeObjectURL(sourceObjectUrl); }catch(_){} sourceObjectUrl=null; }
+}
+function isPdfSource(meta){
+  return YingyanPluginImport.isLikelyPdf(meta.name, meta.type || '', '') || (meta.type === 'application/pdf');
+}
+function showSourceDocument(meta){
+  revokeSourceUrl();
+  var frame=document.getElementById('sourceFrame');
+  var url=meta.objectUrl || meta.dataUrl;
+  if(meta.file && !meta.objectUrl){
+    try{ sourceObjectUrl=URL.createObjectURL(meta.file); url=sourceObjectUrl; }catch(_){}
+  }
+  frame.innerHTML='';
+  if(!url){
+    frame.innerHTML='<div style="padding:24px;color:#98a6b5;text-align:center">无法预览该文件</div>';
+  } else if(isPdfSource(meta)){
+    var iframe=document.createElement('iframe');
+    iframe.title=meta.name||'PDF';
+    iframe.src=url+'#view=FitH';
+    frame.appendChild(iframe);
+  } else {
+    var img=document.createElement('img');
+    img.alt=meta.name||'导入照片';
+    img.src=url;
+    frame.appendChild(img);
+  }
+  document.getElementById('sourceName').textContent=meta.name||'导入件';
+  document.getElementById('sourceTag').textContent=isPdfSource(meta)?'PDF 原件':'照片原件';
+  document.getElementById('hisSource').classList.add('on');
+  document.getElementById('hisDemo').classList.add('off');
+  document.getElementById('ocrMeta').textContent='左侧为导入原件 · 右侧为识别出的费用行 · 确认后可筛查';
+  setStep(2);
+}
+function hideSourceDocument(){
+  revokeSourceUrl();
+  document.getElementById('hisSource').classList.remove('on');
+  document.getElementById('hisDemo').classList.remove('off');
+  document.getElementById('sourceFrame').innerHTML='';
+}
+document.getElementById('btnBackDemo').onclick=function(){
+  hideSourceDocument();
+  renderHis();
+};
 
 function esc(v){ return String(v==null?'':v).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];}); }
 function money(n){ return Number(n||0).toLocaleString('zh-CN'); }
@@ -377,26 +451,46 @@ function importOcrRows(rows) {
   showStatus('已导入 ' + recognizedRows.length + ' 行 · 可筛查', 'ok');
 }
 YingyanPluginImport.mount('#yyImportOcr', {
-  hint: '拖入费用 CSV/Excel · 或拍摄/拖入 HIS 屏幕照片',
+  hint: '拖入费用 CSV/Excel/PDF · 或拍摄/拖入 HIS 屏幕照片',
+  parseImages: true,
+  slot: 'fee_list',
+  onSourcePreview: function (meta) {
+    showSourceDocument(meta);
+    showStatus('已载入原件 · ' + (meta.name || '') + ' · 正在识别…', 'warn');
+  },
   onImport: function (payload) {
+    if (payload.source) showSourceDocument(payload.source);
     if (payload.kind === 'table') {
       var h = payload.table.headers;
       var c = CASES[currentCase].patient;
-      importOcrRows(payload.table.rows.map(function (row, i) {
+      var rows = payload.table.rows.map(function (row, i) {
         return {
           row_id: 'IMP-' + (i + 1),
-          item_name: YingyanPluginImport.pick(row, h, 'name') || '',
-          qty: Number(YingyanPluginImport.pick(row, h, 'qty')) || 1,
-          amount: Number(String(YingyanPluginImport.pick(row, h, 'amount')).replace(/[^\d.]/g, '')) || 0,
-          settle_date: YingyanPluginImport.pick(row, h, 'date') || '2026-06-16',
-          trace_code: YingyanPluginImport.pick(row, h, 'trace') || undefined,
+          item_name: YingyanPluginImport.pickSmart(row, h, 'name') || '',
+          qty: Number(YingyanPluginImport.pickSmart(row, h, 'qty')) || 1,
+          amount: Number(String(YingyanPluginImport.pickSmart(row, h, 'amount')).replace(/[^\d.]/g, '')) || 0,
+          settle_date: YingyanPluginImport.pickSmart(row, h, 'date') || '2026-06-16',
+          trace_code: YingyanPluginImport.pickSmart(row, h, 'trace') || undefined,
           patient_age: c.age, patient_sex: c.sex, dept: c.dept
         };
-      }).filter(function (r) { return r.item_name; }));
+      }).filter(function (r) { return r.item_name; });
+      if (!rows.length) {
+        showStatus('文件已读入但未识别到费用行 · 请确认含「项目名称/金额」列，或启动 L1 解析服务', 'warn');
+        return;
+      }
+      importOcrRows(rows);
+      if (payload.parsed_remote && payload.engine) {
+        showStatus('L1 解析 · ' + rows.length + ' 行 · ' + payload.engine + ' · 可筛查', 'ok');
+      }
     }
   },
   onImage: function (img) {
-    showStatus('图片 ' + img.name + ' 已接收 · 演示态请用「框选 OCR」或粘贴 TSV；完整解析请用材料导入中心', 'warn');
+    if (img.dataUrl || img.objectUrl) showSourceDocument(img);
+    if (img.error) {
+      showStatus('图片解析失败：' + img.error + ' · 原件已在左侧展示，可改用框选 OCR 或粘贴 TSV', 'warn');
+    } else {
+      showStatus('图片 ' + img.name + ' 已展示 · 正在 L1 识别…', 'warn');
+    }
     setStep(2);
   }
 });

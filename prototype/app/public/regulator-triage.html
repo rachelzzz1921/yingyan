@@ -206,8 +206,8 @@ YingyanPluginImport.mount('#yyImportTriage', {
         settle_date: YingyanPluginImport.pick(row, h, 'date') || '2026-06-16',
         dept: YingyanPluginImport.pick(row, h, 'dept') || '—',
         doctor: YingyanPluginImport.pick(row, h, 'doctor') || '—',
-        item_name: YingyanPluginImport.pick(row, h, 'name') || row[h[4]] || '—',
-        amount: Number(String(YingyanPluginImport.pick(row, h, 'amount')).replace(/[^\d.]/g, '')) || 0,
+        item_name: YingyanPluginImport.pickSmart(row, h, 'name') || row[h[4]] || '—',
+        amount: Number(String(YingyanPluginImport.pickSmart(row, h, 'amount')).replace(/[^\d.]/g, '')) || 0,
         rule_id: YingyanPluginImport.pick(row, h, 'rule') || '待分诊',
         reason: '导入行 · 待鹰眼分档',
         nature: '可疑'

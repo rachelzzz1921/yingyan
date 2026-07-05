@@ -2909,6 +2909,21 @@ const server = http.createServer(async (req, res) => {
     if (p === '/api/intake/slots') {
       return sendJSON(res, { slots: INTAKE_SLOTS.filter(s => s.id !== 'unknown').map(s => ({ id: s.id, label: s.label, tab: s.tab })) });
     }
+    // 插件靶站：PDF/图片 → 表格（不写 uploaded 案卷，供 OCR/分诊/结算等小插件拖入）
+    if (p === '/api/plugin/parse-table' && req.method === 'POST') {
+      const body = await readBody(req);
+      const { parsePluginTableFile } = require('./engine/plugin-parse-table');
+      const f = body.file || body;
+      if (!f?.fileBase64) return sendJSON(res, { ok: false, error: '缺少 fileBase64' });
+      const result = await parsePluginTableFile({
+        name: f.name || body.name || 'upload.bin',
+        mime: f.mime || body.mime || 'application/octet-stream',
+        fileBase64: f.fileBase64,
+        slot: body.slot || f.slot || 'fee_list',
+      });
+      return sendJSON(res, result);
+    }
+
     if (p === '/api/intake/batch' && req.method === 'POST') {
       const body = await readBody(req);
       // 串行化：把本次导入挂到链尾，确保读改写 uploaded 案卷不与并发请求交错

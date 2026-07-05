@@ -13,6 +13,8 @@ const files = {
   plugins: path.join(PUB, 'plugins.html'),
   overlay: path.join(PUB, 'plugin-overlay.js'),
   chip: path.join(PUB, 'plugin-chip.js'),
+  pluginImport: path.join(PUB, 'plugin-import.js'),
+  ocrImport: path.join(PUB, 'regulator-ocr-import.html'),
   triage: path.join(PUB, 'regulator-triage.html'),
   threshold: path.join(PUB, 'regulator-threshold.html'),
   fieldkit: path.join(PUB, 'regulator-fieldkit.html'),
@@ -48,6 +50,21 @@ mustContain('plugins', ['/mockhis.html?tour=1', '/regulator-ocr-import.html', '/
 mustContain('triage', ['派给飞检组', 'assignTask', 'task=assigned', 'H 列已写回'], 'triage has dispatch workflow');
 mustContain('threshold', ['生成审批说明', '灰度下发 10%', '回滚到 18 岁', 'stageRollout'], 'threshold has ops workflow');
 mustContain('fieldkit', ['现场 checklist', 'confirmChecklist', '带着行装包进现场'], 'fieldkit has onsite checklist');
+
+mustContain('pluginImport', ['/api/plugin/parse-table', 'isLikelyPdf', 'pickSmart', '.pdf', 'onSourcePreview', 'renderInlinePreview'], 'plugin-import PDF guard and source preview');
+mustContain('ocrImport', ['parseImages: true', 'pickSmart', 'fee_list', 'onSourcePreview', 'showSourceDocument', 'hisSource'], 'OCR import page shows source doc then parses');
+
+(function checkPluginParseSanitize() {
+  const { sanitizeFeeItems } = require(path.join(ROOT, 'prototype/app/engine/plugin-parse-table'));
+  const clean = sanitizeFeeItems([
+    { item_name: '姓名', qty: 1, amount: 0 },
+    { item_name: '床位费(双人间)', qty: 7, amount: 350 },
+    { item_name: '床位费(双人间)', qty: 7, amount: 350 },
+  ]);
+  if (clean.length !== 1 || clean[0].item_name !== '床位费(双人间)') {
+    fail('plugin-parse-table sanitize drops junk and dedupes');
+  } else ok('plugin-parse-table sanitize drops junk and dedupes');
+})();
 
 mustContain('precheck', ['两库依据可展开', '等待医生处置', '已完成患者沟通'], 'doctor precheck status and realistic override reasons');
 mustContain('disposition', ['处置入同一台账', '等待经办处置', '已完成患者沟通'], 'coder/settle disposition status');

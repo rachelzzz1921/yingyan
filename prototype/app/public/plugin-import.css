@@ -22,5 +22,19 @@
 .yy-import-thumb img{
   max-height:56px;border-radius:4px;border:1px solid #b9cadc;object-fit:cover
 }
+.yy-import-preview{
+  margin-top:8px;border:1px solid #b9cadc;border-radius:8px;overflow:hidden;background:#fff;
+  box-shadow:0 4px 16px rgba(20,40,70,.08)
+}
+.yy-import-preview-hd{
+  padding:6px 10px;background:#e3ecf5;border-bottom:1px solid #b9cadc;
+  font-size:11px;font-weight:700;color:#2c5788;display:flex;align-items:center;gap:8px
+}
+.yy-import-preview-hd span{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:400;color:#5b6d82}
+.yy-import-preview-body{max-height:320px;overflow:auto;background:#f4f7fb}
+.yy-import-preview-body img{display:block;width:100%;height:auto;object-fit:contain}
+.yy-import-preview-body iframe,.yy-import-preview-body embed,.yy-import-preview-body object{
+  display:block;width:100%;min-height:280px;border:0;background:#fff
+}
 /* Excel 靶站 */
 .hostwin .yy-import{margin:0 12px 8px}
